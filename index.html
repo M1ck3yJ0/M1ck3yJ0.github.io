@@ -215,34 +215,63 @@
     }
 
     /* SKILLS */
-    .skills-grid {
+    .skills-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    .skill-category {
+      background: var(--card-bg);
+      border: 1px solid var(--cat-color, var(--border));
+      border-radius: 12px;
+      padding: 1.5rem 1.75rem;
+      transition: box-shadow 0.2s;
+    }
+    .skill-category:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+    }
+    .skill-category-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cat-color, var(--accent));
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--cat-color-light, var(--border));
+    }
+    .cat-viz  { --cat-color: #2563eb; --cat-color-light: #dbeafe; background: #f8faff; }
+    .cat-build { --cat-color: #7c3aed; --cat-color-light: #ede9fe; background: #faf8ff; }
+    .cat-analyze { --cat-color: #b45309; --cat-color-light: #fef3c7; background: #fffdf5; }
+    .cat-domain { --cat-color: #2d5a3d; --cat-color-light: #d1fae5; background: #f5faf7; }
+    .skill-chips {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
     .skill-chip {
       display: inline-flex;
       align-items: center;
-      gap: 0.6rem;
-      padding: 0.55rem 1.1rem;
-      background: var(--card-bg);
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      background: white;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 500;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 400;
       color: var(--ink);
-      transition: all 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      transition: all 0.18s;
     }
     .skill-chip:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--accent-light);
+      border-color: var(--cat-color, var(--accent));
+      color: var(--cat-color, var(--accent));
+      background: var(--cat-color-light, var(--accent-light));
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(45,90,61,0.12);
     }
-    .skill-chip svg { width: 20px; height: 20px; flex-shrink: 0; }
-    .skill-chip img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+    .skill-chip svg, .skill-chip img { width: 16px; height: 16px; flex-shrink: 0; }
+    .cat-viz  .skill-chip img { filter: invert(30%) sepia(80%) saturate(500%) hue-rotate(190deg); }
+    .cat-build .skill-chip img { filter: invert(25%) sepia(60%) saturate(600%) hue-rotate(245deg); }
+    .cat-analyze .skill-chip img { filter: invert(35%) sepia(70%) saturate(500%) hue-rotate(10deg); }
 
     /* PORTFOLIO GRID */
     .portfolio-grid {
@@ -378,6 +407,7 @@
       .headshot-frame { width: 220px; height: 270px; }
       section { padding: 3rem 1.5rem; }
       .portfolio-grid { grid-template-columns: 1fr; }
+      .skills-2x2 { grid-template-columns: 1fr; }
       .about-grid { grid-template-columns: 1fr; gap: 2rem; }
       footer { flex-direction: column; gap: 0.5rem; padding: 2rem 1.5rem; }
     }
@@ -447,92 +477,154 @@
   <!-- SKILLS -->
   <section id="skills">
     <p class="section-label">Skills & Tools</p>
-    <div class="skills-grid">
-      <!-- Tableau -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#E97627"><path d="M11.14 4.93V2.57h1.72v2.36h2.36v1.72h-2.36v2.35h-1.72V6.65H8.79V4.93h2.35zm6.22 6.22V8.79h1.72v2.36H21.4v1.72h-2.32v2.35h-1.72v-2.35h-2.35v-1.72h2.35zM4.93 11.15H2.57v1.72h2.36v2.35h1.72v-2.35h2.35v-1.72H6.65V8.8H4.93v2.35zm6.21 6.22v-2.36h1.72v2.36h2.36v1.72h-2.36v2.32h-1.72v-2.32H8.79v-1.72h2.35z"/></svg>
-        Tableau
-      </span>
-      <!-- Power BI -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#F2C811"><path d="M6.5 21H3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1zm7.25-2.5H10.25a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1zm7.25 2H17.5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1H21a1 1 0 0 1 1 1v16.5a1 1 0 0 1-1 1z"/></svg>
-        Power BI
-      </span>
-      <!-- Python -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24"><defs><linearGradient id="py-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3776AB"/><stop offset="100%" stop-color="#FFD43B"/></linearGradient></defs><path fill="url(#py-grad)" d="M11.98 0C5.92 0 6.3 2.6 6.3 2.6l.01 2.69h5.78v.81H3.93S0 5.65 0 11.77c0 6.12 3.38 5.9 3.38 5.9h2.02v-2.84s-.11-3.38 3.33-3.38h5.74s3.22.05 3.22-3.11V3.19S18.24 0 11.98 0zm-3.2 1.85a1.04 1.04 0 1 1 0 2.08 1.04 1.04 0 0 1 0-2.08zM12.02 24c6.06 0 5.68-2.6 5.68-2.6l-.01-2.69h-5.78v-.81h8.16S24 18.35 24 12.23c0-6.12-3.38-5.9-3.38-5.9h-2.02v2.84s.11 3.38-3.33 3.38H9.53s-3.22-.05-3.22 3.11v5.15S5.76 24 12.02 24zm3.2-1.85a1.04 1.04 0 1 1 0-2.08 1.04 1.04 0 0 1 0 2.08z"/></svg>
-        Python
-      </span>
-      <!-- SQL / Database -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#336791" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>
-        SQL
-      </span>
-      <!-- scikit-learn -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#F7931E"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 2a8 8 0 0 1 7.39 4.93L5.07 14.61A8 8 0 0 1 12 4zm0 16a8 8 0 0 1-7.39-4.93l14.32-5.68A8 8 0 0 1 12 20z"/></svg>
-        scikit-learn
-      </span>
-      <!-- ESG -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 5-9 13-9 13S3 16 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
-        ESG & Sustainability
-      </span>
-      <!-- Microsoft Fabric -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#0078D4"><path d="M11.5 2L2 7.5v9L11.5 22l9.5-5.5v-9L11.5 2zm0 2.3L19 8.6v6.8l-7.5 4.3L4 15.4V8.6l7.5-4.3z"/></svg>
-        Microsoft Fabric
-      </span>
-      <!-- GitHub -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#181717"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.41-1.29.75-1.59-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        GitHub Pipelines
-      </span>
-      <!-- pandas -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#150458"><path d="M9.5 2h2v7h-2V2zm3 0h2v7h-2V2zM9.5 15h2v7h-2v-7zm3 0h2v7h-2v-7zM6 8.5h12v3H6z"/></svg>
-        pandas
-      </span>
-      <!-- numpy -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#013243"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        numpy
-      </span>
-      <!-- matplotlib -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#11557C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 7,11 11,13 15,7 21,3"/><polyline points="3,21 21,21 21,3"/></svg>
-        matplotlib / seaborn
-      </span>
-      <!-- Excel -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#217346"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM8.5 19l2.5-3.5 2.5 3.5H8.5zm5-5.5L11 10l2.5-3.5h2l-2.5 3.5L15.5 14h-2z"/></svg>
-        Excel
-      </span>
-      <!-- R -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#276DC3"><path d="M12 0C5.37 0 0 3.58 0 8c0 3.54 2.84 6.57 7 7.62L4.5 24h3l2.38-8h.24L12.5 24h3l-2.62-8.71C17.07 14.17 20 11.35 20 8c0-4.42-3.58-8-8-8zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-        R
-      </span>
-      <!-- Time Series -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c1-4 3-6 5-4s3 7 5 5 3-7 5-5"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
-        Time Series
-      </span>
-      <!-- Operations -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-        Operations Analytics
-      </span>
-      <!-- ESG Reporting -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        ESG Reporting
-      </span>
-      <!-- Azure -->
-      <span class="skill-chip">
-        <svg viewBox="0 0 24 24" fill="#0078D4"><path d="M13.5 2L6 13.5h5L8 22l10-12h-5.5L13.5 2z"/></svg>
-        Azure (DP-900)
-      </span>
+    <div class="skills-2x2">
+
+      <!-- 1. Visualize & Report (blue) -->
+      <div class="skill-category cat-viz">
+        <p class="skill-category-label">Visualize & Report</p>
+        <div class="skill-chips">
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/tableau.svg" alt="Tableau">
+            Tableau
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/powerbi.svg" alt="Power BI">
+            Power BI
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/matplotlib.svg" alt="matplotlib">
+            matplotlib / seaborn
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/microsoftexcel.svg" alt="Excel">
+            Excel (Power Query, Pivot Tables)
+          </span>
+        </div>
+      </div>
+
+      <!-- 2. Build & Automate (purple) -->
+      <div class="skill-category cat-build">
+        <p class="skill-category-label">Build & Automate</p>
+        <div class="skill-chips">
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/python.svg" alt="Python">
+            Python
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/r.svg" alt="R">
+            R
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/mysql.svg" alt="MySQL">
+            MySQL
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/github.svg" alt="GitHub">
+            GitHub Pipelines
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/microsoftfabric.svg" alt="Microsoft Fabric">
+            Microsoft Fabric
+          </span>
+        </div>
+      </div>
+
+      <!-- 3. Analyze & Model (amber) -->
+      <div class="skill-category cat-analyze">
+        <p class="skill-category-label">Analyze & Model</p>
+        <div class="skill-chips">
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/pandas.svg" alt="pandas">
+            pandas
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/numpy.svg" alt="numpy">
+            numpy
+          </span>
+          <span class="skill-chip">
+            <img src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/scikitlearn.svg" alt="scikit-learn">
+            scikit-learn
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7h3a1 1 0 0 0 1-1V4a2 2 0 1 1 4 0v2a1 1 0 0 0 1 1h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-2a2 2 0 1 0 0 4h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h2a2 2 0 1 0 0-4H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
+            </svg>
+            Descriptive Analytics
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.5 2a4.5 4.5 0 0 1 4.5 4.5c0 .8-.2 1.5-.5 2.1A4 4 0 0 1 17 12.5a4 4 0 0 1-3 3.87V18a2 2 0 0 1-4 0v-1.63A4 4 0 0 1 7 12.5a4 4 0 0 1 3.5-3.96A4.5 4.5 0 0 1 9.5 2z"/>
+              <path d="M19 8c1 .8 1.5 2 1.5 3.5"/>
+              <path d="M21 6c1.5 1.5 2 3.5 2 5.5"/>
+            </svg>
+            Predictive Modeling
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.7" stroke-linecap="round">
+              <circle cx="5" cy="6" r="1.5" fill="#b45309"/>
+              <circle cx="8" cy="4" r="1.5" fill="#b45309"/>
+              <circle cx="6" cy="9" r="1.5" fill="#b45309"/>
+              <circle cx="16" cy="15" r="1.5" fill="#7c3aed"/>
+              <circle cx="19" cy="18" r="1.5" fill="#7c3aed"/>
+              <circle cx="18" cy="13" r="1.5" fill="#7c3aed"/>
+              <line x1="3" y1="19" x2="21" y2="5" stroke="#b45309" stroke-dasharray="3 2"/>
+            </svg>
+            Classification & Regression
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 14c1.5-4 3-5 4.5-3S9 17 11 15s3-8 5-6 3 3 6 1"/>
+              <line x1="2" y1="21" x2="22" y2="21"/>
+            </svg>
+            Time Series Forecasting
+          </span>
+        </div>
+      </div>
+
+      <!-- 4. Domain Knowledge (green) -->
+      <div class="skill-category cat-domain">
+        <p class="skill-category-label">Domain Knowledge</p>
+        <div class="skill-chips">
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 20c0-4 2.5-7 6-8"/>
+              <path d="M13 12c0-4 2-7 6-7-1 4-3 7-6 7z"/>
+              <path d="M5 17c2-1 4-1 6 0"/>
+              <path d="M4 20h16"/>
+            </svg>
+            ESG & Sustainability
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <circle cx="12" cy="12" r="5"/>
+              <circle cx="12" cy="12" r="1.5" fill="#2d5a3d"/>
+              <line x1="20" y1="4" x2="13.5" y2="10.5"/>
+              <polyline points="16,4 20,4 20,8"/>
+            </svg>
+            Materiality Assessment
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <circle cx="10" cy="14" r="2.5"/>
+              <line x1="12" y1="16" x2="14.5" y2="18.5"/>
+            </svg>
+            ESG Financial Profiling
+          </span>
+          <span class="skill-chip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8" cy="9" r="3"/>
+              <path d="M8 6V4M8 14v-2M5.1 7.1L3.7 5.7M10.9 10.9l-1.4-1.4M5.1 10.9L3.7 12.3M10.9 7.1l-1.4 1.4M5 9H3M13 9h-2"/>
+              <circle cx="16" cy="16" r="2.5"/>
+              <path d="M16 13.5v-1.5M16 20v-1.5M13.8 14.2l-1-1M19.2 19.8l-1-1M13.8 17.8l-1 1M19.2 13.2l-1 1M13 16h-1.5M20.5 16H19"/>
+            </svg>
+            Operations Analytics
+          </span>
+        </div>
+      </div>
+
     </div>
   </section>
 
