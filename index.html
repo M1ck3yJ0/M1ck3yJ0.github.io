@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Milcah Mary Joseph | Data & Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #0f0f0f;
+      --paper: #f5f2ec;
+      --accent: #2d5a3d;
+      --accent-light: #e8f0eb;
+      --muted: #6b6b6b;
+      --border: #d8d3c8;
+      --card-bg: #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 4rem;
+      background: rgba(245, 242, 236, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 8rem 4rem 4rem;
+      gap: 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-text { animation: fadeUp 0.8s ease both; }
+    .hero-eyebrow {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .hero-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.05;
+      margin-bottom: 1rem;
+      color: var(--ink);
+    }
+    .hero-title {
+      font-size: 1.1rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .hero-summary {
+      font-size: 1rem;
+      color: var(--ink);
+      max-width: 480px;
+      margin-bottom: 2rem;
+      line-height: 1.75;
+    }
+
+    /* LINKS ROW */
+    .links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+    .link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      background: var(--card-bg);
+      transition: all 0.2s;
+    }
+    .link-pill:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .link-pill svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    .contact-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .contact-item {
+      font-size: 0.85rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .contact-item a { color: var(--muted); text-decoration: none; }
+    .contact-item a:hover { color: var(--accent); }
+
+    /* HEADSHOT */
+    .hero-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .headshot-frame {
+      width: 340px;
+      height: 420px;
+      border-radius: 4px 120px 4px 120px;
+      background: var(--accent-light);
+      border: 2px solid var(--border);
+      overflow: hidden;
+      position: relative;
+    }
+    .headshot-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headshot-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      color: var(--accent);
+    }
+    .headshot-placeholder svg { width: 64px; height: 64px; opacity: 0.4; }
+    .headshot-placeholder p { font-size: 0.8rem; color: var(--muted); }
+
+    /* DIVIDER */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* SECTIONS */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 5rem 4rem;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* SKILLS */
+    .skills-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    .skill-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 1.1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink);
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .skill-chip:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(45,90,61,0.12);
+    }
+    .skill-chip svg { width: 20px; height: 20px; flex-shrink: 0; }
+    .skill-chip img { width: 20px; height: 20px; object-fit: contain; flex-shrink: 0; }
+
+    /* PORTFOLIO GRID */
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    .portfolio-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--ink);
+      transition: all 0.25s;
+      display: block;
+    }
+    .portfolio-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+      border-color: var(--accent);
+    }
+    .card-thumb {
+      height: 200px;
+      background: var(--accent-light);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-thumb-label {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      opacity: 0.3;
+    }
+    .card-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .card-tag {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.25rem 0.6rem;
+      border-radius: 100px;
+    }
+    .card-body { padding: 1.5rem; }
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .card-cta {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .card-cta::after { content: '→'; transition: transform 0.2s; }
+    .portfolio-card:hover .card-cta::after { transform: translateX(4px); }
+
+    /* ABOUT */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-sidebar h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .about-sidebar .accent-line {
+      width: 40px;
+      height: 3px;
+      background: var(--accent);
+      margin-bottom: 1.5rem;
+    }
+    .about-body p {
+      font-size: 1rem;
+      line-height: 1.85;
+      color: #2a2a2a;
+      margin-bottom: 1.25rem;
+    }
+    .about-body p:last-child { margin-bottom: 0; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    footer p { font-size: 0.8rem; color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 7rem 1.5rem 3rem;
+        gap: 2.5rem;
+      }
+      .hero-image { order: -1; }
+      .headshot-frame { width: 220px; height: 270px; }
+      section { padding: 3rem 1.5rem; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      footer { flex-direction: column; gap: 0.5rem; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">Milcah Mary Joseph</a>
+    <ul class="nav-links">
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="mailto:milcahjoseph@live.com">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-text">
+      <h1 class="hero-name">Milcah<br>Mary<br>Joseph</h1>
+      <p class="hero-title">Data & Operations Analyst &nbsp;·&nbsp; Dublin, Ireland</p>
+      <p class="hero-summary">Turning complex, messy data into clear decisions. Working at the intersection of analytics, operational improvement, and ESG reporting.</p>
+
+      <div class="links-row">
+        <a class="link-pill" href="https://www.linkedin.com/in/milcah-mary-joseph/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.59 0 4.26 2.36 4.26 5.44v6.3zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45C23.21 24 24 23.23 24 22.27V1.73C24 .77 23.21 0 22.22 0z"/></svg>
+          LinkedIn
+        </a>
+        <a class="link-pill" href="https://github.com/M1ck3yJ0" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.41-1.29.75-1.59-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <a class="link-pill" href="https://public.tableau.com/app/profile/milcah.joseph2216/vizzes" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.14 4.93V2.57h1.72v2.36h2.36v1.72h-2.36v2.35h-1.72V6.65H8.79V4.93h2.35zm6.22 6.22V8.79h1.72v2.36H21.4v1.72h-2.32v2.35h-1.72v-2.35h-2.35v-1.72h2.35zM4.93 11.15H2.57v1.72h2.36v2.35h1.72v-2.35h2.35v-1.72H6.65V8.8H4.93v2.35zm6.21 6.22v-2.36h1.72v2.36h2.36v1.72h-2.36v2.32h-1.72v-2.32H8.79v-1.72h2.35z"/></svg>
+          Tableau Public
+        </a>
+      </div>
+
+      <div class="contact-row">
+        <span class="contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:milcahjoseph@live.com">milcahjoseph@live.com</a>
+        </span>
+        <span class="contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Dublin, Ireland
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-image">
+      <div class="headshot-frame">
+        <!-- REPLACE src with your actual headshot path e.g. assets/headshot.jpg -->
+        <!-- <img src="assets/headshot.jpg" alt="Milcah Mary Joseph"> -->
+        <div class="headshot-placeholder">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          <p>Add headshot to assets/</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label">Skills & Tools</p>
+    <div class="skills-grid">
+      <!-- Tableau -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#E97627"><path d="M11.14 4.93V2.57h1.72v2.36h2.36v1.72h-2.36v2.35h-1.72V6.65H8.79V4.93h2.35zm6.22 6.22V8.79h1.72v2.36H21.4v1.72h-2.32v2.35h-1.72v-2.35h-2.35v-1.72h2.35zM4.93 11.15H2.57v1.72h2.36v2.35h1.72v-2.35h2.35v-1.72H6.65V8.8H4.93v2.35zm6.21 6.22v-2.36h1.72v2.36h2.36v1.72h-2.36v2.32h-1.72v-2.32H8.79v-1.72h2.35z"/></svg>
+        Tableau
+      </span>
+      <!-- Power BI -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#F2C811"><path d="M6.5 21H3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1zm7.25-2.5H10.25a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1zm7.25 2H17.5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1H21a1 1 0 0 1 1 1v16.5a1 1 0 0 1-1 1z"/></svg>
+        Power BI
+      </span>
+      <!-- Python -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24"><defs><linearGradient id="py-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3776AB"/><stop offset="100%" stop-color="#FFD43B"/></linearGradient></defs><path fill="url(#py-grad)" d="M11.98 0C5.92 0 6.3 2.6 6.3 2.6l.01 2.69h5.78v.81H3.93S0 5.65 0 11.77c0 6.12 3.38 5.9 3.38 5.9h2.02v-2.84s-.11-3.38 3.33-3.38h5.74s3.22.05 3.22-3.11V3.19S18.24 0 11.98 0zm-3.2 1.85a1.04 1.04 0 1 1 0 2.08 1.04 1.04 0 0 1 0-2.08zM12.02 24c6.06 0 5.68-2.6 5.68-2.6l-.01-2.69h-5.78v-.81h8.16S24 18.35 24 12.23c0-6.12-3.38-5.9-3.38-5.9h-2.02v2.84s.11 3.38-3.33 3.38H9.53s-3.22-.05-3.22 3.11v5.15S5.76 24 12.02 24zm3.2-1.85a1.04 1.04 0 1 1 0-2.08 1.04 1.04 0 0 1 0 2.08z"/></svg>
+        Python
+      </span>
+      <!-- SQL / Database -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#336791" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v4c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 9v4c0 1.66 4.03 3 9 3s9-1.34 9-3V9"/><path d="M3 13v4c0 1.66 4.03 3 9 3s9-1.34 9-3v-4"/></svg>
+        SQL
+      </span>
+      <!-- scikit-learn -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#F7931E"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 2a8 8 0 0 1 7.39 4.93L5.07 14.61A8 8 0 0 1 12 4zm0 16a8 8 0 0 1-7.39-4.93l14.32-5.68A8 8 0 0 1 12 20z"/></svg>
+        scikit-learn
+      </span>
+      <!-- ESG -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 1 9 9c0 5-9 13-9 13S3 16 3 11a9 9 0 0 1 9-9z"/><circle cx="12" cy="11" r="3"/></svg>
+        ESG & Sustainability
+      </span>
+      <!-- Microsoft Fabric -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#0078D4"><path d="M11.5 2L2 7.5v9L11.5 22l9.5-5.5v-9L11.5 2zm0 2.3L19 8.6v6.8l-7.5 4.3L4 15.4V8.6l7.5-4.3z"/></svg>
+        Microsoft Fabric
+      </span>
+      <!-- GitHub -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#181717"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.73.08-.73 1.2.09 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.29 3.47.99.1-.77.41-1.29.75-1.59-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub Pipelines
+      </span>
+      <!-- pandas -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#150458"><path d="M9.5 2h2v7h-2V2zm3 0h2v7h-2V2zM9.5 15h2v7h-2v-7zm3 0h2v7h-2v-7zM6 8.5h12v3H6z"/></svg>
+        pandas
+      </span>
+      <!-- numpy -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#013243"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        numpy
+      </span>
+      <!-- matplotlib -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#11557C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,17 7,11 11,13 15,7 21,3"/><polyline points="3,21 21,21 21,3"/></svg>
+        matplotlib / seaborn
+      </span>
+      <!-- Excel -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#217346"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zM8.5 19l2.5-3.5 2.5 3.5H8.5zm5-5.5L11 10l2.5-3.5h2l-2.5 3.5L15.5 14h-2z"/></svg>
+        Excel
+      </span>
+      <!-- R -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#276DC3"><path d="M12 0C5.37 0 0 3.58 0 8c0 3.54 2.84 6.57 7 7.62L4.5 24h3l2.38-8h.24L12.5 24h3l-2.62-8.71C17.07 14.17 20 11.35 20 8c0-4.42-3.58-8-8-8zm0 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+        R
+      </span>
+      <!-- Time Series -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c1-4 3-6 5-4s3 7 5 5 3-7 5-5"/><line x1="3" y1="20" x2="21" y2="20"/></svg>
+        Time Series
+      </span>
+      <!-- Operations -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        Operations Analytics
+      </span>
+      <!-- ESG Reporting -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#2d5a3d" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        ESG Reporting
+      </span>
+      <!-- Azure -->
+      <span class="skill-chip">
+        <svg viewBox="0 0 24 24" fill="#0078D4"><path d="M13.5 2L6 13.5h5L8 22l10-12h-5.5L13.5 2z"/></svg>
+        Azure (DP-900)
+      </span>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <p class="section-label">Portfolio</p>
+    <div class="portfolio-grid">
+
+      <a class="portfolio-card" href="projects/bike_share/index.html">
+        <div class="card-thumb">
+          <!-- <img src="assets/bike_thumb.png" alt="Bike Share"> -->
+          <span class="card-thumb-label">Bike Share</span>
+          <span class="card-tag">Operations · SQL</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Bike Share Operations</h3>
+          <p class="card-desc">End-to-end analysis of urban bike share usage patterns, station performance, and demand forecasting to support operational decisions.</p>
+          <span class="card-cta">View project</span>
+        </div>
+      </a>
+
+      <a class="portfolio-card" href="projects/superstore_orders/index.html">
+        <div class="card-thumb">
+          <!-- <img src="assets/superstore_thumb.png" alt="Superstore Orders"> -->
+          <span class="card-thumb-label">Superstore</span>
+          <span class="card-tag">Tableau · Business</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Superstore Orders Dashboard</h3>
+          <p class="card-desc">Sales performance, regional breakdowns, and profitability analysis across product categories built in Tableau with drill-down capability.</p>
+          <span class="card-cta">View project</span>
+        </div>
+      </a>
+
+      <a class="portfolio-card" href="projects/esg_finance_thesis/index.html">
+        <div class="card-thumb">
+          <!-- <img src="assets/esg_thumb.png" alt="ESG Finance Thesis"> -->
+          <span class="card-thumb-label">ESG</span>
+          <span class="card-tag">M.Sc. Thesis · ML</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">ESG Factors & Financial Health</h3>
+          <p class="card-desc">M.Sc. thesis investigating the relationship between ESG factors, non-financial data, and financial health via correlation analysis, autoregression, and time series forecasting.</p>
+          <span class="card-cta">View project</span>
+        </div>
+      </a>
+
+      <a class="portfolio-card" href="projects/pokemon_stat/index.html">
+        <div class="card-thumb">
+          <!-- <img src="assets/pokemon_thumb.png" alt="Pokemon Stats"> -->
+          <span class="card-thumb-label">Pokemon</span>
+          <span class="card-tag">Python · Data Viz</span>
+        </div>
+        <div class="card-body">
+          <h3 class="card-title">Pokemon Stat Analysis</h3>
+          <p class="card-desc">Exploratory analysis and visualization of Pokemon battle statistics, type distributions, and generational trends using Python and pandas.</p>
+          <span class="card-cta">View project</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label">About</p>
+    <div class="about-grid">
+      <div class="about-sidebar">
+        <h3>Analyst,<br><em>researcher,</em><br>advocate.</h3>
+        <div class="accent-line"></div>
+      </div>
+      <div class="about-body">
+        <p>I'm a data and operations analyst with a multi-industry background turning complex, messy data into clear decisions. My work sits at the intersection of analytics, operational improvement, and reporting, and I'm especially drawn to roles where data has real-world stakes, whether that's ESG and sustainability, financial performance, or operational efficiency.</p>
+        <p>I'm especially interested in how data can support sustainability and ESG-related thinking, and am a strong advocate for incentivizing capitalism to do the heavy lifting for a sustainability future for everyone.</p>
+        <p>On the technical side, I work across the full analytics stack: Python (pandas, numpy, scikit-learn, matplotlib, seaborn), SQL, Power BI, Tableau, Microsoft Fabric, and GitHub-based automation pipelines. My M.Sc. thesis in Business Analytics investigated the relationship between ESG factors, non-financial data, and financial health using a multi-stage Python modeling pipeline combining correlation analysis, iterative autoregression, and time series forecasting. I built and evaluated the models in Jupyter Notebook using Factset and Google Trends API data.</p>
+        <p>I believe data has the most value when it is made accessible, meaningful, and actionable, and I'm a strong advocate for using market mechanisms and clear information to drive sustainability outcomes. That conviction runs through both my professional work and my personal interest in ESG research.</p>
+        <p>Outside work, I'm usually somewhere in nature, deep in a high fantasy novel, or thinking through big questions. At heart, I'm motivated by work that helps people make better decisions and creates meaningful impact.</p>
+        <p>Open to data analyst, operations analyst, business analyst, and ESG/sustainability analyst roles in Dublin and remote. Always happy to connect.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider">
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 Milcah Mary Joseph</p>
+    <p>Built with HTML & GitHub Pages · Dublin, Ireland</p>
+  </footer>
+
+</body>
+</html>
