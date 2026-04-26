@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Milcah Mary Joseph | Data & Analytics</title>
+  <title>Milcah M. Joseph | Data & Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --ink: #0f0f0f;
       --paper: #f5f2ec;
-      --accent: #2d5a3d;
-      --accent-light: #e8f0eb;
+      --accent: #ae8625;
+      --accent-light: #faf4e0;
       --muted: #6b6b6b;
       --border: #d8d3c8;
       --card-bg: #ffffff;
@@ -23,35 +23,31 @@
     }
 
     [data-theme="dark"] {
-      --ink: #e8e4dc;
-      --paper: #141210;
-      --accent: #5a9e6f;
-      --accent-light: #1a2e21;
-      --muted: #8a8580;
-      --border: #2a2620;
-      --card-bg: #1c1916;
-      --nav-bg: rgba(20, 18, 16, 0.92);
-      --glass-bg: rgba(28,25,22,0.55);
-      --glass-border: rgba(255,255,255,0.08);
-      --shadow-color: rgba(0,0,0,0.3);
-      --texture-opacity: 0.06;
-      --cat-viz-bg: #0e1520;
-      --cat-build-bg: #130e1e;
-      --cat-analyze-bg: #1a1208;
-      --cat-domain-bg: #0a1410;
+      --ink: #e2e8f0;
+      --paper: #050d1a;
+      --accent: #dfbd69;
+      --accent-light: #2a1f06;
+      --muted: #94a3b8;
+      --border: rgba(148,163,184,0.15);
+      --card-bg: rgba(15,28,50,0.85);
+      --nav-bg: rgba(5,13,26,0.85);
+      --glass-bg: rgba(15,28,50,0.6);
+      --glass-border: rgba(148,163,184,0.15);
+      --shadow-color: rgba(0,0,0,0.5);
+      --texture-opacity: 0;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
-    /* PAPER TEXTURE */
+    /* PAPER TEXTURE (light mode only) */
     body {
       font-family: 'DM Sans', sans-serif;
       background-color: var(--paper);
       color: var(--ink);
       font-size: 16px;
       line-height: 1.6;
-      transition: background-color 0.3s, color 0.3s;
+      transition: background-color 0.4s, color 0.3s;
     }
     body::before {
       content: '';
@@ -63,9 +59,28 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
       background-size: 200px 200px;
     }
-    body > * { position: relative; z-index: 1; }
+    /* HEATMAP CANVAS (light mode) */
+    #heatmap {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    body { position: relative; }
+    [data-theme="dark"] #heatmap { display: none; }
 
-    /* NAV */
+    /* STARFIELD CANVAS */
+    #starfield {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+    [data-theme="dark"] #starfield { display: block; }
+    [data-theme="dark"] body::before { opacity: 0; }
+    body > * { position: relative; z-index: 1; }
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -110,11 +125,11 @@
       background: none;
       border: 1px solid var(--border);
       border-radius: 100px;
-      padding: 0.35rem 0.75rem;
+      padding: 0.4rem 0.85rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.5rem;
       font-size: 0.75rem;
       font-weight: 500;
       color: var(--muted);
@@ -122,9 +137,13 @@
       white-space: nowrap;
     }
     .dark-toggle:hover { border-color: var(--accent); color: var(--accent); }
-    .dark-toggle .icon-sun, .dark-toggle .icon-moon { font-size: 0.9rem; }
-    [data-theme="dark"] .icon-sun { display: none; }
-    [data-theme="light"] .icon-moon, body:not([data-theme="dark"]) .icon-moon { display: none; }
+    .dark-toggle svg { width: 18px; height: 18px; flex-shrink: 0; }
+    /* Light mode shows moon (click to go dark) */
+    .icon-sun { display: none; }
+    .icon-moon { display: block; }
+    /* Dark mode shows sun (click to go light) */
+    [data-theme="dark"] .icon-sun { display: block; }
+    [data-theme="dark"] .icon-moon { display: none; }
 
     /* HERO */
     .hero {
@@ -222,8 +241,8 @@
       width: 340px;
       height: 420px;
       border-radius: 4px 120px 4px 120px;
-      background: var(--accent-light);
-      border: 2px solid var(--border);
+      background: rgba(161,163,188,0.12);
+      border: 2px solid rgba(161,163,188,0.25);
       overflow: hidden;
       position: relative;
     }
@@ -250,6 +269,8 @@
       border: none;
       border-top: 1px solid var(--border);
       margin: 0;
+      position: relative;
+      z-index: 1;
     }
 
     /* SECTIONS */
@@ -330,30 +351,22 @@
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--cat-color-light, var(--border));
     }
-    .cat-viz  {
-      --cat-color: #2563eb; --cat-color-light: rgba(37,99,235,0.15);
-      --cat-glow: rgba(37,99,235,0.08);
-      background: rgba(248,250,255,0.6);
+    .cat-viz, .cat-build, .cat-analyze, .cat-domain {
+      --cat-color: #ae8625;
+      --cat-color-light: rgba(174,134,37,0.15);
+      --cat-glow: rgba(161,163,188,0.08);
+      background: rgba(155,158,194,0.08);
+      border-color: rgba(161,163,188,0.25);
     }
-    .cat-build {
-      --cat-color: #7c3aed; --cat-color-light: rgba(124,58,237,0.15);
-      --cat-glow: rgba(124,58,237,0.08);
-      background: rgba(250,248,255,0.6);
+    [data-theme="dark"] .cat-viz,
+    [data-theme="dark"] .cat-build,
+    [data-theme="dark"] .cat-analyze,
+    [data-theme="dark"] .cat-domain {
+      background: rgba(155,158,194,0.1);
+      --cat-color: #dfbd69;
+      --cat-color-light: rgba(223,189,105,0.12);
+      border-color: rgba(161,163,188,0.2);
     }
-    .cat-analyze {
-      --cat-color: #b45309; --cat-color-light: rgba(180,83,9,0.15);
-      --cat-glow: rgba(180,83,9,0.08);
-      background: rgba(255,253,245,0.6);
-    }
-    .cat-domain {
-      --cat-color: #2d5a3d; --cat-color-light: rgba(45,90,61,0.15);
-      --cat-glow: rgba(45,90,61,0.08);
-      background: rgba(245,250,247,0.6);
-    }
-    [data-theme="dark"] .cat-viz  { background: rgba(14,21,32,0.7); }
-    [data-theme="dark"] .cat-build { background: rgba(19,14,30,0.7); }
-    [data-theme="dark"] .cat-analyze { background: rgba(26,18,8,0.7); }
-    [data-theme="dark"] .cat-domain { background: rgba(10,20,16,0.7); }
 
     .skill-chips {
       display: flex;
@@ -404,7 +417,7 @@
     }
     .card-thumb {
       height: 210px;
-      background: var(--accent-light);
+      background: rgba(161,163,188,0.12);
       position: relative;
       overflow: hidden;
       display: flex;
@@ -436,11 +449,17 @@
       font-weight: 500;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: var(--accent);
-      color: #fff;
+      background: rgba(155,158,194,0.18);
+      color: #ae8625;
+      border: 1px solid rgba(161,163,188,0.35);
       padding: 0.25rem 0.6rem;
       border-radius: 100px;
       backdrop-filter: blur(4px);
+    }
+    [data-theme="dark"] .card-tag {
+      background: rgba(155,158,194,0.15);
+      color: #dfbd69;
+      border-color: rgba(161,163,188,0.25);
     }
     .card-external {
       position: absolute;
@@ -547,9 +566,12 @@
 </head>
 <body>
 
+  <canvas id="heatmap"></canvas>
+  <canvas id="starfield"></canvas>
+
   <!-- NAV -->
   <nav>
-    <a href="#" class="nav-logo">Milcah Mary Joseph</a>
+    <a href="#" class="nav-logo">Milcah M. Joseph</a>
     <div class="nav-right">
       <ul class="nav-links">
         <li><a href="#skills">Skills</a></li>
@@ -558,8 +580,12 @@
         <li><a href="mailto:milcahjoseph@live.com">Contact</a></li>
       </ul>
       <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
-        <span class="icon-sun">☀️</span>
-        <span class="icon-moon">🌙</span>
+        <span class="icon-sun">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><path fill="#fcc11a" d="M37.41 41.95c-9.71 12.48-9.54 34.65 2.87 45.64c14.09 12.47 33.92 12.34 46.39.87c14.95-13.76 14.09-36.66.87-49.63c-13.29-13.04-37.04-13.72-50.13 3.12"/><path fill="#fee269" d="M53 37.67c-3.84-1.7-8.04 2.93-9.87 6.09c-1.83 3.17-3.53 9.38.37 10.97c3.9 1.58 6.7-1.1 9.51-5.73c2.79-4.63 4.38-9.38-.01-11.33"/><path fill="#ffa722" d="M63 20.27c-.93 1.74-.62 3.08 1.23 3.52s13.36 2.31 14.33 2.37c1.41.09 1.93-.97 1.76-2.2c-.18-1.23-2.99-18.46-3.25-20.04S75.14.76 73.55 2.87S63.7 18.96 63 20.27m29.8 11.96c-1.81.56-1.76 1.67-.79 3.08s7.65 11.6 8.26 12.31c.62.7 1.67.88 2.55-.18c.88-1.05 11.86-16.45 12.66-17.41c1.32-1.58.53-3.25-1.49-2.73c-1.54.41-20.05 4.58-21.19 4.93m13.8 29.63c-1.3-.74-2.99-.53-3.43 1.14s-2.37 13.8-2.55 14.86s.62 2.11 1.93 1.85s19.45-2.95 20.66-3.25c2.11-.53 2.81-2.64.62-4.22c-1.42-1.03-16-9.68-17.23-10.38M92.09 90.6c1.4-.75 2.64-.18 2.99 1.41c.35 1.58 4.22 17.76 4.84 20.75c.31 1.5-1.41 2.73-2.81 1.85c-1.41-.88-16.69-11.53-17.67-12.4c-1.41-1.23-.43-2.51.26-3.16c1.4-1.33 11.07-7.74 12.39-8.45m-42.55 8.88c-1.77-.17-2.29 1.41-2.02 2.81c.26 1.41 2.9 19.24 3.08 20.57c.26 1.93 2.29 2.73 3.6.79s10.35-16.4 11.08-17.76c1.32-2.46.35-2.99-.97-3.6c-1.31-.61-12.92-2.63-14.77-2.81M24.23 79c1.23-2.02 2.81-1.49 3.96.44c.78 1.32 7.38 10.2 8 11.16c.62.97.88 2.81-1.05 3.25c-1.95.45-17.68 4.58-20.14 5.02s-3.87-1.49-2.29-3.6c.92-1.24 10.82-15.12 11.52-16.27m-3.34-15.3c2.25 1 3.31.64 3.78-.97c.62-2.11 2.46-11.78 2.55-13.98c.06-1.43-.53-2.81-2.73-2.46S6.47 48.85 4.45 49.55c-2.35.82-2.18 3.4-.62 4.22c1.85.97 15.47 9.23 17.06 9.93m27.34-36.92c1.27-1.01.88-2.46-.26-3.25s-15.26-11-17.05-12.4c-1.58-1.23-3.52-.79-2.99 2.02c.38 2.02 4.88 19.7 5.19 20.92c.35 1.41 1.41 2.11 2.64 1.23c1.21-.87 11.15-7.46 12.47-8.52"/></svg>
+        </span>
+        <span class="icon-moon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56"><path fill="#00446c" d="M31.211 14.945c.281 0 .445-.187.492-.445c.727-3.89.703-3.984 4.758-4.781c.281-.047.445-.188.445-.469c0-.305-.164-.445-.445-.492c-4.055-.82-4.031-.89-4.758-4.781c-.047-.258-.21-.446-.492-.446c-.281 0-.422.188-.469.446c-.75 3.89-.703 3.96-4.781 4.78c-.258.048-.445.188-.445.493c0 .281.187.422.445.469c4.102.797 4.031.89 4.781 4.781c.047.258.188.445.469.445M42.438 30.79c.421 0 .726-.305.773-.75c.773-6.281 1.078-6.469 7.43-7.453c.515-.094.82-.328.82-.797c0-.445-.305-.727-.727-.797c-6.398-1.219-6.75-1.172-7.523-7.453c-.047-.445-.352-.75-.773-.75c-.446 0-.75.305-.797.727c-.82 6.351-1.032 6.562-7.524 7.476c-.422.047-.726.352-.726.797s.304.703.726.797c6.492 1.195 6.727 1.219 7.524 7.5a.774.774 0 0 0 .797.703M24.789 52.47c8.484 0 15.258-4.29 18.492-11.508c.399-.867.328-1.617-.093-2.016c-.375-.351-1.032-.398-1.758-.14q-2.848 1.125-6.68 1.125c-10.64 0-17.437-6.657-17.437-17.04c0-2.953.562-5.788 1.289-7.241c.398-.82.398-1.524.046-1.97c-.421-.468-1.171-.538-2.085-.187C9.367 16.328 4.539 23.97 4.539 32.547c0 11.414 8.414 19.922 20.25 19.922"/></svg>
+        </span>
       </button>
     </div>
   </nav>
@@ -610,7 +636,6 @@
     </div>
   </div>
 
-  <hr class="section-divider">
 
   <!-- SKILLS -->
   <section id="skills">
@@ -633,7 +658,7 @@
           </span>
 
           <span class="skill-chip">
-            <svg width="20" height="20" viewBox="0 0 256 256"><path fill="#fff" d="M128 254.617c69.928 0 126.617-56.689 126.617-126.617S197.928 1.383 128 1.383A126.617 126.617 0 0 0 1.383 128c0 69.928 56.689 126.617 126.617 126.617"/><path fill="#11557c" d="M128 0A128 128 0 0 0 0 128c0 70.692 57.308 128 128 128s128-57.308 128-128S198.692 0 128 0m0 2.767c69.164 0 125.233 56.069 125.233 125.233S197.164 253.233 128 253.233S2.767 197.164 2.767 128A125.233 125.233 0 0 1 128 2.767"/><path fill="#11557c" d="M75.46 64.88c.15.21.22.48.22.8s-.09.61-.27.88s-.44.49-.79.64c-.34.15-.73.23-1.16.23c-.72 0-1.26-.15-1.64-.45s-.62-.74-.72-1.33l.93-.15c.05.37.2.66.43.85c.24.2.57.3 1 .3s.75-.09.96-.26s.31-.38.31-.62c0-.21-.09-.38-.28-.5c-.13-.08-.45-.19-.96-.32c-.69-.17-1.16-.32-1.43-.45s-.47-.3-.6-.53s-.21-.47-.21-.74c0-.25.06-.47.17-.68s.27-.38.46-.52c.15-.11.34-.2.59-.27s.52-.11.81-.11c.43 0 .81.06 1.14.19c.33.12.57.29.73.51c.16.21.26.5.32.86l-.92.12c-.04-.28-.16-.51-.36-.67s-.48-.24-.85-.24c-.43 0-.74.07-.92.21s-.28.31-.28.5c0 .12.04.23.11.33c.08.1.2.18.36.25c.09.03.37.11.83.24c.66.18 1.12.32 1.39.43c.26.11.47.28.62.49Zm4.47 1.44c-.25.23-.55.34-.92.34c-.46 0-.83-.17-1.11-.5s-.43-.88-.43-1.62s.15-1.27.44-1.6s.68-.51 1.15-.51c.31 0 .58.09.8.28s.37.47.46.84l.91-.14c-.11-.56-.35-.99-.73-1.29q-.57-.45-1.47-.45c-.48 0-.91.11-1.32.34c-.4.22-.71.56-.9 1.01c-.2.45-.3.97-.3 1.57c0 .92.23 1.63.69 2.12s1.07.74 1.82.74q.9 0 1.53-.54c.41-.36.67-.86.77-1.49l-.92-.12c-.07.47-.22.81-.47 1.04Zm2.19.98h.94v-5.52h-.94zm0-6.55h.94v-1.08h-.94zm6.73 1.02h-1.21l-2.22 2.25v-4.35h-.94v7.62h.94V65.1l.66-.63l1.83 2.82h1.16l-2.33-3.47zm.96-1.02h.94v-1.08h-.94zm0 6.55h.94v-5.52h-.94zm4.41-.84c-.17.02-.31.04-.41.04c-.14 0-.25-.02-.32-.07s-.13-.11-.16-.18c-.03-.08-.05-.25-.05-.51v-3.23h.94v-.73h-.94v-1.93l-.93.56v1.37h-.69v.73h.69v3.18c0 .56.04.93.11 1.1q.12.27.39.42c.19.11.45.16.79.16c.21 0 .44-.03.71-.08l-.14-.83Z"/></svg>
+            <svg width="20" height="20" viewBox="0 0 256 256"><path fill="#fff" d="M128.902 2.393a124.7 124.7 0 0 0-124.7 124.7a124.7 124.7 0 0 0 124.7 124.698A124.7 124.7 0 0 0 253.59 128.676l.01-1.584l-.01-1.584A124.7 124.7 0 0 0 128.902 2.393"/><g fill="#afdad2" stroke="#fff" stroke-width="0.25"><path d="M100.427 73.98a4.803 4.803 0 1 0 0-9.606a4.803 4.803 0 0 0 0 9.606Zm-10.343 7.242a4.652 4.652 0 1 0 0-9.304a4.652 4.652 0 0 0 0 9.304Zm-9.949 4.608a4.38 4.38 0 1 0 0-8.76a4.38 4.38 0 0 0 0 8.76Zm29.017-17.572a4.946 4.946 0 1 0 0-9.89a4.946 4.946 0 0 0 0 9.89ZM72.67 75.444a3.323 3.323 0 1 0 0-6.646a3.323 3.323 0 0 0 0 6.646Zm-8.205 18.204a3.948 3.948 0 1 0 0-7.896a3.948 3.948 0 0 0 0 7.896Zm5.022-31.26a4.757 4.757 0 1 0 0-9.515a4.757 4.757 0 0 0 0 9.515Zm12.837 8.902a3.68 3.68 0 1 0 0-7.358a3.68 3.68 0 0 0 0 7.359Zm63.444-10.98a4.302 4.302 0 1 0 0-8.605a4.302 4.302 0 0 0 0 8.605ZM55.535 83.116a2.608 2.608 0 1 0 0-5.216a2.608 2.608 0 0 0 0 5.216ZM64.2 80.66a3.095 3.095 0 1 0 0-6.189a3.095 3.095 0 0 0 0 6.19Zm-15.801-9.806a4.103 4.103 0 1 0 0-8.205a4.103 4.103 0 0 0 0 8.205Zm16.141-1.808a2.139 2.139 0 1 0 0-4.277a2.139 2.139 0 0 0 0 4.277Zm28.635-3.334a3.992 3.992 0 1 0 0-7.985a3.992 3.992 0 0 0 0 7.985Zm30.33 2.311a3.446 3.446 0 1 0 0-6.891a3.446 3.446 0 0 0 0 6.89Zm6.307-21.497a2.255 2.255 0 1 0 0-4.51a2.255 2.255 0 0 0 0 4.51Zm7.331 12.982a3.768 3.768 0 1 0 0-7.536a3.768 3.768 0 0 0 0 7.536ZM99.5 57.31a3.872 3.872 0 1 0 0-7.744a3.872 3.872 0 0 0 0 7.744ZM50.998 94.521a3.142 3.142 0 1 0 0-6.284a3.142 3.142 0 0 0 0 6.284Z"/></g><path fill="#7db0bc" stroke="#fff" d="m169.577 60.045l4.643.108l4.643.325l4.642.537l4.641.743l4.64.94l4.638 1.127l4.636 1.3l4.634 1.46l4.632 1.601l4.636 1.73l4.627 1.836l4.626 1.925l4.625 1.997l4.623 2.048l4.201 1.893a120.8 120.8 0 0 1 10.087 45.827l.017 1.024l.01 1.534l-.01 1.531a120.8 120.8 0 0 1-4.933 32.663l-5.07-1.077l-4.63-1.076l-4.63-1.17l-4.629-1.266l-4.63-1.363l-4.628-1.458l-4.628-1.554l-4.628-1.646l-4.627-1.733l-4.627-1.815l-4.626-1.89l-4.624-1.955l-4.624-2.01l-4.622-2.054l-4.622-2.084l-9.238-4.197l-4.618-2.08l-4.615-2.046l-4.614-1.992l-4.612-1.92l-4.61-1.828l-4.615-1.722l-4.608-1.594l-4.606-1.45l-4.604-1.291l-4.602-1.118l-4.6-.932l-4.6-.737l-4.597-.532l-4.598-.321l-4.596-.108l-4.597.108l-4.597.321l-4.598.532l-4.6.737l-4.6.932l-4.602 1.118l-4.604 1.29l-4.606 1.451l-4.607 1.594l-4.605 1.718l-4.612 1.83l-4.614 1.92l-4.616 1.992l-4.617 2.046l-4.619 2.081l-9.241 4.199l-4.622 2.084l-4.647 2.065a120.8 120.8 0 0 1 .465-31.882l3.892-.617l4.611-.809l4.612-.892l4.61-.98l4.611-1.072l4.61-1.165l4.611-1.26l4.611-1.358l4.612-1.453l4.611-1.547l4.612-1.64l4.613-1.728l4.614-1.81l4.614-1.885l4.615-1.951l4.617-2.007l4.617-2.052l4.619-2.083l9.241-4.198l4.623-2.083l4.625-2.05l4.626-1.996l4.627-1.926l4.63-1.836l4.626-1.727l4.632-1.602l4.634-1.459l4.636-1.3l4.638-1.126l4.64-.94l4.64-.744l4.643-.537l4.643-.325z" stroke-width="1"/><path fill="#5c7da2" d="m95.657 115.985l4.62.108l4.62.323l4.62.535l4.62.74l4.62.936l4.62 1.122l4.62 1.296l4.62 1.454l4.62 1.598l4.62 1.724l4.62 1.833l4.62 1.923l4.62 1.994l4.62 2.047l4.62 2.082l4.62 2.099l4.62 2.099l4.62 2.083l4.62 2.053l4.62 2.009l4.62 1.953l4.62 1.887l4.62 1.813l4.62 1.73l4.62 1.643l4.62 1.55l4.62 1.457l4.62 1.36l4.62 1.262l4.62 1.168l4.62 1.074l3.955.84a120.28 120.28 0 0 1-68.806 75.342a120.284 120.284 0 0 1-157.154-65.096a120.3 120.3 0 0 1-8.133-30.376l3.757-1.669l4.62-2.083l4.62-2.1l4.62-2.098l4.62-2.082l4.62-2.047l4.62-1.994l4.62-1.923l4.62-1.833l4.62-1.724l4.62-1.598l4.62-1.454l4.62-1.296l4.62-1.122l4.62-.936l4.62-.74l4.62-.535l4.62-.323z"/><path fill="#444876" d="M104.897 147.13v15.493h27.72v21.396h27.72v14.634h27.72v6.177h27.72v5.399a120.28 120.28 0 0 1-133.81 28.893a120.28 120.28 0 0 1-60.231-54.77v-14.434h27.72V150.61h27.72v-3.48z"/><path fill="#444876" d="M127.997 0a128 128 0 0 1 127.986 126.37l.01 1.627l-.01 1.626a128 128 0 0 1-127.986 126.37A128 128 0 0 1 0 127.998A128 128 0 0 1 127.997 0m0 4.203A123.797 123.797 0 0 0 4.203 127.997A123.797 123.797 0 0 0 127.997 251.79A123.797 123.797 0 0 0 251.78 129.57l.01-1.573l-.01-1.573A123.797 123.797 0 0 0 127.997 4.203"/></svg>
             matplotlib / seaborn
           </span>
 
@@ -752,7 +777,6 @@
     </div>
   </section>
 
-  <hr class="section-divider">
 
   <!-- PORTFOLIO -->
   <section id="portfolio">
@@ -826,7 +850,6 @@
     </div>
   </section>
 
-  <hr class="section-divider">
 
   <!-- ABOUT -->
   <section id="about">
@@ -847,42 +870,295 @@
     </div>
   </section>
 
-  <hr class="section-divider">
 
   <!-- FOOTER -->
   <footer>
-    <p>© 2026 Milcah Mary Joseph</p>
+    <p>© 2026 Milcah M. Joseph</p>
     <p>Built with HTML & GitHub Pages · Dublin, Ireland</p>
   </footer>
 
   <script>
-    // DARK MODE
+    // STARFIELD
+    const canvas = document.getElementById('starfield');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
+    let animFrame;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createStars(count) {
+      stars = [];
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          r: Math.random() * 1.4 + 0.2,
+          alpha: Math.random(),
+          speed: Math.random() * 0.004 + 0.001,
+          phase: Math.random() * Math.PI * 2,
+          color: Math.random() > 0.92
+            ? `hsl(${200 + Math.random() * 40}, 80%, 85%)`
+            : '#ffffff'
+        });
+      }
+    }
+
+    function drawStarfield(ts) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Base deep space
+      ctx.fillStyle = '#030a18';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Natural patchy nebula clouds - multiple overlapping blobs at different positions
+      const clouds = [
+        { x: 0.72, y: 0.18, rx: 0.38, ry: 0.28, color: '56,90,180', a: 0.055 },
+        { x: 0.55, y: 0.08, rx: 0.25, ry: 0.18, color: '80,120,200', a: 0.04 },
+        { x: 0.85, y: 0.35, rx: 0.22, ry: 0.3,  color: '40,70,160', a: 0.05 },
+        { x: 0.15, y: 0.22, rx: 0.28, ry: 0.2,  color: '30,55,140', a: 0.04 },
+        { x: 0.08, y: 0.55, rx: 0.2,  ry: 0.25, color: '50,80,170', a: 0.035 },
+        { x: 0.42, y: 0.65, rx: 0.18, ry: 0.15, color: '60,90,190', a: 0.03 },
+        { x: 0.78, y: 0.72, rx: 0.24, ry: 0.2,  color: '35,60,150', a: 0.04 },
+        { x: 0.3,  y: 0.42, rx: 0.15, ry: 0.18, color: '70,100,180', a: 0.025 },
+        { x: 0.62, y: 0.45, rx: 0.12, ry: 0.14, color: '90,130,210', a: 0.02 },
+        { x: 0.5,  y: 0.85, rx: 0.3,  ry: 0.2,  color: '45,75,165', a: 0.03 },
+        { x: 0.92, y: 0.15, rx: 0.14, ry: 0.18, color: '100,140,220', a: 0.025 },
+        { x: 0.22, y: 0.78, rx: 0.18, ry: 0.14, color: '55,85,175', a: 0.03 },
+      ];
+
+      clouds.forEach(c => {
+        const cx = c.x * canvas.width;
+        const cy = c.y * canvas.height;
+        const rx = c.rx * canvas.width;
+        const ry = c.ry * canvas.height;
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+        g.addColorStop(0,   `rgba(${c.color},${c.a})`);
+        g.addColorStop(0.4, `rgba(${c.color},${c.a * 0.6})`);
+        g.addColorStop(0.75,`rgba(${c.color},${c.a * 0.2})`);
+        g.addColorStop(1,   `rgba(${c.color},0)`);
+        ctx.save();
+        ctx.scale(rx / Math.max(rx, ry), ry / Math.max(rx, ry));
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx / (rx / Math.max(rx, ry)), cy / (ry / Math.max(rx, ry)), Math.max(rx, ry), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      });
+
+      // Stars
+      stars.forEach(s => {
+        const flicker = Math.sin(ts * s.speed + s.phase);
+        const a = 0.4 + 0.6 * ((flicker + 1) / 2);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = a * 0.9;
+        ctx.fill();
+        if (s.r > 1.1 && a > 0.8) {
+          ctx.globalAlpha = a * 0.3;
+          ctx.fillRect(s.x - s.r * 2.5, s.y - 0.5, s.r * 5, 1);
+          ctx.fillRect(s.x - 0.5, s.y - s.r * 2.5, 1, s.r * 5);
+        }
+      });
+      ctx.globalAlpha = 1;
+      animFrame = requestAnimationFrame(drawStarfield);
+    }
+
+    function startStarfield() {
+      resizeCanvas();
+      createStars(280);
+      cancelAnimationFrame(animFrame);
+      animFrame = requestAnimationFrame(drawStarfield);
+    }
+
+    function stopStarfield() {
+      cancelAnimationFrame(animFrame);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    window.addEventListener('resize', () => {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) { resizeCanvas(); createStars(280); }
+    });
+
+    // DARK MODE TOGGLE
     function toggleDark() {
       const html = document.documentElement;
       const isDark = html.getAttribute('data-theme') === 'dark';
       html.setAttribute('data-theme', isDark ? 'light' : 'dark');
       localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      if (isDark) stopStarfield();
+      else startStarfield();
     }
+
     // Restore saved preference
     (function() {
       const saved = localStorage.getItem('theme');
-      if (saved) document.documentElement.setAttribute('data-theme', saved);
-      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.setAttribute('data-theme', 'dark');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = saved || (prefersDark ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+      if (theme === 'dark') startStarfield();
+    })();
+
+    // HEATMAP (light mode)
+    (function() {
+      const hc = document.getElementById('heatmap');
+      const htx = hc.getContext('2d');
+      const MAX_VAL = 24;
+      const GAP = 2;
+      const CELL_REM = 1.75;
+      const MAX_POOL = 20000;
+
+      function getCellSize() {
+        return Math.round(CELL_REM * parseFloat(getComputedStyle(document.documentElement).fontSize));
       }
+
+      function mulberry32(seed) {
+        return function() {
+          seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+          let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+          t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+          return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        };
+      }
+      const rng = mulberry32(0xDEADBEEF);
+
+      function shuffle(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+          const j = Math.floor(rng() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function generatePool(total) {
+        const vals = [];
+        const tiers = [
+          { min: 16, max: 24, count: Math.round(total * 0.085) },
+          { min: 9,  max: 15, count: Math.round(total * 0.14) },
+          { min: 4,  max: 8,  count: Math.round(total * 0.35) },
+          { min: 1,  max: 3,  count: Math.round(total * 0.30) },
+        ];
+        for (const tier of tiers) {
+          for (let i = 0; i < tier.count; i++) {
+            vals.push(Math.round(tier.min + rng() * (tier.max - tier.min)));
+          }
+        }
+        while (vals.length < total) vals.push(0);
+        return shuffle(vals);
+      }
+
+      function valueToColor(v) {
+        const t = v / MAX_VAL;
+        return `rgba(99,110,250,${(0.05 + t * 0.95).toFixed(3)})`;
+      }
+
+      const stablePool = generatePool(MAX_POOL);
+      let gridData = { data: [], COLS: 0, ROWS: 0, step: 0, cell: 0, W: 0, H: 0 };
+      let mouseX = -9999, mouseY = -9999;
+
+      window.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY + window.scrollY;
+      });
+      window.addEventListener('mouseleave', () => { mouseX = -9999; mouseY = -9999; });
+
+      function buildGrid() {
+        const W = window.innerWidth;
+        const H = document.body.scrollHeight;
+        const cell = getCellSize();
+        const step = cell + GAP;
+        const COLS = Math.floor((W + GAP) / step);
+        const ROWS = Math.ceil((H + GAP) / step);
+        const total = COLS * ROWS;
+        const pool = stablePool.slice(0, Math.min(total, MAX_POOL));
+        const data = [];
+        for (let i = 0; i < total; i++) data.push(pool[i % pool.length]);
+        hc.width = W;
+        hc.height = H;
+        hc.style.height = H + 'px';
+        gridData = { data, COLS, ROWS, step, cell, W, H };
+      }
+
+      function renderHeatmap(ts) {
+        if (document.documentElement.getAttribute('data-theme') === 'dark') {
+          requestAnimationFrame(renderHeatmap);
+          return;
+        }
+        const { data, COLS, ROWS, step, cell, W, H } = gridData;
+        if (!data.length) { requestAnimationFrame(renderHeatmap); return; }
+
+        const sweep = (ts * 0.00005) % 1;
+        const sweepX = (sweep * 1.4 - 0.2) * W;
+        const sweepRadius = W * 0.12;
+        const mouseRadius = step * 4.5;
+
+        htx.fillStyle = '#f5f2ec';
+        htx.fillRect(0, 0, W, H);
+
+        for (let r = 0; r < ROWS; r++) {
+          for (let c = 0; c < COLS; c++) {
+            const v = data[r * COLS + c];
+            if (v === 0) continue;
+            const x = GAP + c * step;
+            const y = GAP + r * step;
+            const cx = x + cell * 0.5;
+            const cy = y + cell * 0.5;
+
+            const sweepDist = Math.abs(cx - sweepX);
+            const sweepGlow = sweepDist < sweepRadius ? Math.pow(1 - sweepDist / sweepRadius, 2) : 0;
+
+            const mdx = cx - mouseX, mdy = cy - mouseY;
+            const mouseGlow = Math.sqrt(mdx*mdx + mdy*mdy) < mouseRadius
+              ? Math.pow(1 - Math.sqrt(mdx*mdx + mdy*mdy) / mouseRadius, 2.5) : 0;
+
+            const glow = Math.max(sweepGlow, mouseGlow);
+            const baseAlpha = 0.03 + (v / MAX_VAL) * 0.05;
+            const glowAlpha = glow * (0.12 + (v / MAX_VAL) * 0.28);
+
+            htx.fillStyle = valueToColor(v);
+            htx.globalAlpha = Math.min(baseAlpha + glowAlpha, 0.42);
+            htx.fillRect(x, y, cell, cell);
+          }
+        }
+        htx.globalAlpha = 1;
+        requestAnimationFrame(renderHeatmap);
+      }
+
+      buildGrid();
+      requestAnimationFrame(renderHeatmap);
+
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildGrid, 150);
+      });
     })();
 
     // SCROLL REVEAL
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
+    window.addEventListener('load', () => {
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(el => {
+        // If already in viewport on load, reveal immediately
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight) {
+          el.classList.add('visible');
+        } else {
+          revealObserver.observe(el);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    });
   </script>
 </body>
 </html>
