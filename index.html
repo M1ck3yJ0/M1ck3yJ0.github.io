@@ -238,9 +238,9 @@
       animation: fadeUp 0.8s 0.2s ease both;
     }
     .headshot-frame {
-      width: 340px;
-      height: 420px;
-      border-radius: 4px 120px 4px 120px;
+      width: 420px;
+      height: 300px;
+      border-radius: 120px 4px 120px 4px;
       background: rgba(161,163,188,0.12);
       border: 2px solid rgba(161,163,188,0.25);
       overflow: hidden;
@@ -555,7 +555,7 @@
         gap: 2.5rem;
       }
       .hero-image { order: -1; }
-      .headshot-frame { width: 220px; height: 270px; }
+      .headshot-frame { width: 300px; height: 210px; }
       section { padding: 3rem 1.5rem; }
       .portfolio-grid { grid-template-columns: 1fr; }
       .skills-2x2 { grid-template-columns: 1fr; }
@@ -626,7 +626,12 @@
 
     <div class="hero-image">
       <div class="headshot-frame">
-        <img src="assets/headshot.jpg" alt="Milcah Mary Joseph">
+        <!-- REPLACE src with your actual headshot path e.g. assets/headshot.jpg -->
+        <!-- <img src="assets/headshot.jpg" alt="Milcah Mary Joseph"> -->
+        <div class="headshot-placeholder">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          <p>Add headshot to assets/</p>
+        </div>
       </div>
     </div>
   </div>
@@ -812,8 +817,7 @@
 
       <a class="portfolio-card reveal reveal-delay-3" href="#" target="_blank" rel="noopener">
         <div class="card-thumb">
-          <img class="static" src="assets/thesis_thumb.png" alt="ESG Finance Thesis">
-          <img class="animated" src="assets/thesis_hover.gif" alt="ESG Finance Thesis preview">
+          <span class="card-thumb-label">ESG</span>
           <span class="card-tag">M.Sc. Thesis · ML</span>
           <span class="card-external">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
