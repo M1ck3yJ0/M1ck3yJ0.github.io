@@ -15,19 +15,55 @@
       --muted: #6b6b6b;
       --border: #d8d3c8;
       --card-bg: #ffffff;
+      --nav-bg: rgba(245, 242, 236, 0.92);
+      --glass-bg: rgba(255,255,255,0.45);
+      --glass-border: rgba(255,255,255,0.6);
+      --shadow-color: rgba(0,0,0,0.07);
+      --texture-opacity: 0.035;
+    }
+
+    [data-theme="dark"] {
+      --ink: #e8e4dc;
+      --paper: #141210;
+      --accent: #5a9e6f;
+      --accent-light: #1a2e21;
+      --muted: #8a8580;
+      --border: #2a2620;
+      --card-bg: #1c1916;
+      --nav-bg: rgba(20, 18, 16, 0.92);
+      --glass-bg: rgba(28,25,22,0.55);
+      --glass-border: rgba(255,255,255,0.08);
+      --shadow-color: rgba(0,0,0,0.3);
+      --texture-opacity: 0.06;
+      --cat-viz-bg: #0e1520;
+      --cat-build-bg: #130e1e;
+      --cat-analyze-bg: #1a1208;
+      --cat-domain-bg: #0a1410;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
 
+    /* PAPER TEXTURE */
     body {
       font-family: 'DM Sans', sans-serif;
-      background: var(--paper);
+      background-color: var(--paper);
       color: var(--ink);
       font-size: 16px;
       line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
     }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: var(--texture-opacity);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+    body > * { position: relative; z-index: 1; }
 
     /* NAV */
     nav {
@@ -38,15 +74,22 @@
       justify-content: space-between;
       align-items: center;
       padding: 1rem 4rem;
-      background: rgba(245, 242, 236, 0.92);
-      backdrop-filter: blur(8px);
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
+      transition: background 0.3s, border-color 0.3s;
     }
     .nav-logo {
       font-family: 'DM Serif Display', serif;
       font-size: 1.1rem;
       color: var(--ink);
       text-decoration: none;
+    }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
     }
     .nav-links {
       display: flex;
@@ -63,6 +106,25 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--accent); }
+    .dark-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.35rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .dark-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .dark-toggle .icon-sun, .dark-toggle .icon-moon { font-size: 0.9rem; }
+    [data-theme="dark"] .icon-sun { display: none; }
+    [data-theme="light"] .icon-moon, body:not([data-theme="dark"]) .icon-moon { display: none; }
 
     /* HERO */
     .hero {
@@ -214,21 +276,49 @@
       background: var(--border);
     }
 
-    /* SKILLS */
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* SKILLS - GLASSMORPHISM */
     .skills-2x2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.25rem;
     }
     .skill-category {
-      background: var(--card-bg);
-      border: 1px solid var(--cat-color, var(--border));
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 1.5rem 1.75rem;
-      transition: box-shadow 0.2s;
+      transition: box-shadow 0.25s, transform 0.25s;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      background: var(--glass-bg);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-category::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      background: radial-gradient(ellipse at top left, var(--cat-glow, transparent) 0%, transparent 60%);
+      pointer-events: none;
     }
     .skill-category:hover {
-      box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+      box-shadow: 0 8px 32px var(--shadow-color);
+      transform: translateY(-2px);
     }
     .skill-category-label {
       font-size: 0.7rem;
@@ -240,10 +330,31 @@
       padding-bottom: 0.75rem;
       border-bottom: 1px solid var(--cat-color-light, var(--border));
     }
-    .cat-viz  { --cat-color: #2563eb; --cat-color-light: #dbeafe; background: #f8faff; }
-    .cat-build { --cat-color: #7c3aed; --cat-color-light: #ede9fe; background: #faf8ff; }
-    .cat-analyze { --cat-color: #b45309; --cat-color-light: #fef3c7; background: #fffdf5; }
-    .cat-domain { --cat-color: #2d5a3d; --cat-color-light: #d1fae5; background: #f5faf7; }
+    .cat-viz  {
+      --cat-color: #2563eb; --cat-color-light: rgba(37,99,235,0.15);
+      --cat-glow: rgba(37,99,235,0.08);
+      background: rgba(248,250,255,0.6);
+    }
+    .cat-build {
+      --cat-color: #7c3aed; --cat-color-light: rgba(124,58,237,0.15);
+      --cat-glow: rgba(124,58,237,0.08);
+      background: rgba(250,248,255,0.6);
+    }
+    .cat-analyze {
+      --cat-color: #b45309; --cat-color-light: rgba(180,83,9,0.15);
+      --cat-glow: rgba(180,83,9,0.08);
+      background: rgba(255,253,245,0.6);
+    }
+    .cat-domain {
+      --cat-color: #2d5a3d; --cat-color-light: rgba(45,90,61,0.15);
+      --cat-glow: rgba(45,90,61,0.08);
+      background: rgba(245,250,247,0.6);
+    }
+    [data-theme="dark"] .cat-viz  { background: rgba(14,21,32,0.7); }
+    [data-theme="dark"] .cat-build { background: rgba(19,14,30,0.7); }
+    [data-theme="dark"] .cat-analyze { background: rgba(26,18,8,0.7); }
+    [data-theme="dark"] .cat-domain { background: rgba(10,20,16,0.7); }
+
     .skill-chips {
       display: flex;
       flex-wrap: wrap;
@@ -254,7 +365,7 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.45rem 0.9rem;
-      background: white;
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 100px;
       font-size: 0.8rem;
@@ -279,20 +390,20 @@
     .portfolio-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 16px;
       overflow: hidden;
       text-decoration: none;
       color: var(--ink);
-      transition: all 0.25s;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       display: block;
     }
     .portfolio-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 50px var(--shadow-color);
       border-color: var(--accent);
     }
     .card-thumb {
-      height: 200px;
+      height: 210px;
       background: var(--accent-light);
       position: relative;
       overflow: hidden;
@@ -300,16 +411,23 @@
       align-items: center;
       justify-content: center;
     }
+    .card-thumb img.static,
+    .card-thumb img.animated {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s;
+    }
+    .card-thumb img.animated { opacity: 0; }
+    .portfolio-card:hover .card-thumb img.static { opacity: 0; }
+    .portfolio-card:hover .card-thumb img.animated { opacity: 1; }
     .card-thumb-label {
       font-family: 'DM Serif Display', serif;
       font-size: 2rem;
       color: var(--accent);
-      opacity: 0.3;
-    }
-    .card-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      opacity: 0.25;
     }
     .card-tag {
       position: absolute;
@@ -322,7 +440,23 @@
       color: #fff;
       padding: 0.25rem 0.6rem;
       border-radius: 100px;
+      backdrop-filter: blur(4px);
     }
+    .card-external {
+      position: absolute;
+      top: 1rem; right: 1rem;
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    [data-theme="dark"] .card-external { background: rgba(30,28,26,0.9); }
+    .portfolio-card:hover .card-external { opacity: 1; }
+    .card-external svg { width: 12px; height: 12px; color: var(--ink); }
     .card-body { padding: 1.5rem; }
     .card-title {
       font-family: 'DM Serif Display', serif;
@@ -368,7 +502,7 @@
     .about-body p {
       font-size: 1rem;
       line-height: 1.85;
-      color: #2a2a2a;
+      color: var(--ink);
       margin-bottom: 1.25rem;
     }
     .about-body p:last-child { margin-bottom: 0; }
@@ -395,6 +529,7 @@
     @media (max-width: 768px) {
       nav { padding: 1rem 1.5rem; }
       .nav-links { display: none; }
+      .nav-right { gap: 0; }
       .hero {
         grid-template-columns: 1fr;
         padding: 7rem 1.5rem 3rem;
@@ -415,12 +550,18 @@
   <!-- NAV -->
   <nav>
     <a href="#" class="nav-logo">Milcah Mary Joseph</a>
-    <ul class="nav-links">
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="mailto:milcahjoseph@live.com">Contact</a></li>
-    </ul>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="mailto:milcahjoseph@live.com">Contact</a></li>
+      </ul>
+      <button class="dark-toggle" onclick="toggleDark()" aria-label="Toggle dark mode">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+      </button>
+    </div>
   </nav>
 
   <!-- HERO -->
@@ -473,11 +614,11 @@
 
   <!-- SKILLS -->
   <section id="skills">
-    <p class="section-label">Skills & Tools</p>
+    <p class="section-label reveal">Skills & Tools</p>
     <div class="skills-2x2">
 
       <!-- 1. Visualize & Report (blue) -->
-      <div class="skill-category cat-viz">
+      <div class="skill-category cat-viz reveal reveal-delay-1">
         <p class="skill-category-label">Visualize & Report</p>
         <div class="skill-chips">
 
@@ -505,7 +646,7 @@
       </div>
 
       <!-- 2. Build & Automate (purple) -->
-      <div class="skill-category cat-build">
+      <div class="skill-category cat-build reveal reveal-delay-2">
         <p class="skill-category-label">Build & Automate</p>
         <div class="skill-chips">
 
@@ -538,7 +679,7 @@
       </div>
 
       <!-- 3. Analyze & Model (amber) -->
-      <div class="skill-category cat-analyze">
+      <div class="skill-category cat-analyze reveal reveal-delay-3">
         <p class="skill-category-label">Analyze & Model</p>
         <div class="skill-chips">
 
@@ -581,7 +722,7 @@
       </div>
 
       <!-- 4. Domain Knowledge (green) -->
-      <div class="skill-category cat-domain">
+      <div class="skill-category cat-domain reveal reveal-delay-4">
         <p class="skill-category-label">Domain Knowledge</p>
         <div class="skill-chips">
 
@@ -615,58 +756,70 @@
 
   <!-- PORTFOLIO -->
   <section id="portfolio">
-    <p class="section-label">Portfolio</p>
+    <p class="section-label reveal">Portfolio</p>
     <div class="portfolio-grid">
 
-      <a class="portfolio-card" href="projects/bike_share/index.html">
+      <a class="portfolio-card reveal reveal-delay-1" href="https://gb4c45-milcah-joseph.shinyapps.io/project/" target="_blank" rel="noopener">
         <div class="card-thumb">
-          <!-- <img src="assets/bike_thumb.png" alt="Bike Share"> -->
-          <span class="card-thumb-label">Bike Share</span>
-          <span class="card-tag">Operations · SQL</span>
+          <img class="static" src="assets/bikeshare_thumb.png" alt="Bike Share Dashboard">
+          <img class="animated" src="assets/bikeshare_hover.gif" alt="Bike Share Dashboard preview">
+          <span class="card-tag">Operations · R Shiny</span>
+          <span class="card-external">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </span>
         </div>
         <div class="card-body">
           <h3 class="card-title">Bike Share Operations</h3>
           <p class="card-desc">End-to-end analysis of urban bike share usage patterns, station performance, and demand forecasting to support operational decisions.</p>
-          <span class="card-cta">View project</span>
+          <span class="card-cta">View live dashboard</span>
         </div>
       </a>
 
-      <a class="portfolio-card" href="projects/superstore_orders/index.html">
+      <a class="portfolio-card reveal reveal-delay-2" href="https://public.tableau.com/app/profile/milcah.joseph2216/viz/SuperstoreShippingDashboard_17584714679730/SuperstoreShippingDashboard" target="_blank" rel="noopener">
         <div class="card-thumb">
-          <!-- <img src="assets/superstore_thumb.png" alt="Superstore Orders"> -->
-          <span class="card-thumb-label">Superstore</span>
+          <img class="static" src="assets/superstore_thumb.png" alt="Superstore Dashboard">
+          <img class="animated" src="assets/superstore_hover.gif" alt="Superstore Dashboard preview">
           <span class="card-tag">Tableau · Business</span>
+          <span class="card-external">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </span>
         </div>
         <div class="card-body">
-          <h3 class="card-title">Superstore Orders Dashboard</h3>
+          <h3 class="card-title">Superstore Shipping Dashboard</h3>
           <p class="card-desc">Sales performance, regional breakdowns, and profitability analysis across product categories built in Tableau with drill-down capability.</p>
-          <span class="card-cta">View project</span>
+          <span class="card-cta">View live dashboard</span>
         </div>
       </a>
 
-      <a class="portfolio-card" href="projects/esg_finance_thesis/index.html">
+      <a class="portfolio-card reveal reveal-delay-3" href="#" target="_blank" rel="noopener">
         <div class="card-thumb">
-          <!-- <img src="assets/esg_thumb.png" alt="ESG Finance Thesis"> -->
-          <span class="card-thumb-label">ESG</span>
+          <img class="static" src="assets/thesis_thumb.png" alt="ESG Finance Thesis">
+          <img class="animated" src="assets/thesis_hover.gif" alt="ESG Finance Thesis preview">
           <span class="card-tag">M.Sc. Thesis · ML</span>
+          <span class="card-external">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </span>
         </div>
         <div class="card-body">
           <h3 class="card-title">ESG Factors & Financial Health</h3>
           <p class="card-desc">M.Sc. thesis investigating the relationship between ESG factors, non-financial data, and financial health via correlation analysis, autoregression, and time series forecasting.</p>
-          <span class="card-cta">View project</span>
+          <span class="card-cta">Coming soon</span>
         </div>
       </a>
 
-      <a class="portfolio-card" href="projects/pokemon_stat/index.html">
+      <a class="portfolio-card reveal reveal-delay-4" href="https://public.tableau.com/app/profile/milcah.joseph2216/viz/PokeStat_17479338530510/PokeDash" target="_blank" rel="noopener">
         <div class="card-thumb">
-          <!-- <img src="assets/pokemon_thumb.png" alt="Pokemon Stats"> -->
-          <span class="card-thumb-label">Pokemon</span>
-          <span class="card-tag">Python · Data Viz</span>
+          <img class="static" src="assets/pokemon_thumb.png" alt="Pokemon Stat Analysis">
+          <img class="animated" src="assets/pokemon_hover.gif" alt="Pokemon Stat Analysis preview">
+          <span class="card-tag">Tableau · Data Viz</span>
+          <span class="card-external">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </span>
         </div>
         <div class="card-body">
-          <h3 class="card-title">Pokemon Stat Analysis</h3>
-          <p class="card-desc">Exploratory analysis and visualization of Pokemon battle statistics, type distributions, and generational trends using Python and pandas.</p>
-          <span class="card-cta">View project</span>
+          <h3 class="card-title">PokeStat Dashboard</h3>
+          <p class="card-desc">Exploratory analysis and visualization of Pokemon battle statistics, type distributions, and generational trends built in Tableau.</p>
+          <span class="card-cta">View live dashboard</span>
         </div>
       </a>
 
@@ -677,8 +830,8 @@
 
   <!-- ABOUT -->
   <section id="about">
-    <p class="section-label">About</p>
-    <div class="about-grid">
+    <p class="section-label reveal">About</p>
+    <div class="about-grid reveal reveal-delay-1">
       <div class="about-sidebar">
         <h3>Analyst,<br><em>researcher,</em><br>advocate.</h3>
         <div class="accent-line"></div>
@@ -702,5 +855,34 @@
     <p>Built with HTML & GitHub Pages · Dublin, Ireland</p>
   </footer>
 
+  <script>
+    // DARK MODE
+    function toggleDark() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    }
+    // Restore saved preference
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+
+    // SCROLL REVEAL
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  </script>
 </body>
 </html>
