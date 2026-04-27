@@ -1090,7 +1090,7 @@
         if (!data.length) { requestAnimationFrame(renderHeatmap); return; }
 
         const sweep = (ts * 0.0001) % 1;
-        const sweepX = (sweep * 0.1 - 0.1) * W;
+        const sweepX = (sweep * 1.1 - 0.1) * W;
         const sweepRadius = W * 0.12;
         const mouseRadius = step * 4.5;
 
