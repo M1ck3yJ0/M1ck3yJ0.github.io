@@ -1,0 +1,2616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Food, Our Planet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:   #FAF7F2;
+  --paper:   #F2EDE4;
+  --ink:     #1A1410;
+  --ink-60:  #3D3530;
+  --ink-35:  #7A7068;
+  --rule:    rgba(26,20,16,0.12);
+  --terra:   #B84A18;
+  --terra-7: rgba(184,74,24,0.07);
+  --terra-15:rgba(184,74,24,0.15);
+  --terra-30:rgba(184,74,24,0.30);
+  --terra-55:rgba(184,74,24,0.55);
+
+  --display: 'Playfair Display', Georgia, serif;
+  --body:    'Source Serif 4', Georgia, serif;
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 18px;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────────────
+   LAYOUT
+───────────────────────────────────── */
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 56px 56px 88px;
+}
+
+/* ─────────────────────────────────────
+   TYPOGRAPHY SYSTEM
+───────────────────────────────────── */
+.kicker {
+  font-family: var(--body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  margin-bottom: 16px;
+}
+
+/* Main title — centered */
+.main-title {
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 20px;
+  text-align: center;
+}
+.main-title em { font-style: italic; color: var(--terra); }
+
+/* Section display headers — same style, smaller */
+h1, h2 {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.08;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+h1 em, h2 em { font-style: italic; color: var(--terra); }
+.heading-terra { color: var(--terra); font-style: italic; }
+.heading-ink { color: var(--ink); font-style: normal; }
+
+/* Reversed header variant — terra lines, ink last */
+h2.reversed em { color: var(--terra); }
+h2.reversed .last { color: var(--ink); font-style: normal; }
+
+.lede {
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink-60);
+  line-height: 1.72;
+  max-width: none;
+}
+.lede strong { font-weight: 500; color: var(--ink); }
+
+/* ─────────────────────────────────────
+   SECTION RHYTHM
+───────────────────────────────────── */
+.section { margin-top: 56px; }
+
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.ornament-line { flex: 1; height: 1px; background: var(--rule); }
+.ornament-mark {
+  width: 5px; height: 5px;
+  border: 1px solid var(--ink-35);
+  transform: rotate(45deg);
+}
+
+/* ─────────────────────────────────────
+   INLINE STAT
+───────────────────────────────────── */
+.stat-pull {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 8px;
+  border-left: 2px solid var(--terra);
+  padding-left: 18px;
+}
+.stat-pull-num {
+  font-family: var(--display);
+  font-size: 56px;
+  line-height: 1;
+  color: var(--terra);
+  flex-shrink: 0;
+}
+.stat-pull-lbl {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.42;
+  max-width: 340px;
+}
+
+/* ─────────────────────────────────────
+   POLICY BLOCK
+───────────────────────────────────── */
+.policy {
+  margin: 24px 0;
+  padding: 14px 18px;
+  border-left: none;
+  background: transparent;
+  text-align: center;
+}
+.policy p {
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.68;
+  font-style: italic;
+}
+.policy strong { font-weight: 500; color: var(--ink); font-style: normal; }
+
+/* ─────────────────────────────────────
+   HINGE
+───────────────────────────────────── */
+.hinge {
+  margin: 16px 0 48px;
+  padding: 0 0;
+  background: transparent;
+  border-top: 0;
+  border-bottom: 0;
+}
+.hinge p {
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.7;
+}
+.hinge strong { font-weight: 500; color: var(--ink); }
+.hinge em { font-style: italic; color: var(--terra); }
+
+/* ─────────────────────────────────────
+   CHART WRAPPERS
+───────────────────────────────────── */
+.chart-wrap {
+  margin: 26px auto 0;
+  display: block;
+}
+svg { display: block; }
+
+/* ─────────────────────────────────────
+   TIPPING-POINT PANEL
+───────────────────────────────────── */
+.collapse-wrap {
+  max-width: 760px;
+  width: 100%;
+}
+
+.collapse-chart-title,
+.chart-title-standard {
+  margin: 22px 0 10px;
+  text-align: center;
+  font-family: var(--body);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.collapse-svg {
+  width: 100%;
+  height: auto;
+}
+
+.collapse-svg .curve {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.collapse-svg .curve-guide {
+  fill: none;
+  stroke: var(--ink-12);
+  stroke-width: 1.5;
+}
+
+.collapse-svg text {
+  font-family: var(--body);
+}
+
+.collapse-svg .node-label {
+  font-size: 17px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+
+.collapse-svg .node-note {
+  font-size: 14px;
+  fill: var(--ink-60);
+}
+
+.collapse-svg .node-letter {
+  font-family: var(--body);
+  font-size: 14px;
+  font-weight: 700;
+  dominant-baseline: middle;
+  text-anchor: middle;
+}
+
+.collapse-quote {
+  margin-top: 14px;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--ink-60);
+  font-style: normal;
+  text-align: left;
+}
+
+.systems-callout {
+  margin-top: 18px;
+  margin-bottom: 28px;
+  padding: 10px 0 10px 20px;
+  border-left: 3px solid var(--terra);
+}
+
+.systems-callout-text {
+  font-family: var(--display);
+  font-size: 26px;
+  line-height: 1.16;
+  color: var(--terra);
+  max-width: none;
+  white-space: nowrap;
+}
+
+/* ─────────────────────────────────────
+   FIELD LEAVES (crop diversity)
+───────────────────────────────────── */
+.field-outer {
+  margin: 22px auto 6px;
+  max-width: 760px;
+}
+
+.field-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: var(--ink-60);
+  font-family: var(--body);
+}
+
+.field-note > span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.field-grid-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 76px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(25, 1fr);
+  gap: 4px;
+  width: 100%;
+}
+
+.fd {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fd svg {
+  width: 92%;
+  height: 92%;
+  display: block;
+}
+
+.fd.alive svg path { fill: #5A7A28; }
+.fd.dead  svg path { fill: #CFC8B6; }
+
+.field-annotations {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.fn-dot {
+  display: inline-flex;
+  width: 12px;
+  height: 12px;
+  margin-right: 5px;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+}
+
+.fn-dot svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.fn-dot.alive svg path { fill: #5A7A28; }
+.fn-dot.dead  svg path { fill: #CFC8B6; }
+
+/* ─────────────────────────────────────
+   CROP NOTE
+───────────────────────────────────── */
+.crop-note {
+  margin: -10px 0 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.65;
+}
+.crop-note .declining {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--terra);
+}
+
+/* ─────────────────────────────────────
+   FINANCE SECTION
+───────────────────────────────────── */
+.finance-section { margin-top: 30px; }
+.finance-scale { margin-top: 2px; }
+.finance-axis {
+  position: relative;
+  height: 24px;
+  margin-bottom: 16px;
+}
+.finance-axis-line {
+  position: absolute;
+  left: 0; right: 0;
+  top: 12px;
+  height: 1px;
+  background: var(--rule);
+}
+.finance-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 10.5px;
+  color: var(--ink-35);
+  line-height: 1;
+}
+.finance-tick::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 14px;
+  width: 1px;
+  height: 6px;
+  background: var(--rule);
+  transform: translateX(-50%);
+}
+.finance-tick.start { transform: translateX(0); }
+.finance-tick.start::after { left: 0; transform: none; }
+.finance-tick.end { transform: translateX(-100%); }
+.finance-tick.end::after { left: 100%; transform: translateX(-100%); }
+
+.finance-row { margin-bottom: 28px; }
+.finance-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.finance-row-meta { flex: 1; }
+.finance-row-kicker {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  margin-bottom: 2px;
+}
+.finance-row-title {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--ink);
+  font-weight: 500;
+}
+.finance-row-total {
+  font-size: 13px;
+  color: var(--ink-60);
+  white-space: nowrap;
+}
+.finance-track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--paper);
+  overflow: visible;
+}
+.finance-fill,
+.finance-range {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+.finance-range {
+  border-radius: 999px;
+  background: #4A7A30;
+}
+.finance-marker {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 30px;
+  background: #2A6848;
+}
+.finance-marker::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2A6848;
+  transform: translateX(-50%);
+}
+.finance-sub-labels {
+  position: relative;
+  height: 50px;
+  margin-top: 8px;
+}
+.finance-sub-label,
+.finance-marker-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 11px;
+  line-height: 1.3;
+  color: var(--ink-60);
+  max-width: 158px;
+}
+.finance-marker-label { max-width: 190px; }
+.finance-range-label {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--ink-35);
+}
+.finance-sub-label strong,
+.finance-marker-label strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.finance-sub-label.align-end,
+.finance-marker-label.align-end {
+  transform: translateX(-100%);
+  text-align: right;
+}
+.finance-sub-label.align-start,
+.finance-marker-label.align-start {
+  transform: translateX(0);
+  text-align: left;
+}
+.finance-ratio-wrap {
+  position: relative;
+  margin: -8px 0 0;
+}
+
+.finance-ratio-bracket {
+  position: absolute;
+  right: -2px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.finance-ratio-chip {
+  position: absolute;
+  right: 0;
+  background: var(--terra);
+  color: #fff;
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 3px 8px 4px;
+  border-radius: 4px;
+  white-space: nowrap;
+  letter-spacing: .01em;
+}
+
+.finance-ratio-line {
+  position: absolute;
+  right: 28px;
+  width: 1.5px;
+  background: var(--terra);
+  opacity: 0.35;
+}
+
+.finance-ratio-tick {
+  position: absolute;
+  right: 22px;
+  width: 8px;
+  height: 1.5px;
+  background: var(--terra);
+  opacity: 0.45;
+}
+
+.finance-callout {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 22px;
+  align-items: center;
+  padding: 14px 0 14px 20px;
+  border-left: 3px solid var(--terra);
+}
+.finance-callout-stat {
+  font-family: var(--display);
+  font-size: 72px;
+  line-height: 0.88;
+  color: var(--terra);
+}
+.finance-callout-body {
+  font-size: 19px;
+  color: var(--ink);
+  line-height: 1.45;
+  max-width: 720px;
+}
+.finance-callout-body strong { font-weight: 500; color: var(--ink); }
+
+.two-small-callouts {
+  margin-top: 6px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.small-callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 0 10px 16px;
+  border-left: 3px solid var(--terra);
+}
+
+.small-callout-stat {
+  font-family: var(--display);
+  font-size: 44px;
+  line-height: 0.9;
+  color: var(--terra);
+}
+
+.small-callout-body {
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.42;
+  max-width: 300px;
+}
+
+.small-callout-body strong { font-weight: 500; color: var(--ink); }
+
+/* ─────────────────────────────────────
+   SOLUTION SHIFTS (replaces card grid)
+───────────────────────────────────── */
+.shift-block {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0 24px;
+  align-items: center;
+  padding: 28px 0;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.shift-block.pull-left {
+  grid-template-columns: 140px 1fr;
+}
+.shift-block.pull-left .shift-pull {
+  order: -1;
+  text-align: left;
+}
+.shift-block:not(.pull-left) {
+  grid-template-columns: 1fr 140px;
+}
+.shift-block:not(.pull-left) .shift-pull {
+  text-align: right;
+}
+.shift-main { min-width: 0; }
+.shift-kicker {
+  font-family: var(--body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  margin-bottom: 6px;
+}
+.shift-title {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--terra);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+.shift-tagline {
+  font-family: var(--body);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--ink-60);
+  margin-bottom: 14px;
+}
+.shift-body {
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink-60);
+  max-width: 680px;
+}
+.shift-body p { margin-bottom: 10px; }
+.shift-body p:last-child { margin-bottom: 0; }
+.shift-pull {
+  padding-top: 4px;
+  text-align: right;
+}
+.shift-pull-stat {
+  font-family: var(--display);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--terra);
+  margin-bottom: 4px;
+}
+.shift-pull-label {
+  font-family: var(--body);
+  font-size: 11px;
+  color: var(--ink-35);
+  line-height: 1.5;
+}
+.earths-wrap { margin-top: 20px; max-width: 520px; }
+.earths-row {
+  display: grid;
+  grid-template-columns: 96px 1fr 36px;
+  align-items: center;
+  gap: 0 10px;
+  margin-bottom: 7px;
+}
+.earths-label {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--ink-60);
+  text-align: right;
+}
+.earths-track {
+  height: 8px;
+  background: var(--rule);
+  border-radius: 99px;
+  position: relative;
+}
+.earths-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: rgba(184,74,24,0.65);
+}
+.earths-fill.safe { background: rgba(74,122,48,0.75); }
+.earths-val {
+  font-family: var(--body);
+  font-size: 11px;
+  color: var(--ink-35);
+}
+.earths-boundary-wrap {
+  grid-column: 2;
+  position: relative;
+  height: 0;
+  margin-top: -28px;
+  margin-bottom: 14px;
+  pointer-events: none;
+}
+.earths-boundary-line {
+  position: absolute;
+  top: -18px;
+  bottom: -8px;
+  width: 1.5px;
+  background: rgba(74,122,48,0.55);
+}
+.earths-boundary-label {
+  position: absolute;
+  top: -32px;
+  font-family: var(--body);
+  font-size: 9px;
+  color: rgba(74,122,48,0.85);
+  white-space: nowrap;
+  letter-spacing: .04em;
+}
+
+/* ─────────────────────────────────────
+   SOLUTIONS GRID
+───────────────────────────────────── */
+.solution-grid {
+  margin: 24px auto 0;
+  width: calc(100% - 88px);
+  max-width: 980px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.solution-card {
+  --accent: #4A7A30;
+  --accent-rgb: 74,122,48;
+  background: rgba(var(--accent-rgb), 0.05);
+  border: 1px solid rgba(var(--accent-rgb), 0.10);
+  border-radius: 14px;
+  padding: 22px 24px 20px 28px;
+  position: relative;
+  overflow: hidden;
+  min-height: 196px;
+  box-shadow: 0 1px 0 rgba(26,20,16,0.03);
+}
+
+.solution-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.9;
+}
+
+.solution-card-title {
+  font-family: var(--display);
+  font-size: 19px;
+  line-height: 1.2;
+  color: var(--accent);
+  font-weight: 700;
+  opacity: 1;
+  margin-bottom: 12px;
+  padding-top: 0;
+  max-width: 88%;
+}
+
+.solution-card-body {
+  font-size: 17px;
+  line-height: 1.68;
+  color: var(--ink);
+}
+
+/* ─────────────────────────────────────
+   CLOSING PULL QUOTE
+───────────────────────────────────── */
+.closing {
+  margin-top: 64px;
+  padding: 28px 0 0;
+  border-top: 1px solid var(--rule);
+}
+.closing-quote {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 14px;
+}
+.closing-quote em { color: var(--terra); }
+.closing-sub {
+  font-size: 19px;
+  color: var(--ink-60);
+  line-height: 1.72;
+}
+.closing-sub strong { font-weight: 500; color: var(--ink); }
+
+/* ─────────────────────────────────────
+   SOURCE
+───────────────────────────────────── */
+.source {
+  margin-top: 48px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--ink-35);
+  letter-spacing: .03em;
+  font-family: var(--body);
+}
+
+/* ─────────────────────────────────────
+   REFERENCE SUPERSCRIPTS & LIST
+───────────────────────────────────── */
+sup.ref {
+  font-size: 9px;
+  font-family: var(--body);
+  color: var(--ink-35);
+  vertical-align: super;
+  line-height: 0;
+  letter-spacing: 0;
+  margin-left: 1px;
+}
+
+.ref-section {
+  margin-top: 48px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+}
+
+.ref-section-title {
+  font-family: var(--body);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  margin-bottom: 12px;
+}
+
+.ref-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+  column-gap: 36px;
+}
+
+.ref-list li {
+  font-size: 10.5px;
+  color: var(--ink-35);
+  font-family: var(--body);
+  line-height: 1.55;
+  margin-bottom: 6px;
+  break-inside: avoid;
+  padding-left: 18px;
+  text-indent: -18px;
+}
+
+.ref-list li .ref-num {
+  font-weight: 600;
+  color: var(--ink-60);
+  margin-right: 4px;
+}
+
+.ref-adapted {
+  margin-top: 14px;
+  font-size: 10.5px;
+  color: var(--ink-35);
+  font-family: var(--body);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+
+  .page { padding: 20px 32px; }
+  body { font-size: 13px; }
+
+  .ornament {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Adds print-only breathing room after each diamond divider page break. */
+  .ornament + * {
+    padding-top: 48px;
+  }
+}
+
+@media (max-width: 600px) {
+  html, body { font-size: 17px; }
+  .page {
+    max-width: none;
+    width: 100%;
+    padding: 28px 14px 56px;
+  }
+  .main-title { font-size: 42px; }
+  h1 { font-size: 38px; }
+  h2 { font-size: 28px; }
+  .lede {
+    font-size: 18px;
+    max-width: none;
+  }
+  .chart-wrap,
+  .field-outer {
+    max-width: none !important;
+    width: 100% !important;
+  }
+  .field-grid {
+    gap: 3px;
+  }
+  .field-note {
+    font-size: 14px;
+    gap: 8px 16px;
+  }
+  .two-small-callouts {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .small-callout {
+    padding-left: 14px;
+  }
+  .small-callout-stat {
+    font-size: 40px;
+  }
+  .small-callout-body {
+    font-size: 16px;
+    max-width: none;
+  }
+  .solution-grid {
+    width: calc(100% - 28px);
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .solution-card {
+    padding: 18px 18px 16px 22px;
+    min-height: 0;
+  }
+  .solution-card::before {
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    border-radius: 999px;
+  }
+  .solution-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    opacity: 1;
+    max-width: none;
+  }
+  .solution-card-body {
+    font-size: 16px;
+  }
+  .collapse-chart-title {
+    font-size: 13px;
+    margin-top: 18px;
+  }
+  .collapse-quote {
+    font-size: 18px;
+  }
+  .systems-callout {
+    padding-left: 16px;
+  }
+  .systems-callout-text {
+    font-size: 22px;
+    white-space: normal;
+  }
+  .stat-pull-num { font-size: 56px; }
+  .stat-pull-lbl { font-size: 15.5px; }
+  .finance-callout-stat { font-size: 72px; }
+  .finance-callout-body { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- Title and byline -->
+<p class="kicker" style="text-align:center">Data analysis &amp; design by Milcah M. Joseph<br>Adapted from WWF Living Planet Report 2024</p>
+<h1 class="main-title">Our Food, <span style="color:#B84A18">Our Planet</span></h1>
+
+<div class="policy" style="margin-top:12px;margin-bottom:18px">
+  <p>The food system is the <strong>single largest driver of environmental degradation on Earth</strong>.<br>It is not adequately addressed in the Global Biodiversity Framework.<br>It is not mentioned in the Paris Agreement.</p>
+</div>
+
+<div class="section" style="margin-top:16px">
+  <h2><em class="heading-ink">Systems bend.</em><br><em class="heading-terra">Then break.</em></h2>
+  <p class="lede">Most environmental damage feels gradual. But ecosystems under sustained pressure don't decline in a straight line. They absorb stress until they can't, and then they shift state, often abruptly, often irreversibly.</p>
+
+  <div class="chart-wrap collapse-wrap">
+    <br>
+    <div class="collapse-chart-title" style="margin-bottom:-28px">The shape of collapse</div>
+    <svg class="collapse-svg" viewBox="0 0 760 530" aria-label="The shape of collapse, showing five moments from a stable state to a new state">
+      <path class="curve" d="M56 170
+        C 108 170, 144 158, 182 170
+        C 220 182, 262 216, 320 222
+        C 378 228, 420 222, 456 218
+        C 488 216, 516 228, 540 286
+        C 556 336, 560 403, 578 442
+        C 596 481, 636 486, 708 484" />
+
+      <circle cx="96" cy="144" r="20" fill="#5b792b"/>
+      <text x="96" y="144" class="node-letter" fill="#FFFFFF">A</text>
+      <text x="96" y="64" class="node-label" text-anchor="middle">
+        <tspan x="96" dy="0">A. Stable</tspan>
+        <tspan x="96" dy="18">state</tspan>
+      </text>
+      <text x="96" y="102" class="node-note" text-anchor="middle">
+        <tspan x="96" dy="0">Pressure absorbed,</tspan>
+        <tspan x="96" dy="18">system holds.</tspan>
+      </text>
+
+      <circle cx="250" cy="176" r="18" fill="#d27b45"/>
+      <text x="250" y="176" class="node-letter" fill="#FFFFFF">B</text>
+      <text x="250" y="244" class="node-label" text-anchor="middle">B. Mounting pressure</text>
+      <text x="250" y="266" class="node-note" text-anchor="middle">Cumulative damage builds.</text>
+
+      <circle cx="450" cy="191" r="19" fill="#b84a18"/>
+      <text x="450" y="191" class="node-letter" fill="#FFFFFF">C</text>
+      <text x="450" y="140" class="node-label" text-anchor="middle">C. Tipping point</text>
+      <text x="450" y="162" class="node-note" text-anchor="middle">Threshold crossed.</text>
+
+      <circle cx="578" cy="332" r="18" fill="#933e18"/>
+      <text x="578" y="332" class="node-letter" fill="#FFFFFF">D</text>
+      <text x="606" y="320" class="node-label">D. Acceleration</text>
+      <text x="606" y="342" class="node-note">
+        <tspan x="606" dy="0">Change becomes</tspan>
+        <tspan x="606" dy="18">self-perpetuating.</tspan>
+      </text>
+
+      <circle cx="654" cy="454" r="20" fill="#B4AC9E"/>
+      <text x="654" y="454" class="node-letter" fill="#FFFFFF">E</text>
+      <text x="438" y="438" class="node-label">E. New state</text>
+      <text x="438" y="460" class="node-note">
+        <tspan x="438" dy="0">Often irreversible on</tspan>
+        <tspan x="438" dy="18">human timescales.</tspan>
+      </text>
+    </svg>
+  </div>
+  <p style="font-family:var(--body);font-size:11px;color:var(--ink-35);font-style:italic;text-align:center;margin-top:4px;margin-bottom:16px">Figure adapted from Scheffer et al. (2001) via WWF Living Planet Report 2024, Fig. 2.1.</p>
+
+  <br>
+  <p class="collapse-quote" style="margin-bottom:48px">The journey from A to E can take decades. The journey from C to E can take <span style="color:#B84A18">years</span>.</p>
+
+  <div class="systems-callout">
+    <div class="systems-callout-text">The largest source of ecosystem pressure on Earth is our food system.</div>
+  </div>
+  <br>
+</div>
+
+<div class="ornament" style="margin-top:30px;margin-bottom:20px">
+  <div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div>
+</div>
+
+<h2 style="margin-bottom:20px">
+  <em class="heading-ink">One system.</em><br>
+  <em class="heading-terra">One failure.</em>
+</h2>
+<p class="lede">40% of all habitable land on Earth is consumed by the food system. Look at what that land actually does <em>— and for whom.</em><sup class="ref">[2,3]</sup></p>
+
+<!-- Land use chart: weighted Voronoi treemap showing share of all habitable land -->
+<div class="chart-wrap" style="max-width:860px;width:100%">
+  <div class="chart-title-standard" style="margin-bottom:-48px">SHARE OF ALL HABITABLE LAND</div>
+  <svg id="vsvg" viewBox="0 0 920 640" width="100%"></svg>
+</div>
+
+<div class="stat-pull" style="margin-top:0">
+  <div class="stat-pull-num">82%</div>
+  <div class="stat-pull-lbl">of all agricultural land on Earth feeds livestock — not people directly<sup class="ref">[2]</sup></div>
+</div>
+
+
+
+<!-- Six wounds: environmental pressures driven by the food system -->
+<div class="section">
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+  <h2><em class="heading-ink">One machine.</em><br><em class="heading-terra">Six wounds.</em></h2>
+  <p class="lede">These are not separate crises. They are the same industrial food system exerting pressure on every system that sustains life.<sup class="ref">[4-10]</sup></p>
+  <div class="chart-wrap" style="max-width:760px;width:100%">
+    <svg id="wsvg" viewBox="0 0 520 448" width="100%"></svg>
+  </div>
+</div>
+
+<!-- Connecting argument: how subsidies drive the machine -->
+<div class="hinge">
+  <p>To maximise output from the fewest crops, governments pay <strong>$635 billion per year in subsidies to industrial monoculture</strong><sup class="ref">[10]</sup>. Non-subsidized varieties become economically unviable and disappear. Farmers push into forest frontiers to grow what the subsidies reward. <strong style="color:#B84A18">The money makes the machine self-perpetuating.</strong> And as subsidies concentrate production, a second collapse begins — not of land, but of life itself.</p>
+</div>
+
+<!-- Crop diversity: isotype grid and harvested calorie bar chart -->
+<div class="section">
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+  <h2><em class="heading-ink">A century of</em><br><em class="heading-terra">Vanishing crops.</em></h2>
+  <p class="lede">100 years ago, farmers cultivated thousands of crop varieties. Today, almost all of them are gone — replaced by the handful of species that industrial subsidies made profitable.<sup class="ref">[11]</sup></p>
+
+  <br>
+  <div class="chart-title-standard" style="margin-top:22px;margin-bottom:14px">CROPS: THEN AND NOW</div>
+  <div class="field-outer">
+    <div class="field-note">
+      <span><span class="fn-dot alive" data-leaf-icon></span>Surviving (~10%)</span>
+      <span><span class="fn-dot dead" data-leaf-icon></span>Gone from farms (~90%)</span>
+    </div>
+    <div class="field-grid-wrap">
+      <div class="field-grid" id="fdots"></div>
+      <svg class="field-annotations" id="fanno" aria-hidden="true"></svg>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:0">Today: only ~10% of formerly cultivated varieties survive on farms. The rest exist, if at all, only in seed banks.<sup class="ref">[11]</sup></p>
+
+  <div style="margin-top:36px">
+    <h2 style="font-size:24px;margin-bottom:8px">The 10 crops that <em>ate the world</em></h2>
+    <p class="lede" style="margin-bottom:20px">Barley, cassava, maize, oil palm, rapeseed, rice, sorghum, soybean, sugar cane and wheat account for <strong>83% of all harvested food calories on Earth</strong>.<sup class="ref">[12]</sup></p>
+    <div class="chart-wrap" style="max-width:760px;width:100%;margin-top:44px">
+      <div class="chart-title-standard" style="margin-bottom:0">SHARE OF GLOBAL HARVESTED FOOD CALORIES</div>
+      <svg id="bsvg" viewBox="0 0 520 220" width="100%"></svg>
+    </div>
+    <div class="crop-note">
+      All other crop varieties combined — thousands of species — produce only 17% of global calories. <span class="declining" style="color:#B84A18">And declining.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Human cost: hunger and obesity as parallel outcomes, food waste stats -->
+<div class="section">
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+  <h2>
+    <em>Starving.</em><br>
+    <em>Stuffed.</em><br>
+    <span style="color:var(--ink);font-style:normal">Simultaneously.</span>
+  </h2>
+  <p class="lede">Cheap, subsidized commodity crops flood the food supply with fats and sugars. The result is hunger and obesity — not as opposites, but as twin products of the same machine.<sup class="ref">[13,14]</sup></p>
+  <div class="chart-wrap" style="max-width:760px;width:100%">
+    <br>
+    <div class="chart-title-standard" style="margin-bottom:-28px">ONE TABLE · TWO OUTCOMES</div>
+    <svg id="ssvg" viewBox="0 0 520 290" width="100%"></svg>
+  </div>
+  <div class="two-small-callouts">
+    <div class="small-callout">
+      <div class="small-callout-stat">30–40%</div>
+      <div class="small-callout-body">of all food produced is never eaten.<sup class="ref">[15]</sup></div>
+    </div>
+    <div class="small-callout">
+      <div class="small-callout-stat">9M</div>
+      <div class="small-callout-body">tonnes of marine life are discarded as <strong>bycatch annually</strong>.<sup class="ref">[16]</sup></div>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:14px;font-size:17px"><br>The waste is structural, not incidental.</p>
+</div>
+
+<!-- Finance: subsidies vs. transition need vs. climate finance reaching food systems -->
+<div class="section">
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+  <h2><em class="heading-ink">The machine</em><br><em class="heading-terra">funds itself.</em></h2>
+  <p class="lede">The food system is not underfunded — it is misfunded.</p>
+  <br>
+  <div class="chart-title-standard" style="margin-bottom:10px">THE FLOW OF MONEY</div>
+  <div class="finance-section" id="finance-section"></div>
+
+  <br>
+  <div class="finance-callout" style="margin-top:18px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;padding:14px 0 14px 20px;border-left:3px solid var(--terra)">
+    <div class="finance-callout-stat" style="font-family:var(--display);font-size:72px;line-height:0.88;color:var(--terra)">23×</div>
+    <div class="finance-callout-body" style="font-size:19px;line-height:1.45;max-width:720px;color:var(--ink)">more flows toward harming the food system<br>than reaches it for positive transformation</div>
+  </div>
+
+  <p class="finance-summary" style="margin-top:22px"><br>Harmful subsidies already exceed even the upper-end transition need. <strong>Only 4% of global climate finance reaches the food system, despite it driving a third of emissions.<sup class="ref">[17]</sup></strong> The problem is not scarcity. It is direction. More than enough money exists to transform the problem. But it is spent to make the problem worse.</p>
+
+  <div class="finance-callout" style="margin-top:28px;display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;padding:14px 0 14px 20px;border-left:3px solid var(--terra)">
+    <div class="finance-callout-stat" style="font-family:var(--display);font-size:72px;line-height:0.88;color:var(--terra)">14%</div>
+    <div class="finance-callout-body" style="font-size:19px;line-height:1.45;max-width:720px;color:var(--ink)">of annual forest loss is driven by subsidies for <strong>soy, palm oil and beef</strong>.<sup class="ref">[10]</sup></div>
+  </div>
+</div>
+
+<!-- Solutions: four evidenced shifts for food system transformation -->
+<div class="section">
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+  <h2><em class="heading-ink">The solution,</em><br><em class="heading-terra">Four shifts.</em></h2>
+  <p class="lede">The diagnosis is established. The solutions exist. None require new technology. All require political will and redirected money.</p>
+
+  <!-- Shift 1: pull right -->
+  <div class="shift-block">
+    <div class="shift-main">
+      <div class="shift-kicker">Shift 1</div>
+      <div class="shift-title">Nature-positive production</div>
+      <div class="shift-tagline">Work with the land, not against it.</div>
+      <div class="shift-body">
+        <p>In Andhra Pradesh, India, 630,000 farmers transitioned to community-managed natural farming. Crop diversity doubled. Prime crop yields rose 11%. Net income rose 49%. Not a single hectare was added.<sup class="ref">[18,23]</sup></p>
+        <p>The yield gap is large enough in many regions to meet demand without touching another forest. The obstacle is not agronomic. It is financial.<sup class="ref">[10]</sup></p>
+      </div>
+    </div>
+    <div class="shift-pull">
+      <div class="shift-pull-stat">+49%</div>
+      <div class="shift-pull-label">farmer net income,<br>Andhra Pradesh<br>APCNF initiative</div>
+    </div>
+  </div>
+
+  <!-- Shift 2: pull left -->
+  <div class="shift-block pull-left">
+    <div class="shift-pull">
+      <div class="shift-pull-stat">7.42</div>
+      <div class="shift-pull-label">Earths needed if<br>all ate like the<br>highest consumers</div>
+    </div>
+    <div class="shift-main">
+      <div class="shift-kicker">Shift 2</div>
+      <div class="shift-title">Healthy diets within planetary limits</div>
+      <div class="shift-tagline">What the world eats determines what the world needs.</div>
+      <div class="shift-body">
+        <p>If all countries adopted the diets of the world's highest-consuming economies by 2050, food emissions would exceed the 1.5°C target by 263% and require up to 7.42 Earths. The lowest-consuming economies require under one.<sup class="ref">[19,20]</sup></p>
+        <p>The path forward is not uniform. Countries facing hunger need more food. High-consumption economies need less meat and different choices. The direction depends entirely on where you start.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shift 3: pull right -->
+  <div class="shift-block" style="align-items:center">
+    <div class="shift-main">
+      <div class="shift-kicker">Shift 3</div>
+      <div class="shift-title">Cut food loss and waste</div>
+      <div class="shift-tagline">The food already exists. Stop losing it.</div>
+      <div class="shift-body">
+        <p>30–40% of all food produced is never eaten.<sup class="ref">[15]</sup> In Lake Naivasha, Kenya, 146 farmers collectively built solar-powered cold storage. Post-harvest loss fell from nearly 50% to under 10%.<sup class="ref">[21]</sup> No policy change. No new variety. Just infrastructure and coordination.</p>
+        <p>9 million tonnes of marine life are discarded as bycatch each year.<sup class="ref">[16]</sup> A structural outcome of how fishing is optimised, not an accident.</p>
+      </div>
+    </div>
+    <div class="shift-pull" style="text-align:right">
+      <div class="shift-pull-stat" style="font-size:36px">50%→10%</div>
+      <div class="shift-pull-label">post-harvest loss,<br>Lake Naivasha,<br>146 farmers</div>
+    </div>
+  </div>
+
+  <!-- Shift 4: pull left -->
+  <div class="shift-block pull-left">
+    <div class="shift-pull">
+      <div class="shift-pull-stat">23×</div>
+      <div class="shift-pull-label">more flows to harm<br>than reaches food<br>systems for good</div>
+    </div>
+    <div class="shift-main">
+      <div class="shift-kicker">Shift 4</div>
+      <div class="shift-title">Redirect finance and reform governance</div>
+      <div class="shift-tagline">The money exists. It is flowing the wrong way.</div>
+      <div class="shift-body">
+        <p>$635bn in agricultural subsidies and $22.2bn in fisheries subsidies flow annually toward the practices driving this crisis.<sup class="ref">[10,24]</sup> Together they exceed the $200–500bn needed to transform the entire food system.<sup class="ref">[22]</sup></p>
+        <p>The ask is not new money. Every dollar subsidising deforestation-linked soy, palm oil, and beef could be building cold storage in Kenya or supporting smallholder transitions in Andhra Pradesh.</p>
+        <p>Food systems sit outside the Paris Agreement and the Global Biodiversity Framework. That is not an oversight. It is a choice that can be unmade.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Closing statement -->
+<div class="closing">
+  <p class="closing-quote">Working <em>with</em> the environment rather than against it would cost less, feed more people, sustain more species, and produce more diverse, nutritious food.</p>
+  <p class="closing-sub">The obstacles are not technical. The solutions exist. The money exists. It is currently misdirected.<br>The land is the same. The machine is the same. <strong>The choices shape our future.</strong></p>
+</div>
+
+<div class="ref-section">
+  <br><br>
+  <div style="text-align:center;padding:16px 0 20px;border-bottom:1px solid var(--rule);margin-bottom:18px">
+    <p class="kicker" style="margin-bottom:6px;font-size:13.5px;letter-spacing:.14em;color:var(--ink-60)">Milcah M. Joseph &nbsp;·&nbsp; Data analysis &amp; design</p>
+    <p class="kicker" style="margin-bottom:0;font-size:13.5px;letter-spacing:.14em;color:var(--ink-60)">
+      <a href="mailto:milcahjoseph@live.com" style="color:var(--ink-60);text-decoration:none">Email</a>
+      &nbsp;·&nbsp;
+      <a href="http://milcahjoseph.com" style="color:var(--ink-60);text-decoration:none">Website</a>
+      &nbsp;·&nbsp;
+      <a href="https://linkedin.com/in/milcah-mary-joseph/" style="color:var(--ink-60);text-decoration:none">LinkedIn</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/M1ck3yJ0" style="color:var(--ink-60);text-decoration:none">GitHub</a>
+    </p>
+    <br><br>
+  </div>
+  <br>
+  <p class="ref-adapted" style="margin-bottom:18px">Adapted from WWF Living Planet Report 2024, Chapter 4 (Benton et al. [4]; FAO [3,9]; Food System Economics Commission [22]; Clark, Hill &amp; Tilman [18]).<br>Built with assistance from Claude (Anthropic) and ChatGPT (OpenAI).<br><br></p>
+  <div class="ref-section-title">References</div>
+  <ol class="ref-list">
+    <li><span class="ref-num">1.</span> Scheffer M, Carpenter S, Foley JA et al. Catastrophic shifts in ecosystems. <em>Nature</em> 2001;413:591–6. Via WWF Living Planet Report 2024, Figure 2.1.</li>
+    <li><span class="ref-num">2.</span> WWF. Bending the Curve: The Restorative Power of Plant-Based Diets. Gland, Switzerland: WWF, 2020.</li>
+    <li><span class="ref-num">3.</span> FAO. The State of the World's Forests 2022. FAO, 2022. [90% deforestation figure]</li>
+    <li><span class="ref-num">4.</span> Benton TG, Bieg C, Harwatt H et al. Food System Impacts on Biodiversity Loss. Chatham House, 2021. [GHG 27%; species threat 86%]</li>
+    <li><span class="ref-num">5.</span> IPCC. Climate Change 2022: Mitigation of Climate Change. Cambridge University Press, 2023. [GHG 27%]</li>
+    <li><span class="ref-num">6.</span> Fujs T, Kashiwase H. Strains on freshwater resources. World Bank Data Blog, 2023. [70% freshwater]</li>
+    <li><span class="ref-num">7.</span> Tilman D, Clark M, Williams DR et al. Future threats to biodiversity. <em>Nature</em> 2017;546:73–81. [86% threatened species]</li>
+    <li><span class="ref-num">8.</span> Deinet S, Flint R, Puleston H et al. The Living Planet Index for Migratory Freshwater Fish. ZSL, 2024. [–81% migratory fish]</li>
+    <li><span class="ref-num">9.</span> FAO. The State of World Fisheries and Aquaculture 2024. FAO, 2024. [37.7% marine stocks overfished]</li>
+    <li><span class="ref-num">10.</span> Damania R et al. Detox Development: Repurposing Environmentally Harmful Subsidies. World Bank, 2023. [$635bn agricultural subsidies; 14% forest loss]</li>
+    <li><span class="ref-num">11.</span> IPBES. Global Assessment Report on Biodiversity and Ecosystem Services. Bonn: IPBES Secretariat, 2019. [90% crop variety loss]</li>
+    <li><span class="ref-num">12.</span> Tilman D, Balzer C, Hill J et al. Global food demand and the sustainable intensification of agriculture. <em>PNAS</em> 2011;108:20260–64. [83% of calories from 10 crops]</li>
+    <li><span class="ref-num">13.</span> FAO. Tracking Progress on Food and Agriculture-Related SDG Indicators 2023. Rome: FAO, 2023. [735M hungry]</li>
+    <li><span class="ref-num">14.</span> WHO. Obesity and overweight. WHO, 2024. [2.5B overweight; 890M with obesity]</li>
+    <li><span class="ref-num">15.</span> WWF-UK. Driven to Waste: The Global Impact of Food Loss and Waste on Farms. WWF-UK, 2021. [30–40% food never eaten]</li>
+    <li><span class="ref-num">16.</span> Gilman E, Perez Roda A, Huntington T et al. Benchmarking global fisheries discards. <em>Sci Rep</em> 2020;10:14017. [9M tonnes bycatch]</li>
+    <li><span class="ref-num">17.</span> Galbiati GM et al. Climate-Related Development Finance to Agrifood Systems. Rome: FAO, 2023. [$28.5bn / 4% climate finance to food]</li>
+    <li><span class="ref-num">18.</span> Clark M, Hill J, Tilman D. The Diet, Health, and Environment Trilemma. <em>Annual Review of Environment and Resources</em> 2018;43:109–34.</li>
+    <li><span class="ref-num">19.</span> Loken B, DeClerck F, Willett W et al. Diets for a Better Future. EAT, 2019. [263% overshoot of 1.5°C target]</li>
+    <li><span class="ref-num">20.</span> Springmann M, Spajic L, Clark MA et al. The healthiness and sustainability of national and global food based dietary guidelines. <em>BMJ</em> 2020;370:m2322.</li>
+    <li><span class="ref-num">21.</span> WWF. Solving the Great Food Puzzle: Right Innovation, Right Impact, Right Place. Gland: WWF, 2023. [Lake Naivasha example]</li>
+    <li><span class="ref-num">22.</span> Laderchi CR, Lotze-Campen H, DeClerck F et al. The Economics of the Food System Transformation. Food System Economics Commission, 2024. [$200–500bn transition finance; $10–15T hidden costs]</li>
+    <li><span class="ref-num">23.</span> GIST Impact. Natural Farming Through a Wide-Angle Lens: True Cost Accounting Study of Community Managed Natural Farming in Andhra Pradesh, India. GIST Impact, 2023. [APCNF: 630,000 farmers; +49% net income; +11% yields]</li>
+    <li><span class="ref-num">24.</span> Sumaila UR, Ebrahim N, Schuhbauer A et al. Updated estimates and analysis of global fisheries subsidies. <em>Marine Policy</em> 2019;109:103695. [$22.2bn harmful fisheries subsidies]</li>
+    <li><span class="ref-num">25.</span> Climate Policy Initiative. Global Landscape of Climate Finance 2023. CPI, 2023. [$212bn needed for Paris Agreement]</li>
+  </ol>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   COLOUR PALETTE (JS mirror of CSS)
+═══════════════════════════════════════════════════════════ */
+const C = {
+  ink:    '#1A1410',
+  ink60:  '#6B6259',
+  ink35:  '#A09890',
+  rule:   'rgba(26,20,16,0.12)',
+  paper:  '#F2EDE4',
+  cream:  '#FAF7F2',
+  terra:  '#B84A18',
+  t55:    'rgba(184,74,24,0.55)',
+  t30:    'rgba(184,74,24,0.30)',
+  t15:    'rgba(184,74,24,0.15)',
+  t07:    'rgba(184,74,24,0.07)',
+  // For voronoi segments — all terracotta tones + neutral
+  graze:  '#B84A18',   // full terra
+  feed:   '#C87840',   // lighter amber-terra
+  food:   '#5A7A28',   // sage — only non-terra, deliberate contrast
+  other:  '#C8BFB0',   // warm stone grey
+};
+
+const FONT_D = "'Playfair Display', Georgia, serif";
+const FONT_B = "'Source Serif 4', Georgia, serif";
+
+/* ═══════════════════════════════════════════════════════════
+   HELPER — append SVG text with optional italic / weight
+═══════════════════════════════════════════════════════════ */
+function txt(parent, x, y, content, opts={}) {
+  const t = parent.append('text')
+    .attr('x', x).attr('y', y)
+    .attr('text-anchor', opts.anchor || 'middle')
+    .attr('dominant-baseline', opts.base || 'auto')
+    .attr('font-family', opts.font || FONT_B)
+    .attr('font-size', opts.size || 12)
+    .attr('font-weight', opts.weight || 'normal')
+    .attr('font-style', opts.italic ? 'italic' : 'normal')
+    .attr('fill', opts.color || C.ink60)
+    .attr('letter-spacing', opts.ls || 0);
+  if (Array.isArray(content)) {
+    content.forEach((line, i) => {
+      t.append('tspan')
+        .attr('x', x).attr('dy', i === 0 ? 0 : opts.lh || 14)
+        .text(line);
+    });
+  } else {
+    t.text(content);
+  }
+  return t;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   1. LAND FOOTPRINT — clean weighted Voronoi power diagram
+   ───────────────────────────────────────────────────────────
+   ONE convex cell per category, with mathematically straight
+   edges (Aurenhammer power diagram). Iteratively adjusts each
+   seed's weight so its cell's area matches the target share.
+
+   For four seeds {p_i, w_i}, cell_i is the intersection of:
+     • the disk
+     • half-planes  ‖x - p_i‖² - w_i  ≤  ‖x - p_j‖² - w_j   ∀ j≠i
+
+   The dividing line between seeds i and j is straight
+   (perpendicular to the line p_i → p_j, offset by the weight
+   difference), giving clean, treemap-style boundaries.
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const W = 920, H = 640;
+  const cx = 460, cy = 355, R = 210;
+  const svg = d3.select('#vsvg');
+  svg.selectAll('*').remove();
+
+  const COL = {
+    grazing: '#B84A18',
+    food:    '#D27B45',
+    feed:    '#5A7A28',
+    other:   '#C8BFB0',
+    border:  'rgba(26,20,16,0.85)'
+  };
+
+  // ─── Geometry helpers ────────────────────────────────────
+  function isLeftOrOn(A, B, P) {
+    // True iff P is on the left of (or on) directed line A→B.
+    return (B[0] - A[0]) * (P[1] - A[1]) - (B[1] - A[1]) * (P[0] - A[0]) >= -1e-9;
+  }
+  function lineIntersect(A, B, P, Q) {
+    const dx1 = B[0] - A[0], dy1 = B[1] - A[1];
+    const dx2 = Q[0] - P[0], dy2 = Q[1] - P[1];
+    const denom = dx1 * dy2 - dy1 * dx2;
+    if (Math.abs(denom) < 1e-12) return null;
+    const t = ((P[0] - A[0]) * dy2 - (P[1] - A[1]) * dx2) / denom;
+    return [A[0] + t * dx1, A[1] + t * dy1];
+  }
+  function polygonClipHalfPlane(subject, A, B) {
+    // Sutherland–Hodgman: keep the part of `subject` on the left of A→B.
+    if (subject.length === 0) return subject;
+    const out = [];
+    for (let j = 0; j < subject.length; j++) {
+      const P = subject[j], Q = subject[(j + 1) % subject.length];
+      const insideP = isLeftOrOn(A, B, P);
+      const insideQ = isLeftOrOn(A, B, Q);
+      if (insideP) {
+        out.push(P);
+        if (!insideQ) {
+          const X = lineIntersect(A, B, P, Q);
+          if (X) out.push(X);
+        }
+      } else if (insideQ) {
+        const X = lineIntersect(A, B, P, Q);
+        if (X) out.push(X);
+      }
+    }
+    return out;
+  }
+  function polygonClipPolygon(subject, clip) {
+    let out = subject.slice();
+    for (let i = 0; i < clip.length; i++) {
+      out = polygonClipHalfPlane(out, clip[i], clip[(i + 1) % clip.length]);
+      if (out.length === 0) break;
+    }
+    return out;
+  }
+  function polyArea(poly) {
+    let A = 0;
+    for (let i = 0, n = poly.length; i < n; i++) {
+      const [x0, y0] = poly[i];
+      const [x1, y1] = poly[(i + 1) % n];
+      A += x0 * y1 - x1 * y0;
+    }
+    return Math.abs(A) * 0.5;
+  }
+
+  // ─── Circle clip polygon (CCW for "inside on left" convention) ──
+  function circlePolygon(n) {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * 2 * Math.PI;
+      pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]);
+    }
+    return pts;
+  }
+  const CIRC = circlePolygon(180);
+
+  // ─── Categories: target share, color, seed position ──────
+  // Seed positions chosen so the resulting layout mirrors the
+  // intended composition (grazing top-left, food top-right,
+  // feed mid-right, other bottom).
+  const cats = [
+    { id: 'grazing', value: 28.4, color: COL.grazing, seed: [cx - 90,  cy - 90 ] },
+    { id: 'food',    value: 11.6, color: COL.food,    seed: [cx + 100, cy - 110] },
+    { id: 'feed',    value:  4.4, color: COL.feed,    seed: [cx + 130, cy + 30 ] },
+    { id: 'other',   value: 55.6, color: COL.other,   seed: [cx - 30,  cy + 90 ] }
+  ];
+  const NCATS = cats.length;
+  const totalCircleArea = Math.PI * R * R;
+
+  // Each seed has a weight. Larger weight = larger cell.
+  const weights = cats.map(() => 0);
+
+  // ─── Power-diagram cell construction ─────────────────────
+  // Bisector between seed i (weight wi) and seed j (weight wj):
+  //   ‖x - p_i‖² - w_i = ‖x - p_j‖² - w_j
+  //   ⇔  2·(p_j - p_i)·x  =  ‖p_j‖² - ‖p_i‖² + w_i - w_j
+  // The "i side" of this line (where i's power is smaller) is
+  // the side that contains p_i if wi == wj, but shifts with weights.
+  //
+  // We construct the cell for seed i by clipping the disk by
+  // the half-plane containing p_i for each j ≠ i.
+
+  // Build the half-plane defining "p_i has smaller power than p_j",
+  // i.e. the side containing seed i's cell. Returns [A, B] such that
+  // the desired side is to the LEFT of A→B. If the resulting cell
+  // would be empty (the half-plane excludes the entire disk), the
+  // caller's cell becomes empty after clipping — which is correct.
+  function bisectorLine(pi, pj, wi, wj) {
+    // Bisector line: 2 x·(pj - pi) = pj² - pi² + wi - wj
+    // Normal direction (pointing FROM i's side TOWARD j's side):
+    //   n = pj - pi
+    // Any point on the line satisfies x·n = (pj² - pi² + wi - wj) / 2.
+    // Pick the foot = projection of the midpoint onto the line.
+    const dx = pj[0] - pi[0], dy = pj[1] - pi[1];
+    const dSq = dx * dx + dy * dy;
+    if (dSq < 1e-9) return null;
+    // Solve for foot on the line in the form  midpoint + t·n.
+    // Substitute (mx + t*dx, my + t*dy) into 2x·n = K:
+    //   2 ((mx+t*dx)*dx + (my+t*dy)*dy) = K
+    //   2 (mx*dx + my*dy) + 2 t (dx² + dy²) = K
+    //   t = (K - 2*(mx*dx + my*dy)) / (2 * dSq)
+    const mx = (pi[0] + pj[0]) / 2;
+    const my = (pi[1] + pj[1]) / 2;
+    const K = (pj[0]*pj[0] + pj[1]*pj[1]) - (pi[0]*pi[0] + pi[1]*pi[1]) + wi - wj;
+    const t = (K - 2 * (mx * dx + my * dy)) / (2 * dSq);
+    const fx = mx + t * dx;
+    const fy = my + t * dy;
+    // Direction perpendicular to n, used to span A and B along the line.
+    // We want the order A→B to put i's side on the LEFT.
+    // i's side is where x·n < K/2, i.e. on the side OPPOSITE to n
+    // from the foot. The "left" of A→B is determined by the cross
+    // product (B-A) × (P-A); for a 2D perpendicular px = -dy, py = dx,
+    // a point on the (-n) side is on the LEFT of A=(f - perp), B=(f + perp).
+    // We verify by testing a point clearly on i's side:  pi - 1000*n.
+    const px = -dy, py = dx;
+    const A = [fx - px * 1e6, fy - py * 1e6];
+    const B = [fx + px * 1e6, fy + py * 1e6];
+    const testPt = [pi[0] - dx * 1000, pi[1] - dy * 1000]; // far in (-n) direction from pi
+    if (isLeftOrOn(A, B, testPt)) return [A, B];
+    return [B, A];
+  }
+
+  function cellFor(i) {
+    let cell = CIRC.slice();
+    const pi = cats[i].seed, wi = weights[i];
+    for (let j = 0; j < NCATS; j++) {
+      if (j === i) continue;
+      const bi = bisectorLine(pi, cats[j].seed, wi, weights[j]);
+      if (!bi) continue;
+      const [A, B] = bi;
+      cell = polygonClipHalfPlane(cell, A, B);
+      if (cell.length === 0) break;
+    }
+    return cell;
+  }
+
+  // ─── Iterative weight adjustment ─────────────────────────
+  // Standard Aurenhammer-style update: increase weight when cell
+  // is too small, decrease when too large. The update is gentle
+  // and runs until areas converge (or 200 iterations).
+  function computeAllAreas() {
+    return cats.map((_, i) => polyArea(cellFor(i)));
+  }
+
+  // Iterative weighted-Voronoi treemap: alternate between
+  //   • adjusting each seed's WEIGHT to push its area toward
+  //     the target (multiplicative-style update); and
+  //   • moving each seed toward the centroid of its current
+  //     cell (Lloyd-style relaxation).
+  // The combination is the standard recipe used by Balzer &
+  // Heck and by d3-voronoi-treemap.
+
+  function polyCentroid(poly) {
+    let A = 0, x = 0, y = 0;
+    for (let i = 0, n = poly.length; i < n; i++) {
+      const [x0, y0] = poly[i];
+      const [x1, y1] = poly[(i + 1) % n];
+      const cross = x0 * y1 - x1 * y0;
+      A += cross; x += (x0 + x1) * cross; y += (y0 + y1) * cross;
+    }
+    A *= 0.5;
+    if (Math.abs(A) < 1e-6) {
+      const m = poly.reduce((acc, p) => [acc[0] + p[0], acc[1] + p[1]], [0, 0]);
+      return [m[0] / poly.length, m[1] / poly.length];
+    }
+    return [x / (6 * A), y / (6 * A)];
+  }
+
+  let lastCells = cats.map((_, i) => cellFor(i));
+
+  for (let iter = 0; iter < 400; iter++) {
+    // Update weights based on area mismatch.
+    const areas = lastCells.map(c => polyArea(c));
+    const totA = areas.reduce((s, a) => s + a, 0);
+    if (totA < 1) {
+      for (let i = 0; i < NCATS; i++) weights[i] = 0;
+      lastCells = cats.map((_, i) => cellFor(i));
+      continue;
+    }
+
+    let maxRelErr = 0;
+    for (let i = 0; i < NCATS; i++) {
+      const targetArea = totA * cats[i].value / 100;
+      const ratio = (areas[i] + 1) / (targetArea + 1);
+      // Multiplicative weight update: increase weight when too small, decrease when too big.
+      // Step size 0.5 per iteration is conservative enough to avoid blow-up.
+      weights[i] += (targetArea - areas[i]) * 0.5;
+      const relErr = Math.abs(areas[i] - targetArea) / targetArea;
+      if (relErr > maxRelErr) maxRelErr = relErr;
+    }
+    // Recenter weights so the smallest is 0 (avoids unbounded drift).
+    const wmin = Math.min(...weights);
+    for (let i = 0; i < NCATS; i++) weights[i] -= wmin;
+
+    // Recompute cells with new weights.
+    lastCells = cats.map((_, i) => cellFor(i));
+
+    // Lloyd nudge disabled — just rely on weight updates.
+
+    if (maxRelErr < 0.01) break;
+  }
+
+  const cells = lastCells;
+
+  // ─── DRAW ────────────────────────────────────────────────
+
+  // Background paper circle
+  svg.append('circle')
+    .attr('cx', cx).attr('cy', cy).attr('r', R)
+    .attr('fill', C.paper);
+
+  // Each region is a single filled path
+  cats.forEach((cat, i) => {
+    const poly = cells[i];
+    if (!poly || poly.length < 3) return;
+    svg.append('path')
+      .attr('d', 'M' + poly.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join('L') + 'Z')
+      .attr('fill', cat.color)
+      .attr('stroke', COL.border)
+      .attr('stroke-width', 2.4)
+      .attr('stroke-linejoin', 'round');
+  });
+
+  // Outer circle border (drawn last so it covers the seam where
+  // a cell meets the disk boundary)
+  svg.append('circle')
+    .attr('cx', cx).attr('cy', cy).attr('r', R)
+    .attr('fill', 'none')
+    .attr('stroke', COL.border)
+    .attr('stroke-width', 3.0);
+
+  // ─── Centroids for label connectors ──────────────────────
+  const catCentroids = cells.map(c => c.length >= 3 ? polyCentroid(c) : [cx, cy]);
+
+  // ─── Word-wrap helper ─────────────────────────────────────
+  function wrapText(parent, x, y, str, opts, maxWidth) {
+    const size = opts.size || 11;
+    const charW = size * 0.50;
+    const lineH = opts.lh || (size * 1.52);
+    const words = str.split(' ');
+    const lines = [];
+    let cur = '';
+    for (const w of words) {
+      const test = cur ? cur + ' ' + w : w;
+      if (test.length * charW > maxWidth && cur) {
+        lines.push(cur);
+        cur = w;
+      } else {
+        cur = test;
+      }
+    }
+    if (cur) lines.push(cur);
+    lines.forEach((line, i) => {
+      txt(parent, x, y + i * lineH, line, opts);
+    });
+    return lines.length * lineH;
+  }
+
+  // ─── LABELS (outside the circle) ─────────────────────────
+  // The two left labels sit in the ~200px left gutter (x 0–260).
+  // The two right labels sit in the ~200px right gutter (x 660–920).
+  // Text blocks are left-aligned for left labels, right-aligned for right.
+  const LABEL_W = 215;
+  const DOT_OUT = 7;   // px outside the circle edge
+  const DOT_R   = 2.8;
+  const BODY_LH = 19;
+
+  // anchor = top-left corner for left labels, top-right corner for right.
+  const labelDefs = [
+    {
+      id: 'grazing',
+      pct: '28.4%',
+      name: 'grazing land',
+      bodyLines: [
+        '71% of all farmland.',
+        'An area larger than',
+        'the continent of Africa,',
+        'used solely to graze livestock.'
+      ],
+      anchor: [55, 155],
+      align: 'start',
+      color: COL.grazing,
+      leaderEnd: [192, 192]
+    },
+    {
+      id: 'food',
+      pct: '11.6%',
+      name: 'food crops',
+      bodyLines: [
+        'Only 29% of farmland',
+        'grows food eaten',
+        'directly by humans.'
+      ],
+      anchor: [865, 155],
+      align: 'end',
+      color: COL.food,
+      leaderEnd: [718, 202]
+    },
+    {
+      id: 'feed',
+      pct: '+4.4%',
+      name: 'feed crops',
+      bodyLines: [
+        'Soy, corn and grain',
+        'grown not for people,',
+        'but to feed animals.',
+        'Together with grazing:',
+        '82% of all farmland',
+        'feeds livestock.'
+      ],
+      anchor: [865, 330],
+      align: 'end',
+      color: COL.feed,
+      leaderEnd: [738, 370]
+    },
+    {
+      id: 'other',
+      pct: '55.6%',
+      name: 'other habitable land',
+      bodyLines: [
+        'Forests, deserts, ice,',
+        'freshwater, urban areas.',
+        '90% of all deforestation',
+        'is driven by agricultural',
+        'expansion into this land.'
+      ],
+      anchor: [55, 410],
+      align: 'start',
+      color: C.ink60,
+      leaderEnd: [212, 427]
+    }
+  ];
+
+  function dotOnOffsetCircleAtY(y, side) {
+    const r = R + DOT_OUT;
+    const dy = y - cy;
+    const inside = Math.max(0, r * r - dy * dy);
+    const dx = Math.sqrt(inside);
+    return [side === 'left' ? cx - dx : cx + dx, y];
+  }
+
+  function sLeaderPath(x1, y1, x2, y2, side, id) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const dir = side === 'left' ? -1 : 1;
+
+    // Grazing keeps the more expressive curve.
+    // Food gets a slightly stronger S than feed; other stays flatter so it sits quietly beside the label.
+    const bend = id === 'grazing'
+      ? Math.min(132, Math.max(48, Math.abs(dx) * 0.60))
+      : id === 'food'
+        ? Math.min(118, Math.max(38, Math.abs(dx) * 0.49))
+        : id === 'other'
+          ? Math.min(70, Math.max(22, Math.abs(dx) * 0.26))
+          : Math.min(108, Math.max(34, Math.abs(dx) * 0.44));
+
+    const lift = id === 'grazing'
+      ? Math.min(44, Math.max(18, Math.abs(dy) * 0.55 + 24))
+      : id === 'food'
+        ? Math.min(30, Math.max(10, Math.abs(dy) * 0.34 + 12))
+        : id === 'other'
+          ? Math.min(14, Math.max(4, Math.abs(dy) * 0.14 + 5))
+          : Math.min(26, Math.max(8, Math.abs(dy) * 0.28 + 10));
+
+    const c1x = x1 + dir * bend;
+    const c1y = y1 - lift;
+
+    const c2x = x2 - dir * bend;
+    const c2y = y2 + lift;
+
+    return `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+  }
+
+  labelDefs.forEach(def => {
+    const ci = cats.findIndex(c => c.id === def.id);
+    if (ci < 0) return;
+
+    // Text block geometry
+    const tx = def.anchor[0];
+    const topY = def.anchor[1];
+    const targetX = def.leaderEnd[0];
+    const targetY = def.leaderEnd[1];
+
+    // Dots stay as previously positioned.
+    const centroid = catCentroids[ci];
+    const dirX = centroid[0] - cx, dirY = centroid[1] - cy;
+    const dirLen = Math.sqrt(dirX * dirX + dirY * dirY);
+    let dotX = cx + (dirX / dirLen) * (R + DOT_OUT);
+    let dotY = cy + (dirY / dirLen) * (R + DOT_OUT);
+
+    // Left-side dots positioned directly in front of the nearest text edge.
+    if (def.id === 'other') {
+      [dotX, dotY] = dotOnOffsetCircleAtY(def.anchor[1] + 12, 'left');
+    }
+    if (def.id === 'grazing') {
+      [dotX, dotY] = dotOnOffsetCircleAtY(def.anchor[1] + 32, 'left');
+    }
+
+    svg.append('circle')
+      .attr('cx', dotX).attr('cy', dotY).attr('r', DOT_R)
+      .attr('fill', def.color);
+
+    // Gentle S-shaped solid leader line from dot to the manual label endpoint.
+    const side = def.align === 'start' ? 'left' : 'right';
+
+    svg.append('path')
+      .attr('d', sLeaderPath(dotX, dotY, targetX, targetY, side, def.id))
+      .attr('fill', 'none')
+      .attr('stroke', def.color)
+      .attr('stroke-width', 0.85)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round')
+      .attr('opacity', 0.72);
+
+    // Text block
+    let ty = def.anchor[1];
+
+    txt(svg, tx, ty, def.pct, {
+      size: 26,
+      color: def.color,
+      font: FONT_D,
+      anchor: def.align
+    });
+    ty += 28;
+
+    txt(svg, tx, ty, def.name, {
+      size: 17,
+      color: def.color,
+      font: FONT_D,
+      anchor: def.align
+    });
+    ty += 21;
+
+    txt(svg, tx, ty, def.bodyLines, {
+      size: 14,
+      color: C.ink60,
+      font: FONT_B,
+      anchor: def.align,
+      italic: true,
+      lh: BODY_LH
+    });
+  });
+
+  // ─── 40% FARMLAND BRACKET ────────────────────────────────
+  // Span just the farmland arc (grazing top-left to food top-right).
+  // Visually, the top of the circle near x = cx−R+gap to cx+R−gap.
+  const brTop   = cy - R - 12;
+  const brLeft  = cx - 130;   // roughly over the grazing / food boundary region
+  const brRight = cx + 130;
+  const brDown  = 8;
+  svg.append('path')
+    .attr('d', `M ${brLeft} ${brTop + brDown} L ${brLeft} ${brTop} L ${brRight} ${brTop} L ${brRight} ${brTop + brDown}`)
+    .attr('fill', 'none')
+    .attr('stroke', C.terra)
+    .attr('stroke-width', 1.3)
+    .attr('opacity', 0.75);
+
+  txt(svg, cx, brTop - 7, '40% FARMLAND', {
+    size: 11.5,
+    color: C.terra,
+    font: FONT_B,
+    weight: '600',
+    ls: '.18em',
+    anchor: 'middle'
+  });
+
+})();
+
+
+
+/* ═══════════════════════════════════════════════════════════
+   2. SIX WOUNDS — hidden cost panel with tiles
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const W = 520, H = 448;
+  const svg = d3.select('#wsvg');
+
+  const panel = { x: 18, y: 24, w: 484, h: 386, rx: 6 };
+
+  function drawLines(lines, x, y, opts = {}) {
+    const size = opts.size || 10;
+    const lineGap = opts.lineGap || (size + 2);
+    const color = opts.color || C.ink60;
+    const weight = opts.weight || null;
+    const anchor = opts.anchor || 'start';
+    const ff = opts.font || FONT_B;
+
+    const t = svg.append('text')
+      .attr('x', x).attr('y', y)
+      .attr('text-anchor', anchor)
+      .attr('font-family', ff)
+      .attr('font-size', size)
+      .attr('fill', color);
+    if (weight) t.attr('font-weight', weight);
+
+    lines.forEach((line, i) => {
+      t.append('tspan')
+        .attr('x', x)
+        .attr('dy', i === 0 ? 0 : lineGap)
+        .text(line);
+    });
+    return t;
+  }
+
+  svg.append('rect')
+    .attr('x', panel.x).attr('y', panel.y)
+    .attr('width', panel.w).attr('height', panel.h)
+    .attr('rx', panel.rx)
+    .attr('fill', C.paper)
+    .attr('stroke', C.rule)
+    .attr('stroke-width', 1.1)
+    .attr('opacity', 0.97);
+
+  svg.append('text')
+    .attr('x', 260).attr('y', 76)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', FONT_D)
+    .attr('font-size', 39)
+    .attr('font-weight', '600')
+    .attr('fill', C.terra)
+    .text('$10–15 Trillion');
+
+  svg.append('text')
+    .attr('x', 260).attr('y', 104)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', FONT_B)
+    .attr('font-size', 13.6)
+    .attr('font-weight', '500')
+    .attr('fill', C.ink)
+    .text('hidden annual costs of ill health and environmental degradation');
+
+  svg.append('text')
+    .attr('x', 260).attr('y', 124)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', FONT_B)
+    .attr('font-size', 10.8)
+    .attr('fill', C.ink60)
+    .text('equal to 12% of global GDP in 2020');
+
+  svg.append('line')
+    .attr('x1', 62).attr('y1', 152)
+    .attr('x2', 458).attr('y2', 152)
+    .attr('stroke', C.rule)
+    .attr('stroke-width', 1);
+
+  svg.append('text')
+    .attr('x', 260).attr('y', 166)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', FONT_B)
+    .attr('font-size', 9.4)
+    .attr('font-weight', '500')
+    .attr('letter-spacing', '.14em')
+    .attr('fill', C.ink35)
+    .text('THE PRESSURES BEHIND THE BILL');
+
+  const tiles = [
+    { val: '90%',   label: 'Deforestation',       sub: ['from conversion', 'to farmland'],           color: '#B84A18' },
+    { val: '70%',   label: 'Freshwater',          sub: ['withdrawals used', 'by agriculture'],       color: '#3A6898' },
+    { val: '27%',   label: 'GHG emissions',       sub: ['from the food system'],                      color: '#C87840' },
+    { val: '86%',   label: 'Threatened species',  sub: ['birds & mammals', 'at risk'],               color: '#704888' },
+    { val: '−81%',  label: 'Migratory fish',      sub: ['since 1970: habitat loss,', 'overharvest, pollution'],         color: '#2A7A60' },
+    { val: '37.7%', label: 'Marine stocks',       sub: ['classified as', 'overfished'],              color: '#8F7F45' },
+  ];
+
+  const cols = 3;
+  const tileW = 144;
+  const tileH = 98;
+  const gapX = 12;
+  const gapY = 14;
+  const startX = 38;
+  const startY = 186;
+
+  tiles.forEach((d, i) => {
+    const col = i % cols;
+    const row = Math.floor(i / cols);
+    const x = startX + col * (tileW + gapX);
+    const y = startY + row * (tileH + gapY);
+
+    svg.append('rect')
+      .attr('x', x).attr('y', y)
+      .attr('width', tileW).attr('height', tileH)
+      .attr('rx', 4)
+      .attr('fill', d.color)
+      .attr('opacity', 0.12)
+      .attr('stroke', d.color)
+      .attr('stroke-width', 1.05);
+
+    svg.append('rect')
+      .attr('x', x).attr('y', y)
+      .attr('width', 4).attr('height', tileH)
+      .attr('rx', 2)
+      .attr('fill', d.color)
+      .attr('opacity', 0.72);
+
+    svg.append('text')
+      .attr('x', x + 18).attr('y', y + 34)
+      .attr('text-anchor', 'start')
+      .attr('font-family', FONT_D)
+      .attr('font-size', d.val.length > 4 ? 22 : 28)
+      .attr('font-weight', '600')
+      .attr('fill', d.color)
+      .text(d.val);
+
+    drawLines([d.label], x + 18, y + 55, {
+      size: 10.2,
+      weight: '500',
+      color: C.ink,
+      lineGap: 12
+    });
+
+    drawLines(d.sub, x + 18, y + 69, {
+      size: 8.6,
+      color: C.ink60,
+      lineGap: 10.5
+    });
+  });
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   3. FIELD LEAVES
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const g = document.getElementById('fdots');
+  const anno = document.getElementById('fanno');
+  const wrap = document.querySelector('.field-grid-wrap');
+  const leafPath = "M332.9 17.37c-11.7-.1-24.2 1.23-37.5 4.13c-33.1 7.21-48.6 28.49-56.2 54.09c11.2 22.86 20.1 46.01 25 71.91c-9.6-6.9-19.7-1.7-22.6 5c-4.3-22.4-10-42.9-17.8-62.93c-48.8-34.88-83-20.9-89.6-18.76C49.64 98.12 25.54 165.7 39.84 239.1c19.32-43.4 86.56-68.7 113.56-68.6c6.9.1 47 9.5 13.6 20c-54.8 17.3-98.29 48.7-116.81 86c8.78 24.5 21.34 49.1 36.89 72.4c14.42-42 40.22-89 96.72-125.1c14.5-9.3 23.8.7 12.2 13.2c-53.5 57.4-75.1 104.2-81 148.6c17.4 20.3 37.2 38.9 58.5 54.7c1.6-54.4 20.3-117.7 56.3-164.6c3.7-6.6 22-2.7 15.6 9c-27.9 50.9-43.2 119.9-44.5 174c25.6 15.2 52.9 26.3 80.9 31.9c-15.1-35.2-18.5-80.5-6.9-120.8c5.1-17.8 20.8-8.1 17.6 4.2c-10 38.8 8.6 87.5 28.1 120.6c20.7.1 41.6-3.1 62.3-10.2c11.8-4 22.7-12.3 32.7-23.8c-11.3-22.8-27-44.1-46.6-57.2c-7.4-5-3.2-23.6 10.2-14.8c19.1 12.6 37.6 29.7 52.8 48.7c9.8-16.8 18.2-37 25-59.4c-29.7-34.7-83.3-82-128.8-101.7c-9.6-4.1-8.7-21.5 7.6-16.4c47.8 14.8 98 46.2 131.1 78c3.9-19.9 6.7-40.8 8.1-61.9c-39-27.6-95.5-67.2-147.1-74.8c-9.5-1.4-13.6-18.6 3-17.8c58.3 2.7 109.8 23.5 145.1 50.5c-.5-28.6-3.6-56.7-9.7-82.9c-41.7-13.6-113.5-18.5-141.5-6.1c-11.1 4.9-29.9-4.8-6.8-16.6c37.6-22.1 94.5-22.8 138.3-11c-21.3-57.97-60.7-99.32-123.4-99.83";
+
+  function leafSVG() {
+    return `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+        <path d="${leafPath}"></path>
+      </svg>
+    `;
+  }
+
+  for (let i = 0; i < 100; i++) {
+    const d = document.createElement('div');
+    d.className = 'fd ' + (i >= 90 ? 'alive' : 'dead');
+    d.innerHTML = leafSVG();
+    g.appendChild(d);
+  }
+
+  document.querySelectorAll('[data-leaf-icon]').forEach((el) => {
+    el.innerHTML = leafSVG();
+  });
+
+  function svgEl(name) {
+    return document.createElementNS('http://www.w3.org/2000/svg', name);
+  }
+
+  function leafPoint(el) {
+    const wrapBox = wrap.getBoundingClientRect();
+    const box = el.getBoundingClientRect();
+    return {
+      x: box.left - wrapBox.left + box.width / 2,
+      y: box.top - wrapBox.top + box.height + 2
+    };
+  }
+
+  function leaderCurve(start, end) {
+    return [
+      `M ${start.x.toFixed(1)} ${start.y.toFixed(1)}`,
+      `C ${start.x.toFixed(1)} ${(start.y + 10).toFixed(1)}, ${end.x.toFixed(1)} ${(end.y - 10).toFixed(1)}, ${end.x.toFixed(1)} ${end.y.toFixed(1)}`
+    ].join(' ');
+  }
+
+  function addLeader(start, end) {
+    const dot = svgEl('circle');
+    dot.setAttribute('cx', start.x.toFixed(1));
+    dot.setAttribute('cy', start.y.toFixed(1));
+    dot.setAttribute('r', '2');
+    dot.setAttribute('fill', 'rgba(122,112,104,0.72)');
+    anno.appendChild(dot);
+
+    const path = svgEl('path');
+    path.setAttribute('d', leaderCurve(start, end));
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', 'rgba(122,112,104,0.58)');
+    path.setAttribute('stroke-width', '1');
+    path.setAttribute('stroke-linecap', 'round');
+    anno.appendChild(path);
+  }
+
+  function addLabel(label) {
+    const text = svgEl('text');
+    text.setAttribute('x', label.x);
+    text.setAttribute('y', label.y);
+    text.setAttribute('text-anchor', label.anchor || 'middle');
+    text.setAttribute('font-family', FONT_B);
+    text.setAttribute('font-size', '11.5');
+    text.setAttribute('fill', C.ink60);
+    text.textContent = label.text;
+    anno.appendChild(text);
+  }
+
+  function drawAnnotations() {
+    if (!g || !anno || !wrap) return;
+
+    const leaves = g.querySelectorAll('.fd');
+    if (leaves.length < 100) return;
+
+    const width = wrap.clientWidth;
+    const height = wrap.clientHeight;
+    const gridHeight = g.offsetHeight;
+
+    anno.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    anno.innerHTML = '';
+
+    const onceLeaf = leafPoint(leaves[84]);
+    const todayLeaf = leafPoint(leaves[90]);
+    const sharedLabelY = gridHeight + 32;
+
+    const onceLabel = {
+      x: Math.max(150, onceLeaf.x - 58),
+      y: sharedLabelY,
+      anchor: 'middle',
+      text: 'Once: 7,000 apple varieties in the US.'
+    };
+
+    const todayLabel = {
+      x: Math.min(width - 92, todayLeaf.x + 66),
+      y: sharedLabelY,
+      anchor: 'middle',
+      text: 'Today: ~100 commercially grown.'
+    };
+
+    addLeader(onceLeaf, { x: onceLabel.x, y: onceLabel.y - 14 });
+    addLeader(todayLeaf, { x: todayLabel.x, y: todayLabel.y - 14 });
+
+    addLabel(onceLabel);
+    addLabel(todayLabel);
+  }
+
+  requestAnimationFrame(drawAnnotations);
+  window.addEventListener('resize', drawAnnotations);
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   4. CALORIE CONCENTRATION STRIP — segmented 100% bar
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const W = 520, H = 220;
+  const svg = d3.select('#bsvg');
+
+  const DATA = [
+    { n: 'Sugar cane', p: 16.8, c: '#B84A18', side: 'top' },
+    { n: 'Maize',      p: 15.2, c: '#B87838', side: 'bottom' },
+    { n: 'Wheat',      p: 13.1, c: '#A08A3F', side: 'top' },
+    { n: 'Rice',       p: 11.4, c: '#6F8B45', side: 'bottom' },
+    { n: 'Soybean',    p:  7.2, c: '#D8905E', side: 'top' },
+    { n: 'Oil palm',   p:  5.9, c: '#D0A640', side: 'bottom' },
+    { n: 'Barley',     p:  4.8, c: '#9B8444', side: 'top' },
+    { n: 'Cassava',    p:  3.8, c: '#B37450', side: 'bottom' },
+    { n: 'Rapeseed',   p:  2.6, c: '#C98D3D', side: 'top' },
+    { n: 'Sorghum',    p:  2.2, c: '#8F7F45', side: 'bottom' },
+    { n: 'All others', p: 17.0, c: C.paper,  side: 'top', stroke: C.rule, textC: C.ink60 }
+  ];
+
+  const x0 = 30, y0 = 82, barW = 460, barH = 30;
+  let acc = 0;
+
+  // Outer frame.
+  svg.append('rect')
+    .attr('x', x0).attr('y', y0).attr('width', barW).attr('height', barH)
+    .attr('rx', 2).attr('fill', 'none')
+    .attr('stroke', C.rule).attr('stroke-width', 1);
+
+  DATA.forEach((d, i) => {
+    const w = d.p / 100 * barW;
+    d.x1 = x0 + acc;
+    d.x2 = d.x1 + w;
+    d.cx = d.x1 + w / 2;
+    d.w = w;
+
+    svg.append('rect')
+      .attr('x', d.x1).attr('y', y0).attr('width', w).attr('height', barH)
+      .attr('fill', d.c)
+      .attr('stroke', d.stroke || C.cream)
+      .attr('stroke-width', d.stroke ? 1 : 0.8)
+      .attr('opacity', d.n === 'All others' ? 1 : 0.88);
+
+    acc += w;
+  });
+
+  // 83% bracket for the ten dominant crops.
+  const tenW = DATA.slice(0, 10).reduce((sum, d) => sum + d.w, 0);
+  const bracketY = y0 + barH + 58;
+  svg.append('line')
+    .attr('x1', x0).attr('y1', bracketY)
+    .attr('x2', x0 + tenW).attr('y2', bracketY)
+    .attr('stroke', C.terra).attr('stroke-width', 1.2).attr('opacity', 0.75);
+  svg.append('line')
+    .attr('x1', x0).attr('y1', bracketY - 5)
+    .attr('x2', x0).attr('y2', bracketY + 5)
+    .attr('stroke', C.terra).attr('stroke-width', 1.2).attr('opacity', 0.75);
+  svg.append('line')
+    .attr('x1', x0 + tenW).attr('y1', bracketY - 5)
+    .attr('x2', x0 + tenW).attr('y2', bracketY + 5)
+    .attr('stroke', C.terra).attr('stroke-width', 1.2).attr('opacity', 0.75);
+  svg.append('text')
+    .attr('x', x0 + tenW / 2).attr('y', bracketY + 22)
+    .attr('text-anchor', 'middle')
+    .attr('font-family', FONT_D).attr('font-size', 15)
+    .attr('font-style', 'italic')
+    .attr('fill', C.terra)
+    .text('10 crops: 83%');
+
+  // Hand-tuned callout positions prevent small segments from colliding.
+  const labelX = {
+    'Sugar cane': 42,
+    'Maize': 126,
+    'Wheat': 205,
+    'Rice': 275,
+    'Soybean': 332,
+    'Oil palm': 368,
+    'Barley': 400,
+    'Cassava': 428,
+    'Rapeseed': 454,
+    'Sorghum': 474,
+    'All others': 505
+  };
+
+  DATA.forEach((d) => {
+    const top = d.side === 'top';
+    const lx = labelX[d.n] || d.cx;
+    const ly = top ? y0 - 44 : y0 + barH + 36;
+    const lineEndY = top ? y0 - 4 : y0 + barH + 4;
+    const color = d.textC || C.ink;
+
+    // Leader line from label to segment center.
+    const labelTouchY = top ? ly + 22 : ly - 12;
+    svg.append('path')
+      .attr('d', `M ${d.cx} ${lineEndY} C ${d.cx} ${top ? y0 - 20 : y0 + barH + 20}, ${lx} ${top ? labelTouchY + 6 : labelTouchY - 10}, ${lx} ${labelTouchY}`)
+      .attr('fill', 'none')
+      .attr('stroke', d.n === 'All others' ? C.rule : d.c)
+      .attr('stroke-width', 0.8)
+      .attr('opacity', d.n === 'All others' ? 0.9 : 0.55);
+
+    svg.append('circle')
+      .attr('cx', d.cx).attr('cy', top ? y0 - 3 : y0 + barH + 3)
+      .attr('r', 2)
+      .attr('fill', d.n === 'All others' ? C.ink35 : d.c)
+      .attr('opacity', 0.8);
+
+    svg.append('text')
+      .attr('x', lx).attr('y', ly)
+      .attr('text-anchor', 'middle')
+      .attr('font-family', FONT_D).attr('font-size', d.p < 4 ? 8.5 : 9.5)
+      .attr('font-weight', '400')
+      .attr('fill', color)
+      .text(d.n);
+
+    svg.append('text')
+      .attr('x', lx).attr('y', ly + 12)
+      .attr('text-anchor', 'middle')
+      .attr('font-family', FONT_B).attr('font-size', 8.5)
+      .attr('fill', d.n === 'All others' ? C.ink35 : C.ink60)
+      .text(d.p.toFixed(1) + '%');
+  });
+
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   5. HUMAN COST — table surface place settings
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const W = 520, H = 290;
+  const svg = d3.select('#ssvg');
+
+  const tableScale = 0.9;
+  const tableW = 504 * tableScale;
+  const tableH = 206 * tableScale;
+  const tableX = (W - tableW) / 2;
+  const tableY = 58;
+  const tableR = 18 * tableScale;
+  const plateY = 126;
+  const plateR = 35 * 1.15;
+  const cols = [144, 376];
+
+  const defs = svg.append('defs');
+  defs.append('clipPath')
+    .attr('id', 'table-clip')
+    .append('rect')
+    .attr('x', tableX).attr('y', tableY)
+    .attr('width', tableW).attr('height', tableH)
+    .attr('rx', tableR);
+
+  svg.append('rect')
+    .attr('x', tableX + 4).attr('y', tableY + 8)
+    .attr('width', tableW).attr('height', tableH)
+    .attr('rx', tableR)
+    .attr('fill', C.t07)
+    .attr('opacity', 0.55);
+
+  svg.append('rect')
+    .attr('x', tableX).attr('y', tableY)
+    .attr('width', tableW).attr('height', tableH)
+    .attr('rx', tableR)
+    .attr('fill', '#E4DDD1')
+    .attr('stroke', 'rgba(120,94,68,0.16)')
+    .attr('stroke-width', 1.3);
+
+  const grain = svg.append('g').attr('clip-path', 'url(#table-clip)');
+  const grainDark = 'rgba(132,107,77,0.14)';
+  const grainLite = 'rgba(255,255,255,0.08)';
+
+  function woodLine(y, a1, a2, a3, drift) {
+    return [
+      `M ${tableX-20} ${y}`,
+      `C ${tableX+46} ${y+a1}, ${tableX+108} ${y-a2}, ${tableX+176} ${y+drift}`,
+      `S ${tableX+312} ${y+a3}, ${tableX+tableW+24} ${y-a1/2}`
+    ].join(' ');
+  }
+
+  [72, 84, 96, 108, 120, 132, 144, 156, 168, 180, 192, 204, 216, 228].forEach((y, i) => {
+    grain.append('path')
+      .attr('d', woodLine(y, 3 + (i % 3), 2 + ((i + 1) % 3), 3 + ((i + 2) % 2), (i % 2) ? 1 : -1))
+      .attr('fill', 'none')
+      .attr('stroke', grainDark)
+      .attr('stroke-width', 1.25)
+      .attr('stroke-linecap', 'round');
+  });
+
+  [78, 102, 126, 150, 174, 198, 222].forEach((y, i) => {
+    grain.append('path')
+      .attr('d', woodLine(y, -2 - (i % 2), 2 + (i % 3), -2, (i % 2) ? 0.5 : -0.5))
+      .attr('fill', 'none')
+      .attr('stroke', grainLite)
+      .attr('stroke-width', 0.9)
+      .attr('stroke-linecap', 'round');
+  });
+
+  [
+    {x: tableX + tableW * 0.31, y: tableY + tableH * 0.24, rx: 15, ry: 10, ang: -18},
+    {x: tableX + tableW * 0.69, y: tableY + tableH * 0.76, rx: 17, ry: 11, ang: 12}
+  ].forEach(k => {
+    grain.append('ellipse')
+      .attr('cx', k.x).attr('cy', k.y)
+      .attr('rx', k.rx).attr('ry', k.ry)
+      .attr('transform', `rotate(${k.ang} ${k.x} ${k.y})`)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(132,107,77,0.13)')
+      .attr('stroke-width', 1.15);
+    grain.append('ellipse')
+      .attr('cx', k.x).attr('cy', k.y)
+      .attr('rx', k.rx - 5).attr('ry', k.ry - 3)
+      .attr('transform', `rotate(${k.ang} ${k.x} ${k.y})`)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(132,107,77,0.10)')
+      .attr('stroke-width', 0.95);
+    grain.append('path')
+      .attr('d', `M ${k.x - 36} ${k.y + 1} C ${k.x - 22} ${k.y - 4}, ${k.x - 8} ${k.y - 3}, ${k.x - k.rx} ${k.y}`)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(132,107,77,0.11)')
+      .attr('stroke-width', 1.05);
+    grain.append('path')
+      .attr('d', `M ${k.x + k.rx} ${k.y} C ${k.x + 10} ${k.y + 3}, ${k.x + 24} ${k.y + 3}, ${k.x + 40} ${k.y}`)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(132,107,77,0.11)')
+      .attr('stroke-width', 1.05);
+  });
+
+  grain.append('path')
+    .attr('d', `M ${tableX + 2} ${tableY + 16} C ${tableX + 120} ${tableY + 8}, ${tableX + 250} ${tableY + 22}, ${tableX + tableW - 2} ${tableY + 12}`)
+    .attr('fill', 'none')
+    .attr('stroke', 'rgba(255,255,255,0.14)')
+    .attr('stroke-width', 1.2);
+
+  function drawFork(g, x, y) {
+    g.append('rect')
+      .attr('x', x - 1.6).attr('y', y - 8)
+      .attr('width', 3.2).attr('height', 46)
+      .attr('rx', 1.6);
+    g.append('rect')
+      .attr('x', x - 3.5).attr('y', y - 17)
+      .attr('width', 7).attr('height', 10)
+      .attr('rx', 2.2);
+    [-5.2, -1.8, 1.8, 5.2].forEach(dx => {
+      g.append('rect')
+        .attr('x', x + dx - 0.95).attr('y', y - 30)
+        .attr('width', 1.9).attr('height', 15)
+        .attr('rx', 0.9);
+    });
+    g.append('path')
+      .attr('d', `M ${x - 7} ${y - 17} Q ${x} ${y - 14} ${x + 7} ${y - 17} L ${x + 5.6} ${y - 21} Q ${x} ${y - 19.5} ${x - 5.6} ${y - 21} Z`);
+  }
+
+  function drawSpoon(g, x, y) {
+    g.append('rect')
+      .attr('x', x - 1.6).attr('y', y - 2)
+      .attr('width', 3.2).attr('height', 40)
+      .attr('rx', 1.6);
+    g.append('ellipse')
+      .attr('cx', x).attr('cy', y - 17)
+      .attr('rx', 7).attr('ry', 11);
+  }
+
+  function placeSetting(cx, angle, stat, size, color, label, details) {
+    const setting = svg.append('g')
+      .attr('transform', `rotate(0 ${cx} ${plateY})`);
+
+    const utensils = setting.append('g')
+      .attr('opacity', 0.62)
+      .attr('fill', C.ink35);
+
+    drawFork(utensils, cx - 56, plateY + 1);
+    drawSpoon(utensils, cx + 56, plateY + 1);
+
+    setting.append('circle')
+      .attr('cx', cx + 1.8).attr('cy', plateY + 2.2)
+      .attr('r', plateR)
+      .attr('fill', 'rgba(120,94,68,0.05)');
+
+    setting.append('circle')
+      .attr('cx', cx).attr('cy', plateY)
+      .attr('r', plateR)
+      .attr('fill', C.cream)
+      .attr('stroke', 'rgba(120,94,68,0.16)')
+      .attr('stroke-width', 1.3);
+
+    setting.append('circle')
+      .attr('cx', cx).attr('cy', plateY)
+      .attr('r', plateR - 8)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(120,94,68,0.11)')
+      .attr('stroke-width', 1);
+
+    setting.append('text')
+      .attr('x', cx).attr('y', plateY + 5)
+      .attr('text-anchor', 'middle')
+      .attr('font-family', FONT_D)
+      .attr('font-size', size)
+      .attr('font-weight', '600')
+      .attr('fill', color)
+      .text(stat);
+
+    svg.append('text')
+      .attr('x', cx).attr('y', 194)
+      .attr('text-anchor', 'middle')
+      .attr('font-family', FONT_B)
+      .attr('font-size', 10.2)
+      .attr('font-weight', '500')
+      .attr('fill', C.ink)
+      .text(label);
+
+    details.forEach((line, i) => {
+      svg.append('text')
+        .attr('x', cx).attr('y', 211 + i * 12)
+        .attr('text-anchor', 'middle')
+        .attr('font-family', FONT_B)
+        .attr('font-size', 8.8)
+        .attr('fill', C.ink)
+        .text(line);
+    });
+  }
+
+  placeSetting(
+    cols[0],
+    0,
+    '735M',
+    23,
+    '#B03030',
+    'go hungry nightly',
+    ['despite record global food output', 'and abundance elsewhere']
+  );
+
+  placeSetting(
+    cols[1],
+    0,
+    '2.5B',
+    23,
+    '#B87820',
+    'adults overweight',
+    ['including 890M living with obesity', 'and poor-quality diets']
+  );
+})();
+
+
+/* ═══════════════════════════════════════════════════════════
+   6. FINANCE — shared-scale comparison
+═══════════════════════════════════════════════════════════ */
+(function () {
+  const section = document.getElementById('finance-section');
+  const MAX = 700;
+  const pct = (v) => (v / MAX * 100).toFixed(2) + '%';
+
+  section.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 68px;align-items:stretch">
+
+      <!-- Bar rows -->
+      <div class="finance-scale">
+
+      <!-- Harmful subsidies row -->
+        <div class="finance-row">
+          <div class="finance-row-head">
+            <div class="finance-row-meta">
+              <div class="finance-row-kicker" style="color:#B03030">Wrong-way finance</div>
+              <div class="finance-row-title">Harmful subsidies already flowing</div>
+            </div>
+            <div class="finance-row-total">Total: $657bn/year</div>
+          </div>
+          <div class="finance-track">
+            <div class="finance-fill" style="left:0;width:${pct(635)};background:#B84A18;border-radius:999px 0 0 999px"></div>
+            <div class="finance-fill" style="left:${pct(635)};width:${pct(22.2)};background:#7A1F22;border-radius:0 999px 999px 0"></div>
+          </div>
+          <div class="finance-sub-labels">
+            <div class="finance-sub-label" style="left:${pct(317.5)}">
+              <strong>$635bn</strong>
+              Agricultural subsidies
+            </div>
+            <div class="finance-sub-label align-end" style="left:${pct(657)}">
+              <strong>$22.2bn</strong>
+              Harmful fisheries subsidies
+            </div>
+          </div>
+        </div>
+
+        <!-- Transition finance needed row -->
+        <div class="finance-row">
+          <div class="finance-row-head">
+            <div class="finance-row-meta">
+              <div class="finance-row-kicker" style="color:#2A6848">What is actually needed</div>
+              <div class="finance-row-title">Food system transition needed: $200 to $500bn/year</div>
+            </div>
+          </div>
+          <div class="finance-track">
+            <div class="finance-fill" style="left:0;width:${pct(200)};background:#4A7A30;border-radius:999px 0 0 999px"></div>
+            <div class="finance-fill" style="left:${pct(200)};width:${pct(300)};background:rgba(74,122,48,0.28);border-radius:0 999px 999px 0"></div>
+            <div class="finance-marker" style="left:${pct(212)}"></div>
+          </div>
+          <div class="finance-sub-labels" style="height:68px">
+            <div class="finance-range-label" style="left:${pct(200)}">$200bn</div>
+            <div class="finance-range-label" style="left:${pct(500)}">$500bn</div>
+            <div class="finance-marker-label align-start" style="left:${pct(212)};top:16px;max-width:none">
+              <strong>$212bn</strong>
+              <span style="white-space:nowrap">needed annually just to meet Paris Agreement</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Climate finance currently reaching food systems -->
+        <div class="finance-row" style="margin-bottom:26px">
+          <div class="finance-row-head">
+            <div class="finance-row-meta">
+              <div class="finance-row-kicker" style="color:#7EA84C">What currently reaches food systems</div>
+              <div class="finance-row-title">Current climate finance to food systems</div>
+            </div>
+          </div>
+          <div class="finance-track">
+            <div class="finance-fill" style="left:0;width:${pct(28.5)};background:#96BF63;border-radius:999px"></div>
+          </div>
+          <div class="finance-sub-labels" style="height:46px">
+            <div class="finance-sub-label align-start" style="left:${pct(28.5)};max-width:none">
+              <strong>$28.5bn</strong>
+              <span style="white-space:nowrap">Only 4% of global climate finance</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 23x ratio bracket: spans the full height of all three rows -->
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:stretch;padding:4px 0 30px 10px">
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;min-height:180px">
+          <div style="width:10px;height:1.5px;background:rgba(184,74,24,0.5);flex-shrink:0"></div>
+          <div style="width:1.5px;flex:1;background:rgba(184,74,24,0.28)"></div>
+          <div style="background:#B84A18;color:#fff;font-family:'Source Serif 4',Georgia,serif;font-size:10px;font-weight:600;line-height:1.3;padding:5px 7px 6px;border-radius:4px;text-align:center;flex-shrink:0;margin:5px 0">
+            23×<br><span style="font-weight:400;font-size:9px;opacity:0.92">more<br>to harm</span>
+          </div>
+          <div style="width:1.5px;flex:1;background:rgba(184,74,24,0.28)"></div>
+          <div style="width:10px;height:1.5px;background:rgba(184,74,24,0.5);flex-shrink:0"></div>
+        </div>
+      </div>
+
+    </div>`;
+})();
+</script>
+</body>
+</html>
