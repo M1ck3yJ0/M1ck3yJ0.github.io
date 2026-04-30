@@ -1664,6 +1664,135 @@ function txt(parent, x, y, content, opts={}) {
       .attr('stroke-linejoin', 'round');
   });
 
+  // ─── Word watermarks inside each segment ─────────────────
+  const segmentWords = {
+    grazing: ['pasture','meadow','rangeland','sward','forbs','legumes','forage','ryegrass','fescue','bluegrass','clover','vetch','chicory','alfalfa','white clover','sainfoin'],
+    food:    ['wheat','rice','maize','potato','tomato','cassava','soybean','barley','sorghum','millet','legume','pulse','rapeseed','sugarcane','oilseed','taro','lentil','chickpea'],
+    feed:    ['soy','silage','alfalfa'],
+    other:   ['rainforest','mangrove','wetland','urban','city','suburb','road','infrastructure','village','mountain','ice','wilderness','savannah','shrubland','moorland','desert','forest','plains','coastal','tundra','glacier','peatland','estuary','coral','delta','floodplain','lake','river','bog','heath']
+  };
+
+  const defs = svg.append('defs');
+
+  function seededRand(seed) {
+    let s = seed;
+    return function() {
+      s = (s * 1664525 + 1013904223) & 0xffffffff;
+      return (s >>> 0) / 0xffffffff;
+    };
+  }
+
+  function pointInPoly(px, py, poly) {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const xi = poly[i][0], yi = poly[i][1];
+      const xj = poly[j][0], yj = poly[j][1];
+      if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+  }
+
+  cats.forEach((cat, i) => {
+    const poly = cells[i];
+    if (!poly || poly.length < 3) return;
+    const words = segmentWords[cat.id];
+    if (!words || words.length === 0) return;
+
+    const clipId = 'clip-wm-' + cat.id;
+    defs.append('clipPath')
+      .attr('id', clipId)
+      .append('path')
+      .attr('d', 'M' + poly.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join('L') + 'Z');
+
+    const xs = poly.map(p => p[0]);
+    const ys = poly.map(p => p[1]);
+    const minX = Math.min(...xs), maxX = Math.max(...xs);
+    const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+    const opacity = cat.id === 'other' ? 0.08 : cat.id === 'grazing' ? 0.09 : cat.id === 'feed' ? 0.10 : 0.12;
+    const baseColor = cat.id === 'other' ? '26,20,16' : '250,247,242';
+    const textColor = `rgba(${baseColor},${opacity})`;
+
+    const g = svg.append('g')
+      .attr('clip-path', `url(#${clipId})`)
+      .attr('pointer-events', 'none');
+
+    const rand = seededRand(i * 7919 + 3571);
+
+    // Erode polygon inward to keep words clear of edges
+    const erosion = cat.id === 'feed' ? 6 : 14;
+    function erodePoly(p, margin) {
+      const ctr = polyCentroid(p);
+      return p.map(([x, y]) => {
+        const dx = x - ctr[0], dy = y - ctr[1];
+        const d = Math.sqrt(dx*dx + dy*dy);
+        const f = Math.max(0, (d - margin) / d);
+        return [ctr[0] + dx * f, ctr[1] + dy * f];
+      });
+    }
+    const innerPoly = erodePoly(poly, erosion);
+    const ixs = innerPoly.map(p => p[0]);
+    const iys = innerPoly.map(p => p[1]);
+    const iminX = Math.min(...ixs), imaxX = Math.max(...ixs);
+    const iminY = Math.min(...iys), imaxY = Math.max(...iys);
+
+    // Build a grid of valid points inside the eroded polygon
+    const gridStep = cat.id === 'feed' ? 11 : cat.id === 'food' ? 22 : cat.id === 'grazing' ? 17 : 7;
+    const validPoints = [];
+    for (let gx = iminX; gx <= imaxX; gx += gridStep) {
+      for (let gy = iminY; gy <= imaxY; gy += gridStep) {
+        if (pointInPoly(gx, gy, innerPoly)) validPoints.push([gx, gy]);
+      }
+    }
+    if (validPoints.length === 0) return;
+
+    const reps = 2;
+    const pool = [];
+    for (let r = 0; r < reps; r++) words.forEach(w => pool.push(w));
+
+    function cornersInPoly(px, py, hw, hh, angleDeg) {
+      const rad = angleDeg * Math.PI / 180;
+      const cos = Math.cos(rad), sin = Math.sin(rad);
+      return [[-hw,-hh],[hw,-hh],[hw,hh],[-hw,hh]].every(([dx,dy]) =>
+        pointInPoly(px + dx*cos - dy*sin, py + dx*sin + dy*cos, innerPoly)
+      );
+    }
+
+    pool.forEach((word, wi) => {
+      if (wi >= validPoints.length) return; // more words than points: skip extras
+      // Shuffle validPoints using seeded rand index
+      const idx = Math.floor(rand() * validPoints.length);
+      const [gpx, gpy] = validPoints.splice(idx, 1)[0];
+
+      const fontSize = cat.id === 'grazing' ? 9 + rand() * 8 : 9 + rand() * 9;
+      const estHW = word.length * fontSize * 0.32;
+      const estHH = fontSize * 0.6;
+
+      const preferred = (rand() - 0.5) * 50;
+      const attempts = [preferred, 0, 45, -45, 90, -90, 30, -30, 60, -60];
+      let chosenAngle = preferred;
+      for (const angle of attempts) {
+        if (cornersInPoly(gpx, gpy, estHW, estHH, angle)) {
+          chosenAngle = angle;
+          break;
+        }
+      }
+
+      g.append('text')
+        .attr('x', gpx)
+        .attr('y', gpy)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('font-family', "'Source Serif 4', Georgia, serif")
+        .attr('font-size', fontSize.toFixed(1))
+        .attr('font-style', 'italic')
+        .attr('letter-spacing', '0.04em')
+        .attr('fill', textColor)
+        .attr('transform', `rotate(${chosenAngle.toFixed(1)},${gpx.toFixed(1)},${gpy.toFixed(1)})`)
+        .text(word);
+    });
+  });
+   
   // Outer circle border (drawn last so it covers the seam where
   // a cell meets the disk boundary)
   svg.append('circle')
