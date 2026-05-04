@@ -103,6 +103,9 @@
       color: var(--accent-dark);
       text-decoration: none;
     }
+    [data-theme="dark"] .nav-logo {
+      color: var(--accent);
+    }
     .nav-right {
       display: flex;
       align-items: center;
@@ -122,6 +125,10 @@
       text-transform: uppercase;
       transition: color 0.2s;
     }
+    [data-theme="dark"] .nav-links {
+      color: var(--accent);
+    }
+    
     .nav-links a:hover { color: var(--accent); }
     .dark-toggle {
       background: none;
