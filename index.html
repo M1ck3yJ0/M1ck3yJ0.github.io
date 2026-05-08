@@ -41,6 +41,7 @@
       --ink: #f5ebd2;
       --paper: #050d1a;
       --accent: #dfbd69;
+      --accent-dark: #7a561a; 
       --accent-light: #2a1f06;
       --muted: #e8cf93;
       --border: #373737;
@@ -425,9 +426,9 @@
     }
 
     .skill-chip:hover {
-      border-color: var(--cat-color, var(--accent));
+      border-color: var(--cat-color, var(--accent-dark));
       color: var(--cat-color, var(--accent));
-      background: var(--cat-color-light, var(--accent-light));
+      background: var(--cat-color-light, var(--accent-dark));
       transform: translateY(-1px);
     }
     .skill-chip svg, .skill-chip img { width: 20px; height: 20px; flex-shrink: 0; }
