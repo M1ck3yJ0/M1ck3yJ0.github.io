@@ -550,7 +550,14 @@
     }
     .card-cta::after { content: '→'; transition: transform 0.2s; }
     .portfolio-card:hover .card-cta::after { transform: translateX(4px); }
-
+    .card-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      justify-content: space-between;
+      margin-top: auto;
+    }
+    
     /* ABOUT */
     .about-grid {
       display: grid;
@@ -842,21 +849,21 @@
     <p class="section-label reveal">Portfolio</p>
     <div class="portfolio-grid">
 
-      <a class="portfolio-card reveal reveal-delay-1" href="https://milcahjoseph-cbam-dashboard.streamlit.app/" target="_blank" rel="noopener">
+      <div class="portfolio-card reveal reveal-delay-1">
         <div class="card-thumb">
           <img class="static" src="assets/cbam_thumb.png" alt="CBAM Analysis Dashboard">
           <img class="animated" src="assets/cbam_hover.gif" alt="CBAM Analysis Dashboard preview">
           <span class="card-tag">Python · SQL · Sustainability</span>
-          <span class="card-external">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </span>
         </div>
         <div class="card-body">
           <h3 class="card-title">Carbon Border Exposure Analysis</h3>
-          <p class="card-desc">End-to-end data engineering and visualization project exploring which economies face the greatest CBAM exposure, integrating six datasets from raw API sources into a structured SQL database.</p>
-          <span class="card-cta">View live dashboard</span>
+          <p class="card-desc">Six trade, emissions, and regulatory datasets, an eight-stage ETL, a normalized SQLite database, 119 economies, one decision: what actually cuts a European importer's CBAM bill.</p>
+          <div class="card-links">
+            <a class="card-cta" href="https://github.com/M1ck3yJ0/cbam-analysis#cbam-exposure-what-actually-impacts-an-importers-carbon-bill" target="_blank" rel="noopener">Read case study</a>
+            <a class="card-cta" href="https://milcahjoseph-cbam-dashboard.streamlit.app/" target="_blank" rel="noopener">View live dashboard</a>
+          </div>
         </div>
-      </a>
+      </div>
   
       <a class="portfolio-card reveal reveal-delay-2" href="https://milcahjoseph.com/projects/wwf_2024_living_planet/data_story" target="_blank" rel="noopener">
         <div class="card-thumb">
