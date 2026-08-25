@@ -10,8 +10,8 @@
 <meta property="og:description" content="Does the online attention around a company predict how its stock moves, and does its ESG profile change the answer? An MSc Business Analytics thesis, in brief.">
 <meta property="og:type" content="article">
 <!-- TODO: set to the real published path and a real preview image before publishing -->
-<meta property="og:url" content="https://milcahjoseph.com/projects/five-days-of-fame/">
-<meta property="og:image" content="https://milcahjoseph.com/assets/thesis_meta_thumb.png">
+<meta property="og:url" content="https://milcahjoseph.com/projects/esg_finance_thesis/five_days_of_fame.html">
+<meta property="og:image" content="https://github.com/M1ck3yJ0/M1ck3yJ0.github.io/blob/b493d0cc36fcc2b0c7622149a1742fabe62ecf95/assets/thesis_thumb.png">
 <link rel="icon" type="image/png" href="https://milcahjoseph.com/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -57,7 +57,7 @@ html, body {
 
 /* LAYOUT: narrow reading column for long-form prose */
 .page {
-  max-width: 720px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 72px 40px 88px;
 }
@@ -268,14 +268,14 @@ p em { font-style: italic; color: var(--pop); }
   <!-- Title -->
   <p class="kicker" style="text-align:center">Data analysis &amp; writing by Milcah M. Joseph<br>MSc Business Analytics &nbsp;&middot;&nbsp; Dublin Business School</p>
   <h1 class="main-title">Five Days of <em>Fame</em></h1>
-  <p class="dek">ESG is now one of the loudest signals in a company's public image. <span class="q">So does that attention actually predict how its stock moves?</span></p>
+  <p class="ink">ESG is now one of the loudest signals in a company's public image. <span class="q">So does that attention actually predict how its stock moves?</span></p>
 
   <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
 
   <!-- Bottom line -->
   <div class="section" style="margin-top:34px">
     <h2><span class="ink">The bottom</span> <span class="pop">line</span></h2>
-    <p>The public attention around a company, the searches people run, including searches about its sustainability, does carry real information about where its stock is headed. But that information has a shelf life of about a week, and then it is <em>gone</em>. A company's ESG rating, it turns out, has nothing to do with whether the signal shows up at all. And the most useful conclusion is the one that sounds like a letdown: the signal is real, but too fleeting, and too expensive to keep chasing, to build a forecasting tool on. What this project is really about is the discipline it takes to prove that honestly, to tell a genuine pattern apart from tens of thousands of lucky accidents, and to know the difference between a result that impresses and a result that is true.</p>
+    <p>The public attention around a company, the searches people run, including searches about its sustainability, carries real information about where its stock is headed. But that information has a shelf life of about a week, and then it's <em>gone</em>. A company's ESG rating, it turns out, has nothing to do with whether the signal shows up at all. And the most useful conclusion is the one that sounds like a letdown: the signal is real, but too fleeting and too expensive to keep chasing. What this project is really about is the discipline it takes to prove that honestly, to tell a genuine pattern apart from tens of thousands of lucky accidents. And to know the difference between a result that impresses and a result that is true.</p>
   </div>
 
   <!-- The question -->
@@ -289,7 +289,7 @@ p em { font-style: italic; color: var(--pop); }
   <div class="section">
     <h2><span class="ink">Building the data,</span> <span class="pop">and fighting it</span></h2>
     <p>There was no clean dataset waiting for this, so I built one, and it fought me the whole way. It came to 45 companies across the US, UK, and India, sorted into high, mid, and low ESG using FTSE Russell ratings pulled across ten years, so that one unusual year could not define a company's label. Against them, 124 search terms across 6 regions, from 2021 to 2024.</p>
-    <p>The worst of it was hiding in the search data itself. Google Trends does not hand you raw search counts. It scores each batch of terms from 0 to 100, where 100 is simply the busiest point inside that particular batch. Pull two terms in separate batches and both will touch 100 at their own peaks, even if one is searched a thousand times more often than the other. Pulled the obvious way, the numbers look perfectly comparable and are quietly meaningless. So into every single pull, hundreds of them, I wedged one fixed reference term, a constant yardstick that let me rescale every batch onto the same footing. Miss that step, and every comparison in the entire study would have been built on <em>sand</em>.</p>
+    <p>The worst of it was hiding in the search data itself. Google Trends does not hand you raw search counts. It scores each batch of terms from 0 to 100, where 100 is simply the busiest point inside that particular batch. Pull two terms in separate batches and both will touch 100 at their own peaks, even if one is searched a thousand times more often than the other. Pulled the obvious way, the numbers look perfectly comparable and are quietly meaningless. So into every single pull, hundreds of them, I wedged one fixed reference term, a constant yardstick that let me rescale every batch onto the same footing. Miss that step, and every comparison in the entire study would have been built on sand.</p>
     <p>The rest was the ordinary grind of making imperfect data behave, each fix a small judgment call. Trading weeks end on a Friday, except when a holiday shifts them, while Google's search weeks run Sunday to Saturday, so I realigned every trading week back to its Sunday to make the two calendars line up. I worked in returns, that is, percentage moves, rather than raw share prices, so that a company trading at 500 and one trading at 5 sit on the same scale. The models need each data series to be statistically stable over time rather than drifting, so I tested all 785 of them and corrected the one that was not. Search terms that barely moved got dropped, since a flat line carries no information. Coca-Cola trades in both the US and UK, so I kept both listings but counted its name searches only once, so it was not double-weighted. And I threw out 2020 entirely: the pandemic crash was a one-off break in how both markets and search behaved, and training on it would teach the model a world that no longer exists.</p>
     <p>None of this is glamorous. It is also most of the actual work, and getting it wrong quietly poisons everything downstream.</p>
   </div>
