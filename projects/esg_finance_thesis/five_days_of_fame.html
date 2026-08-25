@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Five Days of Fame | Milcah M. Joseph</title>
+<meta name="description" content="Does the online attention around a company predict how its stock moves, and does its ESG profile change the answer? An MSc Business Analytics thesis, in brief.">
+<meta name="author" content="Milcah M. Joseph">
+<meta property="og:title" content="Five Days of Fame">
+<meta property="og:description" content="Does the online attention around a company predict how its stock moves, and does its ESG profile change the answer? An MSc Business Analytics thesis, in brief.">
+<meta property="og:type" content="article">
+<!-- TODO: set to the real published path and a real preview image before publishing -->
+<meta property="og:url" content="https://milcahjoseph.com/projects/five-days-of-fame/">
+<meta property="og:image" content="https://milcahjoseph.com/assets/thesis_meta_thumb.png">
+<link rel="icon" type="image/png" href="https://milcahjoseph.com/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,400&display=swap" rel="stylesheet">
+
+<style>
+/* RESET & BASE */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:   #FAF7F2;
+  --paper:   #F2EDE4;
+  --ink:     #1A1410;
+  --ink-80:  #2E2620;
+  --ink-60:  #3D3530;
+  --ink-35:  #7A7068;
+  --rule:    rgba(26,20,16,0.12);
+  --terra:   #B84A18;
+  --terra-08: rgba(184,74,24,0.09);
+  --terra-15: rgba(184,74,24,0.15);
+
+  --display: 'Playfair Display', Georgia, serif;
+  --body:    'Source Serif 4', Georgia, serif;
+}
+
+html, body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 19px;
+  line-height: 1.72;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Home link */
+.home-link {
+  position: fixed; top: 20px; left: 24px; z-index: 999;
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; opacity: 0.75; transition: opacity 0.2s;
+}
+.home-link:hover { opacity: 1; }
+.home-link img { border-radius: 4px; }
+
+/* LAYOUT: narrow reading column for long-form prose */
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 72px 40px 88px;
+}
+
+/* TYPOGRAPHY */
+.kicker {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  line-height: 1.7;
+}
+
+.main-title {
+  font-family: var(--display);
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1.04;
+  color: var(--ink);
+  margin: 16px 0 18px;
+  text-align: center;
+}
+.main-title em { font-style: italic; color: var(--terra); }
+
+.dek {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 23px;
+  line-height: 1.4;
+  color: var(--ink-60);
+  text-align: center;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.dek .q { color: var(--terra); }
+
+h2 {
+  font-family: var(--display);
+  font-size: 31px;
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+h2 .ink  { color: var(--ink); font-style: normal; }
+h2 .terra { color: var(--terra); font-style: italic; }
+
+.section { margin-top: 54px; }
+
+p { margin-bottom: 20px; color: var(--ink-80); }
+p:last-child { margin-bottom: 0; }
+p strong { font-weight: 600; color: var(--ink); }
+p em { font-style: italic; color: var(--terra); }
+.paren { color: var(--ink-35); }
+
+/* ORNAMENT */
+.ornament {
+  display: flex; align-items: center; gap: 12px;
+  margin: 34px 0 6px;
+}
+.ornament-line { flex: 1; height: 1px; background: var(--rule); }
+.ornament-mark {
+  width: 5px; height: 5px;
+  border: 1px solid var(--ink-35);
+  transform: rotate(45deg);
+}
+
+/* STAT PULL */
+.stat-pull {
+  display: flex; align-items: center; gap: 18px;
+  margin: 30px 0 8px;
+  border-left: 2px solid var(--terra);
+  padding-left: 20px;
+}
+.stat-pull-num {
+  font-family: var(--display);
+  font-size: 58px;
+  line-height: 1;
+  color: var(--terra);
+  flex-shrink: 0;
+}
+.stat-pull-lbl {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.42;
+  max-width: 320px;
+}
+
+/* PULL QUOTE */
+.pull {
+  margin: 20px 0 4px;
+  padding-left: 20px;
+  border-left: 3px solid var(--terra);
+}
+.pull p {
+  font-family: var(--display);
+  font-size: 27px;
+  line-height: 1.18;
+  color: var(--terra);
+  margin: 0;
+}
+
+/* CHART */
+.chart-wrap { margin: 34px 0 8px; }
+.chart-title-standard {
+  margin: 0 0 14px;
+  text-align: center;
+  font-family: var(--body);
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  font-weight: 600;
+  line-height: 1.3;
+}
+.funnel-svg { width: 100%; height: auto; display: block; }
+.funnel-svg .track { fill: var(--terra-08); }
+.funnel-svg .bar   { fill: var(--terra); }
+.funnel-svg .wk    { font-family: var(--body); font-size: 15px; fill: var(--ink-60); }
+.funnel-svg .val   { font-family: var(--display); font-size: 23px; fill: var(--ink); }
+.chart-note {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--ink-35);
+  line-height: 1.5;
+}
+
+/* READ MORE */
+.readmore {
+  margin-top: 60px;
+  padding-top: 26px;
+  border-top: 1px solid var(--rule);
+  text-align: center;
+}
+.readmore .label {
+  font-family: var(--body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--ink-35);
+  margin-bottom: 14px;
+}
+.readmore-links {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 10px 26px;
+}
+.readmore-links a {
+  font-family: var(--body);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--terra);
+  text-decoration: none;
+  border-bottom: 1px solid var(--terra-15);
+  padding-bottom: 2px;
+  transition: border-color 0.2s;
+}
+.readmore-links a:hover { border-bottom-color: var(--terra); }
+
+.credit-note {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 14.5px;
+  color: var(--ink-35);
+  line-height: 1.6;
+}
+
+/* FOOTER */
+.foot {
+  margin-top: 40px;
+  text-align: center;
+  padding: 22px 0 4px;
+  border-top: 1px solid var(--rule);
+}
+.foot .kicker { color: var(--ink-60); font-size: 13px; letter-spacing: .14em; }
+.foot a { color: var(--ink-60); text-decoration: none; }
+.foot a:hover { color: var(--terra); }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  html, body { font-size: 18px; }
+  .page { max-width: none; width: 100%; padding: 30px 18px 60px; }
+  .main-title { font-size: 40px; }
+  .dek { font-size: 20px; }
+  h2 { font-size: 27px; }
+  .stat-pull-num { font-size: 48px; }
+  .pull p { font-size: 23px; }
+  .home-link { top: 14px; left: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<a class="home-link" href="https://milcahjoseph.com" aria-label="Home">
+  <img src="https://milcahjoseph.com/assets/favicon.png" width="26" height="26" alt="Home">
+</a>
+
+<div class="page">
+
+  <!-- Title -->
+  <p class="kicker" style="text-align:center">Data analysis &amp; writing by Milcah M. Joseph<br>MSc Business Analytics &nbsp;&middot;&nbsp; Dublin Business School</p>
+  <h1 class="main-title">Five Days of <em>Fame</em></h1>
+  <p class="dek">ESG is now one of the loudest signals in a company's public image. <span class="q">So does that attention actually predict how its stock moves?</span></p>
+
+  <div class="ornament"><div class="ornament-line"></div><div class="ornament-mark"></div><div class="ornament-line"></div></div>
+
+  <!-- Bottom line -->
+  <div class="section" style="margin-top:34px">
+    <h2><span class="ink">The bottom</span> <span class="terra">line</span></h2>
+    <p>The public attention around a company, the searches people run, including searches about its sustainability, does carry real information about where its stock is headed. But that information has a shelf life of about a week, and then it is <em>gone</em>. A company's ESG rating, it turns out, has nothing to do with whether the signal shows up at all. And the most useful conclusion is the one that sounds like a letdown: the signal is real, but too fleeting, and too expensive to keep chasing, to build a forecasting tool on. What this project is really about is the discipline it takes to prove that honestly, to tell a genuine pattern apart from tens of thousands of lucky accidents, and to know the difference between a result that impresses and a result that is true.</p>
+  </div>
+
+  <!-- The question -->
+  <div class="section">
+    <h2><span class="ink">The question</span> <span class="terra">worth asking</span></h2>
+    <p>ESG has become one of the loudest signals in modern markets, a shorthand for a company's reputation, its risk, its resilience. Which raises a fair question. If the world is paying this much attention to how companies behave, does that attention actually surface in their share prices? And does a company's sustainability standing change how readable its fortunes are?</p>
+    <p>Those were the two things I set out to test: whether the online attention around a firm, measured through Google search interest and including interest in its sustainability, improves a forecast of its weekly returns, and whether high-, mid-, or low-ESG companies behave any differently. I used weekly stock returns as a practical stand-in for near-term financial performance, and Google Trends search volume as a measurable proxy for public attention. Simple questions. The answers took a lot of machinery to earn.</p>
+  </div>
+
+  <!-- Data -->
+  <div class="section">
+    <h2><span class="ink">Building the data,</span> <span class="terra">and fighting it</span></h2>
+    <p>There was no clean dataset waiting for this, so I built one, and it fought me the whole way. It came to 45 companies across the US, UK, and India, sorted into high, mid, and low ESG using FTSE Russell ratings pulled across ten years, so that one unusual year could not define a company's label. Against them, 124 search terms across 6 regions, from 2021 to 2024.</p>
+    <p>The worst of it was hiding in the search data itself. Google Trends does not hand you raw search counts. It scores each batch of terms from 0 to 100, where 100 is simply the busiest point inside that particular batch. Pull two terms in separate batches and both will touch 100 at their own peaks, even if one is searched a thousand times more often than the other. Pulled the obvious way, the numbers look perfectly comparable and are quietly meaningless. So into every single pull, hundreds of them, I wedged one fixed reference term, a constant yardstick that let me rescale every batch onto the same footing. Miss that step, and every comparison in the entire study would have been built on <em>sand</em>.</p>
+    <p>The rest was the ordinary grind of making imperfect data behave, each fix a small judgment call. Trading weeks end on a Friday, except when a holiday shifts them, while Google's search weeks run Sunday to Saturday, so I realigned every trading week back to its Sunday to make the two calendars line up. I worked in returns, that is, percentage moves, rather than raw share prices, so that a company trading at 500 and one trading at 5 sit on the same scale. The models need each data series to be statistically stable over time rather than drifting, so I tested all 785 of them and corrected the one that was not. Search terms that barely moved got dropped, since a flat line carries no information. Coca-Cola trades in both the US and UK, so I kept both listings but counted its name searches only once, so it was not double-weighted. And I threw out 2020 entirely: the pandemic crash was a one-off break in how both markets and search behaved, and training on it would teach the model a world that no longer exists.</p>
+    <p>None of this is glamorous. It is also most of the actual work, and getting it wrong quietly poisons everything downstream.</p>
+  </div>
+
+  <!-- Method -->
+  <div class="section">
+    <h2><span class="ink">Two nets</span> <span class="terra">and a gauntlet</span></h2>
+    <p>First, a wide net. I tested every company against every search term in every region, more than 128,000 combinations in all. But there is a trap in testing that much, and it is the one most attention-and-markets studies fall into: run enough tests and pure chance will hand you significant-looking results even when nothing real is there. Flip enough coins and some will land heads ten times in a row. So before I trusted a single result, I applied a correction that raises the bar in step with how many tests were run <span class="paren">(a false-discovery-rate control)</span>, which throws out the lucky flukes and keeps only what clears the higher bar.</p>
+    <p>Then, a gauntlet. Passing a statistics test is a surprisingly low bar, and a result can be statistically significant while being worthless to anyone actually trying to use it. So every surviving signal had to clear a second set of hurdles, the kind a trader would care about rather than a statistician. It had to beat a plain model that looks only at a stock's own past. It had to beat an even plainer one that just assumes next week looks like this week, and beat it by a clear margin. And its mistakes had to stay small relative to how much the stock naturally bounces around week to week <span class="paren">(in technical terms, forecast error under half the stock's own volatility)</span>. Only what cleared all of that counted.</p>
+    <p>I also added one rule most studies skip. A predictor got credit for working three weeks out only if it had already worked at one week and at two. No going back to cherry-pick a lucky later week after an early miss. Fail early, and it was done.</p>
+  </div>
+
+  <!-- Findings -->
+  <div class="section">
+    <h2><span class="ink">What the</span> <span class="terra">data said</span></h2>
+    <p>There is real signal in here. At one week out, search attention improved the forecast for 43 of the 45 companies, and about a fifth of all the candidate models cleared every one of those economic hurdles. Set against how rare survivors were, only about half a percent of the 128,000 relationships held up at all, that fifth might sound underwhelming. It is the opposite. When you have tested this many combinations, chance alone would have handed you false signals in roughly five percent of them. Coming in well under that, with signals that then survive a much harder gauntlet, is exactly the fingerprint of something real hiding in the noise.</p>
+
+    <div class="stat-pull">
+      <div class="stat-pull-num">43/45</div>
+      <div class="stat-pull-lbl">companies where search attention sharpened the one-week-ahead forecast.</div>
+    </div>
+
+    <p>And then it is gone. This is where the title comes from. Of the 592 signals that worked one week out, only 158 still worked at two weeks, 48 at three, and 13 at four. Search attention gets absorbed into the price within a single trading week, and after that the trail goes cold.</p>
+
+    <div class="pull"><p>The edge does not fade gently. It falls off a cliff.</p></div>
+
+    <div class="chart-wrap">
+      <div class="chart-title-standard">Predictors still working, by weeks ahead</div>
+      <svg class="funnel-svg" viewBox="0 0 760 290" role="img" aria-label="Bar chart of predictors surviving each forecast horizon: 592 at week one, 158 at week two, 48 at week three, 13 at week four.">
+        <!-- Week 1 -->
+        <rect class="track" x="108" y="25" width="500" height="42" rx="2"></rect>
+        <rect class="bar"   x="108" y="25" width="500" height="42" rx="2"></rect>
+        <text class="wk"  x="96" y="46" text-anchor="end" dominant-baseline="middle">Week 1</text>
+        <text class="val" x="624" y="46" dominant-baseline="middle">592</text>
+        <!-- Week 2 -->
+        <rect class="track" x="108" y="91" width="500" height="42" rx="2"></rect>
+        <rect class="bar"   x="108" y="91" width="133" height="42" rx="2"></rect>
+        <text class="wk"  x="96" y="112" text-anchor="end" dominant-baseline="middle">Week 2</text>
+        <text class="val" x="257" y="112" dominant-baseline="middle">158</text>
+        <!-- Week 3 -->
+        <rect class="track" x="108" y="157" width="500" height="42" rx="2"></rect>
+        <rect class="bar"   x="108" y="157" width="41" height="42" rx="2"></rect>
+        <text class="wk"  x="96" y="178" text-anchor="end" dominant-baseline="middle">Week 3</text>
+        <text class="val" x="165" y="178" dominant-baseline="middle">48</text>
+        <!-- Week 4 -->
+        <rect class="track" x="108" y="223" width="500" height="42" rx="2"></rect>
+        <rect class="bar"   x="108" y="223" width="11" height="42" rx="2"></rect>
+        <text class="wk"  x="96" y="244" text-anchor="end" dominant-baseline="middle">Week 4</text>
+        <text class="val" x="135" y="244" dominant-baseline="middle">13</text>
+      </svg>
+      <p class="chart-note">Faint bars mark the week-one baseline. Of 592 signals that work one week out, 13 still hold four weeks later.</p>
+    </div>
+
+    <p>And the ESG question, the one I started with? A company's sustainability rating had nothing to do with any of it. When I tested whether high-, mid-, or low-ESG firms were more or less predictable, the result came back flat <span class="paren">(statistically: chi-square (2) = 1.84, p = .40)</span>. Green companies, brown companies, and everything in between showed roughly the same hit rate. Whatever makes a company's fortunes briefly readable from public attention, its ESG standing is not it.</p>
+  </div>
+
+  <!-- Uncertainty -->
+  <div class="section">
+    <h2><span class="ink">What I</span> <span class="terra">won't claim</span></h2>
+    <p>It would be easy to squeeze more out of this than it can bear, so here is the line I will not cross. The one-week signal, I am confident in: it is real, it survives the strict tests, and it decays the same way across companies and time periods. Almost everything else, I am treating as an observation, not a conclusion. Most of the apparent differences, by region, by company size, by ESG, dissolve once the economic hurdles are applied, and the few that linger are not strong enough to trust at this sample size. Searches from the Worldwide region, for instance, looked over-represented among the winners, until I ran the numbers and found the pattern sat well within what chance would produce <span class="paren">(a goodness-of-fit test put it at p &#8776; 0.21)</span>. With 45 companies, that is a hint to investigate, not a finding to report. Knowing which is which is the whole job.</p>
+  </div>
+
+  <!-- Conclusion -->
+  <div class="section">
+    <h2><span class="ink">So, is it</span> <span class="terra">useful?</span></h2>
+    <p>So is this a usable forecasting tool? No, and saying so plainly is the point. The signal is real, but it lives about a week, and keeping it current would mean re-screening thousands of search terms and refitting every company every single week, an enormous amount of work for a very short look ahead. The deeper limit is the data itself: Google's weekly search figures are coarse and cannot be pulled in bulk, which caps how sophisticated a model can get, while the simple, transparent model I used cannot capture the more tangled patterns that might survive longer. A better answer probably exists. It would need richer data and a cleverer model than the current tools allow.</p>
+    <p>What this project actually delivers is not a forecast. It is the method, and the honesty. A repeatable way to sift a huge, noisy pile of signals under the constant risk of fooling yourself, and to come out the other side able to say which patterns are real, which are luck, and, hardest of all, which are real but still not worth acting on. Most analyses are built to find a win. This one was built to find out what was <em>true</em>, and to say so even when the answer was that it does not work.</p>
+  </div>
+
+  <!-- Read more -->
+  <div class="readmore">
+    <div class="label">Read more</div>
+    <div class="readmore-links">
+      <a href="https://github.com/M1ck3yJ0/five-days-of-fame/blob/main/reports/Five_Days_of_Fame_Thesis.pdf">Full thesis (PDF)</a>
+      <a href="https://colab.research.google.com/drive/1K-Ccuc4_UJX4-G541jvRm3ZZYGU7OMd6?usp=sharing">Run the code (Colab)</a>
+      <a href="https://github.com/M1ck3yJ0/five-days-of-fame">Browse the repo</a>
+    </div>
+    <p class="credit-note">First Class Honours (81%), MSc Business Analytics, Dublin Business School.<br>Built in Python (statsmodels, scikit-learn, pandas, numpy) on FactSet and Google Trends data.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="foot">
+    <p class="kicker">Milcah M. Joseph &nbsp;&middot;&nbsp; Data analysis &amp; writing</p>
+    <p class="kicker" style="margin-top:6px">
+      <a href="mailto:milcahjoseph@live.com">Email</a> &nbsp;&middot;&nbsp;
+      <a href="https://milcahjoseph.com">Website</a> &nbsp;&middot;&nbsp;
+      <a href="https://linkedin.com/in/milcah-mary-joseph/">LinkedIn</a> &nbsp;&middot;&nbsp;
+      <a href="https://github.com/M1ck3yJ0">GitHub</a>
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
