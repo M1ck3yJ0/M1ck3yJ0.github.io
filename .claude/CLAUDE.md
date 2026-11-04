@@ -7,7 +7,7 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 - Never push to `main` and never merge a pull request. Milcah reviews and merges every change herself.
 - Commit as Milcah: before your first commit, run `git config user.name "Milcah M. Joseph"` and `git config user.email "98636311+M1ck3yJ0@users.noreply.github.com"`. Add no Co-Authored-By line, session link or other Claude attribution to commits or pull requests.
 - Do each piece of work on a new branch from the latest `main`, push the branch and open a pull request.
-- Keep each commit to one change, with a plain message saying what changed and why.
+- Commit after every step, so each commit holds one small change: creating a folder, adding a file, making a separate edit. Git can't store an empty folder, so a new folder gets a `.gitkeep` file in its own commit. Give each commit a plain message saying what changed and why.
 - When you open a pull request, give Milcah its link and say in plain words what changed and what to check before merging.
 - Don't edit `CNAME` or delete files unless she asks.
 
