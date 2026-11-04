@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Leaky Loop | Milcah M. Joseph</title>
+<meta name="description" content="Europe uses 6.4 billion tonnes of material a year, and about one tonne in nine comes from recycled waste. A data story on where the rest goes, how far recycling could take each EU country, and why circularity means using less.">
+<meta name="author" content="Milcah M. Joseph">
+<meta property="og:title" content="The Leaky Loop">
+<meta property="og:description" content="Where Europe's 6.4 billion tonnes of material go, how far recycling could take each EU country, and why circularity means using less.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://milcahjoseph.com/projects/eu_circularity/leaky_loop.html">
+<meta property="og:image" content="https://milcahjoseph.com/assets/leaky_loop_meta_thumb.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Leaky Loop: of every 100 tonnes of material moving through Europe's economy, 20 come back as waste.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="https://milcahjoseph.com/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ground:      #F3F5F4;
+  --paper:       #FFFFFF;
+  --ink:         #16201B;
+  --ink-2:       #34403A;
+  --ink-3:       #56615B;
+  --rule:        #D3DAD6;
+  --grid:        #E1E6E3;
+
+  /* three loud nature colors, each with one meaning across the page */
+  --blue:        #1E6FD9;  /* what comes back around: recycled, circular */
+  --blue-ink:    #195FBF;
+  --blue-soft:   #A9C7EF;
+  --ochre:       #D39A2C;  /* rock, sand, gravel and soil */
+  --ochre-soft:  #EDD5A1;
+  --green:       #287E3A;  /* biomass: crops, grass, wood, food */
+  --green-soft:  #AFD5AE;
+
+  --fossil:      #2E3934;
+  --metal:       #87918C;
+  --exit-1:      #AEB7B2;
+  --exit-2:      #CDD3CF;
+  --exit-3:      #939D98;
+  --exit-4:      #BCC4BF;
+  --invest:      #3A4640;
+  --spend:       #AEB7B2;
+
+  --sans:  'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--ground);
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1.62;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.home-link {
+  position: fixed; top: 18px; left: 22px; z-index: 30;
+  opacity: .75; transition: opacity .2s;
+}
+.home-link:hover, .home-link:focus-visible { opacity: 1; }
+.home-link img { display: block; border-radius: 4px; }
+
+.page { max-width: 780px; margin: 0 auto; padding: 88px 28px 72px; }
+
+/* Header */
+.byline { font: 400 15px/1.5 var(--sans); color: var(--ink-3); }
+h1 {
+  font-family: var(--sans); font-stretch: 112%; font-weight: 760;
+  font-size: clamp(44px, 9.5vw, 76px); line-height: .98; letter-spacing: -.015em;
+  color: var(--ink); margin: 16px 0 22px;
+}
+h1 .loop { color: var(--blue); }
+.dek { font-size: 24px; line-height: 1.45; color: var(--ink-2); max-width: 32em; margin: 0; }
+
+/* Text */
+h2 {
+  font-family: var(--sans); font-stretch: 106%; font-weight: 680;
+  font-size: 30px; line-height: 1.16; letter-spacing: -.005em;
+  color: var(--ink); margin: 72px 0 18px; max-width: 24em;
+}
+p { max-width: 64ch; margin: 0 0 20px; }
+p strong, li strong { color: var(--ink); font-weight: 650; }
+.claim {
+  font: 700 25px/1.28 var(--sans); font-stretch: 104%;
+  color: var(--ink); margin: 32px 0; max-width: 26em;
+}
+ul.plain { max-width: 64ch; margin: 0 0 20px; padding-left: 1.1em; }
+ul.plain li { margin: 0 0 10px; padding-left: .2em; }
+
+/* Figures */
+.fig { margin: 42px 0 36px; }
+.fig-title { font: 650 18px/1.32 var(--sans); color: var(--ink); max-width: 46ch; margin: 0 0 4px; }
+.fig-sub { font: 400 14px/1.45 var(--sans); color: var(--ink-3); margin: 0 0 16px; max-width: 72ch; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--sans); font-variant-numeric: tabular-nums; }
+.fig-note { font: 400 13.5px/1.5 var(--sans); color: var(--ink-3); margin: 14px 0 0; max-width: 72ch; }
+
+.t-big   { font-weight: 720; font-size: 26px; fill: var(--ink); }
+.t-mid   { font-weight: 720; font-size: 18px; fill: var(--ink); }
+.t-lab   { font-size: 14.5px; fill: var(--ink-2); }
+.t-name  { font-size: 13.5px; fill: var(--ink-2); }
+.t-sm    { font-size: 12.5px; fill: var(--ink-3); }
+.t-strong { font-weight: 650; fill: var(--ink); }
+.t-halo  { paint-order: stroke; stroke: var(--ground); stroke-width: 4px; stroke-linejoin: round; }
+.axis-lab { font-size: 12px; fill: var(--ink-3); }
+
+.loop-key { list-style: none; margin: 16px 0 0; font: 400 14.5px/1.45 var(--sans); color: var(--ink-2); display: grid; gap: 6px; }
+.loop-key li { display: grid; grid-template-columns: 2.6em 1fr; }
+.loop-key b { font-weight: 720; color: var(--ink); }
+
+details.data { margin: 18px 0 0; font: 400 14px/1.45 var(--sans); color: var(--ink-2); }
+details.data summary { cursor: pointer; font-weight: 600; color: var(--blue-ink); }
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+details.data table { border-collapse: collapse; width: 100%; min-width: 520px; font-variant-numeric: tabular-nums; }
+details.data th, details.data td { text-align: right; padding: 6px 8px; border-bottom: 1px solid var(--grid); }
+details.data th:first-child, details.data td:first-child { text-align: left; }
+details.data th { font-weight: 600; color: var(--ink); vertical-align: bottom; line-height: 1.3; }
+details.data tr.eu td { font-weight: 650; color: var(--ink); }
+
+.tip {
+  position: absolute; z-index: 40; max-width: 290px;
+  padding: 9px 11px; background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 3px;
+  font: 400 13.5px/1.45 var(--sans); color: var(--ink-2);
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.tip b { display: block; color: var(--ink); font-weight: 650; margin-bottom: 3px; }
+.tip .row { display: flex; justify-content: space-between; gap: 16px; }
+.tip .row span:last-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+
+/* Method, sources, read more, footer */
+.sources { font: 400 14.5px/1.55 var(--sans); color: var(--ink-3); max-width: 72ch; padding-left: 1.1em; }
+.sources li { margin-bottom: 6px; }
+.sources a { color: var(--ink-2); }
+.readmore { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--rule); }
+.readmore .label { font: 600 15px/1.4 var(--sans); color: var(--ink); margin-bottom: 10px; }
+.readmore-links { display: flex; flex-wrap: wrap; gap: 8px 26px; }
+.readmore-links a {
+  font: 500 16px/1.5 var(--sans); color: var(--blue-ink); text-decoration: none;
+  border-bottom: 1px solid var(--blue-soft); padding-bottom: 1px;
+}
+.readmore-links a:hover { border-bottom-color: var(--blue-ink); }
+.credit-note { font: 400 14px/1.55 var(--sans); color: var(--ink-3); margin-top: 18px; max-width: 72ch; }
+.foot { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--rule); font: 400 14px/1.7 var(--sans); color: var(--ink-3); }
+.foot a { color: var(--ink-2); text-decoration: none; }
+.foot a:hover { color: var(--blue-ink); }
+
+@media (max-width: 600px) {
+  body { font-size: 18.5px; }
+  .page { padding: 64px 18px 56px; }
+  .dek { font-size: 21px; }
+  h2 { font-size: 25px; margin-top: 56px; }
+  .claim { font-size: 21px; }
+  .home-link { top: 14px; left: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<a class="home-link" href="https://milcahjoseph.com" aria-label="Home">
+  <img src="https://milcahjoseph.com/assets/favicon.png" width="26" height="26" alt="Home">
+</a>
+
+<main class="page">
+
+  <header>
+    <p class="byline">Data analysis and writing by Milcah M. Joseph<br>November 2026 &middot; Eurostat data for 2022</p>
+    <h1>The Leaky <span class="loop">Loop</span></h1>
+    <p class="dek">Europe uses 6.4 billion tonnes of material a year, and about one tonne in nine comes from recycled waste. Where does the rest go, how far could recycling take us, and what would it really take to close the loop?</p>
+  </header>
+
+  <section>
+    <h2>The bottom line</h2>
+    <p>Circularity means keeping materials in use instead of digging, growing or pumping new ones. Measured that way, Europe's economy is a leaky loop. Of every 100 tonnes of material moving through it in 2022, 40 were built into buildings, roads and machines, 29 were burned or eaten, and 11 were exported or spread on land. Only 20 came back as waste, and more than half of that was soil and rock.</p>
+    <p>So recycling, the one thing the EU's circularity rate counts, has little to work with. Even if Europe had recycled every tonne of waste it treated, its rate would have reached about its 2030 target and no further. The rest of the gap comes down to what we use, how long we keep it and how much we need in the first place.</p>
+    <p class="claim">Europe can't recycle its way to circularity. It has to use less material.</p>
+    <p>That isn't bad news. The lever that matters most has no ceiling.</p>
+  </section>
+
+  <section>
+    <h2>Most of what Europe uses never comes back</h2>
+    <p>Europe used 6.4 billion tonnes of material in 2022: about 14 tonnes per person, or 39 kg each, every day. The EU tracks how circular that is with one number, the circular material use rate, the share of the material used that came from recycled waste. In 2022 it was <strong>11.4%</strong>, which means almost nine in every ten tonnes were freshly dug, grown or pumped. The EU wants to double the rate, to <strong>24% by 2030</strong>.</p>
+    <p>Why is it so low? Follow the material.</p>
+
+    <figure class="fig" id="fig-loop">
+      <figcaption>
+        <p class="fig-title">Of every 100 tonnes moving through Europe's economy, 20 come back as waste</p>
+        <p class="fig-sub">EU, 2022, tonnes out of every 100</p>
+      </figcaption>
+      <div class="chart"></div>
+      <p class="fig-note">Material processed in the EU: extracted at home, imported, recycled or backfilled. Shares rounded. Soil and rock (soils, dredging spoils and other mineral waste, mostly from mining) were 53.5% of the waste the EU treated, so their split of the 20 is approximate. Source: Eurostat, env_ac_sd, env_wassd and env_wastrt.</p>
+    </figure>
+
+    <p>Forty tonnes are built into stock: buildings, roads, pipes and machines that will stand for decades. Some of that will come back one day as demolition waste, but not soon. Twenty-nine are burned or eaten, as fuel, food and feed, and will never come back as material at all. Eight are exported, and three are spread on land as fertilizer, manure and de-icing salt.</p>
+    <p>That leaves <strong>20 tonnes coming back as waste, and more than half of it is soil and rock</strong>: earth dug out for foundations, dredged sediment and rock left over from mining.</p>
+  </section>
+
+  <section>
+    <h2>Half of it is sand, gravel and rock</h2>
+    <p>What we use decides where it ends up. By weight, about half of what Europe consumes is construction minerals: sand and gravel, limestone and building stone. <strong>Sand and gravel alone is a third, 13 kg per person a day</strong>, and the single largest material in most EU countries. It goes into concrete, asphalt and foundations, and there it stays. A fifth is fossil fuel, mostly burned. Less than a quarter is biomass: crops, wood, and the grass and fodder livestock eat.</p>
+
+    <figure class="fig" id="fig-materials">
+      <figcaption>
+        <p class="fig-title">Ireland uses 66 kg of material per person a day, and its biggest single material is grass</p>
+        <p class="fig-sub">Material consumed per person per day, 2022, kg</p>
+      </figcaption>
+      <div class="chart"></div>
+      <p class="fig-note">Domestic material consumption per person in 2022, divided by 365. Limestone and other minerals: limestone and gypsum, building stone, clays and others. Other biomass: crops, wood and fish. Rounded, so segments may not add up to the totals. Source: Eurostat, env_ac_mfa.</p>
+    </figure>
+
+    <p>Ireland shows how much the mix matters. Its largest material isn't sand or rock but <strong>grass and fodder for livestock: 18 kg per person a day, almost eight times the EU average</strong>. Next comes limestone, at 16 kg. In all, Ireland uses 66 kg of material per person a day, 1.7 times the EU average. Much of the beef and dairy that grass becomes is exported, but the grass is counted where it grows. And grass that's eaten never comes back as waste.</p>
+  </section>
+
+  <section>
+    <h2>Even recycling every tonne it treats only gets Europe to its target</h2>
+    <p>Here's where the measure narrows. The circularity rate counts one thing as circular: waste that is recycled. Repair, reuse, sharing and longer life don't show up as circular use at all. They only show up indirectly, as less material consumed. Within the rate's own logic, recycling can only work with the waste that comes back.</p>
+    <p>How far could that go? I ran the numbers for 2022, the latest year where every figure is reported rather than estimated. Had Europe recycled every tonne of waste it treated, soil and mining rock included, its rate would have been <strong>23.7%</strong>, or 27.6% if every recycled tonne had replaced a tonne of new material. Leave out the soil and rock, and it drops to <strong>15.4%</strong>.</p>
+    <p class="claim">Even perfect recycling would only take Europe to about its 2030 target.</p>
+    <p>That's a ceiling, not a plan. Nobody recycles every tonne of contaminated soil or mining rock, so the real limit is lower. The European Environment Agency reached the same verdict for the EU as a whole in 2023: even a drastic rise in recycling wouldn't double the rate. What I haven't seen worked out before is the ceiling for each country.</p>
+  </section>
+
+  <section>
+    <h2>Five countries couldn't reach 12% even recycling every tonne they treat</h2>
+    <p>Every country has its own ceiling, and some are strikingly low. Recycling every tonne they treated in 2022, <strong>Latvia, Lithuania, Portugal, Croatia and Ireland would still have stayed below 12%</strong>, about where the EU is today. Fourteen or fifteen of the 27 couldn't have reached the EU's 24%, depending on whether recycled material replaces new material. Leave out soil and rock, and only Estonia, Malta and the Netherlands could have.</p>
+
+    <figure class="fig" id="fig-countries">
+      <figcaption>
+        <p class="fig-title">Recycling alone would leave most of Europe short of 24%, and every country far from a closed loop</p>
+        <p class="fig-sub">Circularity rate today and with every tonne of treated waste recycled, 2022, %</p>
+      </figcaption>
+      <div class="chart"></div>
+      <p class="fig-note">Today: Eurostat's circular material use rate. Ceilings: my calculation, recycling every tonne of waste each country treated, with consumption unchanged. Blue runs from today to recycling all waste except soil and rock; ochre adds soil and rock. Sweden doesn't publish the split. Hover or tap a row for the figures. Source: Eurostat, env_ac_cur, env_ac_mfa and env_wastrt.</p>
+      <details class="data">
+        <summary>Every country's numbers</summary>
+        <div class="table-wrap"><table id="country-table"></table></div>
+      </details>
+    </figure>
+
+    <p>The surprise is what sets the ceiling. It isn't how well a country recycles. <strong>Italy recycles 86% of the waste it treats and has already used 88% of its ceiling. Romania recycles less than 5% and has used 7% of its own.</strong> Across the 27, the ceiling follows one thing almost exactly: how much waste a country treats compared with how much material it consumes.</p>
+    <p>That leaves two kinds of low ceiling. Latvia, Lithuania, Portugal and Croatia recycle much of what they treat, but treat little waste for what they consume. They may be building far more than they demolish, or their soil and construction waste may simply not show up in the statistics.</p>
+    <p>Ireland is the other kind. Per person, it treats about twice as much waste as those four, but 70% of it is soil and rock, almost all of the soil is used to fill land rather than recycled, and Ireland consumes so much, grass above all, that its waste can never catch up. With the EU's average amount of grass and fodder per person, Ireland's ceiling would be 13 to 15%.</p>
+    <p>That matters now. Ireland's new circular economy strategy, published in February, aims for 12% by 2030, two points a year. On these numbers, recycling alone can't get there.</p>
+  </section>
+
+  <section>
+    <h2>More than half ends up in buildings and food</h2>
+    <p>Step back from waste and ask a different question: what is all this material for? Eurostat's material footprint follows the raw materials behind everything bought in the EU, including those extracted abroad to make imports, and assigns them to the final product. In 2022 it came to 6.7 billion tonnes.</p>
+
+    <figure class="fig" id="fig-footprint">
+      <figcaption>
+        <p class="fig-title">Buildings are almost all investment; food is mostly household spending</p>
+        <p class="fig-sub">Share of the EU's material footprint by what it ends up as, 2022, %</p>
+      </figcaption>
+      <div class="chart"></div>
+      <p class="fig-note">Raw material consumption, my grouping of Eurostat's 63 product groups; food includes restaurants and catering. Investment: new buildings, infrastructure, machinery and stocks, whoever pays for them, households buying new homes included. Spending: what households, governments and non-profits buy and use up. Source: Eurostat, env_ac_rmefd.</p>
+    </figure>
+
+    <p><strong>More than half went into two things: buildings and infrastructure (36.5%) and food (18.5%).</strong> One stays locked up for decades; the other is eaten. Services, from real estate and public administration to health care and shops, took another fifth. The manufactured goods households buy, from clothes to phones to sofas, were about 6%.</p>
+    <p>That changes who can act. Of the material in buildings and infrastructure, 95% is investment: new homes, offices, roads and networks, paid for by companies, governments and home buyers. Food is the opposite: households buy 88% of the material behind it. So "use less material" is not mainly a call to shop less. It's a question for whoever designs, specifies, builds and buys: developers, engineers, public buyers, manufacturers and food companies.</p>
+  </section>
+
+  <section>
+    <h2>The heaviest materials aren't the ones that heat the planet</h2>
+    <p>One caution before the big picture. Circularity is counted in tonnes, and tonnes reward the heaviest materials: recycling a tonne of rubble moves the rate as much as recycling a tonne of aluminum. But weight isn't impact. Researchers for the European Environment Agency compared the weight of each material group with the climate impact of producing it, up to the factory gate, for 2022.</p>
+
+    <figure class="fig" id="fig-impact">
+      <figcaption>
+        <p class="fig-title">Minerals are half the weight and a ninth of the climate impact</p>
+        <p class="fig-sub">Share of EU material use by weight and by climate impact, 2022, %</p>
+      </figcaption>
+      <div class="chart"></div>
+      <p class="fig-note">Climate impact of producing materials ready for use, from extraction to the factory gate; burning fuel comes later and isn't included. Minerals: non-metallic minerals such as sand, gravel, limestone and clay. Source: ETC CE Report 2025/3, Measuring environmental benefits of circular economy (Vercalsteren and others, 2025), Figure 3-4, for the European Environment Agency.</p>
+    </figure>
+
+    <p><strong>Minerals are half the weight and a ninth of the climate impact.</strong> Metal ores are 5.5% of the weight and 16% of the impact, the most intense per tonne. Biomass, mostly crops and grass, is less than a quarter of the weight and the largest share of the impact, 46%.</p>
+    <p>So a target in tonnes and a target in carbon pull in different directions. A tonnage target rewards crushing concrete; a carbon target rewards keeping metal in use and changing how food is grown. Both lead to the same place in the end: less new material.</p>
+  </section>
+
+  <section>
+    <h2>Using less has no ceiling</h2>
+    <p>Step all the way back. The circularity rate can rise in only two ways: recycle more of the little that comes back, or use less material in the first place. The first runs out at about the EU's target. The second has no ceiling.</p>
+    <p>The arithmetic is stark. With recycling as it was in 2022, Europe would have needed to consume 59% less material to reach 24%. Even with everything but soil and rock recycled, it would have needed 42% less. <strong>The targets are consumption targets in disguise.</strong></p>
+    <p class="claim">Europe can't recycle its way to circularity. It has to use less material.</p>
+    <p>That isn't a call for austerity, and it isn't mainly about shopping. It's about the circular economy's other tools, the ones the rate barely sees: buildings designed to last and to be taken apart, renovation before new build, foundations and roads that use less concrete, machines that are repaired and resold, and food systems that waste less and need less feed. Every one of them shows up as less material consumed, the lever without a ceiling.</p>
+    <p>Those decisions sit with a relatively small number of people, the ones who design, specify, build and buy, and they follow incentives. Policy sets them: the EU's coming Circular Economy Act, public procurement rules, Ireland's new strategy. Markets reward them when a building, a machine or a product earns more by lasting than by being replaced. And public opinion moves both, because it tells governments and large companies which way the wind is blowing.</p>
+    <p>If you work in sustainability, that's the opening. Ask how much new material goes into what your organization makes, builds or buys, how long it will last, and whether the same job could be done with less, or with what's already there. <strong>Those questions are where the loop starts to close.</strong></p>
+  </section>
+
+  <section>
+    <h2>What I can't claim</h2>
+    <ul class="plain">
+      <li>The ceilings are bounds, not forecasts. They count every tonne of treated waste as recyclable, contaminated soil, ash and mining waste included, so real limits are lower everywhere. Mining waste lifts the ceilings of Finland, Bulgaria, Romania and Sweden.</li>
+      <li>They count only waste treated at home, so waste a country exports for energy recovery is left out.</li>
+      <li>The consumption cuts are static arithmetic. In reality, using less also means less waste later.</li>
+      <li>Ireland's published rate doesn't rebuild from Eurostat's own parts: it implies about 4.0 million tonnes recycled in 2022, against 1.4 million in Eurostat's waste tables. I've used the published rate throughout.</li>
+      <li>Ireland's strategy also quotes a 2.7% circularity rate from the Circularity Gap Report Ireland, a different measure that some coverage reported as the starting point. The strategy's 12% target is for the circular material use rate used here.</li>
+      <li>Eurostat revised consumption figures after calculating the 2022 rates, cutting France's by 9%. I've used the latest figures; no country crosses 12% either way.</li>
+      <li>2022 is the latest year where every figure is reported. Eurostat's 2024 rate (12.2% for the EU) is still built on estimates. Its next release, due in November 2026, may allow a rerun on 2024.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>How I worked it out</h2>
+    <p>The circular material use rate is recycled waste divided by recycled waste plus domestic material consumption, adjusted for waste traded for recycling. Backfilling and energy recovery don't count as recycling.</p>
+    <p>The published rate doesn't rebuild exactly from Eurostat's component tables, so every ceiling starts from it: I work out the recycled tonnes it implies, then add the waste each country treated but didn't recycle, holding consumption fixed or, for the upper bound, assuming each recycled tonne replaces a new one. The version without soil and rock adds only the other waste. Everything is for 2022, from Eurostat files downloaded in October 2026.</p>
+    <ul class="sources">
+      <li>Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">circular material use rate (env_ac_cur)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_mfa/default/table?lang=en">material flow accounts (env_ac_mfa)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wastrt/default/table?lang=en">treatment of waste (env_wastrt)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_sd/default/table?lang=en">material flows for the circular economy (env_ac_sd)</a>, waste by material (env_wassd) and <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_rmefd/default/table?lang=en">material footprint by final use (env_ac_rmefd)</a>.</li>
+      <li>Vercalsteren and others (2025), <a href="https://www.eionet.europa.eu/etcs/etc-ce/products/etc-ce-report-2025-3-measuring-environmental-benefits-of-circular-economy">Measuring environmental benefits of circular economy</a>, ETC CE Report 2025/3.</li>
+      <li>European Environment Agency (2023), <a href="https://www.eea.europa.eu/en/analysis/publications/how-far-is-europe-from">How far is Europe from reaching its ambition to double the circular use of materials?</a>, and Christis and others (2023), <a href="https://www.eionet.europa.eu/etcs/etc-ce/products/etc-ce-report-2023-6-analysis-of-the-circular-material-use-rate-and-the-doubling-target">Analysis of the circular material use rate and the doubling target</a>, ETC CE Report 2023/6.</li>
+      <li>European Commission (2025), <a href="https://commission.europa.eu/topics/competitiveness/clean-industrial-deal_en">Clean Industrial Deal</a>, which sets the 24% goal for 2030.</li>
+      <li>Government of Ireland (2026), <a href="https://www.gov.ie/en/department-of-climate-energy-and-the-environment/publications/whole-of-government-circular-economy-strategy-2026-2028-accelerating-action/">Whole of Government Circular Economy Strategy 2026-2028: Accelerating Action</a>.</li>
+    </ul>
+  </section>
+
+  <div class="readmore">
+    <p class="label">Read more</p>
+    <div class="readmore-links">
+      <a href="https://www.linkedin.com/in/milcah-mary-joseph/">Follow the series on LinkedIn</a>
+      <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">Eurostat's circularity data</a>
+      <a href="https://milcahjoseph.com/#portfolio">More of my work</a>
+    </div>
+    <p class="credit-note">Analysis in Python (pandas) on data from Eurostat and the European Environment Agency. Charts drawn with D3.</p>
+  </div>
+
+  <footer class="foot">
+    <p>Milcah M. Joseph &middot; Data analysis and writing</p>
+    <p>
+      <a href="mailto:milcahjoseph@live.com">Email</a> &middot;
+      <a href="https://milcahjoseph.com">Website</a> &middot;
+      <a href="https://linkedin.com/in/milcah-mary-joseph/">LinkedIn</a> &middot;
+      <a href="https://github.com/M1ck3yJ0">GitHub</a>
+    </p>
+  </footer>
+
+</main>
+
+<div class="tip" id="tip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* All figures recomputed from Eurostat extracts for 2022 (downloaded October 24, 2026);
+     climate shares from ETC CE Report 2025/3, Figure 3-4. */
+  var DATA = {"loop":{"built_in":40,"burned_or_eaten":29,"exported":8,"spread_on_land":3,"waste":20,"soil_rock_share":0.535},"materials":{"eu":{"sand_gravel":13.27,"other_minerals":6.96,"grass_fodder":2.33,"other_biomass":6.74,"fossil":7.51,"metal_other":2.32},"eu_total":39.14,"ie":{"sand_gravel":14.06,"other_minerals":16.99,"grass_fodder":17.66,"other_biomass":6.51,"fossil":7.07,"metal_other":4.14},"ie_total":66.43},"countries":[{"geo":"LV","name":"Latvia","pub":4.3,"lo":6.0,"hi":6.2,"xsr":6.0,"trt":5.7,"rec":66.1,"sr":1.6},{"geo":"LT","name":"Lithuania","pub":4.0,"lo":6.6,"hi":6.8,"xsr":5.6,"trt":6.0,"rec":52.3,"sr":19.2},{"geo":"PT","name":"Portugal","pub":3.4,"lo":7.8,"hi":8.2,"xsr":6.8,"trt":8.9,"rec":44.7,"sr":19.1},{"geo":"HR","name":"Croatia","pub":6.8,"lo":10.2,"hi":10.6,"xsr":9.3,"trt":11.0,"rec":62.9,"sr":15.1},{"geo":"IE","name":"Ireland","pub":2.1,"lo":10.5,"hi":11.5,"xsr":4.1,"trt":10.7,"rec":10.6,"sr":69.9},{"geo":"CY","name":"Cyprus","pub":8.3,"lo":12.3,"hi":12.9,"xsr":10.8,"trt":13.1,"rec":62.0,"sr":30.5},{"geo":"DK","name":"Denmark","pub":9.1,"lo":13.3,"hi":13.9,"xsr":12.5,"trt":14.6,"rec":63.6,"sr":45.6},{"geo":"HU","name":"Hungary","pub":4.9,"lo":14.5,"hi":16.2,"xsr":12.5,"trt":16.4,"rec":27.7,"sr":22.5},{"geo":"SK","name":"Slovakia","pub":11.5,"lo":15.5,"hi":16.2,"xsr":15.1,"trt":16.7,"rec":68.3,"sr":19.0},{"geo":"ES","name":"Spain","pub":9.6,"lo":16.7,"hi":18.1,"xsr":14.5,"trt":20.7,"rec":54.7,"sr":28.1},{"geo":"EL","name":"Greece","pub":6.3,"lo":17.2,"hi":19.5,"xsr":11.3,"trt":21.3,"rec":33.8,"sr":42.3},{"geo":"PL","name":"Poland","pub":6.7,"lo":17.4,"hi":19.7,"xsr":10.5,"trt":20.6,"rec":32.6,"sr":60.3},{"geo":"CZ","name":"Czechia","pub":11.3,"lo":18.0,"hi":19.5,"xsr":14.4,"trt":20.3,"rec":54.3,"sr":47.2},{"geo":"RO","name":"Romania","pub":1.5,"lo":21.9,"hi":27.7,"xsr":3.7,"trt":27.8,"rec":4.5,"sr":87.6},{"geo":"IT","name":"Italy","pub":20.2,"lo":22.9,"hi":23.7,"xsr":22.7,"trt":30.5,"rec":85.6,"sr":13.9},{"geo":"EU27_2020","name":"EU","pub":11.4,"lo":23.7,"hi":27.6,"xsr":15.4,"trt":31.1,"rec":41.2,"sr":53.5},{"geo":"BE","name":"Belgium","pub":17.8,"lo":24.2,"hi":26.2,"xsr":20.8,"trt":31.7,"rec":67.8,"sr":21.7},{"geo":"DE","name":"Germany","pub":12.6,"lo":24.5,"hi":28.3,"xsr":17.2,"trt":32.3,"rec":44.4,"sr":41.5},{"geo":"SI","name":"Slovenia","pub":8.2,"lo":26.3,"hi":32.8,"xsr":10.7,"trt":36.5,"rec":26.4,"sr":70.6},{"geo":"FR","name":"France","pub":16.7,"lo":28.2,"hi":32.8,"xsr":22.3,"trt":40.4,"rec":52.3,"sr":52.1},{"geo":"AT","name":"Austria","pub":12.2,"lo":30.1,"hi":37.8,"xsr":16.2,"trt":44.1,"rec":34.0,"sr":62.5},{"geo":"FI","name":"Finland","pub":5.8,"lo":30.1,"hi":40.5,"xsr":7.8,"trt":42.6,"rec":13.5,"sr":90.2},{"geo":"MT","name":"Malta","pub":20.4,"lo":30.2,"hi":34.4,"xsr":29.8,"trt":41.8,"rec":57.7,"sr":2.1},{"geo":"BG","name":"Bulgaria","pub":3.0,"lo":32.3,"hi":46.3,"xsr":10.0,"trt":47.6,"rec":6.2,"sr":77.7},{"geo":"LU","name":"Luxembourg","pub":12.0,"lo":33.2,"hi":43.7,"xsr":14.1,"trt":65.7,"rec":45.2,"sr":55.1},{"geo":"EE","name":"Estonia","pub":21.8,"lo":37.2,"hi":46.4,"xsr":33.3,"trt":58.0,"rec":45.9,"sr":55.4},{"geo":"SE","name":"Sweden","pub":12.1,"lo":38.1,"hi":54.2,"xsr":null,"trt":61.1,"rec":21.7,"sr":null},{"geo":"NL","name":"Netherlands","pub":28.5,"lo":42.7,"hi":53.3,"xsr":31.9,"trt":72.6,"rec":52.1,"sr":48.5}],"footprint":[{"group":"Buildings and infrastructure","total":36.5,"inv":34.7,"spend":1.8,"note":["95% is investment"],"sw":"var(--invest)"},{"group":"Services","total":20.4,"inv":2.6,"spend":17.8},{"group":"Food","total":18.5,"inv":2.0,"spend":16.5,"note":["89% is spending,","mostly by households"],"sw":"var(--spend)"},{"group":"Energy and fuels","total":8.9,"inv":1.1,"spend":7.8},{"group":"Other manufactured goods","total":7.8,"inv":3.5,"spend":4.3},{"group":"Vehicles, machinery and electronics","total":6.0,"inv":4.0,"spend":2.0},{"group":"Wood from forestry","total":1.8,"inv":0.6,"spend":1.2}],"climate":{"weight":{"minerals":52.3,"biomass":22.7,"fossil":19.5,"metals":5.5},"climate":{"minerals":11.4,"biomass":45.7,"fossil":26.6,"metals":16.3}}};
+
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var tip = document.getElementById('tip');
+  var pinned = null;
+
+  function rad(a) { return a * Math.PI / 180; }
+  function f1(v) { return v.toFixed(1); }
+
+  function setupSvg(el, W, H, label) {
+    el.replaceChildren();
+    return d3.select(el).append('svg')
+      .attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H)
+      .attr('role', 'img').attr('aria-label', label);
+  }
+
+  function text(g, cls, x, y, str, anchor) {
+    return g.append('text').attr('class', cls).attr('x', x).attr('y', y)
+      .attr('text-anchor', anchor || 'start').text(str);
+  }
+
+  /* ---------- tooltip ---------- */
+  function fillTip(title, rows) {
+    tip.replaceChildren();
+    var b = document.createElement('b'); b.textContent = title; tip.appendChild(b);
+    rows.forEach(function (r) {
+      var row = document.createElement('div'); row.className = 'row';
+      var k = document.createElement('span'); k.textContent = r[0];
+      var v = document.createElement('span'); v.textContent = r[1];
+      row.appendChild(k); row.appendChild(v); tip.appendChild(row);
+    });
+  }
+  function placeTip(px, py) {
+    tip.hidden = false;
+    var pg = document.querySelector('.page').getBoundingClientRect();
+    var minX = pg.left + window.scrollX + 8, maxX = pg.right + window.scrollX - 8;
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = px + 14;
+    if (x + tw > maxX) x = px - tw - 14;
+    if (x < minX) x = minX;
+    var y = py - th - 12;
+    if (y < window.scrollY + 6) y = py + 18;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.hidden = true; pinned = null; }
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest || !e.target.closest('.hit')) hideTip();
+  });
+
+  /* ---------- 1. the leaky loop ---------- */
+  function drawLoop(el) {
+    var W = el.clientWidth, narrow = W < 600;
+    var H = narrow ? Math.round(W * 1.0) : 556;
+    var svg = setupSvg(el, W, H, 'Loop diagram. Of every 100 tonnes of material moving through the EU economy in 2022, 40 were built into buildings, roads and machines, 29 were burned or eaten, 8 were exported and 3 were spread on land. 20 came back as waste, more than half of it soil and rock.');
+    var cx = W / 2, cy = narrow ? H / 2 + 6 : 278;
+    var Rout = narrow ? W * 0.29 : 160;
+    var band = narrow ? W * 0.145 : 80;
+    var k = band / 100;
+    var L = DATA.loop, sr = L.soil_rock_share;
+    var lanes = [
+      { t: L.built_in, fill: 'var(--exit-1)', exit: 34, num: '40', label: ['built into buildings,', 'roads and machines'] },
+      { t: L.burned_or_eaten, fill: 'var(--exit-2)', exit: 104, num: '29', label: ['burned or eaten'] },
+      { t: L.exported, fill: 'var(--exit-3)', exit: 158, num: '8', label: ['exported'] },
+      { t: L.spread_on_land, fill: 'var(--exit-4)', exit: 192, num: '3', label: ['spread on land'] },
+      { t: L.waste * (1 - sr), fill: 'var(--blue)', exit: null },
+      { t: L.waste * sr, fill: 'var(--ochre)', exit: null }
+    ];
+    var r = Rout;
+    lanes.forEach(function (l) { l.w = l.t * k; l.r = r - l.w / 2; r -= l.w; });
+    function pt(a, rr) { return [cx + rr * Math.sin(rad(a)), cy - rr * Math.cos(rad(a))]; }
+    var a0 = 9, aEnd = 333, sep = narrow ? 0.8 : 1.4;
+    // each exit peels off the loop along a gentle outward spiral, so wide ribbons never fold
+    var span = 30, rLeave = Rout + (narrow ? 20 : 42);
+    var g = svg.append('g');
+
+    lanes.forEach(function (l) {
+      var w = Math.max(l.w - sep, 0.8), p0 = pt(a0, l.r), d;
+      if (l.exit !== null) {
+        var pe = pt(l.exit, l.r), pts = [];
+        for (var s = 1; s <= 30; s++) {
+          var t = s / 30;
+          pts.push(pt(l.exit + span * t, l.r + (rLeave - l.r) * t * t));
+        }
+        d = 'M' + p0 + ' A' + l.r + ',' + l.r + ' 0 0 1 ' + pe + ' L' + pts.join(' L');
+        l.aq = l.exit + span;
+      } else {
+        d = 'M' + p0 + ' A' + l.r + ',' + l.r + ' 0 1 1 ' + pt(aEnd, l.r);
+      }
+      g.append('path').attr('d', d).attr('fill', 'none').attr('stroke', l.fill)
+        .attr('stroke-width', w).attr('stroke-linecap', 'butt').attr('stroke-linejoin', 'round');
+    });
+
+    // one arrowhead for the returning waste, split by color
+    var blue = lanes[4], ochre = lanes[5];
+    var rOuter = blue.r + blue.w / 2, rMid = blue.r - blue.w / 2, rInner = ochre.r - ochre.w / 2;
+    var tg = [Math.cos(rad(aEnd)), Math.sin(rad(aEnd))];
+    var over = narrow ? 2 : 4, len = narrow ? 9 : 15;
+    var bo = pt(aEnd, rOuter + over), bm = pt(aEnd, rMid), bi = pt(aEnd, rInner - over);
+    var cMid = pt(aEnd, (rOuter + rInner) / 2);
+    var tipPt = [cMid[0] + tg[0] * len, cMid[1] + tg[1] * len];
+    g.append('polygon').attr('points', [bo, bm, tipPt].join(' ')).attr('fill', 'var(--blue)');
+    g.append('polygon').attr('points', [bm, bi, tipPt].join(' ')).attr('fill', 'var(--ochre)');
+
+    var lab = svg.append('g');
+    function side(a) { var s = Math.sin(rad(a)); return s > 0.25 ? 'start' : s < -0.25 ? 'end' : 'middle'; }
+
+    // exits
+    lanes.slice(0, 4).forEach(function (l) {
+      var anchor = side(l.aq + 3);
+      var p = pt(l.aq + 3, rLeave + (narrow ? 14 : 20));
+      var below = Math.cos(rad(l.aq)) < -0.6;
+      if (narrow) {
+        text(lab, 't-mid', p[0], p[1] + (below ? 12 : 6), l.num, anchor);
+        return;
+      }
+      var y = below ? p[1] + 18 : p[1] - (l.label.length - 1) * 9 + 4;
+      text(lab, 't-big', p[0], y, l.num, anchor);
+      l.label.forEach(function (s, i) { text(lab, 't-lab', p[0], y + 20 + i * 18, s, anchor); });
+    });
+
+    // start and return
+    var ps = pt(0, Rout + (narrow ? 10 : 16));
+    if (narrow) {
+      text(lab, 't-mid', ps[0], ps[1], '100', 'middle');
+      var pr = pt(292, rLeave + 2);
+      text(lab, 't-mid', pr[0], pr[1] + 6, '20', 'end');
+      var n1 = pt(292, rLeave - 2), n2 = pt(292, rOuter + 3);
+      lab.append('line').attr('x1', n1[0]).attr('y1', n1[1]).attr('x2', n2[0]).attr('y2', n2[1])
+        .attr('stroke', 'var(--ink-3)').attr('stroke-width', 1);
+    } else {
+      text(lab, 't-big', ps[0], ps[1] - 4, '100', 'middle');
+      var lp = pt(292, Rout + 14);
+      text(lab, 't-big', lp[0], lp[1] - 16, '20', 'end');
+      text(lab, 't-lab', lp[0], lp[1] + 4, 'come back as waste,', 'end');
+      text(lab, 't-lab', lp[0], lp[1] + 22, 'more than half of it', 'end');
+      text(lab, 't-lab', lp[0], lp[1] + 40, 'soil and rock', 'end');
+      var l1 = pt(292, Rout + 6), l2 = pt(292, rOuter + 4);
+      lab.append('line').attr('x1', l1[0]).attr('y1', l1[1]).attr('x2', l2[0]).attr('y2', l2[1])
+        .attr('stroke', 'var(--ink-3)').attr('stroke-width', 1);
+    }
+
+    // center
+    var cl = narrow ? ['EU, 2022'] : ['Every 100 tonnes', 'moving through', "Europe's economy", 'in 2022'];
+    var lh = narrow ? 15 : 19, y0 = cy - (cl.length - 1) * lh / 2 + 5;
+    cl.forEach(function (s, i) { text(lab, narrow ? 't-sm' : 't-lab', cx, y0 + i * lh, s, 'middle'); });
+
+    if (narrow) {
+      var ul = document.createElement('ul'); ul.className = 'loop-key';
+      [['100', 'tonnes of material move through the economy'], ['40', 'are built into buildings, roads and machines'], ['29', 'are burned or eaten'], ['8', 'are exported'], ['3', 'are spread on land'], ['20', 'come back as waste, more than half of it soil and rock']]
+        .forEach(function (it) {
+          var li = document.createElement('li');
+          var b = document.createElement('b'); b.textContent = it[0];
+          li.appendChild(b); li.appendChild(document.createTextNode(it[1]));
+          ul.appendChild(li);
+        });
+      el.appendChild(ul);
+    }
+  }
+
+  /* ---------- 2. what it's made of ---------- */
+  function drawMaterials(el) {
+    var W = el.clientWidth, narrow = W < 560;
+    var M = DATA.materials;
+    var cats = [
+      { key: 'sand_gravel', name: 'Sand and gravel', fill: 'var(--ochre)' },
+      { key: 'other_minerals', name: 'Limestone and other minerals', fill: 'var(--ochre-soft)' },
+      { key: 'grass_fodder', name: 'Grass and fodder for livestock', fill: 'var(--green)' },
+      { key: 'other_biomass', name: 'Other biomass', fill: 'var(--green-soft)' },
+      { key: 'fossil', name: 'Fossil fuels', fill: 'var(--fossil)' },
+      { key: 'metal_other', name: 'Metal ores and other', fill: 'var(--metal)' }
+    ];
+    var H = narrow ? 440 : 480, top = 44, bottom = 44;
+    var y = d3.scaleLinear().domain([0, 70]).range([H - bottom, top]);
+    var colW = narrow ? 50 : 84, gap = narrow ? 10 : 22;
+    var x0 = narrow ? 10 : 56;
+    var cols = [
+      { key: 'eu', name: 'EU', total: M.eu_total, x: x0 },
+      { key: 'ie', name: 'Ireland', total: M.ie_total, x: x0 + colW + gap }
+    ];
+    var right = cols[1].x + colW;
+    var labelX = right + (narrow ? 12 : 24);
+    var svg = setupSvg(el, W, H, 'Stacked columns: material consumed per person per day in 2022. EU 39 kg, of which sand and gravel 13 kg. Ireland 66 kg, of which grass and fodder for livestock 18 kg and limestone and other minerals 17 kg.');
+
+    var grid = svg.append('g');
+    [0, 20, 40, 60].forEach(function (v) {
+      grid.append('line').attr('x1', x0 - (narrow ? 0 : 8)).attr('x2', right).attr('y1', y(v)).attr('y2', y(v))
+        .attr('stroke', v === 0 ? 'var(--ink-3)' : 'var(--grid)').attr('stroke-width', 1);
+      if (!narrow) text(grid, 'axis-lab', x0 - 14, y(v) + 4, v + ' kg', 'end');
+    });
+
+    cols.forEach(function (c) {
+      var acc = 0; c.segs = [];
+      cats.forEach(function (cat) {
+        var v = M[c.key][cat.key], yb = y(acc), yt = y(acc + v);
+        svg.append('rect').attr('x', c.x).attr('y', yt).attr('width', colW)
+          .attr('height', Math.max(yb - yt - 1, 0.5)).attr('fill', cat.fill);
+        c.segs.push({ mid: (yb + yt) / 2 });
+        acc += v;
+      });
+      text(svg, narrow ? 't-mid' : 't-big', c.x + colW / 2, y(c.total) - (narrow ? 9 : 12), Math.round(c.total) + ' kg', 'middle');
+      text(svg, 't-name t-strong', c.x + colW / 2, H - bottom + 22, c.name, 'middle');
+    });
+
+    // labels to the right, aligned with Ireland's segments
+    var minGap = narrow ? 32 : 36;
+    var pos = cols[1].segs.map(function (s) { return s.mid; });
+    for (var i = 1; i < pos.length; i++) { if (pos[i - 1] - pos[i] < minGap) pos[i] = pos[i - 1] - minGap; }
+    var topLimit = top + 10;
+    if (pos[pos.length - 1] < topLimit) {
+      pos[pos.length - 1] = topLimit;
+      for (var j = pos.length - 2; j >= 0; j--) { if (pos[j] - pos[j + 1] < minGap) pos[j] = pos[j + 1] + minGap; }
+    }
+    cats.forEach(function (cat, i) {
+      var ly = pos[i], mid = cols[1].segs[i].mid;
+      if (Math.abs(ly - mid) > 3) {
+        svg.append('polyline').attr('points', [[right + 2, mid], [labelX - 10, ly - 4], [labelX - 4, ly - 4]].join(' '))
+          .attr('fill', 'none').attr('stroke', 'var(--ink-3)').attr('stroke-width', 1);
+      }
+      text(svg, 't-name t-strong', labelX, ly - 1, cat.name, 'start').style('font-size', narrow ? '12.5px' : null);
+      text(svg, 't-sm', labelX, ly + 15, 'EU ' + Math.round(M.eu[cat.key]) + ' kg · Ireland ' + Math.round(M.ie[cat.key]) + ' kg', 'start');
+    });
+  }
+
+  /* ---------- 3. every country's ceiling ---------- */
+  function drawCountries(el) {
+    var W = el.clientWidth, narrow = W < 560;
+    var rows = DATA.countries;
+    var euI = rows.findIndex(function (d) { return d.geo === 'EU27_2020'; });
+    var nameW = narrow ? 80 : 108, rowH = narrow ? 21 : 23;
+    var top = 52, extra = 46, bottom = 34;
+    var H = top + rows.length * rowH + extra + bottom;
+    var x = d3.scaleLinear().domain([0, 100]).range([nameW + 12, W - 6]);
+    function yc(i) { return top + i * rowH + (i >= euI ? extra : 0) + rowH / 2; }
+    var svg = setupSvg(el, W, H, 'Dot chart of every EU country. For each, the circularity rate in 2022, the rate if all waste except soil and rock were recycled, and the rate if every tonne of treated waste were recycled. Latvia, Lithuania, Portugal, Croatia and Ireland stay below 12% even recycling everything; the EU reaches 23.7%.');
+
+    var grid = svg.append('g');
+    [0, 25, 50, 75, 100].forEach(function (v) {
+      grid.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', top - 4).attr('y2', H - bottom + 4)
+        .attr('stroke', v === 0 ? 'var(--rule)' : 'var(--grid)');
+      text(grid, 'axis-lab', x(v), H - bottom + 20, v + '%', v === 0 ? 'start' : v === 100 ? 'end' : 'middle');
+    });
+    // reference lines: 12% on the upper label line, 24% on the lower one so neither crosses the other's text
+    svg.append('line').attr('x1', x(12)).attr('x2', x(12)).attr('y1', top - 44).attr('y2', H - bottom + 4)
+      .attr('stroke', 'var(--ink-3)').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+    svg.append('line').attr('x1', x(24)).attr('x2', x(24)).attr('y1', top - 26).attr('y2', H - bottom + 4)
+      .attr('stroke', 'var(--ink-3)').attr('stroke-width', 1).attr('stroke-dasharray', '3 3');
+    text(svg, 't-sm', x(12) + 5, top - 32, "12%: Ireland's 2030 target", 'start');
+    text(svg, 't-sm', x(24) + 5, top - 14, '24%: EU 2030 target', 'start');
+
+    var notes = narrow
+      ? { IT: 'used 88% of its ceiling', RO: 'used 7% of its ceiling', IE: '70% of its waste is soil and rock' }
+      : { IT: 'has used 88% of its ceiling', RO: 'has used 7% of its ceiling', IE: '70% of its waste is soil and rock' };
+
+    rows.forEach(function (d, i) {
+      var y = yc(i), isEU = d.geo === 'EU27_2020';
+      var g = svg.append('g');
+      if (isEU) g.append('rect').attr('x', 0).attr('y', y - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', 'var(--grid)').attr('opacity', 0.75);
+      text(g, isEU ? 't-name t-strong' : 't-name', nameW, y + 4.5, d.name, 'end');
+      if (d.xsr !== null) {
+        g.append('line').attr('x1', x(d.pub)).attr('x2', x(d.xsr)).attr('y1', y).attr('y2', y).attr('stroke', 'var(--blue-soft)').attr('stroke-width', 3.5);
+        g.append('line').attr('x1', x(d.xsr)).attr('x2', x(d.lo)).attr('y1', y).attr('y2', y).attr('stroke', 'var(--ochre)').attr('stroke-width', 3.5);
+      } else {
+        g.append('line').attr('x1', x(d.pub)).attr('x2', x(d.lo)).attr('y1', y).attr('y2', y).attr('stroke', 'var(--metal)').attr('stroke-width', 2).attr('stroke-dasharray', '2 3');
+      }
+      g.append('circle').attr('cx', x(d.lo)).attr('cy', y).attr('r', 4.6).attr('fill', 'var(--ground)').attr('stroke', 'var(--ink)').attr('stroke-width', 1.6);
+      g.append('circle').attr('cx', x(d.pub)).attr('cy', y).attr('r', 5).attr('fill', 'var(--blue)');
+      if (notes[d.geo]) text(g, 't-sm t-halo', x(d.lo) + 12, y + 4, notes[d.geo], 'start');
+
+      if (isEU) {
+        // the EU row doubles as the key
+        var keys = narrow
+          ? [[d.pub, 'Today ' + f1(d.pub) + '%'], [d.xsr, 'All but soil and rock ' + f1(d.xsr) + '%'], [d.lo, 'Every tonne recycled ' + f1(d.lo) + '%']]
+          : [[d.pub, 'Today ' + f1(d.pub) + '%'], [d.xsr, 'Recycling all but soil and rock ' + f1(d.xsr) + '%'], [d.lo, 'Recycling every tonne ' + f1(d.lo) + '%']];
+        keys.forEach(function (kk, j) {
+          var ty = y - rowH / 2 - 32 + j * 13;
+          g.append('line').attr('x1', x(kk[0])).attr('x2', x(kk[0])).attr('y1', ty + 3).attr('y2', y - 6).attr('stroke', 'var(--ink-3)').attr('stroke-width', 1);
+          text(g, 't-sm t-halo', x(kk[0]) + 3, ty, kk[1], 'start');
+        });
+      }
+
+      var rowsTip = [['Today', f1(d.pub) + '%'],
+        ['Recycling all but soil and rock', d.xsr === null ? 'not published' : f1(d.xsr) + '%'],
+        ['Recycling every tonne treated', f1(d.lo) + ' to ' + f1(d.hi) + '%'],
+        ['Waste treated, % of consumption', f1(d.trt) + '%'],
+        ['Share of it recycled', f1(d.rec) + '%']];
+      var title = isEU ? 'EU 27' : d.name;
+      g.append('rect').attr('class', 'hit').attr('x', 0).attr('y', y - rowH / 2).attr('width', W).attr('height', rowH)
+        .attr('fill', 'transparent').style('cursor', 'pointer')
+        .on('pointermove', function (e) { if (e.pointerType === 'mouse' && !pinned) { fillTip(title, rowsTip); placeTip(e.pageX, e.pageY); } })
+        .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !pinned) hideTip(); })
+        .on('click', function (e) {
+          if (pinned === d.geo) { hideTip(); return; }
+          fillTip(title, rowsTip); placeTip(e.pageX, e.pageY); pinned = d.geo;
+        });
+    });
+  }
+
+  function buildTable() {
+    var t = document.getElementById('country-table');
+    if (!t || t.rows.length) return;
+    var head = t.createTHead().insertRow();
+    ['Country', 'Today', 'Recycling all but soil and rock', 'Recycling every tonne treated', 'Waste treated, % of consumption', 'Share of it recycled']
+      .forEach(function (h) { var th = document.createElement('th'); th.textContent = h; head.appendChild(th); });
+    var body = t.createTBody();
+    DATA.countries.forEach(function (d) {
+      var tr = body.insertRow(); if (d.geo === 'EU27_2020') tr.className = 'eu';
+      [d.geo === 'EU27_2020' ? 'EU 27' : d.name, f1(d.pub) + '%', d.xsr === null ? 'not published' : f1(d.xsr) + '%',
+        f1(d.lo) + ' to ' + f1(d.hi) + '%', f1(d.trt) + '%', f1(d.rec) + '%']
+        .forEach(function (v) { tr.insertCell().textContent = v; });
+    });
+  }
+
+  /* ---------- 4. what it ends up as ---------- */
+  function drawFootprint(el) {
+    var W = el.clientWidth, narrow = W < 560;
+    var rows = DATA.footprint;
+    var nameW = narrow ? 0 : 250, barH = narrow ? 16 : 20, rowH = narrow ? 46 : 38;
+    var top = 4, bottom = 30;
+    var H = top + rows.length * rowH + bottom;
+    var x = d3.scaleLinear().domain([0, 100]).range([narrow ? 0 : nameW + 12, W - 4]);
+    var svg = setupSvg(el, W, H, "Bar chart of the EU's material footprint in 2022 by what it ends up as, split into investment and spending. Buildings and infrastructure 36.5%, 95% of it investment; services 20.4%; food 18.5%, 89% of it spending, mostly by households; energy and fuels 8.9%; other manufactured goods 7.8%; vehicles, machinery and electronics 6.0%; wood 1.8%.");
+    var grid = svg.append('g');
+    [0, 25, 50, 75, 100].forEach(function (v) {
+      grid.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', top).attr('y2', H - bottom + 4)
+        .attr('stroke', v === 0 ? 'var(--ink-3)' : 'var(--grid)');
+      text(grid, 'axis-lab', x(v), H - bottom + 20, v + '%', v === 0 ? 'start' : v === 100 ? 'end' : 'middle');
+    });
+    rows.forEach(function (d, i) {
+      var yb = top + i * rowH + (narrow ? 22 : (rowH - barH) / 2), ym = yb + barH / 2;
+      if (narrow) text(svg, 't-name', x(0), yb - 6, d.group, 'start');
+      else text(svg, 't-name', nameW, ym + 4.5, d.group, 'end');
+      svg.append('rect').attr('x', x(0)).attr('y', yb).attr('width', x(d.inv) - x(0)).attr('height', barH).attr('fill', 'var(--invest)');
+      svg.append('rect').attr('x', x(d.inv)).attr('y', yb).attr('width', Math.max(x(d.total) - x(d.inv) - 0.5, 0)).attr('height', barH).attr('fill', 'var(--spend)');
+      var vx = x(d.total) + 7;
+      text(svg, 't-name t-strong', vx, ym + 4.5, f1(d.total) + '%', 'start');
+      if (d.note) {
+        // a swatch ties each note to the shade it describes, so the bars need no legend
+        var nx = vx + (narrow ? 44 : 50), y1 = ym + 4.5 - (d.note.length - 1) * 7;
+        svg.append('rect').attr('x', nx).attr('y', y1 - 9).attr('width', 9).attr('height', 9).attr('fill', d.sw);
+        d.note.forEach(function (s, j) { text(svg, 't-sm', nx + 13, y1 + j * 14, s, 'start'); });
+      }
+    });
+  }
+
+  /* ---------- 5. weight against climate impact ---------- */
+  function drawImpact(el) {
+    var W = el.clientWidth, narrow = W < 560;
+    var C = DATA.climate;
+    var cats = [
+      { key: 'minerals', name: 'Minerals', fill: 'var(--ochre)', tc: 'var(--ink)' },
+      { key: 'biomass', name: 'Biomass', fill: 'var(--green)', tc: '#FFFFFF' },
+      { key: 'fossil', name: 'Fossil fuels', fill: 'var(--fossil)', tc: '#FFFFFF' },
+      { key: 'metals', name: 'Metal ores', fill: 'var(--metal)', tc: 'var(--ink)' }
+    ];
+    var padL = narrow ? 0 : 118, barH = narrow ? 30 : 36;
+    var yW = narrow ? 62 : 58, gap = narrow ? 70 : 74, yC = yW + barH + gap;
+    var H = yC + barH + (narrow ? 48 : 24);
+    var x = d3.scaleLinear().domain([0, 100]).range([padL, W - 2]);
+    var svg = setupSvg(el, W, H, 'Two stacked bars. By weight: minerals 52.3%, biomass 22.7%, fossil fuels 19.5%, metal ores 5.5%. By climate impact of production: minerals 11.4%, biomass 45.7%, fossil fuels 26.6%, metal ores 16.3%.');
+
+    var accW = 0, accC = 0;
+    cats.forEach(function (c) {
+      c.w0 = accW; c.w1 = accW + C.weight[c.key]; accW = c.w1;
+      c.c0 = accC; c.c1 = accC + C.climate[c.key]; accC = c.c1;
+    });
+    cats.forEach(function (c) {
+      svg.append('polygon').attr('points', [[x(c.w0) + 0.5, yW + barH], [x(c.w1) - 0.5, yW + barH], [x(c.c1) - 0.5, yC], [x(c.c0) + 0.5, yC]].join(' '))
+        .attr('fill', c.fill).attr('opacity', 0.16);
+    });
+    function bar(y0, a, b, key) {
+      cats.forEach(function (c) {
+        var xa = x(c[a]), xb = x(c[b]), w = xb - xa;
+        svg.append('rect').attr('x', xa + 0.5).attr('y', y0).attr('width', Math.max(w - 1, 0.5)).attr('height', barH).attr('fill', c.fill);
+        c['fits_' + key] = w >= 40;
+        if (c['fits_' + key]) {
+          svg.append('text').attr('class', 't-name t-strong').attr('x', xa + w / 2).attr('y', y0 + barH / 2 + 4.5)
+            .attr('text-anchor', 'middle').style('fill', c.tc).text(f1(C[key][c.key]) + '%');
+        }
+      });
+    }
+    bar(yW, 'w0', 'w1', 'weight');
+    bar(yC, 'c0', 'c1', 'climate');
+
+    // names above the weight bar; the last one sits at the right edge, a tier higher on phones
+    cats.forEach(function (c, i) {
+      var last = i === cats.length - 1, lift = last && !c.fits_weight;
+      var tx = lift ? x(100) : x((c.w0 + c.w1) / 2);
+      var ty = yW - (lift ? 26 : 8);
+      var lab = c.name + (c.fits_weight ? '' : ' ' + f1(C.weight[c.key]) + '%');
+      text(svg, 't-name t-strong', tx, ty, lab, lift ? 'end' : 'middle');
+      if (lift) {
+        svg.append('line').attr('x1', x((c.w0 + c.w1) / 2)).attr('x2', x((c.w0 + c.w1) / 2)).attr('y1', ty + 4).attr('y2', yW - 1)
+          .attr('stroke', 'var(--ink-3)').attr('stroke-width', 1);
+      }
+      if (!c.fits_climate) text(svg, 't-name t-strong', x((c.c0 + c.c1) / 2), yC + barH + 16, f1(C.climate[c.key]) + '%', 'middle');
+    });
+    if (narrow) {
+      text(svg, 't-sm', 0, 14, 'Share of weight', 'start');
+      text(svg, 't-sm', 0, yC + barH + 40, 'Share of climate impact', 'start');
+    } else {
+      text(svg, 't-name t-strong', padL - 14, yW + barH / 2 + 4.5, 'Weight', 'end');
+      text(svg, 't-name t-strong', padL - 14, yC + barH / 2 + 4.5, 'Climate impact', 'end');
+    }
+  }
+
+  /* ---------- draw and redraw ---------- */
+  var charts = [['fig-loop', drawLoop], ['fig-materials', drawMaterials], ['fig-countries', drawCountries], ['fig-footprint', drawFootprint], ['fig-impact', drawImpact]];
+  function drawAll() {
+    hideTip();
+    charts.forEach(function (c) {
+      var el = document.querySelector('#' + c[0] + ' .chart');
+      if (el) c[1](el);
+    });
+  }
+  buildTable();
+  drawAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+  var lastW = document.querySelector('.page').clientWidth, timer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var w = document.querySelector('.page').clientWidth;
+      if (w !== lastW) { lastW = w; drawAll(); }
+    }, 150);
+  });
+})();
+</script>
+</body>
+</html>
