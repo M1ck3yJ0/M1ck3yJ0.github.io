@@ -19,7 +19,7 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 
 ## Before committing a page
 
-- Render it at phone (390 px) and desktop (1280 px) widths and look at the screenshots: charts drawn, text readable, nothing cut off or overflowing.
+- Render it at phone (390 px) and desktop (1280 px) widths with `_tools/check_page.py` (usage at the top of the file) and look at the screenshot sheets it saves: charts drawn, text readable, nothing cut off or overflowing.
 - Give it a title, a meta description and an `og:image` set to the full URL of an image file in `assets/`, so LinkedIn shows a preview picture.
 - Check that every link works.
 - Use American spelling and no em or en dashes in page text.
