@@ -4,10 +4,13 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 
 ## How to make changes
 
-- Never push to `main` and never merge a pull request. Milcah reviews and merges every change herself.
-- Commit as Milcah: before your first commit, run `git config user.name "Milcah M. Joseph"` and `git config user.email "98636311+M1ck3yJ0@users.noreply.github.com"`. Add no Co-Authored-By line, session link or other Claude attribution to commits or pull requests.
-- Do each piece of work on a new branch from the latest `main` and push the branch. Don't open or edit pull requests. Milcah opens them herself.
-- Commit after every step, so each commit holds one small change: creating a folder, adding a file, making a separate edit. Git can't store an empty folder, so a new folder gets a `.gitkeep` file in its own commit. Give each commit a plain message saying what changed and why.
+- Never push to `main` and never merge a pull request.
+- Commit as Milcah: before your first commit, run `git config user.name "Milcah M. Joseph"` and `git config user.email "98636311+M1ck3yJ0@users.noreply.github.com"`. End each commit message with a Co-Authored-By line naming the Claude model, such as `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Add no session link.
+- Do each piece of work on a new branch from the latest `main` and push the branch. Don't open or edit pull requests.
+- Work on one task at a time and change only what it asks for. Ask Milcah before changing anything else, such as `index.html`, the portfolio cards or images.
+- Commit after every step, so each commit holds one small change: creating a folder, adding a file, making a separate edit. A new folder gets a `.gitkeep` file in its own commit.
+- Give each commit a concise title, under 50 characters, and at most one line of description.
+- Write rules in this file as plain instructions, without reasons. Never put Milcah's reasons in files or commit messages.
 - After pushing, give Milcah the link to open the pull request, `https://github.com/M1ck3yJ0/M1ck3yJ0.github.io/pull/new/<branch>`, and say in plain words what changed and what to check before merging.
 - Don't edit `CNAME` or delete files unless she asks.
 
@@ -20,7 +23,6 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 ## Before committing a page
 
 - Render it at phone (390 px) and desktop (1280 px) widths with `_tools/check_page.py` (usage at the top of the file) and look at the screenshot sheets it saves: charts drawn, text readable, nothing cut off or overflowing.
-- Give it a title, a meta description and an `og:image` set to the full URL of an image file in `assets/`, so LinkedIn shows a preview picture.
+- Give it a title, a meta description and an `og:image` set to the full URL of an image file in `assets/`.
 - Check that every link works.
 - Use American spelling and no em or en dashes in page text.
-- Give a new project a card in the `index.html` portfolio grid, matching the existing cards.
