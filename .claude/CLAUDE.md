@@ -7,6 +7,7 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 - Never push to `main` and never merge a pull request.
 - Commit as Milcah: before your first commit, run `git config user.name "Milcah M. Joseph"` and `git config user.email "98636311+M1ck3yJ0@users.noreply.github.com"`. Add no Co-Authored-By line, session link or other Claude attribution to commits or pull requests.
 - Do each piece of work on a new branch from the latest `main` and push the branch. Don't open or edit pull requests.
+- Work on one task at a time and change only what it asks for. Ask Milcah before changing anything else, such as `index.html`, the portfolio cards or images.
 - Commit after every step, so each commit holds one small change: creating a folder, adding a file, making a separate edit. A new folder gets a `.gitkeep` file in its own commit.
 - Give each commit a concise title, under 50 characters, and at most one line of description.
 - Write rules in this file as plain instructions, without reasons. Never put Milcah's reasons in files or commit messages.
@@ -25,4 +26,3 @@ This repo is Milcah Joseph's portfolio site. GitHub Pages publishes the `main` b
 - Give it a title, a meta description and an `og:image` set to the full URL of an image file in `assets/`.
 - Check that every link works.
 - Use American spelling and no em or en dashes in page text.
-- Give a new project a card in the `index.html` portfolio grid, matching the existing cards.
