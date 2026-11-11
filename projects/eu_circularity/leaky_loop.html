@@ -748,7 +748,7 @@ details.how li { margin: 0 0 7px; }
     text(svg, 't-sm t-strong', x(TARGET_YEAR) + 10, y(EU_TARGET) - 2, '24%');
     text(svg, 't-sm', x(TARGET_YEAR) + 10, y(EU_TARGET) + 13, narrow ? 'EU target' : 'the EU’s target');
     var mx = (x(last) + x(TARGET_YEAR)) / 2, my = (y(euLast) + y(EU_TARGET)) / 2;
-    text(svg, 't-sm t-strong t-halo', mx + 10, my + 16, 'about ' + String(Math.round(pace * 10) / 10) + ' points a year');
+    text(svg, 't-sm t-strong t-halo', narrow ? W : mx + 10, my + 16, 'about ' + String(Math.round(pace * 10) / 10) + ' points a year', narrow ? 'end' : 'start');
     if (state.geo === 'IE') {
       var ieLast = v(c.trend, 'rate', last);
       line(svg, x(last), y(ieLast), x(TARGET_YEAR), y(IE_TARGET), COL.ink3, 1.1, '5 4');
