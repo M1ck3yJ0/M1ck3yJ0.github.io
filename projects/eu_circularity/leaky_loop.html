@@ -194,6 +194,7 @@ select {
     <a class="home" href="https://milcahjoseph.com"><img src="https://milcahjoseph.com/assets/favicon.png" width="22" height="22" alt="">Milcah M. Joseph</a>
     <nav aria-label="On this page">
       <a href="#how-far">The ceiling</a>
+      <a href="#where-it-goes">Where material goes</a>
     </nav>
   </header>
 
@@ -214,6 +215,13 @@ select {
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
       </section>
 
+      <section class="sec" id="where-it-goes" aria-labelledby="h-flow">
+        <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
+        <p class="sub">Where material went in 2022, in tonnes out of every 100.</p>
+        <figure id="fig-flow"><div class="chart"></div></figure>
+        <p class="txt">For every tonne that comes back as waste, two are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. What's burned or eaten never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
+        <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded to whole tonnes. The soil and rock part is approximate.</p>
+      </section>
 
 
 
@@ -459,6 +467,75 @@ select {
     });
   });
 
+  /* ---------- where material goes ---------- */
+  var FATES = [
+    { name: 'built in', long: 'built into buildings, roads and machines' },
+    { name: 'burned or eaten', long: 'burned or eaten' },
+    { name: 'exported', long: 'exported' },
+    { name: 'spread on land', long: 'spread on land' },
+    { name: 'came back as waste', long: 'came back as waste' }
+  ];
+  function soilPart(c) {
+    var back = c.loop_per_100[4];
+    return c.back_as_soil_rock == null || !c.back_as_waste ? null : back * c.back_as_soil_rock / c.back_as_waste;
+  }
+  charts.push(function () {
+    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, wide = W >= 620, c = C();
+    var rows = [{ name: 'EU', d: EU }, { name: c.name, d: c }];
+    var x0 = wide ? 112 : 0, barH = wide ? 40 : 34;
+    var x = d3.scaleLinear().domain([0, 100]).range([x0, W]);
+    var yEU = wide ? 70 : 40, yGeo = yEU + barH + (wide ? 72 : 62), H = yGeo + barH + 6;
+    var svg = setupSvg(el, W, H, 'Two bars of 100 tonnes. EU: ' + FATES.map(function (f, i) { return EU.loop_per_100[i] + ' ' + f.long; }).join(', ') + '. ' + c.name + ': ' + (c.loop_per_100 ? FATES.map(function (f, i) { return c.loop_per_100[i] + ' ' + f.long; }).join(', ') : 'no flow data') + '.');
+    rows.forEach(function (row, ri) {
+      var y = ri ? yGeo : yEU, lp = row.d.loop_per_100, isEU = ri === 0;
+      if (wide) text(svg, 't-name t-strong', 0, y + barH / 2 + 5, row.name);
+      else text(svg, 't-name t-strong', 0, y - 24, row.name);
+      if (!lp) { text(svg, 't-sm', x0, y + barH / 2 + 4, 'No flow data'); return; }
+      var acc = 0, lastEnd = -99, raised = 0;
+      lp.forEach(function (t, i) {
+        var a = acc, b = acc + t; acc = b;
+        if (t <= 0) return;
+        var xa = x(a), xb = x(b), w = xb - xa, mid = (xa + xb) / 2, back = i === 4;
+        var g = svg.append('g');
+        if (!back) g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(w - 2, 0.5)).attr('height', barH).attr('fill', COL.quiet);
+        else {
+          var sr = soilPart(row.d), xs = sr == null ? xb : x(b - sr);
+          g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(xs - xa - 2, 0.5)).attr('height', barH).attr('fill', COL.blue);
+          if (sr != null && sr > 0.2) g.append('rect').attr('x', xs).attr('y', y).attr('width', Math.max(xb - xs - 1, 0.5)).attr('height', barH).attr('fill', COL.ochre);
+          if (isEU && wide && sr != null) {
+            text(svg, 't-sm', xs - 5, y + barH + 16, 'other waste', 'end');
+            text(svg, 't-sm', xs + 5, y + barH + 16, 'soil and rock');
+          }
+        }
+        g.append('rect').attr('x', xa).attr('y', y).attr('width', w).attr('height', barH).attr('fill', 'transparent')
+          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, cap(FATES[i].long), [['EU', EU.loop_per_100[i] + ' of 100 tonnes'], [c.name, (c.loop_per_100 ? c.loop_per_100[i] : 'n/a') + ' of 100 tonnes']]); })
+          .on('pointerleave', hideTip);
+        // the number, above the segment
+        var num = text(svg, 't-num2', mid, y - 7, String(t), 'middle'), nw = textWidth(num);
+        if (mid - nw / 2 < lastEnd + 3) num.remove(); else lastEnd = mid + nw / 2;
+        // the names, once, above the EU's numbers
+        if (isEU && wide) {
+          var probe = text(svg, 't-name', 0, -99, FATES[i].name), tw = textWidth(probe); probe.remove();
+          if (tw + 10 <= w) text(svg, 't-name', mid, y - 28, FATES[i].name, 'middle');
+          else {
+            var up = y - 46, end = raised % 2 === 0; raised += 1;
+            line(svg, mid, y - 24, mid, up + 5, COL.ink3, 1);
+            text(svg, 't-name', mid + (end ? 3 : -3), up, FATES[i].name, end ? 'end' : 'start');
+          }
+        }
+      });
+    });
+    if (!wide) {
+      var ul = document.createElement('ul'); ul.className = 'rows';
+      FATES.forEach(function (f, i) {
+        var li = document.createElement('li'), b = document.createElement('b');
+        b.textContent = EU.loop_per_100[i] + ' ';
+        li.appendChild(b); li.appendChild(document.createTextNode(f.long + (c.loop_per_100 ? ' (' + c.name + ' ' + c.loop_per_100[i] + ')' : '')));
+        ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+  });
 
 
 
