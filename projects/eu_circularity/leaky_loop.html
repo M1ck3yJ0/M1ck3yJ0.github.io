@@ -151,6 +151,21 @@ select {
 .rail .cap { font-size: 12.5px; line-height: 1.4; color: var(--ink-3); margin-top: 8px; }
 .rail .cap i { display: inline-block; width: 9px; height: 9px; background: var(--blue); margin-right: 5px; }
 
+/* Closing, method, footer */
+.close h2 { max-width: 20em; }
+details.how { margin-top: 28px; font-size: 14.5px; color: var(--ink-2); }
+details.how summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; color: var(--ink); font-weight: 650; }
+details.how summary::-webkit-details-marker { display: none; }
+details.how summary::before { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-45deg); transition: transform .15s; }
+details.how[open] summary::before { transform: rotate(45deg); }
+details.how .body { max-width: 72ch; line-height: 1.55; padding-bottom: 6px; }
+details.how h3 { font-size: 14.5px; font-weight: 650; color: var(--ink); margin: 18px 0 6px; }
+details.how p + p { margin-top: 8px; }
+details.how ul { padding-left: 1.1em; }
+details.how li { margin: 0 0 7px; }
+.foot { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.7; color: var(--ink-3); }
+.foot .links { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-bottom: 8px; }
+.foot .links a { font-weight: 600; }
 
 @media (max-width: 1099px) {
   .shell { grid-template-columns: minmax(0, 1fr); }
@@ -246,6 +261,54 @@ select {
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2010 to 2024. Waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
       </section>
 
+      <section class="sec close" id="so-what" aria-labelledby="h-close">
+        <h2 id="h-close">Using less has no ceiling</h2>
+        <p class="txt">Recycling more of the little that comes back runs out at about Europe's target. Using less material doesn't. That's less about shopping than it sounds: most of those tonnes go into buildings, roads, energy and food, and how much goes in is decided by whoever designs, specifies, builds and buys.</p>
+        <p class="txt"><strong>How much new material goes into what you make or build? How long will it last? Could the same job be done with less, or with what's already there?</strong></p>
+        <p class="txt">This is the first part of a series. Next: what Europe's tonnes are made of, which of them matter most for the climate, and who decides how many go in.</p>
+
+        <details class="how"><summary>How I worked this out, limits and sources</summary><div class="body">
+          <h3>The ceiling</h3>
+          <p>The circularity rate is recycled waste divided by recycled waste plus material consumption. Starting from Eurostat's published rate, I added every tonne of waste each country treated but didn't recycle. Holding consumption fixed gives the lower figure of each range. Letting each recycled tonne replace a tonne of new material gives the higher one.</p>
+          <p>Soil and rock means soils, dredging spoils and other mineral waste, mostly from mining. Rubble from construction and demolition stays in.</p>
+          <h3>Where material goes</h3>
+          <p>Eurostat's material flow accounts follow every tonne of material processed in a country: extracted at home, imported, recycled or backfilled. I took the shares built into stock, burned or eaten (emissions), exported, spread on land (dissipative flows) and treated as waste, and rounded them to whole tonnes out of 100. The soil and rock part of the waste is each country's soil and rock share of all the waste it treats, applied to the waste in the flows. Malta's flows record no emissions and leave about a fifth of its material unaccounted for.</p>
+          <h3>What moved the rate</h3>
+          <p>I recalculated 2012's rate twice: once with 2022's recycling (the recycling effect) and once with 2022's consumption (the consumption effect). The two add up to the total, give or take rounding.</p>
+          <h3>Limits</h3>
+          <ul>
+            <li>The ceilings are bounds, not forecasts. They count every treated tonne as recyclable, contaminated soil and mining waste included, so real ceilings are lower. Mining waste lifts the ceilings of Finland, Bulgaria, Romania and Sweden.</li>
+            <li>They count only waste treated at home, so waste a country exports for energy recovery or disposal is left out.</li>
+            <li>Consumption here is Eurostat's domestic measure. It counts grass grazed and ore mined in a country even when the beef or metal is exported.</li>
+            <li>Eurostat's published rate doesn't rebuild exactly from its own component tables, so every calculation starts from the published rate.</li>
+            <li>Ireland's strategy also quotes a 2.7% circularity rate from the Circularity Gap Report Ireland, a different measure. Its 12% target for 2030 is for the rate used here.</li>
+            <li>2022 is the latest year where every figure is reported. Eurostat revised its 2022 waste figures on October 28, 2026, which lowered Hungary's ceiling by about 2 points and barely moved the rest.</li>
+            <li>The map leaves out overseas regions.</li>
+          </ul>
+          <h3>What others have shown</h3>
+          <ul>
+            <li>European Environment Agency (2023), <a href="https://www.eea.europa.eu/en/analysis/publications/how-far-is-europe-from">How far is Europe from reaching its ambition to double the circular use of materials?</a>, and Christis and others (2023), <a href="https://www.eionet.europa.eu/etcs/etc-ce/products/etc-ce-report-2023-6-analysis-of-the-circular-material-use-rate-and-the-doubling-target">Analysis of the circular material use rate and the doubling target</a>, ETC CE Report 2023/6: recycling alone won't double the EU's rate. This page adds a ceiling for each country, with and without soil and rock.</li>
+            <li>Haas and others (2015), How Circular is the Global Economy?, Journal of Industrial Ecology 19(5), doi 10.1111/jiec.12244: growing stocks of buildings and infrastructure keep circularity low.</li>
+          </ul>
+          <h3>Sources</h3>
+          <ul>
+            <li>Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">circular material use rate (env_ac_cur)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_mfa/default/table?lang=en">material flow accounts (env_ac_mfa)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wastrt/default/table?lang=en">treatment of waste (env_wastrt)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_sd/default/table?lang=en">material flows for the circular economy (env_ac_sd)</a> and <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wassd/default/table?lang=en">waste by material (env_wassd)</a>.</li>
+            <li>European Commission (2025), <a href="https://commission.europa.eu/topics/competitiveness/clean-industrial-deal_en">Clean Industrial Deal</a>, which sets the EU's 24% goal for 2030.</li>
+            <li>Government of Ireland (2026), <a href="https://www.gov.ie/en/department-of-climate-energy-and-the-environment/publications/whole-of-government-circular-economy-strategy-2026-2028-accelerating-action/">Whole of Government Circular Economy Strategy 2026-2028: Accelerating Action</a>, which sets Ireland's 12% goal for 2030.</li>
+            <li>Map shapes: Natural Earth.</li>
+          </ul>
+        </div></details>
+
+        <footer class="foot">
+          <p class="links">
+            <a href="https://github.com/M1ck3yJ0/the-leaky-loop">Code and data on GitHub</a>
+            <a href="https://github.com/M1ck3yJ0/the-leaky-loop/blob/main/data/processed/ceilings_2022.csv">Every country's numbers (CSV)</a>
+            <a href="https://www.linkedin.com/in/milcah-mary-joseph/">Follow the series on LinkedIn</a>
+          </p>
+          <p id="asof"></p>
+          <p>Milcah M. Joseph, data analysis. <a href="mailto:milcahjoseph@live.com">Email</a>, <a href="https://milcahjoseph.com">website</a>, <a href="https://github.com/M1ck3yJ0">GitHub</a>.</p>
+        </footer>
+      </section>
 
     </main>
 
