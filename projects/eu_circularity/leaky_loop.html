@@ -141,10 +141,33 @@ select {
   background-repeat: no-repeat; background-position: right 12px center;
 }
 
+/* Country picker */
+.rail { position: sticky; top: 18px; font-size: 14px; }
+.rail label { display: block; font-weight: 650; color: var(--ink); margin-bottom: 6px; }
+.rail select { width: 100%; }
+.rail .toggle { display: none; }
+.rail .map { margin-top: 14px; }
+.rail .map svg { display: block; width: 100%; height: auto; }
+.rail .cap { font-size: 12.5px; line-height: 1.4; color: var(--ink-3); margin-top: 8px; }
+.rail .cap i { display: inline-block; width: 9px; height: 9px; background: var(--blue); margin-right: 5px; }
 
 
 @media (max-width: 1099px) {
   .shell { grid-template-columns: minmax(0, 1fr); }
+  body { padding-bottom: 66px; }
+  .rail {
+    position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; background: var(--paper);
+    border-top: 1px solid var(--rule); padding: 10px 16px;
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 10px;
+  }
+  .rail label { margin: 0; font-weight: 600; }
+  .rail .toggle {
+    display: inline-flex; align-items: center; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink);
+    background: var(--ground); border: 1px solid var(--rule); border-radius: 4px; min-height: 42px; padding: 0 14px; cursor: pointer;
+  }
+  .rail .mapwrap { display: none; grid-column: 1 / -1; max-width: 400px; width: 100%; margin: 0 auto; padding-bottom: 6px; }
+  .rail.open .mapwrap { display: block; }
+  .rail .map { margin-top: 4px; }
 }
 @media (max-width: 860px) {
   .mast nav { display: none; }
@@ -197,6 +220,15 @@ select {
 
     </main>
 
+    <aside class="rail" id="rail" aria-label="Choose a country">
+      <label for="country">Compare the EU with</label>
+      <select id="country"></select>
+      <button class="toggle" id="map-toggle" type="button" aria-expanded="false" aria-controls="mapwrap">Map</button>
+      <div class="mapwrap" id="mapwrap">
+        <div class="map" id="map"></div>
+        <p class="cap"><i></i>The only <span data-v="could-wo">three</span> countries that could pass 24% by recycling everything except soil and rock. Pick any country to compare it.</p>
+      </div>
+    </aside>
   </div>
 
 </div>
@@ -205,6 +237,7 @@ select {
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="leaky_loop_data.js"></script>
+<script src="europe_map.js"></script>
 <script>
 (function () {
   'use strict';
@@ -390,6 +423,41 @@ select {
     }
   });
 
+  /* ---------- the country picker ---------- */
+  var sel = document.getElementById('country'), rail = document.getElementById('rail'), toggle = document.getElementById('map-toggle');
+  MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
+  sel.addEventListener('change', function () { choose(sel.value); });
+  toggle.addEventListener('click', function () {
+    var open = rail.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.textContent = open ? 'Close map' : 'Map';
+  });
+  function couldWithout(c) { return c.ceiling_without_soil_rock != null && c.ceiling_without_soil_rock >= EU_TARGET; }
+  charts.push(function () {
+    sel.value = state.geo;
+    var M = window.EUROPE_MAP, el = document.getElementById('map');
+    if (!M) { el.replaceChildren(); return; }
+    var svg = setupSvg(el, M.width, M.height, 'Map of the European Union. ' + C().name + ' is selected.').attr('width', null).attr('height', null);
+    var defs = svg.append('defs').append('pattern').attr('id', 'no-split').attr('width', 6).attr('height', 6).attr('patternUnits', 'userSpaceOnUse').attr('patternTransform', 'rotate(45)');
+    defs.append('rect').attr('width', 6).attr('height', 6).attr('fill', COL.quiet);
+    defs.append('rect').attr('width', 2.4).attr('height', 6).attr('fill', COL.ground);
+    svg.append('path').attr('d', M.land).attr('fill', COL.land);
+    var order = MEMBERS.slice().sort(function (a, b) { return (a === state.geo) - (b === state.geo); });
+    order.forEach(function (g) {
+      var c = D.countries[g], shape = M.countries[g], on = g === state.geo;
+      if (!shape) return;
+      var fill = c.ceiling_without_soil_rock == null ? 'url(#no-split)' : couldWithout(c) ? COL.blue : COL.quiet;
+      var grp = svg.append('g');
+      grp.append('path').attr('d', shape.d).attr('fill', fill).attr('stroke', on ? COL.ink : COL.ground).attr('stroke-width', on ? 3.6 : 1.2).attr('stroke-linejoin', 'round');
+      if (shape.w < 14 || shape.h < 14) {
+        // too small to see or tap: a dot stands in
+        grp.append('circle').attr('cx', shape.c[0]).attr('cy', shape.c[1]).attr('r', 9).attr('fill', fill === 'url(#no-split)' ? COL.quiet : fill).attr('stroke', on ? COL.ink : COL.ground).attr('stroke-width', on ? 4.5 : 2.4);
+        grp.append('circle').attr('cx', shape.c[0]).attr('cy', shape.c[1]).attr('r', 22).attr('fill', 'transparent');
+      }
+      pickable(grp, g, c.name, figures(c));
+      grp.on('click.close', function () { if (rail.classList.contains('open')) toggle.click(); });
+    });
+  });
 
 
 
