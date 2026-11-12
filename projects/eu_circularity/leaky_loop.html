@@ -273,6 +273,13 @@ details.how li { margin: 0 0 7px; }
         <p class="sub">Where material went in 2022, in tonnes out of every 100.</p>
         </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
+        <aside class="side" id="side-flow" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-flow">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">From the least coming back as waste to the most. Pick one to compare.</p>
+            <div class="minis bars" id="minis-flow"></div>
+          </div>
+        </aside>
         <div class="tail">
         <p class="txt">For every tonne that comes back as waste, two are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. What's burned or eaten never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
         <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded to whole tonnes. The soil and rock part is approximate.</p>
@@ -657,6 +664,26 @@ details.how li { margin: 0 0 7px; }
       });
       el.appendChild(ul);
     }
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-flow');
+    grid.replaceChildren();
+    ranked(function (g) { return D.countries[g].loop_per_100[4]; }).forEach(function (g) {
+      var c = D.countries[g], lp = c.loop_per_100, acc = 0;
+      var b = mini(grid, g, FATES.map(function (f, i) { return [cap(f.long), lp[i] + ' of 100 t']; }));
+      tag(b, 'span', g === EUKEY ? 'EU' : c.name);
+      var svg = d3.select(b).append('svg').attr('viewBox', '0 0 100 11').attr('preserveAspectRatio', 'none').attr('aria-hidden', 'true');
+      lp.forEach(function (t, i) {
+        var x0 = acc; acc += t;
+        if (t <= 0) return;
+        if (i < 4) { svg.append('rect').attr('x', x0 + 0.4).attr('width', Math.max(t - 0.8, 0.3)).attr('height', 11).attr('fill', COL.quiet); return; }
+        var sr = soilPart(c), xs = sr == null ? x0 + t : x0 + t - sr;
+        svg.append('rect').attr('x', x0 + 0.4).attr('width', Math.max(xs - x0 - 0.6, 0.3)).attr('height', 11).attr('fill', COL.blue);
+        if (sr != null && sr > 0.2) svg.append('rect').attr('x', xs).attr('width', x0 + t - xs).attr('height', 11).attr('fill', COL.ochre);
+      });
+      tag(b, 'b', String(lp[4]));
+    });
   });
 
   /* ---------- every country ---------- */
