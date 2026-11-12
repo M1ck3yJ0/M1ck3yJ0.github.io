@@ -608,7 +608,7 @@ details.how li { margin: 0 0 7px; }
     return null;
   }
   charts.push(function () {
-    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, flat = W >= 620, mats = D.flows_by_material, h = hundred(EU);
+    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, mats = D.flows_by_material, h = hundred(EU);
     var total = d3.sum(mats, function (m) { return m.processed_kt; });
     var src = mats.map(function (m) { return { name: MATERIAL[m.material] || m.material, w: 100 * m.processed_kt / total, m: m }; });
     var tgt = FATES.map(function (f) { return { f: f, w: h[f.key] }; });
@@ -626,16 +626,14 @@ details.how li { margin: 0 0 7px; }
     links.forEach(function (l) { l.w0 = l.kt / src[l.s].sum * src[l.s].w; l.a0 = so[l.s]; so[l.s] += l.w0; });
     links.slice().sort(function (p, q) { return p.t - q.t || p.s - q.s; }).forEach(function (l) { l.w1 = l.kt / tgt[l.t].sum * tgt[l.t].w; l.a1 = to[l.t]; to[l.t] += l.w1; });
 
-    var k, H, cA, cB, pad = 8, Lw = 96, Rw = 126, th = flat ? 14 : 12, bh = 38, top = 44, RH = 176;
-    if (flat) { k = W / 100; cA = top + th; cB = cA + RH; H = cB + bh + 78; }
-    else { k = 4.3; cA = Lw + th; cB = W - Rw - th; H = pad * 2 + 100 * k; }
+    // it flows left to right at every width; wide screens add room for full names and the two brackets
+    var wide = W >= 760, pad = 8, Lw = wide ? 132 : 96, Rw = wide ? 392 : 126, th = wide ? 16 : 12, k = wide ? 4.5 : 4.3;
+    var cA = Lw + th, cB = W - Rw - th, H = pad * 2 + 100 * k;
     var svg = setupSvg(el, W, H, 'Of every 100 tonnes of material the EU processed in 2022: ' + src.map(function (s) { return f0(s.w) + ' were ' + s.name.toLowerCase(); }).join(', ') +
       '. Where they ended up: ' + tgt.map(function (t) { return t.w + ' ' + t.f.long; }).join(', ') + '.');
     function ribbon(l) {
-      var m = (cA + cB) / 2, p0 = (flat ? 0 : pad) + l.a0 * k, p1 = (flat ? 0 : pad) + l.a1 * k, q0 = p0 + l.w0 * k, q1 = p1 + l.w1 * k;
-      return flat
-        ? 'M' + p0 + ',' + cA + ' C' + p0 + ',' + m + ' ' + p1 + ',' + m + ' ' + p1 + ',' + cB + ' L' + q1 + ',' + cB + ' C' + q1 + ',' + m + ' ' + q0 + ',' + m + ' ' + q0 + ',' + cA + ' Z'
-        : 'M' + cA + ',' + p0 + ' C' + m + ',' + p0 + ' ' + m + ',' + p1 + ' ' + cB + ',' + p1 + ' L' + cB + ',' + q1 + ' C' + m + ',' + q1 + ' ' + m + ',' + q0 + ' ' + cA + ',' + q0 + ' Z';
+      var m = (cA + cB) / 2, p0 = pad + l.a0 * k, p1 = pad + l.a1 * k, q0 = p0 + l.w0 * k, q1 = p1 + l.w1 * k;
+      return 'M' + cA + ',' + p0 + ' C' + m + ',' + p0 + ' ' + m + ',' + p1 + ' ' + cB + ',' + p1 + ' L' + cB + ',' + q1 + ' C' + m + ',' + q1 + ' ' + m + ',' + q0 + ' ' + cA + ',' + q0 + ' Z';
     }
     // what doesn't come back is drawn first, what comes back on top
     links.slice().sort(function (p, q) { return (q.t > 1) - (p.t > 1) || p.kt - q.kt; }).forEach(function (l) {
@@ -649,50 +647,33 @@ details.how li { margin: 0 0 7px; }
     // the widest ribbons carry their tonnes
     links.forEach(function (l) {
       if (l.t < 2 || 100 * l.kt / total < 9.5) return;
-      var along = (flat ? 0 : pad) + (l.a0 + l.w0 / 2 + l.a1 + l.w1 / 2) / 2 * k, across = (cA + cB) / 2;
-      text(svg, 't-in', flat ? along : across, flat ? across + 4.5 : along + 4.5, f0(100 * l.kt / total), 'middle').style('font-weight', 720).style('fill', COL.ink);
+      // set a quarter of the way along, before the ribbons cross
+      text(svg, 't-in', 0.773 * cA + 0.227 * cB, pad + (0.914 * (l.a0 + l.w0 / 2) + 0.086 * (l.a1 + l.w1 / 2)) * k + 4.5, f0(100 * l.kt / total), 'middle').style('font-weight', 720).style('fill', COL.ink);
     });
-    function seg(a, b, c0, c1, fill) {
-      var r = svg.append('rect').attr('fill', fill);
-      if (flat) r.attr('x', a * k + 1).attr('width', Math.max((b - a) * k - 2, 0.5)).attr('y', c0).attr('height', c1 - c0);
-      else r.attr('y', pad + a * k + 1).attr('height', Math.max((b - a) * k - 2, 0.5)).attr('x', c0).attr('width', c1 - c0);
-    }
-    src.forEach(function (s) { seg(s.a, s.a + s.w, cA - th, cA, COL.ink2); });
-    tgt.forEach(function (t) { seg(t.a, t.a + t.w, cB, cB + (flat ? bh : th), t.f.fill); });
-
-    if (flat) {
-      // what went in, named above its strip
-      var lastEnd = -99;
-      src.forEach(function (s) {
-        var t = numText(svg, 't-name', s.a * k + 1, top - 9, s.name, f0(s.w)), tw = textWidth(t);
-        if (s.a * k + tw > W) t.attr('x', W - 1).attr('text-anchor', 'end');
-        if ((s.a * k + tw > W ? W - tw : s.a * k) < lastEnd + 10) {       // no room beside the last one: lift it
-          t.attr('y', top - 27); line(svg, (s.a + s.w / 2) * k, top - 22, (s.a + s.w / 2) * k, top - 3, COL.ink3, 1);
-        } else lastEnd = (s.a * k + tw > W ? W : s.a * k + tw);
-      });
-      // where it ended up, named inside its strip, or below it
-      tgt.forEach(function (t) {
-        var xa = t.a * k, xb = (t.a + t.w) * k, f = t.f;
-        var got = inside(svg, xa, xb, cB + bh / 2, String(t.w), f.key === 'built' ? ['built into buildings, roads and machines', f.name, ''] : [f.name, ''], f.light);
-        if (!got || got.text().trim() === String(t.w)) {
-          var end = xb > W - 90;
-          text(svg, 't-sm', end ? W - 1 : xa + 1, cB + bh + 16, (got ? '' : t.w + ' ') + f.name, end ? 'end' : 'start');
-        }
-      });
+    function seg(a, b, x0, fill) { svg.append('rect').attr('x', x0).attr('width', th).attr('y', pad + a * k + 1).attr('height', Math.max((b - a) * k - 2, 0.5)).attr('fill', fill); }
+    src.forEach(function (s) {
+      seg(s.a, s.a + s.w, cA - th, COL.ink2);
+      numText(svg, wide ? 't-lab' : 't-name t-tight', Lw - 9, pad + (s.a + s.w / 2) * k + 4.5, s.name, f0(s.w), 'end');
+    });
+    tgt.forEach(function (t, j) {
+      seg(t.a, t.a + t.w, cB, t.f.fill);
+      var ym = pad + (t.a + t.w / 2) * k + 4.5, two = wide && t.f.key === 'built';
+      var lab = numText(svg, wide ? 't-lab' : 't-name t-tight', W - Rw + 9, ym - (two ? 9 : 0), String(t.w), two ? 'built into buildings,' : t.f.name);
+      if (two) text(svg, 't-lab', W - Rw + 9, ym + 9, 'roads and machines');
+      if (j < 2) lab.style('fill', j ? COL.blueInk : COL.ochreInk).style('font-weight', 650);
+    });
+    if (wide) {
       // the two groups, under one bracket each
-      var xs = h.back * k, yb = cB + bh + 30;
-      [[0, xs - 5, COL.blueInk], [xs + 5, W, COL.ink3]].forEach(function (b) {
-        svg.append('path').attr('d', 'M' + (b[0] + 0.6) + ',' + (yb - 6) + ' V' + yb + ' H' + (b[1] - 0.6) + ' V' + (yb - 6)).attr('fill', 'none').attr('stroke', b[2]).attr('stroke-width', 1.2);
+      var xb = W - 178, ys = pad + h.back * k;
+      [[pad + 1, ys - 4, COL.blueInk], [ys + 4, pad + 100 * k - 1, COL.ink3]].forEach(function (b) {
+        svg.append('path').attr('d', 'M' + (xb - 6) + ',' + b[0] + ' H' + xb + ' V' + b[1] + ' H' + (xb - 6)).attr('fill', 'none').attr('stroke', b[2]).attr('stroke-width', 1.2);
       });
-      numText(svg, 't-group', 0, yb + 22, String(h.back), 'came back as waste').style('fill', COL.blueInk);
-      text(svg, 't-sm', 0, yb + 40, 'more than half of it soil and rock');
-      numText(svg, 't-group', xs + 5, yb + 22, String(100 - h.back), 'didn’t');
+      var yA = (pad + ys) / 2, yB = (ys + pad + 100 * k) / 2;
+      numText(svg, 't-group', xb + 12, yA - 12, String(h.back), 'came back as waste').style('fill', COL.blueInk);
+      text(svg, 't-sm', xb + 12, yA + 7, 'more than half of it');
+      text(svg, 't-sm', xb + 12, yA + 23, 'soil and rock');
+      numText(svg, 't-group', xb + 12, yB + 5, String(100 - h.back), 'didn’t');
     } else {
-      src.forEach(function (s) { numText(svg, 't-name t-tight', Lw - 7, pad + (s.a + s.w / 2) * k + 4.5, s.name, f0(s.w), 'end'); });
-      tgt.forEach(function (t, j) {
-        var lab = numText(svg, 't-name t-tight', W - Rw + 7, pad + (t.a + t.w / 2) * k + 4.5, String(t.w), t.f.name);
-        if (j < 2) lab.style('fill', j ? COL.blueInk : COL.ochreInk).style('font-weight', 650);
-      });
       var sum = document.createElement('p'), b1 = document.createElement('b'), b2 = document.createElement('b'); sum.className = 'sum';
       b1.textContent = h.back + ' came back as waste'; b1.style.color = COL.blueInk; b2.textContent = (100 - h.back) + ' didn’t.';
       sum.appendChild(b1); sum.appendChild(document.createTextNode(', more than half of it soil and rock. ')); sum.appendChild(b2);
