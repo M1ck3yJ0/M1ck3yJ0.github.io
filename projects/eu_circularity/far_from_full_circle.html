@@ -42,6 +42,7 @@
   --ochre-slot: #F1E5C8;
   --ochre-soft: #EDD5A1;
   --quiet:      #C3CAC6;  /* material that doesn't come back */
+  --stock:      #929C97;  /* built in: it may come back, decades from now */
   --land:       #E2E6E4;
 
   --sans:  'Archivo', 'Helvetica Neue', Arial, sans-serif;
@@ -88,7 +89,7 @@ h1 {
 .stand { font-family: var(--serif); font-size: 21px; line-height: 1.45; max-width: 31em; margin-top: 22px; }
 .stand strong, .txt strong { color: var(--ink); font-weight: 600; }
 .by { font-size: 14px; color: var(--ink-3); margin-top: 14px; }
-.tail { margin-top: 44px; }
+.hero + .tail { margin-top: 44px; }
 
 /* Sections */
 .sec { margin-top: 104px; }
@@ -133,6 +134,13 @@ figure { margin: 26px 0 0; }
 .axis-lab { font-size: 12px; fill: var(--ink-3); }
 .t-in   { font-size: 12.5px; font-weight: 600; fill: var(--ink-2); }
 .t-in.light { fill: #FFFFFF; }
+.t-b { font-weight: 720; fill: var(--ink); }
+.t-in.light .t-b { fill: #FFFFFF; }
+.t-tight { font-stretch: 86% !important; }
+.t-group { font-size: 15.5px; fill: var(--ink-2); }
+.sum { margin-top: 12px; font-size: 14.5px; line-height: 1.45; }
+.sum b { font-weight: 700; color: var(--ink); }
+.t-group .t-b { fill: inherit; }
 .hit { cursor: pointer; }
 .duo + .duo { margin-top: 52px; }
 .rest-key { display: flex; margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
@@ -205,7 +213,7 @@ details.how li { margin: 0 0 7px; }
   .bar-in { padding: 6px 18px; }
   .page { padding: 26px 18px 72px; }
   .stand { font-size: 19px; margin-top: 16px; }
-  .tail { margin-top: 32px; }
+  .hero + .tail { margin-top: 32px; }
   .sec { margin-top: 76px; }
   .sec h2 { font-size: 24px; }
   .txt { font-size: 18px; }
@@ -252,15 +260,15 @@ details.how li { margin: 0 0 7px; }
         </div>
       </section>
 
-      <section class="sec duo" id="where-it-goes" aria-labelledby="h-flow">
+      <section class="sec" id="where-it-goes" aria-labelledby="h-flow">
         <div class="head">
         <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
-        <p class="sub">Where material went in 2022. Each of the EU's bars is as thick as the material it carries.</p>
+        <p class="sub">Where the EU's material went in 2022, from what it was to where it ended up.</p>
         </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
         <div class="tail">
-        <p class="txt">Of every 100 tonnes of minerals, <span data-v="min-built">67</span> are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
-        <p class="src">Source: Eurostat, 2022, rounded. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_sd and env_wassd, 2022. The EU's bars leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</span></span></p>
+        <p class="txt">Of the 100 tonnes, <span data-v="min-in">52</span> are minerals, and <span data-v="min-built">35</span> of those are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
+        <p class="src">Source: Eurostat, 2022, rounded. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_sd and env_wassd, 2022. The ribbons split the flows by material and leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</span></span></p>
         </div>
       </section>
 
@@ -376,7 +384,7 @@ details.how li { margin: 0 0 7px; }
   var MEMBERS = Object.keys(D.countries).filter(function (g) { return g !== EUKEY; })
     .sort(function (a, b) { return D.countries[a].name.localeCompare(D.countries[b].name); });
   var COL = { blue: '#1E6FD9', blueInk: '#1657B0', blueSlot: '#D5E2F4', blueSoft: '#A9C7EF', ochre: '#D39A2C', ochreInk: '#8A6110', ochreSlot: '#F1E5C8', ochreSoft: '#EDD5A1',
-    quiet: '#C3CAC6', unknown: '#8E9893', unknownSlot: '#E4E8E5', use: '#5A6560',
+    quiet: '#C3CAC6', stock: '#929C97', unknown: '#8E9893', unknownSlot: '#E4E8E5', use: '#5A6560',
     ink: '#16201B', ink2: '#34403A', ink3: '#56615B', rule: '#D3DAD6', grid: '#E1E6E3', ground: '#F3F5F4', land: '#E2E6E4', paper: '#FFFFFF' };
   var EU_TARGET = 24, IE_TARGET = 12, TARGET_YEAR = 2030;
   var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
@@ -567,118 +575,128 @@ details.how li { margin: 0 0 7px; }
   });
   charts.push(function () { sels.forEach(function (sel) { sel.value = state.geo; }); });
 
-  /* ---------- where material goes ---------- */
+  /* ---------- where material goes: 100 tonnes by material, and where they ended up ---------- */
   var FATES = [
-    { name: 'built in', long: 'built into buildings, roads and machines' },
-    { name: 'burned or eaten', long: 'burned or eaten' },
-    { name: 'exported', long: 'exported' },
-    { name: 'spread on land', long: 'spread on land' },
-    { name: 'came back as waste', long: 'came back as waste' }
+    { key: 'soil', name: 'soil and rock', long: 'came back as waste: soil and rock', fill: COL.ochre },
+    { key: 'other', name: 'other waste', long: 'came back as waste, other than soil and rock', fill: COL.blue, light: true },
+    { key: 'built', name: 'built in', long: 'built into buildings, roads and machines', fill: COL.stock },
+    { key: 'burned', name: 'burned or eaten', long: 'burned or eaten', fill: COL.quiet },
+    { key: 'exported', name: 'exported', long: 'exported', fill: COL.quiet },
+    { key: 'spread', name: 'spread on land', long: 'spread on land', fill: COL.quiet }
   ];
-  function soilPart(c) {
-    var back = c.loop_per_100[4];
-    return c.back_as_soil_rock == null || !c.back_as_waste ? null : back * c.back_as_soil_rock / c.back_as_waste;
-  }
-  var FATE_SHORT = ['built in', 'burned', 'exported', 'spread', 'waste'];
   var MATERIAL = { 'Non-metallic minerals': 'Minerals', 'Biomass': 'Biomass', 'Fossil fuels': 'Fossil fuels', 'Metal ores': 'Metal ores' };
-  function bnT(kt) { return (Math.round(kt / 1e5) / 10).toFixed(1); }
+  // a country's 100 tonnes, in the order drawn; the waste splits into soil and rock and the rest where that's published
+  function hundred(c) {
+    var lp = c.loop_per_100; if (!lp) return null;
+    var back = lp[4], sr = c.back_as_soil_rock == null || !c.back_as_waste ? null : Math.round(back * c.back_as_soil_rock / c.back_as_waste);
+    return { soil: sr == null ? 0 : sr, other: sr == null ? back : back - sr, built: lp[0], burned: lp[1], exported: lp[2], spread: lp[3], back: back, split: sr != null };
+  }
+  // a label with its number in bold
+  function numText(g, cls, x, y, num, str, anchor) {
+    var t = g.append('text').attr('class', cls).attr('x', x).attr('y', y).attr('text-anchor', anchor || 'start');
+    t.append('tspan').attr('class', 't-b').text(num);
+    if (str) t.append('tspan').text(' ' + str);
+    return t;
+  }
   // the longest of the labels that fits inside a segment
-  function inside(svg, xa, xb, yMid, options, light) {
+  function inside(svg, xa, xb, yMid, num, options, light) {
     for (var i = 0; i < options.length; i++) {
-      var t = text(svg, 't-in' + (light ? ' light' : ''), xa + 6, yMid + 4.5, options[i]);
-      if (textWidth(t) + 12 <= xb - xa) return t;
+      var t = numText(svg, 't-in' + (light ? ' light' : ''), xa + 7, yMid + 4.5, num, options[i]);
+      if (textWidth(t) + 13 <= xb - xa) return t;
       t.remove();
     }
     return null;
   }
   charts.push(function () {
-    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, wide = W >= 620, c = C();
-    var mats = D.flows_by_material, x0 = wide ? 132 : 0, barH = wide ? 40 : 34;
-    var x = d3.scaleLinear().domain([0, 100]).range([x0, W]);
-    var k = (wide ? 236 : 214) / d3.sum(mats, function (m) { return m.processed_kt; }), gap = wide ? 6 : 26;
-    var y = wide ? 30 : 46, rows = [];
-    mats.forEach(function (m) { var h = Math.max(m.processed_kt * k, 16); rows.push({ m: m, y: y, h: h }); y += h + gap; });
-    var yS = y + (wide ? 82 : 46), H = yS + barH + 6;
-    var svg = setupSvg(el, W, H, 'The EU by material, each bar as thick as its tonnes: ' + mats.map(function (m) {
-      return (MATERIAL[m.material] || m.material) + ', ' + bnT(m.processed_kt) + ' billion tonnes, ' + FATES.map(function (f, i) { return f0(m.shares[i]) + '% ' + f.long; }).join(', ');
-    }).join('; ') + '. ' + c.name + ', of every 100 tonnes: ' + (c.loop_per_100 ? FATES.map(function (f, i) { return c.loop_per_100[i] + ' ' + f.long; }).join(', ') : 'no flow data') + '.');
-    text(svg, 't-name t-strong', 0, 14, 'EU, by material');
-
-    rows.forEach(function (L) {
-      var m = L.m, nm = MATERIAL[m.material] || m.material, mid = L.y + L.h / 2, acc = 0;
-      if (!wide) text(svg, 't-name', 0, L.y - 7, nm + ', ' + bnT(m.processed_kt) + ' billion tonnes');
-      else if (L.h >= 34) { text(svg, 't-name', 0, mid - 2, nm); text(svg, 't-sm', 0, mid + 15, bnT(m.processed_kt) + ' billion t'); }
-      else text(svg, 't-name', 0, mid + 5, nm + ', ' + bnT(m.processed_kt) + ' bn t');
-      m.shares.forEach(function (s, i) {
-        var a = acc, b = acc + s; acc = b;
-        if (s < 0.05) return;
-        var xa = x(a) + 1, xb = x(b) - 1, sr = i === 4 ? (m.soil_rock || 0) : 0, xs = sr > 0.2 ? x(b - sr) : xb;
-        if (i < 4) {
-          svg.append('rect').attr('x', xa).attr('y', L.y).attr('width', Math.max(xb - xa, 0.5)).attr('height', L.h).attr('fill', COL.quiet);
-          if (L.h >= 15) inside(svg, xa, xb, mid, i === 1 && m.material === 'Fossil fuels' ? ['burned ' + f0(s) + '%', f0(s)]
-            : [FATES[i].name + ' ' + f0(s) + '%', FATE_SHORT[i] + ' ' + f0(s) + '%', f0(s)], false);
-        } else {
-          svg.append('rect').attr('x', xa).attr('y', L.y).attr('width', Math.max(xs - xa - (sr > 0.2 ? 1 : 0), 0.5)).attr('height', L.h).attr('fill', COL.blue);
-          if (sr > 0.2) svg.append('rect').attr('x', xs).attr('y', L.y).attr('width', Math.max(xb - xs, 0.5)).attr('height', L.h).attr('fill', COL.ochre);
-          if (L.h >= 15 && sr > 0.2) {
-            inside(svg, xa, xs - 1, mid, ['other waste ' + f0(s - sr) + '%', f0(s - sr)], true);
-            inside(svg, xs, xb, mid, ['soil and rock ' + f0(sr) + '%', f0(sr)], false);
-          } else if (L.h >= 15) inside(svg, xa, xb, mid, ['back as waste ' + f0(s) + '%', 'waste ' + f0(s) + '%', f0(s)], true);
-        }
-        var tipRows = [['Share of ' + nm.toLowerCase(), f1(s) + '%'], ['Million tonnes', f0(s / 100 * m.processed_kt / 1000)]];
-        if (sr > 0.2) tipRows.push(['Of which soil and rock', f1(sr) + '%']);
-        if (i === 3 && m.material === 'Metal ores') tipRows.push(['Split by Eurostat', 'at a fixed share']);
-        svg.append('rect').attr('x', x(a)).attr('y', L.y).attr('width', x(b) - x(a)).attr('height', L.h).attr('fill', 'transparent')
-          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, nm + ': ' + FATES[i].long, tipRows); })
-          .on('pointerleave', hideTip);
-      });
+    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, flat = W >= 620, mats = D.flows_by_material, h = hundred(EU);
+    var total = d3.sum(mats, function (m) { return m.processed_kt; });
+    var src = mats.map(function (m) { return { name: MATERIAL[m.material] || m.material, w: 100 * m.processed_kt / total, m: m }; });
+    var tgt = FATES.map(function (f) { return { f: f, w: h[f.key] }; });
+    var links = [];
+    src.forEach(function (s, i) {
+      var sh = s.m.shares, sr = s.m.soil_rock || 0, kk = s.m.processed_kt / 100;
+      [sr * kk, (sh[4] - sr) * kk, sh[0] * kk, sh[1] * kk, sh[2] * kk, sh[3] * kk].forEach(function (kt, j) { if (kt > 0) links.push({ s: i, t: j, kt: kt }); });
     });
+    function sumOf(key, i) { return d3.sum(links.filter(function (l) { return l[key] === i; }), function (l) { return l.kt; }); }
+    var acc = 0; src.forEach(function (s, i) { s.a = acc; acc += s.w; s.sum = sumOf('s', i); });
+    acc = 0; tgt.forEach(function (t, j) { t.a = acc; acc += t.w; t.sum = sumOf('t', j); });
+    // each ribbon is as wide as its tonnes at both ends, fitted to the rounded strips
+    var so = src.map(function (s) { return s.a; }), to = tgt.map(function (t) { return t.a; });
+    links.sort(function (p, q) { return p.s - q.s || p.t - q.t; });
+    links.forEach(function (l) { l.w0 = l.kt / src[l.s].sum * src[l.s].w; l.a0 = so[l.s]; so[l.s] += l.w0; });
+    links.slice().sort(function (p, q) { return p.t - q.t || p.s - q.s; }).forEach(function (l) { l.w1 = l.kt / tgt[l.t].sum * tgt[l.t].w; l.a1 = to[l.t]; to[l.t] += l.w1; });
 
-    // the chosen country, every 100 tonnes
-    var lp = c.loop_per_100;
-    if (wide) { text(svg, 't-name t-strong', 0, yS + barH / 2 - 2, c.name); text(svg, 't-sm', 0, yS + barH / 2 + 15, 'of every 100 tonnes'); }
-    else text(svg, 't-name t-strong', 0, yS - 24, c.name + ', of every 100 tonnes');
-    if (!lp) text(svg, 't-sm', x0, yS + barH / 2 + 4, 'No flow data');
-    else {
-      var acc = 0, lastEnd = -99, raised = 0, placed = [];
-      lp.forEach(function (t, i) {
-        var a = acc, b = acc + t; acc = b;
-        if (t <= 0) return;
-        var xa = x(a), xb = x(b), w = xb - xa, mid = (xa + xb) / 2;
-        if (i < 4) svg.append('rect').attr('x', xa + 1).attr('y', yS).attr('width', Math.max(w - 2, 0.5)).attr('height', barH).attr('fill', COL.quiet);
-        else {
-          var sr = soilPart(c), xs = sr == null ? xb : x(b - sr);
-          svg.append('rect').attr('x', xa + 1).attr('y', yS).attr('width', Math.max(xs - xa - 2, 0.5)).attr('height', barH).attr('fill', COL.blue);
-          if (sr != null && sr > 0.2) svg.append('rect').attr('x', xs).attr('y', yS).attr('width', Math.max(xb - xs - 1, 0.5)).attr('height', barH).attr('fill', COL.ochre);
-        }
-        svg.append('rect').attr('x', xa).attr('y', yS).attr('width', w).attr('height', barH).attr('fill', 'transparent')
-          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, cap(FATES[i].long), [['EU', EU.loop_per_100[i] + ' of 100 tonnes'], [c.name, t + ' of 100 tonnes']]); })
-          .on('pointerleave', hideTip);
-        var num = text(svg, 't-num2', mid, yS - 7, String(t), 'middle'), nw = textWidth(num);
-        if (mid - nw / 2 < lastEnd + 3) num.remove(); else lastEnd = mid + nw / 2;
-        if (wide) {
-          var probe = text(svg, 't-name', 0, -99, FATES[i].name), tw = textWidth(probe); probe.remove();
-          if (tw + 10 <= w) text(svg, 't-name', mid, yS - 28, FATES[i].name, 'middle');
-          else {
-            var end = mid + tw + 3 > W ? true : mid - tw - 3 < 0 ? false : raised % 2 === 0; raised += 1;
-            var l = end ? mid + 3 - tw : mid - 3, r = l + tw, low = !placed.some(function (q) { return l < q[1] + 8 && r > q[0] - 8; });
-            if (low) placed.push([l, r]);
-            var up = yS - (low ? 46 : 64);
-            line(svg, mid, yS - 24, mid, up + 5, COL.ink3, 1);
-            text(svg, 't-name', mid + (end ? 3 : -3), up, FATES[i].name, end ? 'end' : 'start');
-          }
-        }
-      });
+    var k, H, cA, cB, pad = 8, Lw = 96, Rw = 126, th = flat ? 14 : 12, bh = 38, top = 44, RH = 176;
+    if (flat) { k = W / 100; cA = top + th; cB = cA + RH; H = cB + bh + 78; }
+    else { k = 4.3; cA = Lw + th; cB = W - Rw - th; H = pad * 2 + 100 * k; }
+    var svg = setupSvg(el, W, H, 'Of every 100 tonnes of material the EU processed in 2022: ' + src.map(function (s) { return f0(s.w) + ' were ' + s.name.toLowerCase(); }).join(', ') +
+      '. Where they ended up: ' + tgt.map(function (t) { return t.w + ' ' + t.f.long; }).join(', ') + '.');
+    function ribbon(l) {
+      var m = (cA + cB) / 2, p0 = (flat ? 0 : pad) + l.a0 * k, p1 = (flat ? 0 : pad) + l.a1 * k, q0 = p0 + l.w0 * k, q1 = p1 + l.w1 * k;
+      return flat
+        ? 'M' + p0 + ',' + cA + ' C' + p0 + ',' + m + ' ' + p1 + ',' + m + ' ' + p1 + ',' + cB + ' L' + q1 + ',' + cB + ' C' + q1 + ',' + m + ' ' + q0 + ',' + m + ' ' + q0 + ',' + cA + ' Z'
+        : 'M' + cA + ',' + p0 + ' C' + m + ',' + p0 + ' ' + m + ',' + p1 + ' ' + cB + ',' + p1 + ' L' + cB + ',' + q1 + ' C' + m + ',' + q1 + ' ' + m + ',' + q0 + ' ' + cA + ',' + q0 + ' Z';
     }
-    if (!wide) {
-      var ul = document.createElement('ul'); ul.className = 'rows';
-      FATES.forEach(function (f, i) {
-        var li = document.createElement('li'), b = document.createElement('b');
-        b.textContent = EU.loop_per_100[i] + ' ';
-        li.appendChild(b); li.appendChild(document.createTextNode(f.long + ' in the EU' + (lp ? ' (' + c.name + ' ' + lp[i] + ')' : '')));
-        ul.appendChild(li);
+    // what doesn't come back is drawn first, what comes back on top
+    links.slice().sort(function (p, q) { return (q.t > 1) - (p.t > 1) || p.kt - q.kt; }).forEach(function (l) {
+      if (Math.max(l.w0, l.w1) * k < 0.5) return;
+      var f = tgt[l.t].f;
+      svg.append('path').attr('d', ribbon(l)).attr('fill', f.fill).attr('fill-opacity', l.t > 1 ? (l.t === 2 ? 0.42 : 0.5) : 0.62)
+        .attr('stroke', COL.ground).attr('stroke-width', 0.8)
+        .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, src[l.s].name + ': ' + f.long, [['Of every 100 tonnes', f1(100 * l.kt / total)], ['Million tonnes', f0(l.kt / 1000)]]); })
+        .on('pointerleave', hideTip);
+    });
+    // the widest ribbons carry their tonnes
+    links.forEach(function (l) {
+      if (l.t < 2 || 100 * l.kt / total < 9.5) return;
+      var along = (flat ? 0 : pad) + (l.a0 + l.w0 / 2 + l.a1 + l.w1 / 2) / 2 * k, across = (cA + cB) / 2;
+      text(svg, 't-in', flat ? along : across, flat ? across + 4.5 : along + 4.5, f0(100 * l.kt / total), 'middle').style('font-weight', 720).style('fill', COL.ink);
+    });
+    function seg(a, b, c0, c1, fill) {
+      var r = svg.append('rect').attr('fill', fill);
+      if (flat) r.attr('x', a * k + 1).attr('width', Math.max((b - a) * k - 2, 0.5)).attr('y', c0).attr('height', c1 - c0);
+      else r.attr('y', pad + a * k + 1).attr('height', Math.max((b - a) * k - 2, 0.5)).attr('x', c0).attr('width', c1 - c0);
+    }
+    src.forEach(function (s) { seg(s.a, s.a + s.w, cA - th, cA, COL.ink2); });
+    tgt.forEach(function (t) { seg(t.a, t.a + t.w, cB, cB + (flat ? bh : th), t.f.fill); });
+
+    if (flat) {
+      // what went in, named above its strip
+      var lastEnd = -99;
+      src.forEach(function (s) {
+        var t = numText(svg, 't-name', s.a * k + 1, top - 9, s.name, f0(s.w)), tw = textWidth(t);
+        if (s.a * k + tw > W) t.attr('x', W - 1).attr('text-anchor', 'end');
+        if ((s.a * k + tw > W ? W - tw : s.a * k) < lastEnd + 10) {       // no room beside the last one: lift it
+          t.attr('y', top - 27); line(svg, (s.a + s.w / 2) * k, top - 22, (s.a + s.w / 2) * k, top - 3, COL.ink3, 1);
+        } else lastEnd = (s.a * k + tw > W ? W : s.a * k + tw);
       });
-      el.appendChild(ul);
+      // where it ended up, named inside its strip, or below it
+      tgt.forEach(function (t) {
+        var xa = t.a * k, xb = (t.a + t.w) * k, f = t.f;
+        var got = inside(svg, xa, xb, cB + bh / 2, String(t.w), f.key === 'built' ? ['built into buildings, roads and machines', f.name, ''] : [f.name, ''], f.light);
+        if (!got || got.text().trim() === String(t.w)) {
+          var end = xb > W - 90;
+          text(svg, 't-sm', end ? W - 1 : xa + 1, cB + bh + 16, (got ? '' : t.w + ' ') + f.name, end ? 'end' : 'start');
+        }
+      });
+      // the two groups, under one bracket each
+      var xs = h.back * k, yb = cB + bh + 30;
+      [[0, xs - 5, COL.blueInk], [xs + 5, W, COL.ink3]].forEach(function (b) {
+        svg.append('path').attr('d', 'M' + (b[0] + 0.6) + ',' + (yb - 6) + ' V' + yb + ' H' + (b[1] - 0.6) + ' V' + (yb - 6)).attr('fill', 'none').attr('stroke', b[2]).attr('stroke-width', 1.2);
+      });
+      numText(svg, 't-group', 0, yb + 22, String(h.back), 'came back as waste').style('fill', COL.blueInk);
+      text(svg, 't-sm', 0, yb + 40, 'more than half of it soil and rock');
+      numText(svg, 't-group', xs + 5, yb + 22, String(100 - h.back), 'didn’t');
+    } else {
+      src.forEach(function (s) { numText(svg, 't-name t-tight', Lw - 7, pad + (s.a + s.w / 2) * k + 4.5, s.name, f0(s.w), 'end'); });
+      tgt.forEach(function (t, j) {
+        var lab = numText(svg, 't-name t-tight', W - Rw + 7, pad + (t.a + t.w / 2) * k + 4.5, String(t.w), t.f.name);
+        if (j < 2) lab.style('fill', j ? COL.blueInk : COL.ochreInk).style('font-weight', 650);
+      });
+      var sum = document.createElement('p'), b1 = document.createElement('b'), b2 = document.createElement('b'); sum.className = 'sum';
+      b1.textContent = h.back + ' came back as waste'; b1.style.color = COL.blueInk; b2.textContent = (100 - h.back) + ' didn’t.';
+      sum.appendChild(b1); sum.appendChild(document.createTextNode(', more than half of it soil and rock. ')); sum.appendChild(b2);
+      el.appendChild(sum);
     }
   });
 
@@ -1011,7 +1029,8 @@ details.how li { margin: 0 0 7px; }
     'hh-mt': f0(D.household.generated_kt / 1000),
     'hh-share': f0(D.household.share_of_generated_pct) + '%',
     'hh-pts': f1(D.household.at_most_pts),
-    'min-built': f0(minerals.shares[0]),
+    'min-in': f0(100 * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })),
+    'min-built': f0(minerals.shares[0] * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })),
     'flows-bt': (D.waste_bases.in_flows_kt / 1e6).toFixed(2),
     'treated-bt': (D.waste_bases.treated_kt / 1e6).toFixed(2),
     'crisis-cut': f0(-S.consumption_change_pct[iCrisis]) + '%',
