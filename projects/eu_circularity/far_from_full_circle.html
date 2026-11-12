@@ -117,7 +117,15 @@ figure { margin: 26px 0 0; }
 .t-mid  { font-family: var(--serif) !important; font-size: 16.5px; fill: var(--ink-2); }
 .t-halo { paint-order: stroke; stroke: var(--ground); stroke-width: 4px; stroke-linejoin: round; }
 .axis-lab { font-size: 12px; fill: var(--ink-3); }
+.t-in   { font-size: 12.5px; font-weight: 600; fill: var(--ink-2); }
+.t-in.light { fill: #FFFFFF; }
 .hit { cursor: pointer; }
+.duo + .duo { margin-top: 52px; }
+.rest-key { display: flex; margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.rest-key div { padding-right: 8px; min-width: 0; }
+.rest-key b { display: block; color: var(--ink); font-weight: 720; font-size: 15px; }
+.rest-key .grp span { display: block; }
+.rest-key .grp b { display: inline; font-size: 13px; }
 
 .key { list-style: none; margin-top: 14px; display: grid; gap: 10px; max-width: 30em; }
 .key li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; font-size: 14.5px; line-height: 1.4; }
@@ -265,14 +273,19 @@ details.how li { margin: 0 0 7px; }
         </aside>
         <div class="tail">
         <p class="txt">Europe already recycles most of what it realistically can. Of the waste it treats but doesn't recycle, <span data-v="unrec-soil">71%</span> is soil, dredged mud and mining rock. <strong>Everything else, recycled to the last tonne, would add <span data-v="wo-gain">four</span> points.</strong></p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
+        <figure id="fig-rest">
+          <p class="chart-label">What everything else is: the <span data-v="rest-mt">339</span> million tonnes the EU treated but didn't recycle in 2022, other than soil and rock</p>
+          <div class="chart" id="rest-bar"></div>
+        </figure>
+        <p class="txt">Households generate <span data-v="hh-mt">196</span> million tonnes of waste a year, <span data-v="hh-share">9%</span> of all the waste Europe generates. <strong>Recycling every tonne of it would add at most <span data-v="hh-pts">2.3</span> points</strong>, and less in practice, since some of it is recycled already.</p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa, env_wastrt and env_wasgen, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
         </div>
       </section>
 
       <section class="sec duo" id="where-it-goes" aria-labelledby="h-flow">
         <div class="head">
         <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
-        <p class="sub">Where material went in 2022, in tonnes out of every 100.</p>
+        <p class="sub">Where material went in 2022. Each of the EU's bars is as thick as the material it carries.</p>
         </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
         <aside class="side" id="side-flow" aria-label="All 27 countries">
@@ -283,8 +296,8 @@ details.how li { margin: 0 0 7px; }
           </div>
         </aside>
         <div class="tail">
-        <p class="txt">For every tonne that comes back as waste, two are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. What's burned or eaten never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
-        <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded to whole tonnes. The soil and rock part is approximate.</p>
+        <p class="txt">Of every 100 tonnes of minerals, <span data-v="min-built">67</span> are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
+        <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded. The EU's bars leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</p>
         </div>
       </section>
 
@@ -296,16 +309,13 @@ details.how li { margin: 0 0 7px; }
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Countries are grouped by the lower end of each range. Sweden doesn't publish how much of its waste is soil and rock.</p>
       </section>
 
-      <section class="sec duo" id="ten-years" aria-labelledby="h-trend">
+      <section class="sec" id="ten-years" aria-labelledby="h-trend">
+        <div class="duo">
         <div class="head">
         <h2 id="h-trend">The rate rose <span data-v="rise">1.5</span> points in <span data-v="span">14</span> years. The target asks for <span data-v="need">12</span> more in <span data-v="left">six</span>.</h2>
         <p class="sub">The share of material that comes from recycled waste, 2010 to 2024, and the 2030 target.</p>
         </div>
-        <figure id="fig-trend">
-          <div class="chart" id="trend-lines"></div>
-          <p class="chart-label">What moved the rate from 2012 to 2022, in points</p>
-          <div class="chart" id="trend-drivers"></div>
-        </figure>
+        <figure id="fig-trend"><div class="chart" id="trend-lines"></div></figure>
         <aside class="side" id="side-trend" aria-label="All 27 countries">
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-trend">All 27 countries</button>
           <div class="side-body">
@@ -313,18 +323,50 @@ details.how li { margin: 0 0 7px; }
             <div class="minis" id="minis-trend"></div>
           </div>
         </aside>
+        </div>
+        <div class="duo">
+        <div class="head"><p class="chart-label">What moved the rate in each two-year step, in points, with the net change as a black line</p></div>
+        <figure id="fig-steps"><div class="chart" id="trend-steps"></div></figure>
+        <aside class="side" id="side-steps" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-steps">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">Each two-year step since 2010: recycling in blue, using more or less material in gray. From the least added by recycling to the most.</p>
+            <div class="minis" id="minis-steps"></div>
+          </div>
+        </aside>
         <div class="tail">
-        <p class="txt">From 2012 to 2022, Europe recycled <span data-v="rec-more">8%</span> more waste, which added <span data-v="rec-pts">0.7</span> points. It also used <span data-v="use-more">3%</span> more material, which took <span data-v="use-pts">0.3</span> back.</p>
-        <p class="txt">Eurostat's 2024 figures, still partly estimates, show the other lever at work: Europe used 6% less material than in 2022, and that alone added about 0.7 points. <strong>Two years of using less did as much as ten years of recycling more.</strong></p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2010 to 2024. Waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
+        <p class="txt"><strong>The biggest jump came from using less, not recycling more.</strong> From 2008 to 2010, as the financial crisis hit, Europe used <span data-v="crisis-cut">14%</span> less material, and that alone added <span data-v="crisis-pts">1.3</span> points. Recycling more added <span data-v="rec-early">1.6</span> points from 2004 to 2010, and only <span data-v="rec-late">0.7</span> in the twelve years to 2022.</p>
+        <p class="txt">Eurostat's 2024 figures, still partly estimates, show it again: Europe used <span data-v="use-cut">6%</span> less material than in 2022, and that alone added about <span data-v="use-pts">0.7</span> points. <strong>Two years of using less did <span data-v="as-much">as much as</span> ten years of recycling more.</strong></p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur and env_ac_mfa, 2004 to 2024, with env_wastrt for the ceilings. Country rates start in 2010, and waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
+        </div>
         </div>
       </section>
 
       <section class="sec close" id="so-what" aria-labelledby="h-close">
+        <div class="duo">
+        <div class="head">
         <h2 id="h-close">Using less has no ceiling</h2>
-        <p class="txt">Recycling more of the little that comes back runs out at about Europe's target. Using less material doesn't. That's less about shopping than it sounds: most of those tonnes go into buildings, roads, energy and food, and how much goes in is decided by whoever designs, specifies, builds and buys.</p>
+        <p class="txt">Recycling more of the little that comes back runs out at about Europe's target. Using less material doesn't.</p>
+        </div>
+        <figure id="fig-levers">
+          <p class="chart-label">What each lever would add to the 2022 rate on its own, in points</p>
+          <div class="chart" id="levers"></div>
+        </figure>
+        <aside class="side" id="side-levers" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-levers">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">The four levers on one scale, with a line where each country's target sits. Least that recycling could add first.</p>
+            <div class="minis" id="minis-levers"></div>
+          </div>
+        </aside>
+        <div class="tail">
+        <p class="txt"><strong>Recycling's bars can't grow any longer. Using less can:</strong> with no more recycling, Europe would reach 24% using <span data-v="cut-24">59%</span> less material, or <span data-v="cut-24-wo">42%</span> less if it also recycled all its waste but soil and rock.</p>
+        <p class="txt">That's less about shopping than it sounds: most of those tonnes go into buildings, roads, energy and food, and how much goes in is decided by whoever designs, specifies, builds and buys.</p>
         <p class="txt"><strong>How much new material goes into what you make or build? How long will it last? Could the same job be done with less, or with what's already there?</strong></p>
         <p class="txt">This is the first part of a series. Next: what Europe's tonnes are made of, which of them matter most for the climate, and who decides how many go in.</p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each lever changes one thing and keeps the rest as it was.</p>
+        </div>
+        </div>
 
         <details class="how"><summary>How I worked this out, limits and sources</summary><div class="body">
           <h3>The ceiling</h3>
@@ -332,8 +374,11 @@ details.how li { margin: 0 0 7px; }
           <p>Soil and rock means soils, dredging spoils and other mineral waste, mostly from mining. Rubble from construction and demolition stays in.</p>
           <h3>Where material goes</h3>
           <p>Eurostat's material flow accounts follow every tonne of material processed in a country: extracted at home, imported, recycled or backfilled. I took the shares built into stock, burned or eaten (emissions), exported, spread on land (dissipative flows) and treated as waste, and rounded them to whole tonnes out of 100. The soil and rock part of the waste is each country's soil and rock share of all the waste it treats, applied to the waste in the flows. Malta's flows record no emissions and leave about a fifth of its material unaccounted for.</p>
+          <p>The EU's bars split the same flows by material, which only the EU and 13 member states publish; other products, about 1% of the total, are left out. Eurostat splits dissipative flows across materials in the same shares in every country (60% metal ores, 25% biomass, 15% minerals), so the share of metal ores spread on land is an estimate. Waste in the flows leaves out soil and dredged mud sent to landfill and waste from treating waste, so it's smaller than the waste treated that the ceilings use.</p>
           <h3>What moved the rate</h3>
-          <p>I recalculated 2012's rate twice: once with 2022's recycling (the recycling effect) and once with 2022's consumption (the consumption effect). The two add up to the total, give or take rounding.</p>
+          <p>For each two-year step, I recalculated the rate with only recycling changing, once with the earlier year's consumption and once with the later year's, and averaged the two: that's the recycling effect. The rest of the change is the consumption effect, so the two add up to it.</p>
+          <h3>What each lever is worth</h3>
+          <p>Each lever changes one thing in 2022 and keeps the rest. The recycling levers recycle waste that was treated but not recycled, with consumption unchanged, the lower end of each range above. The others cut consumption with recycling unchanged: by 15%, by every tonne of fossil fuels, or by as much as it takes to reach the target. For household waste, I added all the waste households generated to recycling, as if none of it were recycled today, so it's an upper bound.</p>
           <h3>Limits</h3>
           <ul>
             <li>The ceilings are bounds, not forecasts. They count every treated tonne as recyclable, contaminated soil and mining waste included, so real ceilings are lower. Mining waste lifts the ceilings of Finland, Bulgaria, Romania and Sweden.</li>
@@ -351,7 +396,7 @@ details.how li { margin: 0 0 7px; }
           </ul>
           <h3>Sources</h3>
           <ul>
-            <li>Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">circular material use rate (env_ac_cur)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_mfa/default/table?lang=en">material flow accounts (env_ac_mfa)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wastrt/default/table?lang=en">treatment of waste (env_wastrt)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_sd/default/table?lang=en">material flows for the circular economy (env_ac_sd)</a> and <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wassd/default/table?lang=en">waste by material (env_wassd)</a>.</li>
+            <li>Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">circular material use rate (env_ac_cur)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_mfa/default/table?lang=en">material flow accounts (env_ac_mfa)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wastrt/default/table?lang=en">treatment of waste (env_wastrt)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wasgen/default/table?lang=en">generation of waste (env_wasgen)</a>,<a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_sd/default/table?lang=en">material flows for the circular economy (env_ac_sd)</a> and <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wassd/default/table?lang=en">waste by material (env_wassd)</a>.</li>
             <li>European Commission (2025), <a href="https://commission.europa.eu/topics/competitiveness/clean-industrial-deal_en">Clean Industrial Deal</a>, which sets the EU's 24% goal for 2030.</li>
             <li>Government of Ireland (2026), <a href="https://www.gov.ie/en/department-of-climate-energy-and-the-environment/publications/whole-of-government-circular-economy-strategy-2026-2028-accelerating-action/">Whole of Government Circular Economy Strategy 2026-2028: Accelerating Action</a>, which sets Ireland's 12% goal for 2030.</li>
             <li>Map shapes: Natural Earth.</li>
@@ -390,7 +435,7 @@ details.how li { margin: 0 0 7px; }
   var EUKEY = 'EU27_2020', EU = D.countries[EUKEY];
   var MEMBERS = Object.keys(D.countries).filter(function (g) { return g !== EUKEY; })
     .sort(function (a, b) { return D.countries[a].name.localeCompare(D.countries[b].name); });
-  var COL = { blue: '#1E6FD9', blueSoft: '#A9C7EF', ochre: '#D39A2C', ochreSoft: '#EDD5A1', quiet: '#C3CAC6', unknown: '#A9B1AC',
+  var COL = { blue: '#1E6FD9', blueSoft: '#A9C7EF', ochre: '#D39A2C', ochreSoft: '#EDD5A1', quiet: '#C3CAC6', unknown: '#A9B1AC', use: '#5A6560',
     ink: '#16201B', ink2: '#34403A', ink3: '#56615B', rule: '#D3DAD6', grid: '#E1E6E3', ground: '#F3F5F4', land: '#E2E6E4', paper: '#FFFFFF' };
   var EU_TARGET = 24, IE_TARGET = 12, TARGET_YEAR = 2030;
   var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
@@ -617,58 +662,103 @@ details.how li { margin: 0 0 7px; }
     var back = c.loop_per_100[4];
     return c.back_as_soil_rock == null || !c.back_as_waste ? null : back * c.back_as_soil_rock / c.back_as_waste;
   }
+  var FATE_SHORT = ['built in', 'burned', 'exported', 'spread', 'waste'];
+  var MATERIAL = { 'Non-metallic minerals': 'Minerals', 'Biomass': 'Biomass', 'Fossil fuels': 'Fossil fuels', 'Metal ores': 'Metal ores' };
+  function bnT(kt) { return (Math.round(kt / 1e5) / 10).toFixed(1); }
+  // the longest of the labels that fits inside a segment
+  function inside(svg, xa, xb, yMid, options, light) {
+    for (var i = 0; i < options.length; i++) {
+      var t = text(svg, 't-in' + (light ? ' light' : ''), xa + 6, yMid + 4.5, options[i]);
+      if (textWidth(t) + 12 <= xb - xa) return t;
+      t.remove();
+    }
+    return null;
+  }
   charts.push(function () {
     var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, wide = W >= 620, c = C();
-    var rows = [{ name: 'EU', d: EU }, { name: c.name, d: c }];
-    var x0 = wide ? 112 : 0, barH = wide ? 40 : 34;
+    var mats = D.flows_by_material, x0 = wide ? 132 : 0, barH = wide ? 40 : 34;
     var x = d3.scaleLinear().domain([0, 100]).range([x0, W]);
-    var yEU = wide ? 70 : 40, yGeo = yEU + barH + (wide ? 72 : 62), H = yGeo + barH + 6;
-    var svg = setupSvg(el, W, H, 'Two bars of 100 tonnes. EU: ' + FATES.map(function (f, i) { return EU.loop_per_100[i] + ' ' + f.long; }).join(', ') + '. ' + c.name + ': ' + (c.loop_per_100 ? FATES.map(function (f, i) { return c.loop_per_100[i] + ' ' + f.long; }).join(', ') : 'no flow data') + '.');
-    rows.forEach(function (row, ri) {
-      var y = ri ? yGeo : yEU, lp = row.d.loop_per_100, isEU = ri === 0;
-      if (wide) text(svg, 't-name t-strong', 0, y + barH / 2 + 5, row.name);
-      else text(svg, 't-name t-strong', 0, y - 24, row.name);
-      if (!lp) { text(svg, 't-sm', x0, y + barH / 2 + 4, 'No flow data'); return; }
-      var acc = 0, lastEnd = -99, raised = 0;
+    var k = (wide ? 236 : 214) / d3.sum(mats, function (m) { return m.processed_kt; }), gap = wide ? 6 : 26;
+    var y = wide ? 30 : 46, rows = [];
+    mats.forEach(function (m) { var h = Math.max(m.processed_kt * k, 16); rows.push({ m: m, y: y, h: h }); y += h + gap; });
+    var yS = y + (wide ? 82 : 46), H = yS + barH + 6;
+    var svg = setupSvg(el, W, H, 'The EU by material, each bar as thick as its tonnes: ' + mats.map(function (m) {
+      return (MATERIAL[m.material] || m.material) + ', ' + bnT(m.processed_kt) + ' billion tonnes, ' + FATES.map(function (f, i) { return f0(m.shares[i]) + '% ' + f.long; }).join(', ');
+    }).join('; ') + '. ' + c.name + ', of every 100 tonnes: ' + (c.loop_per_100 ? FATES.map(function (f, i) { return c.loop_per_100[i] + ' ' + f.long; }).join(', ') : 'no flow data') + '.');
+    text(svg, 't-name t-strong', 0, 14, 'EU, by material');
+
+    rows.forEach(function (L) {
+      var m = L.m, nm = MATERIAL[m.material] || m.material, mid = L.y + L.h / 2, acc = 0;
+      if (!wide) text(svg, 't-name', 0, L.y - 7, nm + ', ' + bnT(m.processed_kt) + ' billion tonnes');
+      else if (L.h >= 34) { text(svg, 't-name', 0, mid - 2, nm); text(svg, 't-sm', 0, mid + 15, bnT(m.processed_kt) + ' billion t'); }
+      else text(svg, 't-name', 0, mid + 5, nm + ', ' + bnT(m.processed_kt) + ' bn t');
+      m.shares.forEach(function (s, i) {
+        var a = acc, b = acc + s; acc = b;
+        if (s < 0.05) return;
+        var xa = x(a) + 1, xb = x(b) - 1, sr = i === 4 ? (m.soil_rock || 0) : 0, xs = sr > 0.2 ? x(b - sr) : xb;
+        if (i < 4) {
+          svg.append('rect').attr('x', xa).attr('y', L.y).attr('width', Math.max(xb - xa, 0.5)).attr('height', L.h).attr('fill', COL.quiet);
+          if (L.h >= 15) inside(svg, xa, xb, mid, i === 1 && m.material === 'Fossil fuels' ? ['burned ' + f0(s) + '%', f0(s)]
+            : [FATES[i].name + ' ' + f0(s) + '%', FATE_SHORT[i] + ' ' + f0(s) + '%', f0(s)], false);
+        } else {
+          svg.append('rect').attr('x', xa).attr('y', L.y).attr('width', Math.max(xs - xa - (sr > 0.2 ? 1 : 0), 0.5)).attr('height', L.h).attr('fill', COL.blue);
+          if (sr > 0.2) svg.append('rect').attr('x', xs).attr('y', L.y).attr('width', Math.max(xb - xs, 0.5)).attr('height', L.h).attr('fill', COL.ochre);
+          if (L.h >= 15 && sr > 0.2) {
+            inside(svg, xa, xs - 1, mid, ['other waste ' + f0(s - sr) + '%', f0(s - sr)], true);
+            inside(svg, xs, xb, mid, ['soil and rock ' + f0(sr) + '%', f0(sr)], false);
+          } else if (L.h >= 15) inside(svg, xa, xb, mid, ['back as waste ' + f0(s) + '%', 'waste ' + f0(s) + '%', f0(s)], true);
+        }
+        var tipRows = [['Share of ' + nm.toLowerCase(), f1(s) + '%'], ['Million tonnes', f0(s / 100 * m.processed_kt / 1000)]];
+        if (sr > 0.2) tipRows.push(['Of which soil and rock', f1(sr) + '%']);
+        if (i === 3 && m.material === 'Metal ores') tipRows.push(['Split by Eurostat', 'at a fixed share']);
+        svg.append('rect').attr('x', x(a)).attr('y', L.y).attr('width', x(b) - x(a)).attr('height', L.h).attr('fill', 'transparent')
+          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, nm + ': ' + FATES[i].long, tipRows); })
+          .on('pointerleave', hideTip);
+      });
+    });
+
+    // the chosen country, every 100 tonnes
+    var lp = c.loop_per_100;
+    if (wide) { text(svg, 't-name t-strong', 0, yS + barH / 2 - 2, c.name); text(svg, 't-sm', 0, yS + barH / 2 + 15, 'of every 100 tonnes'); }
+    else text(svg, 't-name t-strong', 0, yS - 24, c.name + ', of every 100 tonnes');
+    if (!lp) text(svg, 't-sm', x0, yS + barH / 2 + 4, 'No flow data');
+    else {
+      var acc = 0, lastEnd = -99, raised = 0, placed = [];
       lp.forEach(function (t, i) {
         var a = acc, b = acc + t; acc = b;
         if (t <= 0) return;
-        var xa = x(a), xb = x(b), w = xb - xa, mid = (xa + xb) / 2, back = i === 4;
-        var g = svg.append('g');
-        if (!back) g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(w - 2, 0.5)).attr('height', barH).attr('fill', COL.quiet);
+        var xa = x(a), xb = x(b), w = xb - xa, mid = (xa + xb) / 2;
+        if (i < 4) svg.append('rect').attr('x', xa + 1).attr('y', yS).attr('width', Math.max(w - 2, 0.5)).attr('height', barH).attr('fill', COL.quiet);
         else {
-          var sr = soilPart(row.d), xs = sr == null ? xb : x(b - sr);
-          g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(xs - xa - 2, 0.5)).attr('height', barH).attr('fill', COL.blue);
-          if (sr != null && sr > 0.2) g.append('rect').attr('x', xs).attr('y', y).attr('width', Math.max(xb - xs - 1, 0.5)).attr('height', barH).attr('fill', COL.ochre);
-          if (isEU && wide && sr != null) {
-            text(svg, 't-sm', xs - 5, y + barH + 16, 'other waste', 'end');
-            text(svg, 't-sm', xs + 5, y + barH + 16, 'soil and rock');
-          }
+          var sr = soilPart(c), xs = sr == null ? xb : x(b - sr);
+          svg.append('rect').attr('x', xa + 1).attr('y', yS).attr('width', Math.max(xs - xa - 2, 0.5)).attr('height', barH).attr('fill', COL.blue);
+          if (sr != null && sr > 0.2) svg.append('rect').attr('x', xs).attr('y', yS).attr('width', Math.max(xb - xs - 1, 0.5)).attr('height', barH).attr('fill', COL.ochre);
         }
-        g.append('rect').attr('x', xa).attr('y', y).attr('width', w).attr('height', barH).attr('fill', 'transparent')
-          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, cap(FATES[i].long), [['EU', EU.loop_per_100[i] + ' of 100 tonnes'], [c.name, (c.loop_per_100 ? c.loop_per_100[i] : 'n/a') + ' of 100 tonnes']]); })
+        svg.append('rect').attr('x', xa).attr('y', yS).attr('width', w).attr('height', barH).attr('fill', 'transparent')
+          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, cap(FATES[i].long), [['EU', EU.loop_per_100[i] + ' of 100 tonnes'], [c.name, t + ' of 100 tonnes']]); })
           .on('pointerleave', hideTip);
-        // the number, above the segment
-        var num = text(svg, 't-num2', mid, y - 7, String(t), 'middle'), nw = textWidth(num);
+        var num = text(svg, 't-num2', mid, yS - 7, String(t), 'middle'), nw = textWidth(num);
         if (mid - nw / 2 < lastEnd + 3) num.remove(); else lastEnd = mid + nw / 2;
-        // the names, once, above the EU's numbers
-        if (isEU && wide) {
+        if (wide) {
           var probe = text(svg, 't-name', 0, -99, FATES[i].name), tw = textWidth(probe); probe.remove();
-          if (tw + 10 <= w) text(svg, 't-name', mid, y - 28, FATES[i].name, 'middle');
+          if (tw + 10 <= w) text(svg, 't-name', mid, yS - 28, FATES[i].name, 'middle');
           else {
-            var up = y - 46, end = raised % 2 === 0; raised += 1;
-            line(svg, mid, y - 24, mid, up + 5, COL.ink3, 1);
+            var end = mid + tw + 3 > W ? true : mid - tw - 3 < 0 ? false : raised % 2 === 0; raised += 1;
+            var l = end ? mid + 3 - tw : mid - 3, r = l + tw, low = !placed.some(function (q) { return l < q[1] + 8 && r > q[0] - 8; });
+            if (low) placed.push([l, r]);
+            var up = yS - (low ? 46 : 64);
+            line(svg, mid, yS - 24, mid, up + 5, COL.ink3, 1);
             text(svg, 't-name', mid + (end ? 3 : -3), up, FATES[i].name, end ? 'end' : 'start');
           }
         }
       });
-    });
+    }
     if (!wide) {
       var ul = document.createElement('ul'); ul.className = 'rows';
       FATES.forEach(function (f, i) {
         var li = document.createElement('li'), b = document.createElement('b');
         b.textContent = EU.loop_per_100[i] + ' ';
-        li.appendChild(b); li.appendChild(document.createTextNode(f.long + (c.loop_per_100 ? ' (' + c.name + ' ' + c.loop_per_100[i] + ')' : '')));
+        li.appendChild(b); li.appendChild(document.createTextNode(f.long + ' in the EU' + (lp ? ' (' + c.name + ' ' + lp[i] + ')' : '')));
         ul.appendChild(li);
       });
       el.appendChild(ul);
@@ -841,37 +931,6 @@ details.how li { margin: 0 0 7px; }
   });
 
   charts.push(function () {
-    var el = document.getElementById('trend-drivers'), c = C();
-    el.replaceChildren(); el.className = 'chart pair';
-    var sets = [{ name: 'EU', dv: EU.drivers }, { name: c.name, dv: c.drivers }].filter(function (s) { return s.dv; });
-    var vals = [];
-    sets.forEach(function (s) { vals.push(s.dv.recycling_effect_pts, s.dv.consumption_effect_pts, s.dv.rate_change_pts); });
-    var lo = Math.min(0, Math.floor(d3.min(vals))), hi = Math.max(1, Math.ceil(d3.max(vals)));
-    sets.forEach(function (s) {
-      var box = document.createElement('div'); el.appendChild(box);
-      var W = box.clientWidth, nameW = 148, rowH = 30, dv = s.dv;
-      var items = [
-        { label: dv.recycling_effect_pts >= 0 ? 'Recycling more' : 'Recycling less', v: dv.recycling_effect_pts, color: COL.blue },
-        { label: dv.consumption_change_pct >= 0 ? 'Using more material' : 'Using less material', v: dv.consumption_effect_pts, color: COL.unknown },
-        { label: 'Net change', v: dv.rate_change_pts, color: COL.ink }
-      ];
-      var H = 30 + items.length * rowH + 22;
-      var x = d3.scaleLinear().domain([lo, hi]).range([nameW + (lo < 0 ? 40 : 4), W - 44]);
-      var svg = setupSvg(box, W, H, s.name + ', ' + D.drivers_years[0] + ' to ' + D.drivers_years[1] + ': ' + items.map(function (it) { return it.label.toLowerCase() + ' ' + signed(it.v) + ' points'; }).join(', ') + '.');
-      text(svg, 't-name t-strong', 0, 14, s.name + ': ' + f1(dv.rate_from_pct) + '% in ' + D.drivers_years[0] + ', ' + f1(dv.rate_to_pct) + '% in ' + D.drivers_years[1]);
-      [lo, 0, hi].filter(function (t, i, a) { return a.indexOf(t) === i && (t === 0 || Math.abs(x(t) - x(0)) > 26); }).forEach(function (t) { text(svg, 'axis-lab', x(t), H - 4, (t > 0 ? '+' : t < 0 ? '-' : '') + Math.abs(t), 'middle'); });
-      items.forEach(function (it, j) {
-        var yy = 30 + j * rowH;
-        text(svg, 't-name' + (j === 2 ? ' t-strong' : ''), 0, yy + 14, it.label);
-        var xa = x(Math.min(0, it.v)), xb = x(Math.max(0, it.v));
-        svg.append('rect').attr('x', xa).attr('y', yy).attr('width', Math.max(xb - xa, 1.5)).attr('height', 18).attr('fill', it.color);
-        text(svg, 't-name t-strong', it.v >= 0 ? xb + 6 : xa - 6, yy + 14, signed(it.v), it.v >= 0 ? 'start' : 'end');
-      });
-      line(svg, x(0), 24, x(0), 30 + items.length * rowH, COL.ink3);
-    });
-  });
-
-  charts.push(function () {
     var grid = document.getElementById('minis-trend'), yrs = D.trend_years, n = yrs.length, W = 58, H = 36;
     grid.replaceChildren();
     var x = d3.scaleLinear().domain([0, n - 1]).range([3, W - 3]), y = d3.scaleLinear().domain([0, 40]).range([H - 2, 2]);
@@ -890,8 +949,212 @@ details.how li { margin: 0 0 7px; }
     });
   });
 
+  // what moved the rate in each two-year step: recycling and consumption, stacked, with the net change as a tick
+  function stepRate(c, idx) {      // the rate at a step's start, rebuilt from the trend and the steps
+    var Y = D.step_years, yrs = D.trend_years, st = c.steps, yr = Y[idx], t = c.trend.rate;
+    if (yrs.indexOf(yr) >= 0) return t[yrs.indexOf(yr)];
+    var v = t[0];
+    for (var i = idx; i < Y.indexOf(yrs[0]); i++) v -= st.change[i] || 0;
+    return v;
+  }
+  charts.push(function () {
+    var el = document.getElementById('trend-steps'), c = C(), Y = D.step_years, n = Y.length - 1, est = D.trend_estimated_from;
+    el.replaceChildren(); el.className = 'chart pair';
+    var sets = [{ name: 'EU', d: EU, isEU: true }, { name: c.name, d: c, isEU: false }];
+    var lo = -0.5, hi = 0.5;
+    sets.forEach(function (s) {
+      s.d.steps.recycling.forEach(function (rv, i) {
+        if (rv == null) return;
+        var cv = s.d.steps.consumption[i];
+        hi = Math.max(hi, Math.max(rv, 0) + Math.max(cv, 0)); lo = Math.min(lo, Math.min(rv, 0) + Math.min(cv, 0));
+      });
+    });
+    hi = Math.ceil(hi * 2) / 2; lo = Math.floor(lo * 2) / 2;
+    sets.forEach(function (s) {
+      var box = document.createElement('div'); el.appendChild(box);
+      var st = s.d.steps, W = box.clientWidth, top = 40, plotH = 156, H = top + plotH + 24, padL = 30;
+      var x = d3.scaleLinear().domain([0, n]).range([padL, W - 2]), bw = Math.max(x(1) - x(0) - 7, 4);
+      var y = d3.scaleLinear().domain([lo, hi]).range([top + plotH, top]);
+      var first = 0; while (first < n && st.recycling[first] == null) first += 1;
+      var r0 = stepRate(s.d, first), r1 = s.d.trend.rate[s.d.trend.rate.length - 1];
+      var svg = setupSvg(box, W, H, s.name + ', each two-year step from ' + Y[first] + ' to ' + Y[n] + ': ' + st.recycling.map(function (rv, i) {
+        return rv == null ? null : Y[i] + ' to ' + Y[i + 1] + ' recycling ' + signed(rv) + ', consumption ' + signed(st.consumption[i]);
+      }).filter(Boolean).join('; ') + ' points.');
+      text(svg, 't-name t-strong', 0, 14, s.name + ': ' + f1(r0) + '% in ' + Y[first] + ', ' + f1(r1) + '% in ' + Y[n] + (Y[n] >= est ? ' (estimate)' : ''));
+      [lo, hi].forEach(function (t) { line(svg, padL, y(t), W - 2, y(t), COL.grid); text(svg, 'axis-lab', padL - 5, y(t) + 4, (t > 0 ? '+' : t < 0 ? '-' : '') + Math.abs(t), 'end'); });
+      text(svg, 'axis-lab', padL - 5, y(0) + 4, '0', 'end');
+      Y.forEach(function (yr, j) { if ((yr - Y[0]) % 4 === 0) text(svg, 'axis-lab', x(j), H - 5, String(yr), j === 0 ? 'start' : j === n ? 'end' : 'middle'); });
+      if (first > 0) text(svg, 't-sm', (x(0) + x(first)) / 2, y(0) - 10, 'No data', 'middle');
+      var bigRec = -1, bigCon = -1;
+      st.recycling.forEach(function (rv, i) {
+        if (rv == null) return;
+        var cv = st.consumption[i], ch = st.change[i], xc = x(i + 0.5), pos = 0, neg = 0, isEst = Y[i + 1] >= est;
+        [[rv, COL.blue], [cv, COL.use]].forEach(function (p) {
+          var v = p[0], ya, yb;
+          if (v >= 0) { ya = y(pos + v); yb = y(pos); pos += v; } else { ya = y(neg); yb = y(neg + v); neg += v; }
+          svg.append('rect').attr('x', xc - bw / 2).attr('y', ya).attr('width', bw).attr('height', Math.max(yb - ya, 0.5)).attr('fill', p[1]).attr('opacity', isEst ? 0.55 : 1);
+        });
+        line(svg, xc - bw / 2 - 3, y(ch), xc + bw / 2 + 3, y(ch), COL.ink, 2);
+        var pct = st.consumption_change_pct[i];
+        svg.append('rect').attr('x', x(i)).attr('y', top).attr('width', x(i + 1) - x(i)).attr('height', plotH).attr('fill', 'transparent')
+          .on('pointermove', function (e) {
+            if (e.pointerType === 'mouse') showTip(e, s.name + ', ' + Y[i] + ' to ' + Y[i + 1] + (isEst ? ' (estimate)' : ''), [['Recycling more or less', signed(rv)],
+              ['Using ' + f0(Math.abs(pct)) + '% ' + (pct < 0 ? 'less' : 'more') + ' material', signed(cv)], ['Net change, in points', signed(ch)]]);
+          }).on('pointerleave', hideTip);
+        if (bigRec < 0 || rv > st.recycling[bigRec]) bigRec = i;
+        if (bigCon < 0 || cv > st.consumption[bigCon]) bigCon = i;
+      });
+      line(svg, padL, y(0), W - 2, y(0), COL.ink3);
+      // name the two colors once, on the EU's biggest step of each
+      if (s.isEU) {
+        [[bigRec, 'recycling more', COL.blue], [bigCon, 'using ' + f0(Math.abs(st.consumption_change_pct[bigCon])) + '% less', COL.use]].forEach(function (a) {
+          var i = a[0], top2 = Math.max(st.recycling[i], 0) + Math.max(st.consumption[i], 0), xc = x(i + 0.5);
+          text(svg, 't-sm t-strong t-halo', i === 0 ? x(0) : xc, y(top2) - 8, a[1], i === 0 ? 'start' : 'middle').style('fill', a[2]);
+        });
+      }
+    });
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-steps'), Y = D.step_years, from = Y.indexOf(2010), n = Y.length - 1, W = 58, H = 36, LIM = 3;
+    grid.replaceChildren();
+    var x = d3.scaleLinear().domain([from, n]).range([2, W - 2]), y = d3.scaleLinear().domain([-LIM, LIM]).range([H - 1, 1]);
+    function total(a) { return a.slice(from).reduce(function (t, v) { return t + (v || 0); }, 0); }
+    function clamp(v) { return Math.max(-LIM, Math.min(LIM, v)); }
+    ranked(function (g) { return total(D.countries[g].steps.recycling); }).forEach(function (g) {
+      var c = D.countries[g], st = c.steps;
+      var b = mini(grid, g, [['Recycling, since 2010', signed(total(st.recycling)) + ' points'], ['Using more or less material', signed(total(st.consumption)) + ' points']]);
+      var svg = d3.select(b).append('svg').attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H).attr('aria-hidden', 'true');
+      svg.append('line').attr('x1', 0).attr('x2', W).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', COL.rule);
+      for (var i = from; i < n; i++) {
+        var rv = st.recycling[i], cv = st.consumption[i], pos = 0, neg = 0, bx = x(i) + 0.8, bw = x(i + 1) - x(i) - 1.6;
+        if (rv == null) continue;
+        [[rv, COL.blue], [cv, COL.use]].forEach(function (p) {
+          var v = p[0], a = v >= 0 ? pos : neg, e = clamp(a + v);
+          svg.append('rect').attr('x', bx).attr('y', Math.min(y(a), y(e))).attr('width', bw).attr('height', Math.abs(y(e) - y(a))).attr('fill', p[1]);
+          if (v >= 0) pos = e; else neg = e;
+        });
+      }
+      tag(b, 'span', g === EUKEY ? 'EU' : c.name);
+    });
+  });
+
+  /* ---------- what each lever is worth ---------- */
+  var LEVER_ROWS = [
+    { key: 'recycling_all_but_soil_rock', label: 'Recycling all waste but soil and rock' },
+    { key: 'recycling_every_tonne', label: 'Recycling every tonne, soil and rock too' },
+    { key: 'using_15pct_less', label: 'Using 15% less of everything' },
+    { key: 'using_no_fossil_fuels', label: 'Using no fossil fuels' }
+  ];
+  function targetFor(g) { return g === 'IE' ? IE_TARGET : EU_TARGET; }
+  function cutFor(g, c) { return c.less_for_target[g === 'IE' ? 'ireland' : 'eu']; }
+  function leverBar(svg, x, yy, h, c, key) {      // one lever's bar; every tonne splits into its soil and rock part
+    var lv = c.levers, v = lv[key], v0 = lv.recycling_all_but_soil_rock;
+    function bar(a, b, fill) { svg.append('rect').attr('x', x(a)).attr('y', yy).attr('width', Math.max(x(b) - x(a), 0.5)).attr('height', h).attr('fill', fill); }
+    if (v == null) return;
+    if (key === 'recycling_every_tonne') { if (v0 == null) bar(0, v, COL.unknown); else { bar(0, v0, COL.blueSoft); bar(v0, v, COL.ochre); } }
+    else bar(0, v, key === 'recycling_all_but_soil_rock' ? COL.blueSoft : COL.use);
+  }
+  charts.push(function () {
+    var el = document.getElementById('levers'), c = C();
+    el.replaceChildren(); el.className = 'chart pair';
+    var sets = [{ name: 'EU', g: EUKEY, d: EU }, { name: c.name, g: state.geo, d: c }], max = 5;
+    sets.forEach(function (s) {
+      s.t = targetFor(s.g); s.need = s.t - s.d.rate; s.cut = cutFor(s.g, s.d);
+      LEVER_ROWS.forEach(function (r) { max = Math.max(max, s.d.levers[r.key] || 0); });
+      if (s.need > 0) max = Math.max(max, s.need);
+    });
+    max = Math.ceil(max / 5) * 5;
+    sets.forEach(function (s) {
+      var box = document.createElement('div'); el.appendChild(box);
+      var W = box.clientWidth, lv = s.d.levers, top = 58, rowH = 44, H = top + 5 * rowH + 16, bottom = H - 18;
+      var x = d3.scaleLinear().domain([0, max]).range([0, W - 76]);
+      var svg = setupSvg(box, W, H, s.name + ', points each lever would add to the 2022 rate of ' + f1(s.d.rate) + '%: ' + LEVER_ROWS.map(function (r) {
+        return r.label.toLowerCase() + ' ' + (lv[r.key] == null ? 'not published' : signed(lv[r.key]));
+      }).join(', ') + (s.need > 0 ? '; using ' + f0(s.cut) + '% less of everything reaches ' + s.t + '%.' : '; already above ' + s.t + '%.'));
+      text(svg, 't-name t-strong', 0, 14, s.name + ': ' + f1(s.d.rate) + '% in 2022');
+      for (var v = 0; v <= max; v += 5) {
+        line(svg, x(v), top - 4, x(v), bottom, v === 0 ? COL.ink3 : COL.grid);
+        text(svg, 'axis-lab', x(v), H - 3, v ? '+' + v : '0', v === 0 ? 'start' : 'middle');
+      }
+      if (s.need > 0) {
+        line(svg, x(s.need), top - 22, x(s.need), bottom, COL.ink, 1.2, '4 3');
+        var nearEnd = x(s.need) > W * 0.62;
+        text(svg, 't-sm t-strong', x(s.need) + (nearEnd ? -5 : 5), top - 14, s.t + '%: ' + (s.g === 'IE' ? 'Ireland’s target' : 'the EU’s target'), nearEnd ? 'end' : 'start');
+      }
+      LEVER_ROWS.concat([{ key: 'target' }]).forEach(function (r, j) {
+        var yy = top + j * rowH, v = r.key === 'target' ? (s.need > 0 ? s.need : null) : lv[r.key], label, value;
+        if (r.key === 'target') { label = s.need > 0 ? 'Using ' + f0(s.cut) + '% less of everything' : 'Already above ' + s.t + '%'; value = 'reaches ' + s.t + '%'; }
+        else { label = r.label; value = v == null ? 'not published' : signed(v); }
+        text(svg, 't-name t-halo' + (r.key === 'target' ? ' t-strong' : ''), 0, yy + 12, label);
+        if (r.key === 'target') { if (v != null) svg.append('rect').attr('x', x(0)).attr('y', yy + 18).attr('width', x(v) - x(0)).attr('height', 14).attr('fill', COL.use); }
+        else leverBar(svg, x, yy + 18, 14, s.d, r.key);
+        if (v != null) {
+          var vx = x(v) + 6, vl = text(svg, 't-name t-strong', vx, yy + 30, value);
+          if (r.key !== 'target' && s.need > 0 && vx < x(s.need) + 4 && vx + textWidth(vl) > x(s.need) - 3) vl.attr('x', x(s.need) + 5);
+        }
+        else if (r.key !== 'target') text(svg, 't-sm', x(0) + 6, yy + 30, value);
+      });
+    });
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-levers'), W = 58, H = 36, MAX = 30;
+    grid.replaceChildren();
+    var x = d3.scaleLinear().domain([0, MAX]).range([1, W - 1]);
+    ranked(function (g) { return D.countries[g].levers.recycling_every_tonne; }).forEach(function (g) {
+      var c = D.countries[g], t = targetFor(g), need = t - c.rate;
+      var rows = LEVER_ROWS.map(function (r) { return [r.label, c.levers[r.key] == null ? 'not published' : signed(c.levers[r.key]) + ' points']; });
+      rows.push(['Less of everything to reach ' + t + '%', need > 0 ? f0(cutFor(g, c)) + '%' : 'already above']);
+      var b = mini(grid, g, rows);
+      var svg = d3.select(b).append('svg').attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H).attr('aria-hidden', 'true');
+      LEVER_ROWS.forEach(function (r, j) { leverBar(svg, x, 2 + j * 8.6, 6, c, r.key); });
+      if (need > 0) svg.append('line').attr('x1', x(need)).attr('x2', x(need)).attr('y1', 0).attr('y2', H).attr('stroke', COL.ink).attr('stroke-width', 1.2).attr('stroke-dasharray', '2 2');
+      tag(b, 'span', g === EUKEY ? 'EU' : c.name);
+    });
+  });
+
+  /* ---------- what the rest of the unrecycled waste is ---------- */
+  var REST_SHORT = {
+    'Sorting residues and other mixed waste': 'Sorting residues',
+    'Mixed household and similar waste': 'Mixed household',
+    'Ash and residues from burning and treating waste': 'Ash and residues',
+    'Construction and demolition rubble': 'Rubble',
+    'Metal, glass, paper, plastic, wood and textiles': 'Recyclables'
+  };
+  charts.push(function () {
+    var el = document.getElementById('rest-bar'), W = el.clientWidth, wide = W >= 560, all = D.unrecycled;
+    var total = d3.sum(all, function (d) { return d.kt; }), top = all.slice(0, 5);
+    var items = top.map(function (d) { return { name: d.kind, short: REST_SHORT[d.kind] || d.kind, kt: d.kt }; });
+    items.push({ name: 'Chemical waste, sludges, food and the rest', short: 'Other', kt: total - d3.sum(top, function (d) { return d.kt; }) });
+    var x = d3.scaleLinear().domain([0, 100]).range([0, W]), H = 26, acc = 0;
+    var svg = setupSvg(el, W, H, 'One bar of ' + f0(total / 1000) + ' million tonnes: ' + items.map(function (d) { return f0(d.kt / total * 100) + '% ' + d.name.toLowerCase(); }).join(', ') + '.');
+    var key = document.createElement(wide ? 'div' : 'ul'), small = null; key.className = wide ? 'rest-key' : 'rows';
+    items.forEach(function (d) {
+      var p = d.kt / total * 100, a = acc; acc += p;
+      svg.append('rect').attr('x', x(a) + (a ? 1 : 0)).attr('y', 0).attr('width', Math.max(x(p) - x(0) - 2, 0.5)).attr('height', H).attr('fill', COL.blueSoft)
+        .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, d.name, [['Million tonnes', f0(d.kt / 1000)], ['Share', f0(p) + '%']]); })
+        .on('pointerleave', hideTip);
+      var wpx = x(p) - x(0), b = document.createElement('b'), item;
+      b.textContent = f0(p) + '% ';
+      if (wide && wpx < 100) {          // the small ones share one label, a line each
+        if (!small) { small = document.createElement('div'); small.className = 'grp'; small.dataset.w = 0; key.appendChild(small); }
+        small.dataset.w = +small.dataset.w + wpx; small.style.width = small.dataset.w + 'px';
+        item = document.createElement('span'); small.appendChild(item);
+      } else {
+        item = document.createElement(wide ? 'div' : 'li'); key.appendChild(item);
+        if (wide) item.style.width = wpx + 'px';
+      }
+      item.appendChild(b); item.appendChild(document.createTextNode(wide && wpx < 150 ? d.short : d.name));
+    });
+    el.appendChild(key);
+  });
+
   /* ---------- numbers in the text ---------- */
-  var T = EU.trend, yrs = D.trend_years, lastYr = yrs[yrs.length - 1], dv = EU.drivers;
+  var T = EU.trend, yrs = D.trend_years, lastYr = yrs[yrs.length - 1], S = EU.steps, SY = D.step_years, iLast = SY.length - 2, iCrisis = SY.indexOf(2008);
+  function stepSum(a, from, to) { var t = 0; for (var i = SY.indexOf(from); i < SY.indexOf(to); i++) t += a[i] || 0; return t; }
+  var recDecade = stepSum(S.recycling, 2012, 2022), useLast = S.consumption[iLast];
+  var minerals = D.flows_by_material.filter(function (m) { return m.material === 'Non-metallic minerals'; })[0];
   var nBelow = MEMBERS.filter(function (g) { return D.countries[g].ceiling < EU_TARGET; }).length;
   var nCould = MEMBERS.filter(function (g) { var c = D.countries[g]; return c.ceiling_without_soil_rock != null && c.ceiling_without_soil_rock >= EU_TARGET; }).length;
   var V = {
@@ -906,10 +1169,22 @@ details.how li { margin: 0 0 7px; }
     'span': String(lastYr - yrs[0]),
     'need': f0(EU_TARGET - T.rate[yrs.length - 1]),
     'left': word(TARGET_YEAR - lastYr),
-    'rec-more': f0(dv.waste_recycled_change_pct) + '%',
-    'rec-pts': f1(dv.recycling_effect_pts),
-    'use-more': f0(dv.consumption_change_pct) + '%',
-    'use-pts': f1(Math.abs(dv.consumption_effect_pts))
+    'rest-mt': f0(d3.sum(D.unrecycled, function (d) { return d.kt; }) / 1000),
+    'hh-mt': f0(D.household.generated_kt / 1000),
+    'hh-share': f0(D.household.share_of_generated_pct) + '%',
+    'hh-pts': f1(D.household.at_most_pts),
+    'min-built': f0(minerals.shares[0]),
+    'flows-bt': (D.waste_bases.in_flows_kt / 1e6).toFixed(2),
+    'treated-bt': (D.waste_bases.treated_kt / 1e6).toFixed(2),
+    'crisis-cut': f0(-S.consumption_change_pct[iCrisis]) + '%',
+    'crisis-pts': f1(S.consumption[iCrisis]),
+    'rec-early': f1(stepSum(S.recycling, 2004, 2010)),
+    'rec-late': f1(stepSum(S.recycling, 2010, 2022)),
+    'use-cut': f0(-S.consumption_change_pct[iLast]) + '%',
+    'use-pts': f1(useLast),
+    'as-much': f1(useLast) === f1(recDecade) ? 'as much as' : useLast > recDecade ? 'more than' : 'less than',
+    'cut-24': f0(EU.less_for_target.eu) + '%',
+    'cut-24-wo': f0(EU.less_for_target_without_soil_rock.eu) + '%'
   };
   document.querySelectorAll('[data-v]').forEach(function (el) { var k = el.getAttribute('data-v'); if (V[k] != null) el.textContent = V[k]; });
   var asofEl = document.getElementById('asof');
