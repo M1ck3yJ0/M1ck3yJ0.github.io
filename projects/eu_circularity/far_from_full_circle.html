@@ -43,6 +43,9 @@
   --ochre-soft: #EDD5A1;
   --quiet:      #C3CAC6;  /* material that doesn't come back */
   --stock:      #929C97;  /* built in: it may come back, decades from now */
+  --less:       #C4217B;  /* using less material */
+  --less-ink:   #A01763;
+  --less-slot:  #F2D8E5;
   --land:       #E2E6E4;
 
   --sans:  'Archivo', 'Helvetica Neue', Arial, sans-serif;
@@ -132,6 +135,8 @@ figure { margin: 26px 0 0; }
 .t-note { font-family: var(--serif) !important; font-style: italic; font-size: 15.5px; fill: var(--ink-2); }
 .t-halo { paint-order: stroke; stroke: var(--ground); stroke-width: 4px; stroke-linejoin: round; }
 .axis-lab { font-size: 12px; fill: var(--ink-3); }
+.t-bar { font-size: 11.5px; fill: var(--ink-2); }
+#fig-trend { max-width: 960px; }
 .t-in   { font-size: 12.5px; font-weight: 600; fill: var(--ink-2); }
 .t-in.light { fill: #FFFFFF; }
 .t-b { font-weight: 720; fill: var(--ink); }
@@ -281,21 +286,15 @@ details.how li { margin: 0 0 7px; }
       </section>
 
       <section class="sec" id="ten-years" aria-labelledby="h-trend">
-        <div class="duo">
         <div class="head">
         <h2 id="h-trend">The rate rose <span data-v="rise">1.5</span> points in <span data-v="span">14</span> years. The target asks for <span data-v="need">12</span> more in <span data-v="left">six</span>.</h2>
-        <p class="sub">The share of material that comes from recycled waste, 2010 to 2024, and the 2030 target.</p>
+        <p class="sub">The share of the EU's material that comes from recycled waste since 2004, and the path to the 2030 target.</p>
         </div>
-        <figure id="fig-trend"><div class="chart" id="trend-lines"></div></figure>
-        </div>
-        <div class="duo">
-        <div class="head"><p class="chart-label">What moved the rate in each two-year step, in points, with the net change as a black line</p></div>
-        <figure id="fig-steps"><div class="chart" id="trend-steps"></div></figure>
+        <figure id="fig-trend"><div class="chart" id="trend"></div></figure>
         <div class="tail">
         <p class="txt"><strong>The biggest jump came from using less, not recycling more.</strong> From 2008 to 2010, as the financial crisis hit, Europe used <span data-v="crisis-cut">14%</span> less material, and that alone added <span data-v="crisis-pts">1.3</span> points. Recycling more added <span data-v="rec-early">1.6</span> points from 2004 to 2010, and only <span data-v="rec-late">0.7</span> in the twelve years to 2022.</p>
         <p class="txt">Eurostat's 2024 figures, still partly estimates, show it again: Europe used <span data-v="use-cut">6%</span> less material than in 2022, and that alone added about <span data-v="use-pts">0.7</span> points. <strong>Two years of using less did <span data-v="as-much">as much as</span> ten years of recycling more.</strong></p>
-        <p class="src">Source: my calculation on Eurostat data, 2004 to 2024. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur and env_ac_mfa, 2004 to 2024, with env_wastrt for the ceilings. Country rates start in 2010, and waste is reported every two years. 2024 values build on Eurostat's estimated rate.</span></span></p>
-        </div>
+        <p class="src">Source: my calculation on Eurostat data, 2004 to 2024. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur and env_ac_mfa, 2004 to 2024. Waste is reported every two years, so the steps are two years long. Each step's change in the rate is split into what the change in recycling did and what the change in material use did; the two add up to it. 2024 values build on Eurostat's estimated rate.</span></span></p>
         </div>
       </section>
 
@@ -384,7 +383,7 @@ details.how li { margin: 0 0 7px; }
   var MEMBERS = Object.keys(D.countries).filter(function (g) { return g !== EUKEY; })
     .sort(function (a, b) { return D.countries[a].name.localeCompare(D.countries[b].name); });
   var COL = { blue: '#1E6FD9', blueInk: '#1657B0', blueSlot: '#D5E2F4', blueSoft: '#A9C7EF', ochre: '#D39A2C', ochreInk: '#8A6110', ochreSlot: '#F1E5C8', ochreSoft: '#EDD5A1',
-    quiet: '#C3CAC6', stock: '#929C97', unknown: '#8E9893', unknownSlot: '#E4E8E5', use: '#5A6560',
+    less: '#C4217B', lessInk: '#A01763', lessSlot: '#F2D8E5', quiet: '#C3CAC6', stock: '#929C97', guide: '#E7EBE9', unknown: '#8E9893', unknownSlot: '#E4E8E5', use: '#5A6560',
     ink: '#16201B', ink2: '#34403A', ink3: '#56615B', rule: '#D3DAD6', grid: '#E1E6E3', ground: '#F3F5F4', land: '#E2E6E4', paper: '#FFFFFF' };
   var EU_TARGET = 24, IE_TARGET = 12, TARGET_YEAR = 2030;
   var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
@@ -766,129 +765,96 @@ details.how li { margin: 0 0 7px; }
     });
   });
 
-  /* ---------- what moved the rate ---------- */
-  charts.push(function () {
-    var el = document.getElementById('trend-lines'), W = el.clientWidth, narrow = W < 620, c = C();
-    var years = D.trend_years, est = D.trend_estimated_from, last = years[years.length - 1];
-    var H = narrow ? 290 : 350, top = 16, bottom = 28, padL = 40, padR = narrow ? 86 : 150;
-    var x = d3.scaleLinear().domain([years[0], TARGET_YEAR]).range([padL + 8, W - padR]);
-    var y = d3.scaleLinear().domain([0, 40]).range([H - bottom, top]);
-    function v(t, key, yr) { return t[key][years.indexOf(yr)]; }
-    var euLast = v(EU.trend, 'rate', last), pace = (EU_TARGET - euLast) / (TARGET_YEAR - last);
-    var svg = setupSvg(el, W, H, 'Line chart. The EU’s circularity rate went from ' + f1(v(EU.trend, 'rate', years[0])) + '% in ' + years[0] + ' to ' + f1(euLast) + '% in ' + last + ', an estimate. Reaching 24% in 2030 takes about ' + f1(pace) + ' points a year. ' + c.name + ': ' + f1(v(c.trend, 'rate', years[0])) + '% to ' + f1(v(c.trend, 'rate', last)) + '%.');
-    var grid = svg.append('g');
-    [0, 10, 20, 30, 40].forEach(function (t) {
-      line(grid, padL, y(t), W - padR, y(t), t === 0 ? COL.ink3 : COL.grid);
-      text(grid, 'axis-lab', padL - 6, y(t) + 4, t + '%', 'end');
-    });
-    years.concat([TARGET_YEAR]).forEach(function (yr) {
-      if (narrow && (yr - years[0]) % 4 !== 0) return;
-      text(grid, 'axis-lab', x(yr), H - 8, String(yr), 'middle');
-    });
-    // what recycling every tonne could deliver, with and without soil and rock
-    var band = d3.area().x(function (yr) { return x(yr); })
-      .y0(function (yr) { return y(v(EU.trend, 'ceiling_without_soil_rock', yr)); })
-      .y1(function (yr) { return y(v(EU.trend, 'ceiling', yr)); });
-    svg.append('path').attr('d', band(years)).attr('fill', COL.ochreSoft).attr('opacity', 0.75);
-    text(svg, 't-sm', x(years[0]) + 6, y(v(EU.trend, 'ceiling', years[0])) + 15, narrow ? 'Recycling every tonne' : 'The most recycling every tonne could deliver');
-    text(svg, 't-sm', x(years[0]) + 6, y(v(EU.trend, 'ceiling_without_soil_rock', years[0])) - 7, narrow ? 'All but soil and rock' : 'Recycling all but soil and rock');
-
-    function series(t, color, w, r) {
-      var rep = years.filter(function (yr) { return yr < est; }), mk = d3.line().x(function (yr) { return x(yr); }).y(function (yr) { return y(v(t, 'rate', yr)); });
-      svg.append('path').attr('d', mk(rep)).attr('fill', 'none').attr('stroke', color).attr('stroke-width', w);
-      if (last >= est) svg.append('path').attr('d', mk([rep[rep.length - 1], last])).attr('fill', 'none').attr('stroke', color).attr('stroke-width', w).attr('stroke-dasharray', '3 3');
-      years.forEach(function (yr) {
-        svg.append('circle').attr('cx', x(yr)).attr('cy', y(v(t, 'rate', yr))).attr('r', r)
-          .attr('fill', yr >= est ? COL.ground : color).attr('stroke', yr >= est ? color : COL.ground).attr('stroke-width', yr >= est ? 1.6 : 1);
-      });
-    }
-    // the path the target asks for
-    line(svg, x(last), y(euLast), x(TARGET_YEAR), y(EU_TARGET), COL.ink, 1.3, '5 4');
-    svg.append('circle').attr('cx', x(TARGET_YEAR)).attr('cy', y(EU_TARGET)).attr('r', 5).attr('fill', COL.ground).attr('stroke', COL.ink).attr('stroke-width', 1.8);
-    text(svg, 't-sm t-strong', x(TARGET_YEAR) + 10, y(EU_TARGET) - 2, '24%');
-    text(svg, 't-sm', x(TARGET_YEAR) + 10, y(EU_TARGET) + 13, narrow ? 'EU target' : 'the EU’s target');
-    var mx = (x(last) + x(TARGET_YEAR)) / 2, my = (y(euLast) + y(EU_TARGET)) / 2;
-    text(svg, 't-sm t-strong t-halo', narrow ? W : mx + 10, my + 16, 'about ' + String(Math.round(pace * 10) / 10) + ' points a year', narrow ? 'end' : 'start');
-    if (state.geo === 'IE') {
-      var ieLast = v(c.trend, 'rate', last);
-      line(svg, x(last), y(ieLast), x(TARGET_YEAR), y(IE_TARGET), COL.ink3, 1.1, '5 4');
-      svg.append('circle').attr('cx', x(TARGET_YEAR)).attr('cy', y(IE_TARGET)).attr('r', 4).attr('fill', COL.ground).attr('stroke', COL.ink3).attr('stroke-width', 1.5);
-      text(svg, 't-sm', x(TARGET_YEAR) + 10, y(IE_TARGET) + 4, narrow ? '12%, Ireland' : '12%, Ireland’s target');
-    }
-    series(c.trend, COL.ink3, 1.6, 2.6);
-    series(EU.trend, COL.blue, 2.6, 3.4);
-    text(svg, 't-sm t-strong t-halo', x(years[0]), y(v(EU.trend, 'rate', years[0])) + 19, f1(v(EU.trend, 'rate', years[0])) + '%', 'middle');
-    // names at the last year, kept apart
-    // the higher line is named above it, the lower one below
-    var cLast = v(c.trend, 'rate', last), euOnTop = euLast >= cLast;
-    function endY(val, onTop) { var yv = y(val); return onTop || yv + 19 > H - bottom - 3 ? yv - 10 : yv + 19; }
-    text(svg, 't-sm t-strong t-halo', x(last) - 8, endY(euLast, euOnTop), 'EU ' + f1(euLast) + '%' + (last >= est ? ' (estimate)' : ''), 'end');
-    text(svg, 't-sm t-halo', x(last) - 8, endY(cLast, !euOnTop), c.name + ' ' + f1(cLast) + '%', 'end');
-  });
-
-  // what moved the rate in each two-year step: recycling and consumption, stacked, with the net change as a tick
-  function stepRate(c, idx) {      // the rate at a step's start, rebuilt from the trend and the steps
-    var Y = D.step_years, yrs = D.trend_years, st = c.steps, yr = Y[idx], t = c.trend.rate;
-    if (yrs.indexOf(yr) >= 0) return t[yrs.indexOf(yr)];
-    var v = t[0];
-    for (var i = idx; i < Y.indexOf(yrs[0]); i++) v -= st.change[i] || 0;
+  /* ---------- what moved the rate: the trend, and each two-year step split in two ---------- */
+  function rateAt(c, yr) {      // from the trend where it's reported, rebuilt from the steps before that
+    var yrs = D.trend_years, i = yrs.indexOf(yr), Y = D.step_years;
+    if (i >= 0) return c.trend.rate[i];
+    var v = c.trend.rate[0];
+    for (var j = Y.indexOf(yr); j < Y.indexOf(yrs[0]); j++) v -= c.steps.change[j] || 0;
     return v;
   }
+  function points(v) { var r = Math.round(v * 10) / 10; return (r > 0 ? '+' : r < 0 ? '-' : '') + Math.abs(r).toFixed(1); }
+  function bracket(svg, x0, x1, yy, up, color) {
+    return svg.append('path').attr('d', 'M' + x0 + ',' + (yy + (up ? 5 : -5)) + ' V' + yy + ' H' + x1 + ' V' + (yy + (up ? 5 : -5))).attr('fill', 'none').attr('stroke', color || COL.ink3).attr('stroke-width', 1.2);
+  }
   charts.push(function () {
-    var el = document.getElementById('trend-steps'), c = C(), Y = D.step_years, n = Y.length - 1, est = D.trend_estimated_from;
-    el.replaceChildren(); el.className = 'chart pair';
-    var sets = [{ name: 'EU', d: EU, isEU: true }, { name: c.name, d: c, isEU: false }];
-    var lo = -0.5, hi = 0.5;
-    sets.forEach(function (s) {
-      s.d.steps.recycling.forEach(function (rv, i) {
-        if (rv == null) return;
-        var cv = s.d.steps.consumption[i];
-        hi = Math.max(hi, Math.max(rv, 0) + Math.max(cv, 0)); lo = Math.min(lo, Math.min(rv, 0) + Math.min(cv, 0));
-      });
+    var el = document.getElementById('trend'), W = el.clientWidth, narrow = W < 620;
+    var Y = D.step_years, n = Y.length - 1, yrs = D.trend_years, est = D.trend_estimated_from, last = Y[n], st = EU.steps;
+    var padL = narrow ? 34 : 44, padR = narrow ? 12 : 138, top = 14, hA = narrow ? 204 : 240, pp = narrow ? 30 : 34;
+    var x = d3.scaleLinear().domain([Y[0], TARGET_YEAR]).range([padL + 8, W - padR]);
+    var y = d3.scaleLinear().domain([0, 27]).range([top + hA, top]);
+    var capY = top + hA + 66, tB = capY + 30, zB = tB + 40 + 1.2 * pp, tC = zB + 0.8 * pp + 46, zC = tC + 22 + 1.4 * pp, H = zC + 0.5 * pp + 40;
+    var r0 = rateAt(EU, Y[0]), rA = rateAt(EU, yrs[0]), rL = rateAt(EU, last), pace = (EU_TARGET - rL) / (TARGET_YEAR - last), past = (rL - rA) / (last - yrs[0]);
+    function sum(a, from, to) { var t = 0; for (var i = Y.indexOf(from); i < Y.indexOf(to); i++) t += a[i] || 0; return t; }
+    var svg = setupSvg(el, W, H, 'The EU’s circularity rate went from ' + f1(r0) + '% in ' + Y[0] + ' to ' + f1(rL) + '% in ' + last + ', an estimate. Reaching ' + EU_TARGET + '% in ' + TARGET_YEAR + ' takes about ' + f1(pace) +
+      ' points a year. In each two-year step, points from recycling: ' + st.recycling.map(function (v, i) { return Y[i] + ' to ' + Y[i + 1] + ' ' + points(v); }).join(', ') +
+      '. Points from material use: ' + st.consumption.map(function (v, i) { return Y[i] + ' to ' + Y[i + 1] + ' ' + points(v); }).join(', ') + '.');
+
+    // the rate, and the path the target asks for
+    [0, 6, 12, 18, 24].forEach(function (t) {
+      line(svg, padL, y(t), W - padR, y(t), t === 0 ? COL.ink3 : COL.grid);
+      text(svg, 'axis-lab', padL - 6, y(t) + 4, t + '%', 'end');
     });
-    hi = Math.ceil(hi * 2) / 2; lo = Math.floor(lo * 2) / 2;
-    sets.forEach(function (s) {
-      var box = document.createElement('div'); el.appendChild(box);
-      var st = s.d.steps, W = box.clientWidth, top = 40, plotH = 156, H = top + plotH + 24, padL = 30;
-      var x = d3.scaleLinear().domain([0, n]).range([padL, W - 2]), bw = Math.max(x(1) - x(0) - 7, 4);
-      var y = d3.scaleLinear().domain([lo, hi]).range([top + plotH, top]);
-      var first = 0; while (first < n && st.recycling[first] == null) first += 1;
-      var r0 = stepRate(s.d, first), r1 = s.d.trend.rate[s.d.trend.rate.length - 1];
-      var svg = setupSvg(box, W, H, s.name + ', each two-year step from ' + Y[first] + ' to ' + Y[n] + ': ' + st.recycling.map(function (rv, i) {
-        return rv == null ? null : Y[i] + ' to ' + Y[i + 1] + ' recycling ' + signed(rv) + ', consumption ' + signed(st.consumption[i]);
-      }).filter(Boolean).join('; ') + ' points.');
-      text(svg, 't-name t-strong', 0, 14, s.name + ': ' + f1(r0) + '% in ' + Y[first] + ', ' + f1(r1) + '% in ' + Y[n] + (Y[n] >= est ? ' (estimate)' : ''));
-      [lo, hi].forEach(function (t) { line(svg, padL, y(t), W - 2, y(t), COL.grid); text(svg, 'axis-lab', padL - 5, y(t) + 4, (t > 0 ? '+' : t < 0 ? '-' : '') + Math.abs(t), 'end'); });
-      text(svg, 'axis-lab', padL - 5, y(0) + 4, '0', 'end');
-      Y.forEach(function (yr, j) { if ((yr - Y[0]) % 4 === 0) text(svg, 'axis-lab', x(j), H - 5, String(yr), j === 0 ? 'start' : j === n ? 'end' : 'middle'); });
-      if (first > 0) text(svg, 't-sm', (x(0) + x(first)) / 2, y(0) - 10, 'No data', 'middle');
-      var bigRec = -1, bigCon = -1;
-      st.recycling.forEach(function (rv, i) {
-        if (rv == null) return;
-        var cv = st.consumption[i], ch = st.change[i], xc = x(i + 0.5), pos = 0, neg = 0, isEst = Y[i + 1] >= est;
-        [[rv, COL.blue], [cv, COL.use]].forEach(function (p) {
-          var v = p[0], ya, yb;
-          if (v >= 0) { ya = y(pos + v); yb = y(pos); pos += v; } else { ya = y(neg); yb = y(neg + v); neg += v; }
-          svg.append('rect').attr('x', xc - bw / 2).attr('y', ya).attr('width', bw).attr('height', Math.max(yb - ya, 0.5)).attr('fill', p[1]).attr('opacity', isEst ? 0.55 : 1);
-        });
-        line(svg, xc - bw / 2 - 3, y(ch), xc + bw / 2 + 3, y(ch), COL.ink, 2);
-        var pct = st.consumption_change_pct[i];
-        svg.append('rect').attr('x', x(i)).attr('y', top).attr('width', x(i + 1) - x(i)).attr('height', plotH).attr('fill', 'transparent')
+    Y.concat([TARGET_YEAR]).forEach(function (yr) {
+      if (narrow && (yr - Y[0]) % 4 !== 0 && yr !== TARGET_YEAR) return;
+      text(svg, 'axis-lab', x(yr), top + hA + 18, String(yr), 'middle');
+    });
+    line(svg, x(last), y(rL), x(TARGET_YEAR), y(EU_TARGET), COL.ink, 1.5, '5 4');
+    svg.append('circle').attr('cx', x(TARGET_YEAR)).attr('cy', y(EU_TARGET)).attr('r', 5.5).attr('fill', COL.ground).attr('stroke', COL.ink).attr('stroke-width', 2);
+    if (narrow) numText(svg, 't-sm', x(TARGET_YEAR) + 7, y(EU_TARGET) - 13, EU_TARGET + '%', 'target for ' + TARGET_YEAR, 'end');
+    else { text(svg, 't-num2', x(TARGET_YEAR) + 13, y(EU_TARGET) + 1, EU_TARGET + '%'); text(svg, 't-sm', x(TARGET_YEAR) + 13, y(EU_TARGET) + 18, 'the EU’s target'); text(svg, 't-sm', x(TARGET_YEAR) + 13, y(EU_TARGET) + 33, 'for ' + TARGET_YEAR); }
+    var pts = Y.map(function (yr) { return [yr, rateAt(EU, yr)]; }), rep = pts.filter(function (p) { return p[0] < est; });
+    var mk = d3.line().x(function (p) { return x(p[0]); }).y(function (p) { return y(p[1]); });
+    svg.append('path').attr('d', mk(rep)).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', 2.8).attr('stroke-linejoin', 'round');
+    if (last >= est) svg.append('path').attr('d', mk([rep[rep.length - 1], pts[n]])).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', 2.8).attr('stroke-dasharray', '1 5').attr('stroke-linecap', 'round');
+    pts.forEach(function (p) {
+      var e = p[0] >= est;
+      svg.append('circle').attr('cx', x(p[0])).attr('cy', y(p[1])).attr('r', e ? 4.2 : 3.4).attr('fill', e ? COL.ground : COL.blue).attr('stroke', e ? COL.blue : COL.ground).attr('stroke-width', e ? 2 : 1.2);
+    });
+    text(svg, 't-sm t-halo', x(Y[0]), y(r0) - 11, f1(r0) + '%', 'middle');
+    text(svg, 't-sm t-halo', x(yrs[0]), y(rA) - 11, f1(rA) + '%', 'middle');
+    text(svg, 't-sm t-strong t-halo', x(last) + (narrow ? 2 : 4), y(rL) - 12, f1(rL) + '%' + (last >= est ? (narrow ? ' (est.)' : ' (estimate)') : ''), 'end').style('fill', COL.blueInk);
+    // what the last years delivered, and what the next ones would have to
+    var yb = y(d3.min(pts.filter(function (p) { return p[0] >= yrs[0]; }), function (p) { return p[1]; })) + 15;
+    bracket(svg, x(yrs[0]), x(last), yb, false);
+    text(svg, 't-sm t-strong', (x(yrs[0]) + x(last)) / 2, yb + 17, points(rL - rA) + ' points in ' + (last - yrs[0]) + ' years', 'middle');
+    var xr = x(last) + (x(TARGET_YEAR) - x(last)) * 0.3, yr0 = y(rL + (EU_TARGET - rL) * 0.3) - 12;
+    text(svg, 't-note', xr, yr0, 'of the last ' + (last - yrs[0]) + ' years', 'end').style('font-size', '14.5px');
+    text(svg, 't-note', xr, yr0 - 17, 'about ' + f0(pace / past) + ' times the pace', 'end').style('font-size', '14.5px');
+    text(svg, 't-sm t-strong', xr, yr0 - 37, '+' + f0(EU_TARGET - rL) + ' points in ' + word(TARGET_YEAR - last) + ' years', 'end');
+
+    // each two-year step, split into what recycling did and what material use did
+    text(svg, 't-name t-strong', 0, capY, narrow ? 'What moved the rate in each two-year step' : 'What moved the rate in each two-year step, in points added or taken off');
+    Y.forEach(function (yr) { line(svg, x(yr), tB + 8, x(yr), zC + 0.5 * pp + 18, COL.guide); });
+    Y.forEach(function (yr) { if (!narrow || (yr - Y[0]) % 4 === 0) text(svg, 'axis-lab', x(yr), H - 6, String(yr), 'middle'); });
+    var bw = x(Y[1]) - x(Y[0]) - (narrow ? 6 : 14);
+    function row(vals, z, fill, ink, title) {
+      text(svg, 't-name t-strong', 0, z === zB ? tB : tC, title).style('fill', ink);
+      line(svg, padL, z, x(last) + 4, z, COL.ink3);
+      vals.forEach(function (v, i) {
+        var xc = x((Y[i] + Y[i + 1]) / 2), isEst = Y[i + 1] >= est, hh = Math.abs(v) * pp;
+        svg.append('rect').attr('x', xc - bw / 2).attr('y', v >= 0 ? z - hh : z).attr('width', bw).attr('height', Math.max(hh, 0.5)).attr('fill', fill).attr('opacity', isEst ? 0.5 : 1);
+        if (!narrow || Math.abs(v) >= 0.5) text(svg, 't-bar' + (Math.abs(v) >= 0.95 ? ' t-strong' : ''), xc, v >= 0 ? z - hh - 5 : z + hh + 13, points(v), 'middle');
+        svg.append('rect').attr('x', x(Y[i])).attr('y', z - 1.5 * pp).attr('width', x(Y[i + 1]) - x(Y[i])).attr('height', 2.4 * pp).attr('fill', 'transparent')
           .on('pointermove', function (e) {
-            if (e.pointerType === 'mouse') showTip(e, s.name + ', ' + Y[i] + ' to ' + Y[i + 1] + (isEst ? ' (estimate)' : ''), [['Recycling more or less', signed(rv)],
-              ['Using ' + f0(Math.abs(pct)) + '% ' + (pct < 0 ? 'less' : 'more') + ' material', signed(cv)], ['Net change, in points', signed(ch)]]);
+            if (e.pointerType === 'mouse') showTip(e, Y[i] + ' to ' + Y[i + 1] + (isEst ? ' (estimate)' : ''), [['Recycling more or less', points(st.recycling[i])],
+              ['Using ' + f0(Math.abs(st.consumption_change_pct[i])) + '% ' + (st.consumption_change_pct[i] < 0 ? 'less' : 'more') + ' material', points(st.consumption[i])], ['Change in the rate, in points', points(st.change[i])]]);
           }).on('pointerleave', hideTip);
-        if (bigRec < 0 || rv > st.recycling[bigRec]) bigRec = i;
-        if (bigCon < 0 || cv > st.consumption[bigCon]) bigCon = i;
       });
-      line(svg, padL, y(0), W - 2, y(0), COL.ink3);
-      // name the two colors once, on the EU's biggest step of each
-      if (s.isEU) {
-        [[bigRec, 'recycling more', COL.blue], [bigCon, 'using ' + f0(Math.abs(st.consumption_change_pct[bigCon])) + '% less', COL.use]].forEach(function (a) {
-          var i = a[0], top2 = Math.max(st.recycling[i], 0) + Math.max(st.consumption[i], 0), xc = x(i + 0.5);
-          text(svg, 't-sm t-strong t-halo', i === 0 ? x(0) : xc, y(top2) - 8, a[1], i === 0 ? 'start' : 'middle').style('fill', a[2]);
-        });
-      }
+    }
+    row(st.recycling, zB, COL.blue, COL.blueInk, 'Recycling more, or less');
+    row(st.consumption, zC, COL.less, COL.lessInk, 'Using less material, or more');
+    // recycling did most of its work early
+    var ybr = zB - 1.2 * pp - 20;
+    bracket(svg, x(Y[0]) + 3, x(yrs[0]) - 3, ybr, true); bracket(svg, x(yrs[0]) + 3, x(2022) - 3, ybr, true);
+    text(svg, 't-sm', (x(Y[0]) + x(yrs[0])) / 2, ybr - 6, points(sum(st.recycling, Y[0], yrs[0])) + (narrow ? '' : ' by ' + yrs[0]), 'middle');
+    text(svg, 't-sm', (x(yrs[0]) + x(2022)) / 2, ybr - 6, points(sum(st.recycling, yrs[0], 2022)) + (narrow ? ' in ' + word(2022 - yrs[0]) + ' years' : ' in the ' + word(2022 - yrs[0]) + ' years to 2022'), 'middle');
+    // using less came in two steps
+    var iC = Y.indexOf(2008), iL = n - 1;
+    [[iC, narrow ? [f0(-st.consumption_change_pct[iC]) + '% less material'] : ['Europe used ' + f0(-st.consumption_change_pct[iC]) + '% less material', 'as the financial crisis hit']],
+     [iL, narrow ? [f0(-st.consumption_change_pct[iL]) + '% less'] : [f0(-st.consumption_change_pct[iL]) + '% less material', '(estimate)']]].forEach(function (a) {
+      var i = a[0], xx = x(Y[i + 1]) + (narrow ? 1 : 3), yy = zC - Math.max(st.consumption[i], 0) * pp + 6;
+      a[1].forEach(function (s, j) { text(svg, 't-sm t-halo', xx, yy + j * 15, s); });
     });
   });
 
