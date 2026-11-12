@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Far from Full Circle: Europe can't recycle its way to circularity | Milcah M. Joseph</title>
+<meta name="description" content="How far could recycling take the EU and each of its 27 countries? Even recycling every tonne of waste, Europe would only just reach its 2030 target. Using less material has no ceiling.">
+<meta name="author" content="Milcah M. Joseph">
+<meta property="og:title" content="Far from Full Circle: Europe can't recycle its way to circularity">
+<meta property="og:description" content="The most recycling could ever deliver, for the EU and each of its 27 countries.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://milcahjoseph.com/projects/eu_circularity/far_from_full_circle.html">
+<meta property="og:image" content="https://milcahjoseph.com/assets/far_from_full_circle_meta_thumb.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="An open ring: 11.4% of the material Europe used in 2022 came from recycled waste, and recycling every tonne would only just reach the 24% target.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="https://milcahjoseph.com/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ground:     #F3F5F4;
+  --paper:      #FFFFFF;
+  --ink:        #16201B;
+  --ink-2:      #34403A;
+  --ink-3:      #56615B;
+  --rule:       #D3DAD6;
+  --grid:       #E1E6E3;
+
+  /* color has one meaning each */
+  --blue:       #1E6FD9;  /* material that comes back around */
+  --blue-soft:  #A9C7EF;
+  --ochre:      #D39A2C;  /* soil and rock */
+  --ochre-soft: #EDD5A1;
+  --quiet:      #C3CAC6;  /* material that doesn't come back */
+  --land:       #E2E6E4;
+
+  --sans:  'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--ground);
+  color: var(--ink-2);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--ink); text-decoration-color: var(--ink-3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.bar { position: sticky; top: 0; z-index: 70; background: var(--ground); border-bottom: 1px solid var(--rule); }
+.bar-in { max-width: 1280px; margin: 0 auto; padding: 7px 40px; min-height: 54px; display: flex; align-items: center; gap: 28px; font-size: 14px; }
+.bar .home { display: inline-flex; align-items: center; gap: 9px; font-weight: 650; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.bar .home img { display: block; border-radius: 4px; }
+.bar nav { display: flex; gap: 22px; margin-left: auto; }
+.bar nav a { color: var(--ink-3); text-decoration: none; padding: 5px 0 3px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.bar nav a:hover { color: var(--ink); }
+.bar nav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pick { display: flex; align-items: center; gap: 10px; margin-left: 12px; }
+.pick label { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.pick .short { display: none; }
+.pick select { min-height: 38px; padding: 5px 32px 5px 11px; font-size: 14.5px; }
+
+.page { max-width: 1280px; margin: 0 auto; padding: 44px 40px 96px; }
+section { scroll-margin-top: 78px; }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) 264px; column-gap: 44px; }
+.duo > * { grid-column: 1; min-width: 0; }
+
+/* Opening */
+.kicker { font-size: 15px; font-weight: 650; color: var(--ink-3); margin-bottom: 12px; }
+h1 {
+  font-stretch: 106%; font-weight: 740;
+  font-size: clamp(34px, 4.7vw, 58px); line-height: 1.02; letter-spacing: -.016em;
+  color: var(--ink); max-width: 15em; text-wrap: balance;
+}
+.stand { font-family: var(--serif); font-size: 21px; line-height: 1.45; max-width: 31em; margin-top: 22px; }
+.stand strong, .txt strong { color: var(--ink); font-weight: 600; }
+.by { font-size: 14px; color: var(--ink-3); margin-top: 14px; }
+.rings { display: flex; flex-wrap: wrap; gap: 30px 20px; align-items: flex-start; margin-top: 36px; }
+.ringbox { flex: none; }
+.ringbox + .ringbox { flex: 1 1 330px; min-width: 0; }
+.ringbox h3 { font-size: 15px; font-weight: 650; color: var(--ink); margin-bottom: 4px; }
+
+/* Sections */
+.sec { margin-top: 104px; }
+.sec h2 {
+  font-stretch: 104%; font-weight: 690; font-size: 31px; line-height: 1.13; letter-spacing: -.01em;
+  color: var(--ink); max-width: 23em; text-wrap: balance;
+}
+.sub { font-size: 15px; color: var(--ink-3); margin-top: 9px; max-width: 62ch; }
+figure { margin: 26px 0 0; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; overflow: visible; }
+.chart text { font-family: var(--sans); font-variant-numeric: tabular-nums; }
+.txt { font-family: var(--serif); font-size: 19px; line-height: 1.5; max-width: 34em; margin-top: 24px; }
+.txt + .txt { margin-top: 12px; }
+.src { font-size: 13px; color: var(--ink-3); margin-top: 14px; max-width: 72ch; }
+.chart-label { font-size: 15px; font-weight: 650; color: var(--ink); margin: 34px 0 10px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 44px; }
+
+/* Chart text */
+.t-num  { font-weight: 720; font-size: 20px; fill: var(--ink); }
+.t-num2 { font-weight: 720; font-size: 16px; fill: var(--ink); }
+.t-lab  { font-size: 14px; fill: var(--ink-2); }
+.t-sm   { font-size: 12.5px; fill: var(--ink-3); }
+.t-name { font-size: 13.5px; fill: var(--ink-2); }
+.t-strong { font-weight: 660; fill: var(--ink); }
+.t-mid  { font-family: var(--serif) !important; font-size: 16.5px; fill: var(--ink-2); }
+.t-halo { paint-order: stroke; stroke: var(--ground); stroke-width: 4px; stroke-linejoin: round; }
+.axis-lab { font-size: 12px; fill: var(--ink-3); }
+.hit { cursor: pointer; }
+
+.key { list-style: none; margin-top: 14px; display: grid; gap: 10px; max-width: 30em; }
+.key li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; font-size: 14.5px; line-height: 1.4; }
+.key i { display: block; width: 18px; height: 6px; margin-top: 8px; }
+.key b { color: var(--ink); font-weight: 720; font-size: 16.5px; }
+.key.beside { margin-top: 0; align-self: center; flex: 1 1 140px; gap: 9px; }
+.key.beside li { font-size: 14px; gap: 8px; grid-template-columns: 14px 1fr; }
+.key.beside i { width: 14px; }
+.key.beside b { font-size: 15.5px; }
+.rows { list-style: none; margin-top: 14px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.4; }
+.rows b { color: var(--ink); font-weight: 700; }
+
+.tip {
+  position: absolute; z-index: 80; max-width: 300px; padding: 9px 11px; background: var(--paper);
+  border: 1px solid var(--rule); border-radius: 3px; font-size: 13.5px; line-height: 1.45; color: var(--ink-2);
+  pointer-events: none; font-variant-numeric: tabular-nums;
+}
+.tip b { display: block; color: var(--ink); font-weight: 650; margin-bottom: 3px; }
+.tip .row { display: flex; justify-content: space-between; gap: 16px; }
+.tip .row span:last-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.nodata { padding: 24px 0; color: var(--ink-3); }
+
+select {
+  font: inherit; font-size: 15px; color: var(--ink); background-color: var(--paper);
+  border: 1px solid var(--rule); border-radius: 4px; padding: 8px 34px 8px 12px; min-height: 42px;
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2334403A' stroke-width='1.6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+}
+
+/* Side panels: every country, drawn in each section's own chart */
+.duo > .side { grid-column: 2; grid-row: 1 / span 3; align-self: start; position: sticky; top: 72px; }
+.side { font-size: 12px; }
+.side-head {
+  display: flex; align-items: center; justify-content: space-between; width: 100%; font: inherit; font-size: 14px; font-weight: 650;
+  color: var(--ink); background: none; border: 0; border-top: 2px solid var(--ink); padding: 9px 0 2px; cursor: pointer; text-align: left;
+}
+.side-head::after { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-135deg); margin: 5px 3px 0 0; transition: transform .15s; }
+.side.closed .side-head::after { transform: rotate(45deg); margin-top: -3px; }
+.side.closed .side-body { display: none; }
+.side-body { max-height: calc(100vh - 124px); overflow-y: auto; }
+.side .cap { font-size: 12.5px; line-height: 1.4; color: var(--ink-3); margin: 2px 0 10px; }
+.minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 4px 0; }
+.mini {
+  display: grid; justify-items: center; align-content: start; gap: 1px; font: inherit; font-stretch: 88%; line-height: 1.2;
+  color: var(--ink-2); background: none; border: 0; border-radius: 4px; padding: 3px 0 4px; cursor: pointer; min-width: 0;
+}
+.mini svg { display: block; }
+.mini:hover { background: rgba(22, 32, 27, .05); }
+.mini.on { background: rgba(22, 32, 27, .09); color: var(--ink); font-weight: 700; }
+.mini.eu { color: var(--ink); font-weight: 700; cursor: default; }
+.mini.eu:hover { background: none; }
+.minis.bars { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.minis.bars .mini { grid-template-columns: 84px minmax(0, 1fr) 20px; align-items: center; justify-items: stretch; gap: 0 7px; padding: 1.5px 4px 1.5px 0; text-align: right; }
+.minis.bars .mini svg { width: 100%; height: 11px; }
+.minis.bars .mini b { font-weight: 650; color: var(--ink); }
+/* the small charts stay quiet until the pointer is over the panel; the chosen country and the EU stay lit */
+@media (hover: hover) and (min-width: 1100px) {
+  .mini svg { opacity: .5; transition: opacity .15s; }
+  .side:hover .mini svg, .side:focus-within .mini svg, .mini.on svg, .mini.eu svg { opacity: 1; }
+}
+
+/* Closing, method, footer */
+.close h2 { max-width: 20em; }
+details.how { margin-top: 28px; font-size: 14.5px; color: var(--ink-2); }
+details.how summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; color: var(--ink); font-weight: 650; }
+details.how summary::-webkit-details-marker { display: none; }
+details.how summary::before { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-45deg); transition: transform .15s; }
+details.how[open] summary::before { transform: rotate(45deg); }
+details.how .body { max-width: 72ch; line-height: 1.55; padding-bottom: 6px; }
+details.how h3 { font-size: 14.5px; font-weight: 650; color: var(--ink); margin: 18px 0 6px; }
+details.how p + p { margin-top: 8px; }
+details.how ul { padding-left: 1.1em; }
+details.how li { margin: 0 0 7px; }
+.foot { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.7; color: var(--ink-3); }
+.foot .links { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-bottom: 8px; }
+.foot .links a { font-weight: 600; }
+
+@media (max-width: 1099px) {
+  .bar-in { gap: 20px; }
+  .bar .home span, .pick .long { display: none; }
+  .pick .short { display: inline; }
+  .duo { display: block; }
+  .duo > .side { position: static; margin-top: 22px; }
+  .side { font-size: 13px; }
+  .minis.bars .mini { grid-template-columns: 92px minmax(0, 1fr) 22px; padding: 4px 4px 4px 0; }
+  .side-head { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 11px 0; min-height: 44px; }
+  .side.closed .side-head::after { margin-top: -4px; }
+  .side-body { padding-top: 6px; max-height: none; overflow: visible; }
+}
+@media (max-width: 900px) {
+  .bar nav { display: none; }
+  .pick { margin-left: auto; }
+  .pair { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .bar-in { padding: 6px 18px; }
+  .page { padding: 26px 18px 72px; }
+  .stand { font-size: 19px; margin-top: 16px; }
+  .rings { margin-top: 26px; }
+  .sec { margin-top: 76px; }
+  .sec h2 { font-size: 24px; }
+  .txt { font-size: 18px; }
+  .t-mid { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <a class="home" href="https://milcahjoseph.com" aria-label="Milcah M. Joseph, home"><img src="https://milcahjoseph.com/assets/favicon.png" width="24" height="24" alt=""><span>Milcah M. Joseph</span></a>
+    <nav aria-label="On this page">
+      <a href="#how-far">The ceiling</a>
+      <a href="#where-it-goes">Where material goes</a>
+      <a href="#every-country">Every country</a>
+      <a href="#ten-years">What moved the rate</a>
+    </nav>
+    <div class="pick"><label for="country"><span class="long">Compare the EU with</span><span class="short">Compare with</span></label><select id="country"></select></div>
+  </div>
+</header>
+
+<main class="page">
+
+      <section class="duo" id="how-far" aria-labelledby="h-top">
+        <div class="head">
+        <p class="kicker">Far from Full Circle</p>
+        <h1 id="h-top">Europe can't recycle its way to circularity</h1>
+        <p class="stand">The EU wants 24% of its material to come from recycled waste by 2030, double today's share. I worked out the most recycling could ever deliver, for the EU and each of its 27 countries. <strong>Recycling every tonne of waste it has, Europe would only just get there.</strong></p>
+        <p class="by">By Milcah M. Joseph, November 2026. My calculation on Eurostat data for 2022.</p>
+        </div>
+        <figure id="fig-rings">
+          <div class="rings">
+            <div class="ringbox"><h3>European Union</h3><div class="chart" id="ring-eu"></div></div>
+            <div class="ringbox"><h3 id="ring-name"></h3><div class="chart" id="ring-geo"></div></div>
+          </div>
+        </figure>
+        <aside class="side" id="side-rings" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-rings">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">Lowest ceiling first. Pick one to compare it with the EU.</p>
+            <div class="minis" id="minis-rings"></div>
+          </div>
+        </aside>
+        <div class="tail">
+        <p class="txt">Europe already recycles most of what it realistically can. Of the waste it treats but doesn't recycle, <span data-v="unrec-soil">71%</span> is soil, dredged mud and mining rock. <strong>Everything else, recycled to the last tonne, would add <span data-v="wo-gain">four</span> points.</strong></p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
+        </div>
+      </section>
+
+      <section class="sec duo" id="where-it-goes" aria-labelledby="h-flow">
+        <div class="head">
+        <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
+        <p class="sub">Where material went in 2022, in tonnes out of every 100.</p>
+        </div>
+        <figure id="fig-flow"><div class="chart"></div></figure>
+        <aside class="side" id="side-flow" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-flow">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">From the least coming back as waste to the most. Pick one to compare.</p>
+            <div class="minis bars" id="minis-flow"></div>
+          </div>
+        </aside>
+        <div class="tail">
+        <p class="txt">For every tonne that comes back as waste, two are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. What's burned or eaten never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
+        <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded to whole tonnes. The soil and rock part is approximate.</p>
+        </div>
+      </section>
+
+      <section class="sec" id="every-country" aria-labelledby="h-countries">
+        <h2 id="h-countries">Recycling every tonne, <span data-v="below-24">15</span> of 27 countries would still fall short of 24%. Without soil and rock, all but <span data-v="could-wo">three</span> would.</h2>
+        <p class="sub">Each country's rate in 2022 and how far recycling all of its waste would take it. Pick a country to compare it with the EU.</p>
+        <figure id="fig-countries"><div class="chart"></div></figure>
+        <p class="txt">To reach 24% by recycling alone, a country needs about 32 tonnes of waste for every 100 tonnes of material it consumes. <span data-v="below-24-word">Fifteen</span> don't have that much. <strong>The ceiling follows how much waste a country has, not how well it recycles.</strong> Italy recycles <span data-v="it-recycled">86%</span> of its waste and has almost nothing left to add, while nearly all of Romania's room is mining rock.</p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Countries are grouped by the lower end of each range. Sweden doesn't publish how much of its waste is soil and rock.</p>
+      </section>
+
+      <section class="sec duo" id="ten-years" aria-labelledby="h-trend">
+        <div class="head">
+        <h2 id="h-trend">The rate rose <span data-v="rise">1.5</span> points in <span data-v="span">14</span> years. The target asks for <span data-v="need">12</span> more in <span data-v="left">six</span>.</h2>
+        <p class="sub">The share of material that comes from recycled waste, 2010 to 2024, and the 2030 target.</p>
+        </div>
+        <figure id="fig-trend">
+          <div class="chart" id="trend-lines"></div>
+          <p class="chart-label">What moved the rate from 2012 to 2022, in points</p>
+          <div class="chart" id="trend-drivers"></div>
+        </figure>
+        <aside class="side" id="side-trend" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-trend">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">The rate since 2010, with the EU’s in blue. From the biggest fall to the biggest rise.</p>
+            <div class="minis" id="minis-trend"></div>
+          </div>
+        </aside>
+        <div class="tail">
+        <p class="txt">From 2012 to 2022, Europe recycled <span data-v="rec-more">8%</span> more waste, which added <span data-v="rec-pts">0.7</span> points. It also used <span data-v="use-more">3%</span> more material, which took <span data-v="use-pts">0.3</span> back.</p>
+        <p class="txt">Eurostat's 2024 figures, still partly estimates, show the other lever at work: Europe used 6% less material than in 2022, and that alone added about 0.7 points. <strong>Two years of using less did as much as ten years of recycling more.</strong></p>
+        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2010 to 2024. Waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
+        </div>
+      </section>
+
+      <section class="sec close" id="so-what" aria-labelledby="h-close">
+        <h2 id="h-close">Using less has no ceiling</h2>
+        <p class="txt">Recycling more of the little that comes back runs out at about Europe's target. Using less material doesn't. That's less about shopping than it sounds: most of those tonnes go into buildings, roads, energy and food, and how much goes in is decided by whoever designs, specifies, builds and buys.</p>
+        <p class="txt"><strong>How much new material goes into what you make or build? How long will it last? Could the same job be done with less, or with what's already there?</strong></p>
+        <p class="txt">This is the first part of a series. Next: what Europe's tonnes are made of, which of them matter most for the climate, and who decides how many go in.</p>
+
+        <details class="how"><summary>How I worked this out, limits and sources</summary><div class="body">
+          <h3>The ceiling</h3>
+          <p>The circularity rate is recycled waste divided by recycled waste plus material consumption. Starting from Eurostat's published rate, I added every tonne of waste each country treated but didn't recycle. Holding consumption fixed gives the lower figure of each range. Letting each recycled tonne replace a tonne of new material gives the higher one.</p>
+          <p>Soil and rock means soils, dredging spoils and other mineral waste, mostly from mining. Rubble from construction and demolition stays in.</p>
+          <h3>Where material goes</h3>
+          <p>Eurostat's material flow accounts follow every tonne of material processed in a country: extracted at home, imported, recycled or backfilled. I took the shares built into stock, burned or eaten (emissions), exported, spread on land (dissipative flows) and treated as waste, and rounded them to whole tonnes out of 100. The soil and rock part of the waste is each country's soil and rock share of all the waste it treats, applied to the waste in the flows. Malta's flows record no emissions and leave about a fifth of its material unaccounted for.</p>
+          <h3>What moved the rate</h3>
+          <p>I recalculated 2012's rate twice: once with 2022's recycling (the recycling effect) and once with 2022's consumption (the consumption effect). The two add up to the total, give or take rounding.</p>
+          <h3>Limits</h3>
+          <ul>
+            <li>The ceilings are bounds, not forecasts. They count every treated tonne as recyclable, contaminated soil and mining waste included, so real ceilings are lower. Mining waste lifts the ceilings of Finland, Bulgaria, Romania and Sweden.</li>
+            <li>They count only waste treated at home, so waste a country exports for energy recovery or disposal is left out.</li>
+            <li>Consumption here is Eurostat's domestic measure. It counts grass grazed and ore mined in a country even when the beef or metal is exported.</li>
+            <li>Eurostat's published rate doesn't rebuild exactly from its own component tables, so every calculation starts from the published rate.</li>
+            <li>Ireland's strategy also quotes a 2.7% circularity rate from the Circularity Gap Report Ireland, a different measure. Its 12% target for 2030 is for the rate used here.</li>
+            <li>2022 is the latest year where every figure is reported. Eurostat revised its 2022 waste figures on October 28, 2026, which lowered Hungary's ceiling by about 2 points and barely moved the rest.</li>
+            <li>The map leaves out overseas regions.</li>
+          </ul>
+          <h3>What others have shown</h3>
+          <ul>
+            <li>European Environment Agency (2023), <a href="https://www.eea.europa.eu/en/analysis/publications/how-far-is-europe-from">How far is Europe from reaching its ambition to double the circular use of materials?</a>, and Christis and others (2023), <a href="https://www.eionet.europa.eu/etcs/etc-ce/products/etc-ce-report-2023-6-analysis-of-the-circular-material-use-rate-and-the-doubling-target">Analysis of the circular material use rate and the doubling target</a>, ETC CE Report 2023/6: recycling alone won't double the EU's rate. This page adds a ceiling for each country, with and without soil and rock.</li>
+            <li>Haas and others (2015), How Circular is the Global Economy?, Journal of Industrial Ecology 19(5), doi 10.1111/jiec.12244: growing stocks of buildings and infrastructure keep circularity low.</li>
+          </ul>
+          <h3>Sources</h3>
+          <ul>
+            <li>Eurostat: <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_cur/default/table?lang=en">circular material use rate (env_ac_cur)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_mfa/default/table?lang=en">material flow accounts (env_ac_mfa)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wastrt/default/table?lang=en">treatment of waste (env_wastrt)</a>, <a href="https://ec.europa.eu/eurostat/databrowser/view/env_ac_sd/default/table?lang=en">material flows for the circular economy (env_ac_sd)</a> and <a href="https://ec.europa.eu/eurostat/databrowser/view/env_wassd/default/table?lang=en">waste by material (env_wassd)</a>.</li>
+            <li>European Commission (2025), <a href="https://commission.europa.eu/topics/competitiveness/clean-industrial-deal_en">Clean Industrial Deal</a>, which sets the EU's 24% goal for 2030.</li>
+            <li>Government of Ireland (2026), <a href="https://www.gov.ie/en/department-of-climate-energy-and-the-environment/publications/whole-of-government-circular-economy-strategy-2026-2028-accelerating-action/">Whole of Government Circular Economy Strategy 2026-2028: Accelerating Action</a>, which sets Ireland's 12% goal for 2030.</li>
+            <li>Map shapes: Natural Earth.</li>
+          </ul>
+        </div></details>
+
+        <footer class="foot">
+          <p class="links">
+            <a href="https://github.com/M1ck3yJ0/the-leaky-loop">Code and data on GitHub</a>
+            <a href="https://github.com/M1ck3yJ0/the-leaky-loop/blob/main/data/processed/ceilings_2022.csv">Every country's numbers (CSV)</a>
+            <a href="https://www.linkedin.com/in/milcah-mary-joseph/">Follow the series on LinkedIn</a>
+          </p>
+          <p id="asof"></p>
+          <p>Milcah M. Joseph, data analysis. <a href="mailto:milcahjoseph@live.com">Email</a>, <a href="https://milcahjoseph.com">website</a>, <a href="https://github.com/M1ck3yJ0">GitHub</a>.</p>
+        </footer>
+      </section>
+
+</main>
+
+<div class="tip" id="tip" hidden></div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="leaky_loop_data.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var D = window.LEAKY_LOOP_DATA;
+  if (!D || !window.d3) {
+    document.querySelectorAll('.chart').forEach(function (el) {
+      el.innerHTML = '<p class="nodata">The charts couldn’t load. Try reloading the page.</p>';
+    });
+    return;
+  }
+
+  var EUKEY = 'EU27_2020', EU = D.countries[EUKEY];
+  var MEMBERS = Object.keys(D.countries).filter(function (g) { return g !== EUKEY; })
+    .sort(function (a, b) { return D.countries[a].name.localeCompare(D.countries[b].name); });
+  var COL = { blue: '#1E6FD9', blueSoft: '#A9C7EF', ochre: '#D39A2C', ochreSoft: '#EDD5A1', quiet: '#C3CAC6', unknown: '#A9B1AC',
+    ink: '#16201B', ink2: '#34403A', ink3: '#56615B', rule: '#D3DAD6', grid: '#E1E6E3', ground: '#F3F5F4', land: '#E2E6E4', paper: '#FFFFFF' };
+  var EU_TARGET = 24, IE_TARGET = 12, TARGET_YEAR = 2030;
+  var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
+  var state = { geo: 'IE' };
+  try {
+    var q = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
+    if (MEMBERS.indexOf(q) >= 0) state.geo = q;
+  } catch (e) { /* keep the default */ }
+
+  function C() { return D.countries[state.geo]; }
+  function f1(v) { return v == null ? 'n/a' : (Math.round(v * 10) / 10).toFixed(1); }
+  function f0(v) { return v == null ? 'n/a' : String(Math.round(v)); }
+  function word(n) { return WORDS[n] || String(n); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function signed(v) { return (v > 0 ? '+' : v < 0 ? '-' : '') + f1(Math.abs(v)); }
+  function rad(a) { return a * Math.PI / 180; }
+  function range(c) { return f1(c.ceiling) + ' to ' + f1(c.ceiling_replacing_new) + '%'; }
+
+  function setupSvg(el, W, H, label) {
+    el.replaceChildren();
+    return d3.select(el).append('svg')
+      .attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H)
+      .attr('role', 'img').attr('aria-label', label);
+  }
+  function text(g, cls, x, y, str, anchor) {
+    return g.append('text').attr('class', cls).attr('x', x).attr('y', y)
+      .attr('text-anchor', anchor || 'start').text(str);
+  }
+  function line(g, x1, y1, x2, y2, stroke, width, dash) {
+    var l = g.append('line').attr('x1', x1).attr('y1', y1).attr('x2', x2).attr('y2', y2)
+      .attr('stroke', stroke).attr('stroke-width', width || 1);
+    if (dash) l.attr('stroke-dasharray', dash);
+    return l;
+  }
+  function textWidth(sel) { try { return sel.node().getComputedTextLength(); } catch (e) { return sel.text().length * 7; } }
+
+  /* ---------- tooltip ---------- */
+  var tip = document.getElementById('tip');
+  function showTip(e, title, rows) {
+    tip.replaceChildren();
+    var b = document.createElement('b'); b.textContent = title; tip.appendChild(b);
+    rows.forEach(function (r) {
+      var row = document.createElement('div'); row.className = 'row';
+      var k = document.createElement('span'); k.textContent = r[0];
+      var v = document.createElement('span'); v.textContent = r[1];
+      row.appendChild(k); row.appendChild(v); tip.appendChild(row);
+    });
+    tip.hidden = false;
+    var vw = document.documentElement.clientWidth, tw = tip.offsetWidth, th = tip.offsetHeight;
+    var x = e.pageX + 14, y = e.pageY - th - 12;
+    if (x + tw > window.scrollX + vw - 8) x = e.pageX - tw - 14;
+    if (x < window.scrollX + 8) x = window.scrollX + 8;
+    if (y < window.scrollY + 6) y = e.pageY + 18;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.hidden = true; }
+  // hover shows figures (mouse only); a click or tap picks the country
+  function pickable(sel, geo, title, rows) {
+    sel.classed('hit', true)
+      .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, title, rows); })
+      .on('pointerleave', hideTip)
+      .on('click', function () { if (geo !== EUKEY) choose(geo); });
+  }
+  function figures(c) {
+    return [['Rate in 2022', f1(c.rate) + '%'],
+      ['Recycling all but soil and rock', c.ceiling_without_soil_rock == null ? 'not published' : f1(c.ceiling_without_soil_rock) + '%'],
+      ['Recycling every tonne', range(c)]];
+  }
+
+  var charts = [];
+  function drawAll() { hideTip(); charts.forEach(function (f) { f(); }); }
+  function choose(geo) {
+    if (MEMBERS.indexOf(geo) < 0 || geo === state.geo) return;
+    state.geo = geo;
+    try { history.replaceState(null, '', '?country=' + geo); } catch (e) { /* file pages */ }
+    drawAll();
+  }
+
+  /* ---------- the rings ---------- */
+  function segments(c) {
+    var s = [{ a: 0, b: c.rate, fill: COL.blue }];
+    if (c.ceiling_without_soil_rock == null) s.push({ a: c.rate, b: c.ceiling, fill: COL.unknown });
+    else {
+      s.push({ a: c.rate, b: c.ceiling_without_soil_rock, fill: COL.blueSoft });
+      s.push({ a: c.ceiling_without_soil_rock, b: c.ceiling, fill: COL.ochre });
+    }
+    s.push({ a: c.ceiling, b: c.ceiling_replacing_new, fill: COL.ochreSoft });
+    return s;
+  }
+  function pt(cx, cy, r, deg) { return [cx + r * Math.sin(rad(deg)), cy - r * Math.cos(rad(deg))]; }
+  function drawRing(svg, cx, cy, Rout, sw, c) {
+    var r = Rout - sw / 2, g = svg.append('g').attr('transform', 'translate(' + cx + ',' + cy + ')');
+    var a0 = Math.min(c.ceiling_replacing_new * 3.6 + 5, 340), p0 = pt(0, 0, r, a0), p1 = pt(0, 0, r, 352);
+    // the part of the loop recycling can't reach
+    g.append('path').attr('d', 'M' + p0 + ' A' + r + ',' + r + ' 0 ' + (352 - a0 > 180 ? 1 : 0) + ' 1 ' + p1).attr('fill', 'none').attr('stroke', COL.ink3).attr('stroke-width', sw > 30 ? 2.2 : 1.8)
+      .attr('stroke-linecap', 'round').attr('stroke-dasharray', '0.1 ' + (sw > 30 ? 9.5 : 7.5)).attr('opacity', 0.7);
+    var tipP = pt(0, 0, r, 359), b1 = pt(0, 0, r + sw / 5, 353.5), b2 = pt(0, 0, r - sw / 5, 353.5);
+    g.append('polygon').attr('points', [tipP, b1, b2].join(' ')).attr('fill', COL.ink3).attr('opacity', 0.7);
+    segments(c).forEach(function (s) {
+      if (s.b - s.a < 0.05) return;
+      g.append('path').attr('d', d3.arc().innerRadius(Rout - sw).outerRadius(Rout).startAngle(rad(s.a * 3.6)).endAngle(rad(s.b * 3.6))())
+        .attr('fill', s.fill).attr('stroke', COL.ground).attr('stroke-width', 1.5);
+    });
+  }
+  function tick(svg, cx, cy, Rout, sw, v, color, w) {
+    var t0 = pt(cx, cy, Rout - sw - 7, v * 3.6), t1 = pt(cx, cy, Rout + 15, v * 3.6);
+    line(svg, t0[0], t0[1], t1[0], t1[1], color, w);
+    return t1;
+  }
+  function ringLabels(c, isEU) {
+    var l = [{ at: c.rate / 2, num: f1(c.rate) + '%', fill: COL.blue,
+      lines: isEU ? ['of Europe’s material in 2022', 'came from recycled waste'] : ['from recycled waste in 2022'] }];
+    if (c.ceiling_without_soil_rock != null) l.push({ at: (c.rate + c.ceiling_without_soil_rock) / 2, num: f1(c.ceiling_without_soil_rock) + '%', fill: COL.blueSoft,
+      lines: isEU ? ['if it recycled all other waste,', 'apart from soil and rock'] : ['recycling all but soil and rock'] });
+    l.push({ at: ((c.ceiling_without_soil_rock == null ? c.rate : c.ceiling_without_soil_rock) + c.ceiling_replacing_new) / 2, num: range(c), fill: c.ceiling_without_soil_rock == null ? COL.unknown : COL.ochre,
+      lines: isEU ? ['if it recycled the soil, dredged', 'mud and mining rock as well'] : c.ceiling_without_soil_rock == null ? ['recycling every tonne (its soil and rock share isn’t published)'] : ['recycling every tonne'] });
+    if (isEU) l.push({ target: EU_TARGET, num: EU_TARGET + '%', fill: COL.ink, lines: ['the EU’s target for 2030'] });
+    else if (state.geo === 'IE') l.push({ target: IE_TARGET, num: IE_TARGET + '%', fill: COL.ink, lines: ['Ireland’s own target for 2030'] });
+    else l.push({ target: EU_TARGET, num: EU_TARGET + '%', fill: COL.ink, lines: ['the EU’s target'] });
+    return l;
+  }
+  // mode: 'lead' puts labels at the right with leader lines, 'side' a key beside the ring, 'stack' a key below it
+  function ringChart(el, c, isEU, mode, Rout, sw, labelW) {
+    var lead = mode === 'lead', gapL = 40, labels = ringLabels(c, isEU), step = 66;
+    var boxW = lead ? Rout * 2 + gapL + labelW : mode === 'side' ? Rout * 2 + 34 : el.clientWidth;
+    var cx = mode === 'stack' ? boxW / 2 : Rout + 2, cy = Rout + (lead ? 24 : 18);
+    var H = Math.max(cy + Rout + (lead ? 6 : 16), lead ? cy - Rout + (labels.length - 1) * step + 44 : 0);
+    var svg = setupSvg(el, boxW, H, (isEU ? 'The EU' : c.name) + ': ' + f1(c.rate) + '% of material came from recycled waste in 2022. Recycling every tonne of waste but soil and rock would give ' +
+      (c.ceiling_without_soil_rock == null ? 'a figure that is not published' : f1(c.ceiling_without_soil_rock) + '%') + ', and recycling every tonne ' + range(c) + '. The rest of the ring is open.');
+    drawRing(svg, cx, cy, Rout, sw, c);
+    var ends = {};
+    labels.forEach(function (l) { if (l.target) ends[l.target] = tick(svg, cx, cy, Rout, sw, l.target, COL.ink, isEU ? 2.2 : 1.8); });
+    if (isEU) ['The other three quarters', 'didn’t come back as waste.', 'It was built in, burned', 'or eaten.']
+      .forEach(function (s, i) { text(svg, 't-mid', cx, cy - 27 + i * (lead ? 23 : 21), s, 'middle'); });
+    if (lead) {
+      var lx = cx + Rout + gapL, y0 = cy - Rout - 6;
+      labels.forEach(function (l, i) {
+        var y = y0 + i * step, p = l.target ? ends[l.target] : pt(cx, cy, Rout + 4, Math.min(l.at * 3.6, 165));
+        line(svg, p[0], p[1], lx - 9, y - 6, COL.ink3, 1);
+        text(svg, 't-num', lx, y, l.num);
+        l.lines.forEach(function (s, j) { text(svg, 't-lab', lx, y + 20 + j * 18, s); });
+      });
+    } else {
+      var ul = document.createElement('ul'); ul.className = 'key' + (mode === 'side' ? ' beside' : '');
+      labels.forEach(function (l) {
+        var li = document.createElement('li'), sw2 = document.createElement('i'), d = document.createElement('div'), b = document.createElement('b');
+        sw2.style.background = l.fill; if (l.target) { sw2.style.height = '2px'; sw2.style.marginTop = '10px'; }
+        b.textContent = l.num + ' '; d.appendChild(b); d.appendChild(document.createTextNode(l.lines.join(' ')));
+        li.appendChild(sw2); li.appendChild(d); ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+    el.style.display = mode === 'side' ? 'flex' : '';
+    el.style.width = lead ? boxW + 'px' : mode === 'side' ? '' : '100%';
+  }
+  charts.push(function () {
+    var row = document.querySelector('.rings'), W = row.clientWidth, c = C();
+    document.getElementById('ring-name').textContent = c.name;
+    var euEl = document.getElementById('ring-eu'), geoEl = document.getElementById('ring-geo');
+    euEl.parentNode.style.width = geoEl.parentNode.style.width = W >= 610 ? '' : '100%';
+    if (W >= 610) {
+      ringChart(euEl, EU, true, 'lead', 140, 33, 214);
+      ringChart(geoEl, c, false, 'side', 80, 21, 0);
+    } else {
+      ringChart(euEl, EU, true, 'stack', Math.min(150, (W - 8) / 2), 30, 0);
+      ringChart(geoEl, c, false, 'stack', 100, 24, 0);
+    }
+  });
+
+  /* ---------- the country menu ---------- */
+  var sel = document.getElementById('country');
+  MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
+  sel.addEventListener('change', function () { choose(sel.value); });
+  charts.push(function () { sel.value = state.geo; });
+
+  /* ---------- side panels: every country, in each section's own chart ---------- */
+  var wideView = window.matchMedia('(min-width: 1100px)'), sides = document.querySelectorAll('.side');
+  function setSide(s, open) { s.classList.toggle('closed', !open); s.querySelector('.side-head').setAttribute('aria-expanded', open ? 'true' : 'false'); }
+  sides.forEach(function (s) {
+    setSide(s, wideView.matches);
+    s.querySelector('.side-head').addEventListener('click', function () {
+      var open = s.classList.contains('closed');
+      if (wideView.matches) sides.forEach(function (o) { setSide(o, open); }); else setSide(s, open);
+    });
+  });
+  // one small chart per country; a click picks it
+  function mini(grid, geo, rows) {
+    var name = geo === EUKEY ? 'EU' : D.countries[geo].name, b = document.createElement('button');
+    b.type = 'button'; b.tabIndex = -1;
+    b.className = 'mini' + (geo === EUKEY ? ' eu' : geo === state.geo ? ' on' : '');
+    b.setAttribute('aria-label', geo === EUKEY ? 'EU' : 'Compare the EU with ' + name);
+    grid.appendChild(b);
+    pickable(d3.select(b), geo, name, rows);
+    return b;
+  }
+  function tag(b, el, s) { var n = document.createElement(el); n.textContent = s; b.appendChild(n); }
+  function ranked(key) { return [EUKEY].concat(MEMBERS.slice().sort(function (a, b) { return key(a) - key(b) || D.countries[a].name.localeCompare(D.countries[b].name); })); }
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-rings'), S = 46;
+    grid.replaceChildren();
+    ranked(function (g) { return D.countries[g].ceiling; }).forEach(function (g) {
+      var c = D.countries[g], b = mini(grid, g, figures(c));
+      var gg = d3.select(b).append('svg').attr('width', S).attr('height', S).attr('viewBox', '0 0 ' + S + ' ' + S).attr('aria-hidden', 'true')
+        .append('g').attr('transform', 'translate(' + S / 2 + ',' + S / 2 + ')');
+      gg.append('circle').attr('r', 16.5).attr('fill', 'none').attr('stroke', COL.rule).attr('stroke-width', 1.3);
+      segments(c).forEach(function (s) {
+        if (s.b - s.a < 0.05) return;
+        gg.append('path').attr('d', d3.arc().innerRadius(12.5).outerRadius(20.5).startAngle(rad(s.a * 3.6)).endAngle(rad(s.b * 3.6))()).attr('fill', s.fill);
+      });
+      tag(b, 'span', g === EUKEY ? 'EU' : c.name);
+    });
+  });
+
+  /* ---------- where material goes ---------- */
+  var FATES = [
+    { name: 'built in', long: 'built into buildings, roads and machines' },
+    { name: 'burned or eaten', long: 'burned or eaten' },
+    { name: 'exported', long: 'exported' },
+    { name: 'spread on land', long: 'spread on land' },
+    { name: 'came back as waste', long: 'came back as waste' }
+  ];
+  function soilPart(c) {
+    var back = c.loop_per_100[4];
+    return c.back_as_soil_rock == null || !c.back_as_waste ? null : back * c.back_as_soil_rock / c.back_as_waste;
+  }
+  charts.push(function () {
+    var el = document.querySelector('#fig-flow .chart'), W = el.clientWidth, wide = W >= 620, c = C();
+    var rows = [{ name: 'EU', d: EU }, { name: c.name, d: c }];
+    var x0 = wide ? 112 : 0, barH = wide ? 40 : 34;
+    var x = d3.scaleLinear().domain([0, 100]).range([x0, W]);
+    var yEU = wide ? 70 : 40, yGeo = yEU + barH + (wide ? 72 : 62), H = yGeo + barH + 6;
+    var svg = setupSvg(el, W, H, 'Two bars of 100 tonnes. EU: ' + FATES.map(function (f, i) { return EU.loop_per_100[i] + ' ' + f.long; }).join(', ') + '. ' + c.name + ': ' + (c.loop_per_100 ? FATES.map(function (f, i) { return c.loop_per_100[i] + ' ' + f.long; }).join(', ') : 'no flow data') + '.');
+    rows.forEach(function (row, ri) {
+      var y = ri ? yGeo : yEU, lp = row.d.loop_per_100, isEU = ri === 0;
+      if (wide) text(svg, 't-name t-strong', 0, y + barH / 2 + 5, row.name);
+      else text(svg, 't-name t-strong', 0, y - 24, row.name);
+      if (!lp) { text(svg, 't-sm', x0, y + barH / 2 + 4, 'No flow data'); return; }
+      var acc = 0, lastEnd = -99, raised = 0;
+      lp.forEach(function (t, i) {
+        var a = acc, b = acc + t; acc = b;
+        if (t <= 0) return;
+        var xa = x(a), xb = x(b), w = xb - xa, mid = (xa + xb) / 2, back = i === 4;
+        var g = svg.append('g');
+        if (!back) g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(w - 2, 0.5)).attr('height', barH).attr('fill', COL.quiet);
+        else {
+          var sr = soilPart(row.d), xs = sr == null ? xb : x(b - sr);
+          g.append('rect').attr('x', xa + 1).attr('y', y).attr('width', Math.max(xs - xa - 2, 0.5)).attr('height', barH).attr('fill', COL.blue);
+          if (sr != null && sr > 0.2) g.append('rect').attr('x', xs).attr('y', y).attr('width', Math.max(xb - xs - 1, 0.5)).attr('height', barH).attr('fill', COL.ochre);
+          if (isEU && wide && sr != null) {
+            text(svg, 't-sm', xs - 5, y + barH + 16, 'other waste', 'end');
+            text(svg, 't-sm', xs + 5, y + barH + 16, 'soil and rock');
+          }
+        }
+        g.append('rect').attr('x', xa).attr('y', y).attr('width', w).attr('height', barH).attr('fill', 'transparent')
+          .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, cap(FATES[i].long), [['EU', EU.loop_per_100[i] + ' of 100 tonnes'], [c.name, (c.loop_per_100 ? c.loop_per_100[i] : 'n/a') + ' of 100 tonnes']]); })
+          .on('pointerleave', hideTip);
+        // the number, above the segment
+        var num = text(svg, 't-num2', mid, y - 7, String(t), 'middle'), nw = textWidth(num);
+        if (mid - nw / 2 < lastEnd + 3) num.remove(); else lastEnd = mid + nw / 2;
+        // the names, once, above the EU's numbers
+        if (isEU && wide) {
+          var probe = text(svg, 't-name', 0, -99, FATES[i].name), tw = textWidth(probe); probe.remove();
+          if (tw + 10 <= w) text(svg, 't-name', mid, y - 28, FATES[i].name, 'middle');
+          else {
+            var up = y - 46, end = raised % 2 === 0; raised += 1;
+            line(svg, mid, y - 24, mid, up + 5, COL.ink3, 1);
+            text(svg, 't-name', mid + (end ? 3 : -3), up, FATES[i].name, end ? 'end' : 'start');
+          }
+        }
+      });
+    });
+    if (!wide) {
+      var ul = document.createElement('ul'); ul.className = 'rows';
+      FATES.forEach(function (f, i) {
+        var li = document.createElement('li'), b = document.createElement('b');
+        b.textContent = EU.loop_per_100[i] + ' ';
+        li.appendChild(b); li.appendChild(document.createTextNode(f.long + (c.loop_per_100 ? ' (' + c.name + ' ' + c.loop_per_100[i] + ')' : '')));
+        ul.appendChild(li);
+      });
+      el.appendChild(ul);
+    }
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-flow');
+    grid.replaceChildren();
+    ranked(function (g) { return D.countries[g].loop_per_100[4]; }).forEach(function (g) {
+      var c = D.countries[g], lp = c.loop_per_100, acc = 0;
+      var b = mini(grid, g, FATES.map(function (f, i) { return [cap(f.long), lp[i] + ' of 100 t']; }));
+      tag(b, 'span', g === EUKEY ? 'EU' : c.name);
+      var svg = d3.select(b).append('svg').attr('viewBox', '0 0 100 11').attr('preserveAspectRatio', 'none').attr('aria-hidden', 'true');
+      lp.forEach(function (t, i) {
+        var x0 = acc; acc += t;
+        if (t <= 0) return;
+        if (i < 4) { svg.append('rect').attr('x', x0 + 0.4).attr('width', Math.max(t - 0.8, 0.3)).attr('height', 11).attr('fill', COL.quiet); return; }
+        var sr = soilPart(c), xs = sr == null ? x0 + t : x0 + t - sr;
+        svg.append('rect').attr('x', x0 + 0.4).attr('width', Math.max(xs - x0 - 0.6, 0.3)).attr('height', 11).attr('fill', COL.blue);
+        if (sr != null && sr > 0.2) svg.append('rect').attr('x', xs).attr('width', x0 + t - xs).attr('height', 11).attr('fill', COL.ochre);
+      });
+      tag(b, 'b', String(lp[4]));
+    });
+  });
+
+  /* ---------- every country ---------- */
+  charts.push(function () {
+    var el = document.querySelector('#fig-countries .chart'), W = el.clientWidth, narrow = W < 620;
+    var rows = MEMBERS.map(function (g) { return Object.assign({ geo: g }, D.countries[g]); }).sort(function (a, b) { return a.ceiling - b.ceiling; });
+    var bands = [
+      { rows: rows.filter(function (d) { return d.ceiling < IE_TARGET; }), label: function (n) { return n + ' would stay below 12%, about the EU’s rate today'; } },
+      { rows: rows.filter(function (d) { return d.ceiling >= IE_TARGET && d.ceiling < EU_TARGET; }), label: function (n) { return n + ' more would stay below 24%'; } },
+      { rows: rows.filter(function (d) { return d.ceiling >= EU_TARGET; }), label: function (n) { return n + ' could pass 24% on paper'; } }
+    ];
+    var nameW = narrow ? 86 : 118, rightW = narrow ? 8 : 96, rowH = narrow ? 23 : 26, headH = 34;
+    var top = 52, max = Math.ceil(d3.max(rows, function (d) { return d.ceiling_replacing_new; }) / 10) * 10;
+    var x = d3.scaleLinear().domain([0, max]).range([nameW + 12, W - rightW]);
+    var layout = [], y = top + rowH + 6;
+    bands.forEach(function (b) {
+      if (!b.rows.length) return;
+      layout.push({ head: b.label(b.rows.length), y: y + headH - 9 }); y += headH;
+      b.rows.forEach(function (d) { layout.push({ d: d, y: y + rowH / 2 }); y += rowH; });
+    });
+    var bottom = y + 4, H = bottom + 46;
+    var nBelow = rows.filter(function (d) { return d.ceiling < EU_TARGET; }).length;
+    var svg = setupSvg(el, W, H, 'Every EU country’s circularity rate in 2022 and the rate it would have recycling every tonne of waste it treats, with and without soil and rock. ' + nBelow + ' of the 27 stay below 24%.');
+    var grid = svg.append('g');
+    d3.range(0, max + 1, 10).forEach(function (v) {
+      line(grid, x(v), top, x(v), bottom, v === 0 ? COL.rule : COL.grid);
+      text(grid, 'axis-lab', x(v), H - 4, v + '%', v === 0 ? 'start' : 'middle');
+    });
+    line(svg, x(IE_TARGET), top, x(IE_TARGET), bottom + 20, COL.ink3, 1, '3 3');
+    line(svg, x(EU_TARGET), top, x(EU_TARGET), bottom + 20, COL.ink, 1.2, '4 3');
+    text(svg, 't-sm t-strong', x(EU_TARGET) + 6, bottom + 20, narrow ? '24%: EU target' : '24%: the EU’s target for 2030');
+    text(svg, 't-sm', x(IE_TARGET) - 6, bottom + 20, narrow ? '12%' : '12%: Ireland’s target', 'end');
+
+    function drawRow(d, yy, isEU) {
+      var on = d.geo === state.geo, g = svg.append('g'), known = d.ceiling_without_soil_rock != null;
+      if (isEU || on) g.append('rect').attr('x', 0).attr('y', yy - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', COL.ink).attr('opacity', on ? 0.085 : 0.04);
+      text(g, 't-name' + (isEU || on ? ' t-strong' : ''), nameW, yy + 4.5, isEU ? 'EU' : d.name, 'end');
+      line(g, x(d.ceiling), yy, x(d.ceiling_replacing_new), yy, COL.ochreSoft, 3.5);
+      if (known) {
+        line(g, x(d.rate), yy, x(d.ceiling_without_soil_rock), yy, COL.blueSoft, 3.5);
+        line(g, x(d.ceiling_without_soil_rock), yy, x(d.ceiling), yy, COL.ochre, 3.5);
+      } else line(g, x(d.rate), yy, x(d.ceiling), yy, COL.unknown, 3.5);
+      g.append('circle').attr('cx', x(d.ceiling)).attr('cy', yy).attr('r', 4.6).attr('fill', COL.ground).attr('stroke', COL.ink).attr('stroke-width', 1.6);
+      g.append('circle').attr('cx', x(d.rate)).attr('cy', yy).attr('r', 5).attr('fill', COL.blue).attr('stroke', COL.ground).attr('stroke-width', 1.2);
+      var endX = x(d.ceiling_replacing_new) + 8;
+      if ((!narrow || on) && !isEU) {
+        var lab = text(g, 't-sm' + (on ? ' t-strong' : ' t-halo'), endX, yy + 4, (on && !narrow) ? range(d) : f1(d.ceiling) + '%');
+        endX += textWidth(lab) + 10;
+        if (lab.node().getBBox && endX - 10 > W) lab.remove();
+      }
+      if (on && !narrow && x(d.rate) - x(0) > 44) text(g, 't-sm t-strong', x(d.rate) - 9, yy + 4, f1(d.rate) + '%', 'end');
+      var note = NOTES[d.geo] && !narrow && !isEU ? NOTES[d.geo](d) : null;
+      if (note) { var nt = text(g, 't-sm' + (on ? '' : ' t-halo'), endX, yy + 4, note); if (endX + textWidth(nt) > W) nt.remove(); }
+      var hit = g.append('rect').attr('x', 0).attr('y', yy - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', COL.ink).attr('fill-opacity', 0);
+      if (!isEU && !on) hit.on('pointerenter', function (e) { if (e.pointerType === 'mouse') hit.attr('fill-opacity', 0.05); }).on('pointerout', function () { hit.attr('fill-opacity', 0); });
+      pickable(hit, d.geo, isEU ? 'EU' : d.name, figures(d).concat([['Waste treated per 100 t consumed', f1(d.waste_treated_per_consumption) + ' t'], ['Share of it recycled', f1(d.share_recycled) + '%']]));
+      if (isEU) hit.style('cursor', 'default');
+    }
+    var NOTES = {
+      LV: function (d) { return 'recycles ' + f0(d.share_recycled) + '% of its waste, but has little of it'; },
+      IE: function (d) { return f0(d.share_soil_rock) + '% of its waste is soil and rock'; },
+      IT: function (d) { return 'has used ' + f0(d.ceiling_used) + '% of its ceiling'; },
+      RO: function (d) { return 'has used ' + f0(d.ceiling_used) + '% of its ceiling'; },
+      NL: function () { return 'the only one above 24% today'; },
+      SE: function () { return 'soil and rock not published'; }
+    };
+
+    // the EU row, with its marks labeled
+    var yEU = top + rowH / 2, eu = Object.assign({ geo: EUKEY }, EU);
+    var marks = [
+      { v: eu.rate, s: (narrow ? 'Today ' : 'Rate in 2022 ') + f1(eu.rate) + '%', dy: 44, left: true },
+      { v: eu.ceiling_without_soil_rock, s: (narrow ? 'All but soil and rock ' : 'Recycling all but soil and rock ') + f1(eu.ceiling_without_soil_rock) + '%', dy: 30 },
+      { v: eu.ceiling, s: (narrow ? 'Every tonne ' : 'Recycling every tonne ') + f1(eu.ceiling) + '%', dy: 16, strong: true }
+    ];
+    var gl = svg.append('g');
+    marks.forEach(function (m) {
+      var ty = yEU - rowH / 2 - m.dy + 10;
+      line(gl, x(m.v), ty - 3, x(m.v), yEU - 6, COL.ink3, 1);
+      text(svg, 't-sm t-halo' + (m.strong ? ' t-strong' : ''), x(m.v) + (m.left ? -4 : 4), ty, m.s, m.left ? 'end' : 'start');
+    });
+    drawRow(eu, yEU, true);
+    layout.forEach(function (it) {
+      if (it.head) text(svg, 't-name t-strong t-halo', narrow ? 0 : x(0) + 2, it.y, it.head);
+      else drawRow(it.d, it.y, false);
+    });
+  });
+
+  /* ---------- what moved the rate ---------- */
+  charts.push(function () {
+    var el = document.getElementById('trend-lines'), W = el.clientWidth, narrow = W < 620, c = C();
+    var years = D.trend_years, est = D.trend_estimated_from, last = years[years.length - 1];
+    var H = narrow ? 290 : 350, top = 16, bottom = 28, padL = 40, padR = narrow ? 86 : 150;
+    var x = d3.scaleLinear().domain([years[0], TARGET_YEAR]).range([padL + 8, W - padR]);
+    var y = d3.scaleLinear().domain([0, 40]).range([H - bottom, top]);
+    function v(t, key, yr) { return t[key][years.indexOf(yr)]; }
+    var euLast = v(EU.trend, 'rate', last), pace = (EU_TARGET - euLast) / (TARGET_YEAR - last);
+    var svg = setupSvg(el, W, H, 'Line chart. The EU’s circularity rate went from ' + f1(v(EU.trend, 'rate', years[0])) + '% in ' + years[0] + ' to ' + f1(euLast) + '% in ' + last + ', an estimate. Reaching 24% in 2030 takes about ' + f1(pace) + ' points a year. ' + c.name + ': ' + f1(v(c.trend, 'rate', years[0])) + '% to ' + f1(v(c.trend, 'rate', last)) + '%.');
+    var grid = svg.append('g');
+    [0, 10, 20, 30, 40].forEach(function (t) {
+      line(grid, padL, y(t), W - padR, y(t), t === 0 ? COL.ink3 : COL.grid);
+      text(grid, 'axis-lab', padL - 6, y(t) + 4, t + '%', 'end');
+    });
+    years.concat([TARGET_YEAR]).forEach(function (yr) {
+      if (narrow && (yr - years[0]) % 4 !== 0) return;
+      text(grid, 'axis-lab', x(yr), H - 8, String(yr), 'middle');
+    });
+    // what recycling every tonne could deliver, with and without soil and rock
+    var band = d3.area().x(function (yr) { return x(yr); })
+      .y0(function (yr) { return y(v(EU.trend, 'ceiling_without_soil_rock', yr)); })
+      .y1(function (yr) { return y(v(EU.trend, 'ceiling', yr)); });
+    svg.append('path').attr('d', band(years)).attr('fill', COL.ochreSoft).attr('opacity', 0.75);
+    text(svg, 't-sm', x(years[0]) + 6, y(v(EU.trend, 'ceiling', years[0])) + 15, narrow ? 'Recycling every tonne' : 'The most recycling every tonne could deliver');
+    text(svg, 't-sm', x(years[0]) + 6, y(v(EU.trend, 'ceiling_without_soil_rock', years[0])) - 7, narrow ? 'All but soil and rock' : 'Recycling all but soil and rock');
+
+    function series(t, color, w, r) {
+      var rep = years.filter(function (yr) { return yr < est; }), mk = d3.line().x(function (yr) { return x(yr); }).y(function (yr) { return y(v(t, 'rate', yr)); });
+      svg.append('path').attr('d', mk(rep)).attr('fill', 'none').attr('stroke', color).attr('stroke-width', w);
+      if (last >= est) svg.append('path').attr('d', mk([rep[rep.length - 1], last])).attr('fill', 'none').attr('stroke', color).attr('stroke-width', w).attr('stroke-dasharray', '3 3');
+      years.forEach(function (yr) {
+        svg.append('circle').attr('cx', x(yr)).attr('cy', y(v(t, 'rate', yr))).attr('r', r)
+          .attr('fill', yr >= est ? COL.ground : color).attr('stroke', yr >= est ? color : COL.ground).attr('stroke-width', yr >= est ? 1.6 : 1);
+      });
+    }
+    // the path the target asks for
+    line(svg, x(last), y(euLast), x(TARGET_YEAR), y(EU_TARGET), COL.ink, 1.3, '5 4');
+    svg.append('circle').attr('cx', x(TARGET_YEAR)).attr('cy', y(EU_TARGET)).attr('r', 5).attr('fill', COL.ground).attr('stroke', COL.ink).attr('stroke-width', 1.8);
+    text(svg, 't-sm t-strong', x(TARGET_YEAR) + 10, y(EU_TARGET) - 2, '24%');
+    text(svg, 't-sm', x(TARGET_YEAR) + 10, y(EU_TARGET) + 13, narrow ? 'EU target' : 'the EU’s target');
+    var mx = (x(last) + x(TARGET_YEAR)) / 2, my = (y(euLast) + y(EU_TARGET)) / 2;
+    text(svg, 't-sm t-strong t-halo', narrow ? W : mx + 10, my + 16, 'about ' + String(Math.round(pace * 10) / 10) + ' points a year', narrow ? 'end' : 'start');
+    if (state.geo === 'IE') {
+      var ieLast = v(c.trend, 'rate', last);
+      line(svg, x(last), y(ieLast), x(TARGET_YEAR), y(IE_TARGET), COL.ink3, 1.1, '5 4');
+      svg.append('circle').attr('cx', x(TARGET_YEAR)).attr('cy', y(IE_TARGET)).attr('r', 4).attr('fill', COL.ground).attr('stroke', COL.ink3).attr('stroke-width', 1.5);
+      text(svg, 't-sm', x(TARGET_YEAR) + 10, y(IE_TARGET) + 4, narrow ? '12%, Ireland' : '12%, Ireland’s target');
+    }
+    series(c.trend, COL.ink3, 1.6, 2.6);
+    series(EU.trend, COL.blue, 2.6, 3.4);
+    text(svg, 't-sm t-strong t-halo', x(years[0]), y(v(EU.trend, 'rate', years[0])) + 19, f1(v(EU.trend, 'rate', years[0])) + '%', 'middle');
+    // names at the last year, kept apart
+    // the higher line is named above it, the lower one below
+    var cLast = v(c.trend, 'rate', last), euOnTop = euLast >= cLast;
+    function endY(val, onTop) { var yv = y(val); return onTop || yv + 19 > H - bottom - 3 ? yv - 10 : yv + 19; }
+    text(svg, 't-sm t-strong t-halo', x(last) - 8, endY(euLast, euOnTop), 'EU ' + f1(euLast) + '%' + (last >= est ? ' (estimate)' : ''), 'end');
+    text(svg, 't-sm t-halo', x(last) - 8, endY(cLast, !euOnTop), c.name + ' ' + f1(cLast) + '%', 'end');
+  });
+
+  charts.push(function () {
+    var el = document.getElementById('trend-drivers'), c = C();
+    el.replaceChildren(); el.className = 'chart pair';
+    var sets = [{ name: 'EU', dv: EU.drivers }, { name: c.name, dv: c.drivers }].filter(function (s) { return s.dv; });
+    var vals = [];
+    sets.forEach(function (s) { vals.push(s.dv.recycling_effect_pts, s.dv.consumption_effect_pts, s.dv.rate_change_pts); });
+    var lo = Math.min(0, Math.floor(d3.min(vals))), hi = Math.max(1, Math.ceil(d3.max(vals)));
+    sets.forEach(function (s) {
+      var box = document.createElement('div'); el.appendChild(box);
+      var W = box.clientWidth, nameW = 148, rowH = 30, dv = s.dv;
+      var items = [
+        { label: dv.recycling_effect_pts >= 0 ? 'Recycling more' : 'Recycling less', v: dv.recycling_effect_pts, color: COL.blue },
+        { label: dv.consumption_change_pct >= 0 ? 'Using more material' : 'Using less material', v: dv.consumption_effect_pts, color: COL.unknown },
+        { label: 'Net change', v: dv.rate_change_pts, color: COL.ink }
+      ];
+      var H = 30 + items.length * rowH + 22;
+      var x = d3.scaleLinear().domain([lo, hi]).range([nameW + (lo < 0 ? 40 : 4), W - 44]);
+      var svg = setupSvg(box, W, H, s.name + ', ' + D.drivers_years[0] + ' to ' + D.drivers_years[1] + ': ' + items.map(function (it) { return it.label.toLowerCase() + ' ' + signed(it.v) + ' points'; }).join(', ') + '.');
+      text(svg, 't-name t-strong', 0, 14, s.name + ': ' + f1(dv.rate_from_pct) + '% in ' + D.drivers_years[0] + ', ' + f1(dv.rate_to_pct) + '% in ' + D.drivers_years[1]);
+      [lo, 0, hi].filter(function (t, i, a) { return a.indexOf(t) === i && (t === 0 || Math.abs(x(t) - x(0)) > 26); }).forEach(function (t) { text(svg, 'axis-lab', x(t), H - 4, (t > 0 ? '+' : t < 0 ? '-' : '') + Math.abs(t), 'middle'); });
+      items.forEach(function (it, j) {
+        var yy = 30 + j * rowH;
+        text(svg, 't-name' + (j === 2 ? ' t-strong' : ''), 0, yy + 14, it.label);
+        var xa = x(Math.min(0, it.v)), xb = x(Math.max(0, it.v));
+        svg.append('rect').attr('x', xa).attr('y', yy).attr('width', Math.max(xb - xa, 1.5)).attr('height', 18).attr('fill', it.color);
+        text(svg, 't-name t-strong', it.v >= 0 ? xb + 6 : xa - 6, yy + 14, signed(it.v), it.v >= 0 ? 'start' : 'end');
+      });
+      line(svg, x(0), 24, x(0), 30 + items.length * rowH, COL.ink3);
+    });
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-trend'), yrs = D.trend_years, n = yrs.length, W = 58, H = 36;
+    grid.replaceChildren();
+    var x = d3.scaleLinear().domain([0, n - 1]).range([3, W - 3]), y = d3.scaleLinear().domain([0, 40]).range([H - 2, 2]);
+    var path = d3.line().x(function (v, i) { return x(i); }).y(function (v) { return y(v); });
+    ranked(function (g) { var r = D.countries[g].trend.rate; return r[n - 1] - r[0]; }).forEach(function (g) {
+      var c = D.countries[g], r = c.trend.rate, isEU = g === EUKEY;
+      var b = mini(grid, g, [['Rate in ' + yrs[0], f1(r[0]) + '%'], ['Rate in ' + yrs[n - 1] + (yrs[n - 1] >= D.trend_estimated_from ? ' (estimate)' : ''), f1(r[n - 1]) + '%'], ['Change', signed(r[n - 1] - r[0]) + ' points']]);
+      var svg = d3.select(b).append('svg').attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H).attr('aria-hidden', 'true');
+      svg.append('line').attr('x1', 0).attr('x2', W).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', COL.rule);
+      svg.append('path').attr('d', path(EU.trend.rate)).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', isEU ? 2 : 1.2).attr('opacity', isEU ? 1 : 0.8);
+      if (!isEU) {
+        svg.append('path').attr('d', path(r)).attr('fill', 'none').attr('stroke', COL.ink2).attr('stroke-width', 1.7);
+        svg.append('circle').attr('cx', x(n - 1)).attr('cy', y(r[n - 1])).attr('r', 2).attr('fill', COL.ink2);
+      }
+      tag(b, 'span', isEU ? 'EU' : c.name);
+    });
+  });
+
+  /* ---------- numbers in the text ---------- */
+  var T = EU.trend, yrs = D.trend_years, lastYr = yrs[yrs.length - 1], dv = EU.drivers;
+  var nBelow = MEMBERS.filter(function (g) { return D.countries[g].ceiling < EU_TARGET; }).length;
+  var nCould = MEMBERS.filter(function (g) { var c = D.countries[g]; return c.ceiling_without_soil_rock != null && c.ceiling_without_soil_rock >= EU_TARGET; }).length;
+  var V = {
+    'unrec-soil': f0(100 * (1 - EU.not_recycled_without_soil_rock_kt / EU.not_recycled_kt)) + '%',
+    'wo-gain': word(Math.round(EU.ceiling_without_soil_rock - EU.rate)),
+    'eu-back': String(EU.loop_per_100[4]),
+    'below-24': String(nBelow),
+    'below-24-word': cap(word(nBelow)),
+    'could-wo': word(nCould),
+    'it-recycled': f0(D.countries.IT.share_recycled) + '%',
+    'rise': f1(T.rate[yrs.length - 1] - T.rate[0]),
+    'span': String(lastYr - yrs[0]),
+    'need': f0(EU_TARGET - T.rate[yrs.length - 1]),
+    'left': word(TARGET_YEAR - lastYr),
+    'rec-more': f0(dv.waste_recycled_change_pct) + '%',
+    'rec-pts': f1(dv.recycling_effect_pts),
+    'use-more': f0(dv.consumption_change_pct) + '%',
+    'use-pts': f1(Math.abs(dv.consumption_effect_pts))
+  };
+  document.querySelectorAll('[data-v]').forEach(function (el) { var k = el.getAttribute('data-v'); if (V[k] != null) el.textContent = V[k]; });
+  var asofEl = document.getElementById('asof');
+  if (asofEl) asofEl.textContent = 'Eurostat data as of ' + new Date(D.data_as_of + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) + '.';
+
+  /* ---------- the bar shows which section is on screen ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.bar nav a')), ticking = false;
+  function spy() {
+    ticking = false;
+    var cur = links[0];
+    links.forEach(function (l) { var t = document.getElementById(l.getAttribute('href').slice(1)); if (t && t.getBoundingClientRect().top < 150) cur = l; });
+    links.forEach(function (l) { if (l === cur) l.setAttribute('aria-current', 'true'); else l.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
+
+  drawAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
+  var lastW = document.documentElement.clientWidth, timer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      var w = document.documentElement.clientWidth;
+      if (w !== lastW) { lastW = w; drawAll(); }
+    }, 150);
+  });
+})();
+</script>
+</body>
+</html>
