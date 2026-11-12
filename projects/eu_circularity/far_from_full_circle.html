@@ -101,6 +101,18 @@ figure { margin: 26px 0 0; }
 .txt { font-family: var(--serif); font-size: 19px; line-height: 1.5; max-width: 34em; margin-top: 24px; }
 .txt + .txt { margin-top: 12px; }
 .src { font-size: 13px; color: var(--ink-3); margin-top: 14px; max-width: 72ch; }
+.info { position: relative; display: inline-block; }
+.info button {
+  position: relative; width: 19px; height: 19px; margin-left: 3px; vertical-align: -4px; border: 1.3px solid var(--ink-3); border-radius: 50%;
+  background: none; color: var(--ink-2); font: italic 600 13px/1 var(--serif); cursor: pointer;
+}
+.info button::after { content: ""; position: absolute; inset: -9px; }
+.info button:hover, .info.open button { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.info .note {
+  display: none; position: absolute; z-index: 60; left: 0; top: calc(100% + 7px); width: min(400px, calc(100vw - 36px)); padding: 11px 13px;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 3px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); text-align: left;
+}
+.info.open .note { display: block; }
 .chart-label { font-size: 15px; font-weight: 650; color: var(--ink); margin: 34px 0 10px; }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 44px; }
 
@@ -229,7 +241,7 @@ details.how li { margin: 0 0 7px; }
           <div class="chart" id="rest-bar"></div>
         </figure>
         <p class="txt">Households generate <span data-v="hh-mt">196</span> million tonnes of waste a year, <span data-v="hh-share">9%</span> of all the waste Europe generates. <strong>Recycling every tonne of it would add at most <span data-v="hh-pts">2.3</span> points</strong>, and less in practice, since some of it is recycled already.</p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa, env_wastrt and env_wasgen, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
+        <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa, env_wastrt and env_wasgen, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</span></span></p>
         </div>
       </section>
 
@@ -241,7 +253,7 @@ details.how li { margin: 0 0 7px; }
         <figure id="fig-flow"><div class="chart"></div></figure>
         <div class="tail">
         <p class="txt">Of every 100 tonnes of minerals, <span data-v="min-built">67</span> are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
-        <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded. The EU's bars leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</p>
+        <p class="src">Source: Eurostat, 2022, rounded. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_sd and env_wassd, 2022. The EU's bars leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</span></span></p>
         </div>
       </section>
 
@@ -250,7 +262,7 @@ details.how li { margin: 0 0 7px; }
         <p class="sub">Each country's rate in 2022 and how far recycling all of its waste would take it. Pick a country to compare it with the EU.</p>
         <figure id="fig-countries"><div class="chart"></div></figure>
         <p class="txt">To reach 24% by recycling alone, a country needs about 32 tonnes of waste for every 100 tonnes of material it consumes. <span data-v="below-24-word">Fifteen</span> don't have that much. <strong>The ceiling follows how much waste a country has, not how well it recycles.</strong> Italy recycles <span data-v="it-recycled">86%</span> of its waste and has almost nothing left to add, while nearly all of Romania's room is mining rock.</p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Countries are grouped by the lower end of each range. Sweden doesn't publish how much of its waste is soil and rock.</p>
+        <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Countries are grouped by the lower end of each range. Sweden doesn't publish how much of its waste is soil and rock.</span></span></p>
       </section>
 
       <section class="sec" id="ten-years" aria-labelledby="h-trend">
@@ -267,7 +279,7 @@ details.how li { margin: 0 0 7px; }
         <div class="tail">
         <p class="txt"><strong>The biggest jump came from using less, not recycling more.</strong> From 2008 to 2010, as the financial crisis hit, Europe used <span data-v="crisis-cut">14%</span> less material, and that alone added <span data-v="crisis-pts">1.3</span> points. Recycling more added <span data-v="rec-early">1.6</span> points from 2004 to 2010, and only <span data-v="rec-late">0.7</span> in the twelve years to 2022.</p>
         <p class="txt">Eurostat's 2024 figures, still partly estimates, show it again: Europe used <span data-v="use-cut">6%</span> less material than in 2022, and that alone added about <span data-v="use-pts">0.7</span> points. <strong>Two years of using less did <span data-v="as-much">as much as</span> ten years of recycling more.</strong></p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur and env_ac_mfa, 2004 to 2024, with env_wastrt for the ceilings. Country rates start in 2010, and waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
+        <p class="src">Source: my calculation on Eurostat data, 2004 to 2024. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur and env_ac_mfa, 2004 to 2024, with env_wastrt for the ceilings. Country rates start in 2010, and waste is reported every two years. 2024 values build on Eurostat's estimated rate.</span></span></p>
         </div>
         </div>
       </section>
@@ -287,7 +299,7 @@ details.how li { margin: 0 0 7px; }
         <p class="txt">That's less about shopping than it sounds: most of those tonnes go into buildings, roads, energy and food, and how much goes in is decided by whoever designs, specifies, builds and buys.</p>
         <p class="txt"><strong>How much new material goes into what you make or build? How long will it last? Could the same job be done with less, or with what's already there?</strong></p>
         <p class="txt">This is the first part of a series. Next: what Europe's tonnes are made of, which of them matter most for the climate, and who decides how many go in.</p>
-        <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each lever changes one thing and keeps the rest as it was.</p>
+        <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each lever changes one thing and keeps the rest as it was.</span></span></p>
         </div>
         </div>
 
@@ -994,6 +1006,31 @@ details.how li { margin: 0 0 7px; }
   document.querySelectorAll('[data-v]').forEach(function (el) { var k = el.getAttribute('data-v'); if (V[k] != null) el.textContent = V[k]; });
   var asofEl = document.getElementById('asof');
   if (asofEl) asofEl.textContent = 'Eurostat data as of ' + new Date(D.data_as_of + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) + '.';
+
+  /* ---------- notes behind the info buttons: hover or tap ---------- */
+  var infos = Array.prototype.slice.call(document.querySelectorAll('.info'));
+  infos.forEach(function (box) {
+    var btn = box.querySelector('button'), note = box.querySelector('.note');
+    box.show = function (on) {
+      box.classList.toggle('open', on); btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (!on) { box.pinned = false; return; }
+      note.style.left = '0px';          // keep the note on screen
+      var r = note.getBoundingClientRect(), vw = document.documentElement.clientWidth, shift = Math.min(0, vw - 12 - r.right);
+      if (r.left + shift < 12) shift = 12 - r.left;
+      note.style.left = shift + 'px';
+    };
+    box.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') box.show(true); });
+    box.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse' && !box.pinned) box.show(false); });
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var pin = !box.pinned;
+      infos.forEach(function (o) { if (o !== box) o.show(false); });
+      box.show(pin); box.pinned = pin;
+    });
+    note.addEventListener('click', function (e) { e.stopPropagation(); });
+  });
+  document.addEventListener('click', function () { infos.forEach(function (o) { o.show(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') infos.forEach(function (o) { o.show(false); }); });
 
   /* ---------- the bar shows which section is on screen ---------- */
   var links = Array.prototype.slice.call(document.querySelectorAll('.bar nav a')), ticking = false;
