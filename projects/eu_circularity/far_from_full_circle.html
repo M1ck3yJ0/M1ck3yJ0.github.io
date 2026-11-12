@@ -65,10 +65,9 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .bar nav a { color: var(--ink-3); text-decoration: none; padding: 5px 0 3px; border-bottom: 2px solid transparent; white-space: nowrap; }
 .bar nav a:hover { color: var(--ink); }
 .bar nav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
-.pick { display: flex; align-items: center; gap: 10px; margin-left: 12px; }
-.pick label { font-weight: 600; color: var(--ink); white-space: nowrap; }
-.pick .short { display: none; }
-.pick select { min-height: 38px; padding: 5px 32px 5px 11px; font-size: 14.5px; }
+.pick { display: grid; gap: 6px; margin-bottom: 16px; }
+.pick label { font-size: 14px; font-weight: 650; color: var(--ink); }
+.pick select { width: 100%; font-size: 14.5px; }
 
 .page { max-width: 1280px; margin: 0 auto; padding: 44px 40px 96px; }
 section { scroll-margin-top: 78px; }
@@ -166,7 +165,7 @@ select {
 .side-head::after { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-135deg); margin: 5px 3px 0 0; transition: transform .15s; }
 .side.closed .side-head::after { transform: rotate(45deg); margin-top: -3px; }
 .side.closed .side-body { display: none; }
-.side-body { max-height: calc(100vh - 124px); overflow-y: auto; }
+.side-body { max-height: calc(100vh - 196px); overflow-y: auto; }
 .side .cap { font-size: 12.5px; line-height: 1.4; color: var(--ink-3); margin: 2px 0 10px; }
 .minis { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 4px 0; }
 .mini {
@@ -206,8 +205,7 @@ details.how li { margin: 0 0 7px; }
 
 @media (max-width: 1099px) {
   .bar-in { gap: 20px; }
-  .bar .home span, .pick .long { display: none; }
-  .pick .short { display: inline; }
+  .bar .home span { display: none; }
   .duo { display: block; }
   .duo > .side { position: static; margin-top: 22px; }
   .side { font-size: 13px; }
@@ -218,7 +216,6 @@ details.how li { margin: 0 0 7px; }
 }
 @media (max-width: 900px) {
   .bar nav { display: none; }
-  .pick { margin-left: auto; }
   .pair { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 600px) {
@@ -246,7 +243,6 @@ details.how li { margin: 0 0 7px; }
       <a href="#ten-years">What moved the rate</a>
       <a href="#so-what">What each lever is worth</a>
     </nav>
-    <div class="pick"><label for="country"><span class="long">Compare the EU with</span><span class="short">Compare with</span></label><select id="country"></select></div>
   </div>
 </header>
 
@@ -266,6 +262,7 @@ details.how li { margin: 0 0 7px; }
           </div>
         </figure>
         <aside class="side" id="side-rings" aria-label="All 27 countries">
+          <div class="pick"><label for="pick-rings">Compare the EU with</label><select id="pick-rings"></select></div>
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-rings">All 27 countries</button>
           <div class="side-body">
             <p class="cap">Lowest ceiling first. Pick one to compare it with the EU.</p>
@@ -290,6 +287,7 @@ details.how li { margin: 0 0 7px; }
         </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
         <aside class="side" id="side-flow" aria-label="All 27 countries">
+          <div class="pick"><label for="pick-flow">Compare the EU with</label><select id="pick-flow"></select></div>
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-flow">All 27 countries</button>
           <div class="side-body">
             <p class="cap">From the least coming back as waste to the most. Pick one to compare.</p>
@@ -318,6 +316,7 @@ details.how li { margin: 0 0 7px; }
         </div>
         <figure id="fig-trend"><div class="chart" id="trend-lines"></div></figure>
         <aside class="side" id="side-trend" aria-label="All 27 countries">
+          <div class="pick"><label for="pick-trend">Compare the EU with</label><select id="pick-trend"></select></div>
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-trend">All 27 countries</button>
           <div class="side-body">
             <p class="cap">The rate since 2010, with the EU’s in blue. From the biggest fall to the biggest rise.</p>
@@ -329,6 +328,7 @@ details.how li { margin: 0 0 7px; }
         <div class="head"><p class="chart-label">What moved the rate in each two-year step, in points, with the net change as a black line</p></div>
         <figure id="fig-steps"><div class="chart" id="trend-steps"></div></figure>
         <aside class="side" id="side-steps" aria-label="All 27 countries">
+          <div class="pick"><label for="pick-steps">Compare the EU with</label><select id="pick-steps"></select></div>
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-steps">All 27 countries</button>
           <div class="side-body">
             <p class="cap">Each two-year step since 2010: recycling in blue, using more or less material in gray. From the least added by recycling to the most.</p>
@@ -354,6 +354,7 @@ details.how li { margin: 0 0 7px; }
           <div class="chart" id="levers"></div>
         </figure>
         <aside class="side" id="side-levers" aria-label="All 27 countries">
+          <div class="pick"><label for="pick-levers">Compare the EU with</label><select id="pick-levers"></select></div>
           <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-levers">All 27 countries</button>
           <div class="side-body">
             <p class="cap">The four levers on one scale, with a line where each country's target sits. Least that recycling could add first.</p>
@@ -606,11 +607,13 @@ details.how li { margin: 0 0 7px; }
     }
   });
 
-  /* ---------- the country menu ---------- */
-  var sel = document.getElementById('country');
-  MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
-  sel.addEventListener('change', function () { choose(sel.value); });
-  charts.push(function () { sel.value = state.geo; });
+  /* ---------- the country menus, one atop each side panel ---------- */
+  var sels = document.querySelectorAll('.pick select');
+  sels.forEach(function (sel) {
+    MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
+    sel.addEventListener('change', function () { choose(sel.value); });
+  });
+  charts.push(function () { sels.forEach(function (sel) { sel.value = state.geo; }); });
 
   /* ---------- side panels: every country, in each section's own chart ---------- */
   var wideView = window.matchMedia('(min-width: 1100px)'), sides = document.querySelectorAll('.side');
