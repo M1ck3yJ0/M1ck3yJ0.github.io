@@ -304,6 +304,13 @@ details.how li { margin: 0 0 7px; }
           <p class="chart-label">What moved the rate from 2012 to 2022, in points</p>
           <div class="chart" id="trend-drivers"></div>
         </figure>
+        <aside class="side" id="side-trend" aria-label="All 27 countries">
+          <button class="side-head" type="button" aria-expanded="true" aria-controls="minis-trend">All 27 countries</button>
+          <div class="side-body">
+            <p class="cap">The rate since 2010, with the EU’s in blue. From the biggest fall to the biggest rise.</p>
+            <div class="minis" id="minis-trend"></div>
+          </div>
+        </aside>
         <div class="tail">
         <p class="txt">From 2012 to 2022, Europe recycled <span data-v="rec-more">8%</span> more waste, which added <span data-v="rec-pts">0.7</span> points. It also used <span data-v="use-more">3%</span> more material, which took <span data-v="use-pts">0.3</span> back.</p>
         <p class="txt">Eurostat's 2024 figures, still partly estimates, show the other lever at work: Europe used 6% less material than in 2022, and that alone added about 0.7 points. <strong>Two years of using less did as much as ten years of recycling more.</strong></p>
@@ -859,6 +866,25 @@ details.how li { margin: 0 0 7px; }
         text(svg, 't-name t-strong', it.v >= 0 ? xb + 6 : xa - 6, yy + 14, signed(it.v), it.v >= 0 ? 'start' : 'end');
       });
       line(svg, x(0), 24, x(0), 30 + items.length * rowH, COL.ink3);
+    });
+  });
+
+  charts.push(function () {
+    var grid = document.getElementById('minis-trend'), yrs = D.trend_years, n = yrs.length, W = 58, H = 36;
+    grid.replaceChildren();
+    var x = d3.scaleLinear().domain([0, n - 1]).range([3, W - 3]), y = d3.scaleLinear().domain([0, 40]).range([H - 2, 2]);
+    var path = d3.line().x(function (v, i) { return x(i); }).y(function (v) { return y(v); });
+    ranked(function (g) { var r = D.countries[g].trend.rate; return r[n - 1] - r[0]; }).forEach(function (g) {
+      var c = D.countries[g], r = c.trend.rate, isEU = g === EUKEY;
+      var b = mini(grid, g, [['Rate in ' + yrs[0], f1(r[0]) + '%'], ['Rate in ' + yrs[n - 1] + (yrs[n - 1] >= D.trend_estimated_from ? ' (estimate)' : ''), f1(r[n - 1]) + '%'], ['Change', signed(r[n - 1] - r[0]) + ' points']]);
+      var svg = d3.select(b).append('svg').attr('width', W).attr('height', H).attr('viewBox', '0 0 ' + W + ' ' + H).attr('aria-hidden', 'true');
+      svg.append('line').attr('x1', 0).attr('x2', W).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', COL.rule);
+      svg.append('path').attr('d', path(EU.trend.rate)).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', isEU ? 2 : 1.2).attr('opacity', isEU ? 1 : 0.8);
+      if (!isEU) {
+        svg.append('path').attr('d', path(r)).attr('fill', 'none').attr('stroke', COL.ink2).attr('stroke-width', 1.7);
+        svg.append('circle').attr('cx', x(n - 1)).attr('cy', y(r[n - 1])).attr('r', 2).attr('fill', COL.ink2);
+      }
+      tag(b, 'span', isEU ? 'EU' : c.name);
     });
   });
 
