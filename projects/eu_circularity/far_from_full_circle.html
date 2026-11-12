@@ -649,7 +649,7 @@ details.how li { margin: 0 0 7px; }
     links.slice().sort(function (p, q) { return p.t - q.t || p.s - q.s; }).forEach(function (l) { l.w1 = l.kt / tgt[l.t].sum * tgt[l.t].w; l.a1 = to[l.t]; to[l.t] += l.w1; });
 
     // it flows left to right at every width; wide screens add room for full names and the two brackets
-    var wide = W >= 760, pad = 8, Lw = wide ? 132 : 96, Rw = wide ? 392 : 126, th = wide ? 16 : 12, k = wide ? 4.5 : 4.3;
+    var wide = W >= 760, pad = 8, Lw = wide ? 132 : 100, Rw = wide ? 392 : 130, th = wide ? 16 : 12, k = wide ? 4.5 : 4.3;
     var cA = Lw + th, cB = W - Rw - th, H = pad * 2 + 100 * k;
     var svg = setupSvg(el, W, H, 'Of every 100 tonnes of material the EU processed in 2022: ' + src.map(function (s) { return f0(s.w) + ' were ' + s.name.toLowerCase(); }).join(', ') +
       '. Where they ended up: ' + tgt.map(function (t) { return t.w + ' ' + t.f.long; }).join(', ') + '.');
@@ -730,7 +730,7 @@ details.how li { margin: 0 0 7px; }
       line(svg, x(v), top - 4, x(v), bottom, v === 0 ? COL.rule : COL.grid);
       text(svg, 'axis-lab', x(v), bottom + 16, v + '%', 'middle');
     });
-    text(svg, 't-sm', x(0), H - 5, 'Share of material that comes from recycled waste');
+    text(svg, 't-sm', x(0), H - 5, narrow ? 'Share of material from recycled waste' : 'Share of material that comes from recycled waste');
     line(svg, x(EU_TARGET), 16, x(EU_TARGET), bottom, COL.ink, 1.8);
     numText(svg, 't-name', x(EU_TARGET) + 6, 12, EU_TARGET + '%', narrow ? 'the EU’s target' : 'the EU’s target for 2030');
     layout.forEach(function (it) {
@@ -963,7 +963,7 @@ details.how li { margin: 0 0 7px; }
     text(svg, 't-in', (xT + x(wo)) / 2, y2 + bh / 2 + 4.5, points(lv.recycling_all_but_soil_rock), 'middle').style('fill', COL.blueInk);
     text(svg, 't-in', (x(wo) + x(c.ceiling)) / 2, y2 + bh / 2 + 4.5, points(lv.recycling_every_tonne - lv.recycling_all_but_soil_rock), 'middle').style('fill', COL.ochreInk);
     text(svg, 't-sm', xT + 1, y2 + bh + 16, 'all waste but soil and rock').style('fill', COL.blueInk);
-    text(svg, 't-sm t-halo', x(wo) + 1, y2 + bh + 32, 'soil, dredged mud and mining rock too').style('fill', COL.ochreInk);
+    text(svg, 't-sm t-halo', x(wo) + 1, y2 + bh + 32, narrow ? 'soil and rock too' : 'soil, dredged mud and mining rock too').style('fill', COL.ochreInk);
     var xe = x(c.ceiling_replacing_new) + 9;
     text(svg, 't-name t-strong', xe, y2 + bh / 2 - 2, (narrow ? '' : 'ends at ') + range(c));
     text(svg, 't-sm', xe, y2 + bh / 2 + 14, narrow ? 'no waste left' : 'no waste left to recycle');
