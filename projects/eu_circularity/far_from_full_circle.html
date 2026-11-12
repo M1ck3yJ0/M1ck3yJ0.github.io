@@ -686,7 +686,7 @@ details.how li { margin: 0 0 7px; }
     });
     if (wide) {
       // the two groups, under one bracket each
-      var xb = W - 178, ys = pad + h.back * k;
+      var xb = W - 192, ys = pad + h.back * k;
       [[pad + 1, ys - 4, COL.blueInk], [ys + 4, pad + 100 * k - 1, COL.ink3]].forEach(function (b) {
         svg.append('path').attr('d', 'M' + (xb - 6) + ',' + b[0] + ' H' + xb + ' V' + b[1] + ' H' + (xb - 6)).attr('fill', 'none').attr('stroke', b[2]).attr('stroke-width', 1.2);
       });
