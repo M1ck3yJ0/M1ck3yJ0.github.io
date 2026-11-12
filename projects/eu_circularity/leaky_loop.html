@@ -57,17 +57,23 @@ a { color: var(--ink); text-decoration-color: var(--ink-3); text-underline-offse
 a:hover { text-decoration-thickness: 2px; }
 select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
-.page { max-width: 1280px; margin: 0 auto; padding: 20px 40px 96px; }
+.bar { position: sticky; top: 0; z-index: 70; background: var(--ground); border-bottom: 1px solid var(--rule); }
+.bar-in { max-width: 1280px; margin: 0 auto; padding: 7px 40px; min-height: 54px; display: flex; align-items: center; gap: 28px; font-size: 14px; }
+.bar .home { display: inline-flex; align-items: center; gap: 9px; font-weight: 650; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.bar .home img { display: block; border-radius: 4px; }
+.bar nav { display: flex; gap: 22px; margin-left: auto; }
+.bar nav a { color: var(--ink-3); text-decoration: none; padding: 5px 0 3px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.bar nav a:hover { color: var(--ink); }
+.bar nav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.pick { display: flex; align-items: center; gap: 10px; margin-left: 12px; }
+.pick label { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.pick .short { display: none; }
+.pick select { min-height: 38px; padding: 5px 32px 5px 11px; font-size: 14.5px; }
 
-.mast { display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 14px; border-bottom: 1px solid var(--rule); padding-bottom: 12px; }
-.mast .home { display: inline-flex; align-items: center; gap: 9px; font-weight: 650; color: var(--ink); text-decoration: none; }
-.mast .home img { display: block; border-radius: 4px; }
-.mast nav { display: flex; gap: 26px; }
-.mast nav a { color: var(--ink-3); text-decoration: none; }
-.mast nav a:hover { color: var(--ink); }
-
-.shell { display: grid; grid-template-columns: minmax(0, 1fr) 232px; column-gap: 56px; align-items: start; margin-top: 44px; }
-.col { min-width: 0; }
+.page { max-width: 1280px; margin: 0 auto; padding: 44px 40px 96px; }
+section { scroll-margin-top: 78px; }
+.duo { display: grid; grid-template-columns: minmax(0, 1fr) 264px; column-gap: 44px; }
+.duo > * { grid-column: 1; min-width: 0; }
 
 /* Opening */
 h1 {
@@ -84,7 +90,7 @@ h1 {
 .ringbox h3 { font-size: 15px; font-weight: 650; color: var(--ink); margin-bottom: 4px; }
 
 /* Sections */
-.sec { margin-top: 104px; scroll-margin-top: 20px; }
+.sec { margin-top: 104px; }
 .sec h2 {
   font-stretch: 104%; font-weight: 690; font-size: 31px; line-height: 1.13; letter-spacing: -.01em;
   color: var(--ink); max-width: 23em; text-wrap: balance;
@@ -116,10 +122,10 @@ figure { margin: 26px 0 0; }
 .key li { display: grid; grid-template-columns: 18px 1fr; gap: 10px; font-size: 14.5px; line-height: 1.4; }
 .key i { display: block; width: 18px; height: 6px; margin-top: 8px; }
 .key b { color: var(--ink); font-weight: 720; font-size: 16.5px; }
-.key.side { margin-top: 0; align-self: center; flex: 1 1 140px; gap: 9px; }
-.key.side li { font-size: 14px; gap: 8px; grid-template-columns: 14px 1fr; }
-.key.side i { width: 14px; }
-.key.side b { font-size: 15.5px; }
+.key.beside { margin-top: 0; align-self: center; flex: 1 1 140px; gap: 9px; }
+.key.beside li { font-size: 14px; gap: 8px; grid-template-columns: 14px 1fr; }
+.key.beside i { width: 14px; }
+.key.beside b { font-size: 15.5px; }
 .rows { list-style: none; margin-top: 14px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.4; }
 .rows b { color: var(--ink); font-weight: 700; }
 
@@ -141,15 +147,6 @@ select {
   background-repeat: no-repeat; background-position: right 12px center;
 }
 
-/* Country picker */
-.rail { position: sticky; top: 18px; font-size: 14px; }
-.rail label { display: block; font-weight: 650; color: var(--ink); margin-bottom: 6px; }
-.rail select { width: 100%; }
-.rail .toggle { display: none; }
-.rail .map { margin-top: 14px; }
-.rail .map svg { display: block; width: 100%; height: auto; }
-.rail .cap { font-size: 12.5px; line-height: 1.4; color: var(--ink-3); margin-top: 8px; }
-.rail .cap i { display: inline-block; width: 9px; height: 9px; background: var(--blue); margin-right: 5px; }
 
 /* Closing, method, footer */
 .close h2 { max-width: 20em; }
@@ -168,29 +165,19 @@ details.how li { margin: 0 0 7px; }
 .foot .links a { font-weight: 600; }
 
 @media (max-width: 1099px) {
-  .shell { grid-template-columns: minmax(0, 1fr); }
-  body { padding-bottom: 66px; }
-  .rail {
-    position: fixed; left: 0; right: 0; bottom: 0; top: auto; z-index: 60; background: var(--paper);
-    border-top: 1px solid var(--rule); padding: 10px 16px;
-    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 10px;
-  }
-  .rail label { margin: 0; font-weight: 600; }
-  .rail .toggle {
-    display: inline-flex; align-items: center; font: inherit; font-size: 15px; font-weight: 600; color: var(--ink);
-    background: var(--ground); border: 1px solid var(--rule); border-radius: 4px; min-height: 42px; padding: 0 14px; cursor: pointer;
-  }
-  .rail .mapwrap { display: none; grid-column: 1 / -1; max-width: 400px; width: 100%; margin: 0 auto; padding-bottom: 6px; }
-  .rail.open .mapwrap { display: block; }
-  .rail .map { margin-top: 4px; }
+  .bar-in { gap: 20px; }
+  .bar .home span, .pick .long { display: none; }
+  .pick .short { display: inline; }
+  .duo { display: block; }
 }
-@media (max-width: 860px) {
-  .mast nav { display: none; }
+@media (max-width: 900px) {
+  .bar nav { display: none; }
+  .pick { margin-left: auto; }
   .pair { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 600px) {
-  .page { padding: 14px 18px 72px; }
-  .shell { margin-top: 26px; }
+  .bar-in { padding: 6px 18px; }
+  .page { padding: 26px 18px 72px; }
   .stand { font-size: 19px; margin-top: 16px; }
   .rings { margin-top: 26px; }
   .sec { margin-top: 76px; }
@@ -203,41 +190,49 @@ details.how li { margin: 0 0 7px; }
 </head>
 <body>
 
-<div class="page">
-
-  <header class="mast">
-    <a class="home" href="https://milcahjoseph.com"><img src="https://milcahjoseph.com/assets/favicon.png" width="22" height="22" alt="">Milcah M. Joseph</a>
+<header class="bar">
+  <div class="bar-in">
+    <a class="home" href="https://milcahjoseph.com" aria-label="Milcah M. Joseph, home"><img src="https://milcahjoseph.com/assets/favicon.png" width="24" height="24" alt=""><span>Milcah M. Joseph</span></a>
     <nav aria-label="On this page">
       <a href="#how-far">The ceiling</a>
       <a href="#where-it-goes">Where material goes</a>
       <a href="#every-country">Every country</a>
       <a href="#ten-years">What moved the rate</a>
     </nav>
-  </header>
+    <div class="pick"><label for="country"><span class="long">Compare the EU with</span><span class="short">Compare with</span></label><select id="country"></select></div>
+  </div>
+</header>
 
-  <div class="shell">
-    <main class="col">
+<main class="page">
 
-      <section id="how-far" aria-labelledby="h-top">
+      <section class="duo" id="how-far" aria-labelledby="h-top">
+        <div class="head">
         <h1 id="h-top">Europe can't recycle its way to circularity</h1>
         <p class="stand">The EU wants 24% of its material to come from recycled waste by 2030, double today's share. I worked out the most recycling could ever deliver, for the EU and each of its 27 countries. <strong>Recycling every tonne of waste it has, Europe would only just get there.</strong></p>
         <p class="by">By Milcah M. Joseph, November 2026. My calculation on Eurostat data for 2022.</p>
+        </div>
         <figure id="fig-rings">
           <div class="rings">
             <div class="ringbox"><h3>European Union</h3><div class="chart" id="ring-eu"></div></div>
             <div class="ringbox"><h3 id="ring-name"></h3><div class="chart" id="ring-geo"></div></div>
           </div>
         </figure>
+        <div class="tail">
         <p class="txt">Europe already recycles most of what it realistically can. Of the waste it treats but doesn't recycle, <span data-v="unrec-soil">71%</span> is soil, dredged mud and mining rock. <strong>Everything else, recycled to the last tonne, would add <span data-v="wo-gain">four</span> points.</strong></p>
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</p>
+        </div>
       </section>
 
-      <section class="sec" id="where-it-goes" aria-labelledby="h-flow">
+      <section class="sec duo" id="where-it-goes" aria-labelledby="h-flow">
+        <div class="head">
         <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
         <p class="sub">Where material went in 2022, in tonnes out of every 100.</p>
+        </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
+        <div class="tail">
         <p class="txt">For every tonne that comes back as waste, two are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. What's burned or eaten never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
         <p class="src">Source: Eurostat env_ac_sd and env_wassd, 2022, rounded to whole tonnes. The soil and rock part is approximate.</p>
+        </div>
       </section>
 
       <section class="sec" id="every-country" aria-labelledby="h-countries">
@@ -248,17 +243,21 @@ details.how li { margin: 0 0 7px; }
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2022. Countries are grouped by the lower end of each range. Sweden doesn't publish how much of its waste is soil and rock.</p>
       </section>
 
-      <section class="sec" id="ten-years" aria-labelledby="h-trend">
+      <section class="sec duo" id="ten-years" aria-labelledby="h-trend">
+        <div class="head">
         <h2 id="h-trend">The rate rose <span data-v="rise">1.5</span> points in <span data-v="span">14</span> years. The target asks for <span data-v="need">12</span> more in <span data-v="left">six</span>.</h2>
         <p class="sub">The share of material that comes from recycled waste, 2010 to 2024, and the 2030 target.</p>
+        </div>
         <figure id="fig-trend">
           <div class="chart" id="trend-lines"></div>
           <p class="chart-label">What moved the rate from 2012 to 2022, in points</p>
           <div class="chart" id="trend-drivers"></div>
         </figure>
+        <div class="tail">
         <p class="txt">From 2012 to 2022, Europe recycled <span data-v="rec-more">8%</span> more waste, which added <span data-v="rec-pts">0.7</span> points. It also used <span data-v="use-more">3%</span> more material, which took <span data-v="use-pts">0.3</span> back.</p>
         <p class="txt">Eurostat's 2024 figures, still partly estimates, show the other lever at work: Europe used 6% less material than in 2022, and that alone added about 0.7 points. <strong>Two years of using less did as much as ten years of recycling more.</strong></p>
         <p class="src">Source: my calculation on Eurostat env_ac_cur, env_ac_mfa and env_wastrt, 2010 to 2024. Waste is reported every two years. 2024 values build on Eurostat's estimated rate.</p>
+        </div>
       </section>
 
       <section class="sec close" id="so-what" aria-labelledby="h-close">
@@ -310,26 +309,12 @@ details.how li { margin: 0 0 7px; }
         </footer>
       </section>
 
-    </main>
-
-    <aside class="rail" id="rail" aria-label="Choose a country">
-      <label for="country">Compare the EU with</label>
-      <select id="country"></select>
-      <button class="toggle" id="map-toggle" type="button" aria-expanded="false" aria-controls="mapwrap">Map</button>
-      <div class="mapwrap" id="mapwrap">
-        <div class="map" id="map"></div>
-        <p class="cap"><i></i>The only <span data-v="could-wo">three</span> countries that could pass 24% by recycling everything except soil and rock. Pick any country to compare it.</p>
-      </div>
-    </aside>
-  </div>
-
-</div>
+</main>
 
 <div class="tip" id="tip" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="leaky_loop_data.js"></script>
-<script src="europe_map.js"></script>
 <script>
 (function () {
   'use strict';
@@ -489,7 +474,7 @@ details.how li { margin: 0 0 7px; }
         l.lines.forEach(function (s, j) { text(svg, 't-lab', lx, y + 20 + j * 18, s); });
       });
     } else {
-      var ul = document.createElement('ul'); ul.className = 'key' + (mode === 'side' ? ' side' : '');
+      var ul = document.createElement('ul'); ul.className = 'key' + (mode === 'side' ? ' beside' : '');
       labels.forEach(function (l) {
         var li = document.createElement('li'), sw2 = document.createElement('i'), d = document.createElement('div'), b = document.createElement('b');
         sw2.style.background = l.fill; if (l.target) { sw2.style.height = '2px'; sw2.style.marginTop = '10px'; }
@@ -515,41 +500,11 @@ details.how li { margin: 0 0 7px; }
     }
   });
 
-  /* ---------- the country picker ---------- */
-  var sel = document.getElementById('country'), rail = document.getElementById('rail'), toggle = document.getElementById('map-toggle');
+  /* ---------- the country menu ---------- */
+  var sel = document.getElementById('country');
   MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
   sel.addEventListener('change', function () { choose(sel.value); });
-  toggle.addEventListener('click', function () {
-    var open = rail.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    toggle.textContent = open ? 'Close map' : 'Map';
-  });
-  function couldWithout(c) { return c.ceiling_without_soil_rock != null && c.ceiling_without_soil_rock >= EU_TARGET; }
-  charts.push(function () {
-    sel.value = state.geo;
-    var M = window.EUROPE_MAP, el = document.getElementById('map');
-    if (!M) { el.replaceChildren(); return; }
-    var svg = setupSvg(el, M.width, M.height, 'Map of the European Union. ' + C().name + ' is selected.').attr('width', null).attr('height', null);
-    var defs = svg.append('defs').append('pattern').attr('id', 'no-split').attr('width', 6).attr('height', 6).attr('patternUnits', 'userSpaceOnUse').attr('patternTransform', 'rotate(45)');
-    defs.append('rect').attr('width', 6).attr('height', 6).attr('fill', COL.quiet);
-    defs.append('rect').attr('width', 2.4).attr('height', 6).attr('fill', COL.ground);
-    svg.append('path').attr('d', M.land).attr('fill', COL.land);
-    var order = MEMBERS.slice().sort(function (a, b) { return (a === state.geo) - (b === state.geo); });
-    order.forEach(function (g) {
-      var c = D.countries[g], shape = M.countries[g], on = g === state.geo;
-      if (!shape) return;
-      var fill = c.ceiling_without_soil_rock == null ? 'url(#no-split)' : couldWithout(c) ? COL.blue : COL.quiet;
-      var grp = svg.append('g');
-      grp.append('path').attr('d', shape.d).attr('fill', fill).attr('stroke', on ? COL.ink : COL.ground).attr('stroke-width', on ? 3.6 : 1.2).attr('stroke-linejoin', 'round');
-      if (shape.w < 14 || shape.h < 14) {
-        // too small to see or tap: a dot stands in
-        grp.append('circle').attr('cx', shape.c[0]).attr('cy', shape.c[1]).attr('r', 9).attr('fill', fill === 'url(#no-split)' ? COL.quiet : fill).attr('stroke', on ? COL.ink : COL.ground).attr('stroke-width', on ? 4.5 : 2.4);
-        grp.append('circle').attr('cx', shape.c[0]).attr('cy', shape.c[1]).attr('r', 22).attr('fill', 'transparent');
-      }
-      pickable(grp, g, c.name, figures(c));
-      grp.on('click.close', function () { if (rail.classList.contains('open')) toggle.click(); });
-    });
-  });
+  charts.push(function () { sel.value = state.geo; });
 
   /* ---------- where material goes ---------- */
   var FATES = [
@@ -821,6 +776,17 @@ details.how li { margin: 0 0 7px; }
   document.querySelectorAll('[data-v]').forEach(function (el) { var k = el.getAttribute('data-v'); if (V[k] != null) el.textContent = V[k]; });
   var asofEl = document.getElementById('asof');
   if (asofEl) asofEl.textContent = 'Eurostat data as of ' + new Date(D.data_as_of + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) + '.';
+
+  /* ---------- the bar shows which section is on screen ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('.bar nav a')), ticking = false;
+  function spy() {
+    ticking = false;
+    var cur = links[0];
+    links.forEach(function (l) { var t = document.getElementById(l.getAttribute('href').slice(1)); if (t && t.getBoundingClientRect().top < 150) cur = l; });
+    links.forEach(function (l) { if (l === cur) l.setAttribute('aria-current', 'true'); else l.removeAttribute('aria-current'); });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(spy); } }, { passive: true });
+  spy();
 
   drawAll();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawAll);
