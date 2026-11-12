@@ -756,7 +756,7 @@ details.how li { margin: 0 0 7px; }
       if (it.eu) hit.style('cursor', 'default');
       else hit.on('click.profile', function () {      // on a narrow screen the profile sits above the chart
         var p = document.getElementById('profile');
-        if (p.getBoundingClientRect().top < 0 || window.matchMedia('(max-width: 1000px)').matches) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (window.matchMedia('(max-width: 1000px)').matches) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
     line(svg, 0, top + rowH + 1, W, top + rowH + 1, COL.rule);
