@@ -282,12 +282,12 @@ details.how li { margin: 0 0 7px; }
       <section class="sec" id="where-it-goes" aria-labelledby="h-flow">
         <div class="head">
         <p class="eyebrow">Where material goes</p>
-        <h2 id="h-flow">Of every 100 tonnes moving through Europe's economy, <span data-v="eu-back">20</span> come back as waste</h2>
-        <p class="sub">Where the EU's material went in 2022, from what it was to where it ended up.</p>
+        <h2 id="h-flow"><span data-v="eu-back">20%</span> of the material moving through Europe's economy comes back as waste</h2>
+        <p class="sub">Where the EU's material went in 2022, by weight, from what it was to where it ended up.</p>
         </div>
         <figure id="fig-flow"><div class="chart"></div></figure>
         <div class="tail">
-        <p class="txt">Of the 100 tonnes, <span data-v="min-in">52</span> are minerals, and <span data-v="min-built">35</span> of those are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
+        <p class="txt">Minerals are <span data-v="min-in">52%</span> of the material, and most of them, <span data-v="min-built">35%</span> of the total, are built into buildings, roads and machines. Much of that will return as demolition waste, decades from now. Fossil fuels and biomass are mostly burned or eaten, and never will. <strong>Recycling can only work with what comes back,</strong> and more than half of that is soil and rock.</p>
         <p class="src">Source: Eurostat, 2022, rounded. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_sd and env_wassd, 2022. The ribbons split the flows by material and leave out other products, about 1% of the total, and the soil and rock part is approximate. Waste here is Eurostat's flow measure, which leaves out soil and dredged mud sent to landfill and waste from treating waste: <span data-v="flows-bt">1.67</span> billion tonnes, against the <span data-v="treated-bt">1.97</span> billion tonnes of waste treated that the ceilings use.</span></span></p>
         </div>
       </section>
@@ -354,8 +354,8 @@ details.how li { margin: 0 0 7px; }
           <p>The circularity rate is recycled waste divided by recycled waste plus material consumption. Starting from Eurostat's published rate, I added every tonne of waste each country treated but didn't recycle. Holding consumption fixed gives the lower figure of each range. Letting each recycled tonne replace a tonne of new material gives the higher one.</p>
           <p>Soil and rock means soils, dredging spoils and other mineral waste, mostly from mining. Rubble from construction and demolition stays in.</p>
           <h3>Where material goes</h3>
-          <p>Eurostat's material flow accounts follow every tonne of material processed in a country: extracted at home, imported, recycled or backfilled. I took the shares built into stock, burned or eaten (emissions), exported, spread on land (dissipative flows) and treated as waste, and rounded them to whole tonnes out of 100. The soil and rock part of the waste is each country's soil and rock share of all the waste it treats, applied to the waste in the flows. Malta's flows record no emissions and leave about a fifth of its material unaccounted for.</p>
-          <p>The ribbons split the EU's flows by material, which only the EU and 13 member states publish. Other products, about 1% of the total, are left out, so each ribbon is fitted to the rounded tonnes at its two ends. Eurostat splits dissipative flows across materials in the same shares in every country (60% metal ores, 25% biomass, 15% minerals), so the share of metal ores spread on land is an estimate. Waste in the flows leaves out soil and dredged mud sent to landfill and waste from treating waste, so it's smaller than the waste treated that the ceilings use.</p>
+          <p>Eurostat's material flow accounts follow every tonne of material processed in a country: extracted at home, imported, recycled or backfilled. I took the shares built into stock, burned or eaten (emissions), exported, spread on land (dissipative flows) and treated as waste, and rounded them to whole percentages. The soil and rock part of the waste is each country's soil and rock share of all the waste it treats, applied to the waste in the flows. Malta's flows record no emissions and leave about a fifth of its material unaccounted for.</p>
+          <p>The ribbons split the EU's flows by material, which only the EU and 13 member states publish. Other products, about 1% of the total, are left out, so each ribbon is fitted to the rounded shares at its two ends. Eurostat splits dissipative flows across materials in the same shares in every country (60% metal ores, 25% biomass, 15% minerals), so the share of metal ores spread on land is an estimate. Waste in the flows leaves out soil and dredged mud sent to landfill and waste from treating waste, so it's smaller than the waste treated that the ceilings use.</p>
           <h3>What moved the rate</h3>
           <p>For each two-year step, I recalculated the rate with only recycling changing, once with the earlier year's consumption and once with the later year's, and averaged the two: that's the recycling effect. The rest of the change is the consumption effect, so the two add up to it.</p>
           <h3>What each lever is worth</h3>
@@ -649,10 +649,10 @@ details.how li { margin: 0 0 7px; }
     links.slice().sort(function (p, q) { return p.t - q.t || p.s - q.s; }).forEach(function (l) { l.w1 = l.kt / tgt[l.t].sum * tgt[l.t].w; l.a1 = to[l.t]; to[l.t] += l.w1; });
 
     // it flows left to right at every width; wide screens add room for full names and the two brackets
-    var wide = W >= 760, pad = 8, Lw = wide ? 132 : 100, Rw = wide ? 392 : 130, th = wide ? 16 : 12, k = wide ? 4.5 : 4.3;
+    var wide = W >= 760, pad = 8, Lw = wide ? 132 : 112, Rw = wide ? 392 : 138, th = wide ? 16 : 12, k = wide ? 4.5 : 4.3;
     var cA = Lw + th, cB = W - Rw - th, H = pad * 2 + 100 * k;
-    var svg = setupSvg(el, W, H, 'Of every 100 tonnes of material the EU processed in 2022: ' + src.map(function (s) { return f0(s.w) + ' were ' + s.name.toLowerCase(); }).join(', ') +
-      '. Where they ended up: ' + tgt.map(function (t) { return t.w + ' ' + t.f.long; }).join(', ') + '.');
+    var svg = setupSvg(el, W, H, 'Of the material the EU processed in 2022, by weight: ' + src.map(function (s) { return f0(s.w) + '% was ' + s.name.toLowerCase(); }).join(', ') +
+      '. Where it ended up: ' + tgt.map(function (t) { return t.w + '% ' + t.f.long; }).join(', ') + '.');
     function ribbon(l) {
       var m = (cA + cB) / 2, p0 = pad + l.a0 * k, p1 = pad + l.a1 * k, q0 = p0 + l.w0 * k, q1 = p1 + l.w1 * k;
       return 'M' + cA + ',' + p0 + ' C' + m + ',' + p0 + ' ' + m + ',' + p1 + ' ' + cB + ',' + p1 + ' L' + cB + ',' + q1 + ' C' + m + ',' + q1 + ' ' + m + ',' + q0 + ' ' + cA + ',' + q0 + ' Z';
@@ -663,24 +663,24 @@ details.how li { margin: 0 0 7px; }
       var f = tgt[l.t].f;
       svg.append('path').attr('d', ribbon(l)).attr('fill', f.fill).attr('fill-opacity', l.t > 1 ? (l.t === 2 ? 0.42 : 0.5) : 0.62)
         .attr('stroke', COL.ground).attr('stroke-width', 0.8)
-        .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, src[l.s].name + ': ' + f.long, [['Of every 100 tonnes', f1(100 * l.kt / total)], ['Million tonnes', f0(l.kt / 1000)]]); })
+        .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, src[l.s].name + ': ' + f.long, [['Share of all material', f1(100 * l.kt / total) + '%'], ['Million tonnes', f0(l.kt / 1000)]]); })
         .on('pointerleave', hideTip);
     });
     // the widest ribbons carry their tonnes
     links.forEach(function (l) {
       if (l.t < 2 || 100 * l.kt / total < 9.5) return;
       // set a quarter of the way along, before the ribbons cross
-      text(svg, 't-in', 0.773 * cA + 0.227 * cB, pad + (0.914 * (l.a0 + l.w0 / 2) + 0.086 * (l.a1 + l.w1 / 2)) * k + 4.5, f0(100 * l.kt / total), 'middle').style('font-weight', 720).style('fill', COL.ink);
+      text(svg, 't-in', 0.773 * cA + 0.227 * cB, pad + (0.914 * (l.a0 + l.w0 / 2) + 0.086 * (l.a1 + l.w1 / 2)) * k + 4.5, f0(100 * l.kt / total) + '%', 'middle').style('font-weight', 720).style('fill', COL.ink);
     });
     function seg(a, b, x0, fill) { svg.append('rect').attr('x', x0).attr('width', th).attr('y', pad + a * k + 1).attr('height', Math.max((b - a) * k - 2, 0.5)).attr('fill', fill); }
     src.forEach(function (s) {
       seg(s.a, s.a + s.w, cA - th, COL.ink2);
-      numText(svg, wide ? 't-lab' : 't-name t-tight', Lw - 9, pad + (s.a + s.w / 2) * k + 4.5, s.name, f0(s.w), 'end');
+      numText(svg, wide ? 't-lab' : 't-name t-tight', Lw - 9, pad + (s.a + s.w / 2) * k + 4.5, s.name, f0(s.w) + '%', 'end');
     });
     tgt.forEach(function (t, j) {
       seg(t.a, t.a + t.w, cB, t.f.fill);
       var ym = pad + (t.a + t.w / 2) * k + 4.5, two = wide && t.f.key === 'built';
-      var lab = numText(svg, wide ? 't-lab' : 't-name t-tight', W - Rw + 9, ym - (two ? 9 : 0), String(t.w), two ? 'built into buildings,' : t.f.name);
+      var lab = numText(svg, wide ? 't-lab' : 't-name t-tight', W - Rw + 9, ym - (two ? 9 : 0), t.w + '%', two ? 'built into buildings,' : t.f.name);
       if (two) text(svg, 't-lab', W - Rw + 9, ym + 9, 'roads and machines');
       if (j < 2) lab.style('fill', j ? COL.blueInk : COL.ochreInk).style('font-weight', 650);
     });
@@ -691,13 +691,13 @@ details.how li { margin: 0 0 7px; }
         svg.append('path').attr('d', 'M' + (xb - 6) + ',' + b[0] + ' H' + xb + ' V' + b[1] + ' H' + (xb - 6)).attr('fill', 'none').attr('stroke', b[2]).attr('stroke-width', 1.2);
       });
       var yA = (pad + ys) / 2, yB = (ys + pad + 100 * k) / 2;
-      numText(svg, 't-group', xb + 12, yA - 12, String(h.back), 'came back as waste').style('fill', COL.blueInk);
+      numText(svg, 't-group', xb + 12, yA - 12, h.back + '%', 'came back as waste').style('fill', COL.blueInk);
       text(svg, 't-sm', xb + 12, yA + 7, 'more than half of it');
       text(svg, 't-sm', xb + 12, yA + 23, 'soil and rock');
-      numText(svg, 't-group', xb + 12, yB + 5, String(100 - h.back), 'didn’t');
+      numText(svg, 't-group', xb + 12, yB + 5, (100 - h.back) + '%', 'didn’t');
     } else {
       var sum = document.createElement('p'), b1 = document.createElement('b'), b2 = document.createElement('b'); sum.className = 'sum';
-      b1.textContent = h.back + ' came back as waste'; b1.style.color = COL.blueInk; b2.textContent = (100 - h.back) + ' didn’t.';
+      b1.textContent = h.back + '% came back as waste'; b1.style.color = COL.blueInk; b2.textContent = (100 - h.back) + '% didn’t.';
       sum.appendChild(b1); sum.appendChild(document.createTextNode(', more than half of it soil and rock. ')); sum.appendChild(b2);
       el.appendChild(sum);
     }
@@ -1030,7 +1030,7 @@ details.how li { margin: 0 0 7px; }
   var V = {
     'unrec-soil': f0(100 * (1 - EU.not_recycled_without_soil_rock_kt / EU.not_recycled_kt)) + '%',
     'wo-gain': word(Math.round(EU.ceiling_without_soil_rock - EU.rate)),
-    'eu-back': String(EU.loop_per_100[4]),
+    'eu-back': EU.loop_per_100[4] + '%',
     'below-24': String(nBelow),
     'below-24-word': cap(word(nBelow)),
     'could-wo': word(nCould),
@@ -1043,8 +1043,8 @@ details.how li { margin: 0 0 7px; }
     'hh-mt': f0(D.household.generated_kt / 1000),
     'hh-share': f0(D.household.share_of_generated_pct) + '%',
     'hh-pts': f1(D.household.at_most_pts),
-    'min-in': f0(100 * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })),
-    'min-built': f0(minerals.shares[0] * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })),
+    'min-in': f0(100 * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })) + '%',
+    'min-built': f0(minerals.shares[0] * minerals.processed_kt / d3.sum(D.flows_by_material, function (m) { return m.processed_kt; })) + '%',
     'flows-bt': (D.waste_bases.in_flows_kt / 1e6).toFixed(2),
     'treated-bt': (D.waste_bases.treated_kt / 1e6).toFixed(2),
     'crisis-cut': f0(-S.consumption_change_pct[iCrisis]) + '%',
