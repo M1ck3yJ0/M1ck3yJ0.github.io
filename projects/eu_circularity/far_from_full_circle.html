@@ -201,10 +201,13 @@ select {
 
 /* Closing, method, footer */
 details.how { margin-top: 28px; font-size: 14.5px; color: var(--ink-2); }
-details.how summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; color: var(--ink); font-weight: 650; }
-details.how summary::-webkit-details-marker { display: none; }
-details.how summary::before { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-45deg); transition: transform .15s; }
-details.how[open] summary::before { transform: rotate(45deg); }
+details.peek { margin-top: 10px; font-size: 14.5px; }
+details.peek .chart-label { margin: 4px 0 10px; }
+details.how summary, details.peek summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; min-height: 40px; color: var(--ink); font-weight: 650; }
+details.peek summary { color: var(--blue-ink); }
+details.how summary::-webkit-details-marker, details.peek summary::-webkit-details-marker { display: none; }
+details.how summary::before, details.peek summary::before { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(-45deg); transition: transform .15s; }
+details.how[open] summary::before, details.peek[open] summary::before { transform: rotate(45deg); }
 details.how .body { max-width: 72ch; line-height: 1.55; padding-bottom: 6px; }
 details.how h3 { font-size: 14.5px; font-weight: 650; color: var(--ink); margin: 18px 0 6px; }
 details.how p + p { margin-top: 8px; }
@@ -269,13 +272,16 @@ details.how li { margin: 0 0 7px; }
         <h2 id="h-ceiling">Recycling every tonne but soil and rock would only take Europe to <span data-v="wo-rate">15.4%</span></h2>
         <p class="sub">The share of the EU's material that came from recycled waste in 2022, and how far recycling all the waste it treats could take it.</p>
         </div>
-        <figure id="fig-rings"><div class="chart" id="ring-eu"></div></figure>
+        <figure id="fig-rings">
+          <div class="chart" id="ring-eu"></div>
+          <details class="peek" id="rest-peek">
+            <summary>What “all waste but soil and rock” is</summary>
+            <p class="chart-label"><i class="sw k-blue"></i>The <span data-v="rest-mt">339</span> million tonnes the EU treated but didn't recycle in 2022, other than soil and rock</p>
+            <div class="chart" id="rest-bar"></div>
+          </details>
+        </figure>
         <div class="tail">
         <p class="txt">Europe already recycles most of what it realistically can. Of the waste it treats but doesn't recycle, <span data-v="unrec-soil">71%</span> is soil, dredged mud and mining rock. <strong>Everything else, recycled to the last tonne, would add <span data-v="wo-gain">four</span> points.</strong></p>
-        <figure id="fig-rest">
-          <p class="chart-label"><i class="sw k-blue"></i>What everything else is: the <span data-v="rest-mt">339</span> million tonnes the EU treated but didn't recycle in 2022, other than soil and rock</p>
-          <div class="chart" id="rest-bar"></div>
-        </figure>
         <p class="txt">Households generate <span data-v="hh-mt">196</span> million tonnes of waste a year, <span data-v="hh-share">9%</span> of all the waste Europe generates. <strong>Recycling every tonne of it would add at most <span data-v="hh-pts">2.3</span> points</strong>, and less in practice, since some of it is recycled already.</p>
         <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa, env_wastrt and env_wasgen, 2022. Each range runs from recycled material adding to what Europe uses to it replacing new material, tonne for tonne.</span></span></p>
         </div>
@@ -568,36 +574,87 @@ details.how li { margin: 0 0 7px; }
     el.appendChild(box);
   }
   var REST = ['The other three quarters', 'didn’t come back as waste.', 'It was built in, burned', 'or eaten.'];
+  // what all waste but soil and rock is: the five biggest kinds and the rest
+  var REST_SHORT = {
+    'Sorting residues and other mixed waste': 'Sorting residues',
+    'Mixed household and similar waste': 'Mixed household',
+    'Ash and residues from burning and treating waste': 'Ash and residues',
+    'Construction and demolition rubble': 'Rubble',
+    'Metal, glass, paper, plastic, wood and textiles': 'Recyclables'
+  };
+  function restItems() {
+    var all = D.unrecycled, total = d3.sum(all, function (d) { return d.kt; }), top = all.slice(0, 5);
+    var items = top.map(function (d) { return { name: d.kind, short: REST_SHORT[d.kind] || d.kind, kt: d.kt }; });
+    items.push({ name: 'Chemical waste, sludges, food and the rest', short: 'Other', kt: total - d3.sum(top, function (d) { return d.kt; }) });
+    items.forEach(function (d) { d.p = d.kt / total * 100; });
+    return items;
+  }
+  function restTip(sel, d) {
+    sel.on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, d.name, [['Million tonnes', f0(d.kt / 1000)], ['Share', f0(d.p) + '%']]); }).on('pointerleave', hideTip);
+  }
+  // a label with its number in bold, wrapped at maxX; later lines start under the words, or at x
+  function wrapNum(svg, cls, x, y, num, str, maxX, lh, indent) {
+    var words = str.split(' '), t = numText(svg, cls, x, y, num, words[0]), cur = t.select('tspan:last-child'), xc = x, n = 1;
+    var x2 = indent ? x + t.select('tspan').node().getComputedTextLength() + 4 : x;
+    for (var i = 1; i < words.length; i++) {
+      var prev = cur.text(); cur.text(prev + ' ' + words[i]);
+      if (xc + textWidth(n === 1 ? t : cur) > maxX) { cur.text(prev); cur = text(svg, cls, x2, y + n * lh, words[i]); xc = x2; n++; }
+    }
+    return n;
+  }
+  // the callout: fanned out from the label at xs (y0 to y1) to a bar at x0, labeled up to x1
+  function restCallout(svg, xs, y0, y1, x0, x1, H) {
+    var items = restItems(), bw = 26, tx = x0 + bw + 12, acc = 0;
+    var n = wrapNum(svg, 't-name', x0, 16, f0(d3.sum(items, function (d) { return d.kt; }) / 1000) + ' million tonnes', 'of waste, other than soil and rock, that the EU treated but didn’t recycle in 2022', x1, 18);
+    var top = 16 + n * 18 + 4, bot = H - 6, y = d3.scaleLinear().domain([0, 100]).range([top, bot]);
+    svg.append('polygon').attr('points', [[xs, y0], [x0 - 6, top], [x0 - 6, bot], [xs, y1]].join(' ')).attr('fill', COL.blueSlot).attr('opacity', 0.5);
+    line(svg, xs, y0, x0 - 6, top, COL.blue, 1); line(svg, xs, y1, x0 - 6, bot, COL.blue, 1);
+    items.forEach(function (d) {
+      var a = acc; acc += d.p;
+      restTip(svg.append('rect').attr('x', x0 + 0.75).attr('y', y(a) + 2.25).attr('width', bw - 1.5).attr('height', Math.max(y(acc) - y(a) - 4.5, 0.5))
+        .attr('fill', COL.blueSlot).attr('stroke', COL.blue).attr('stroke-width', 1.5), d);
+      var ym = (y(a) + y(acc)) / 2, t = numText(svg, 't-lab', tx, ym + 5, f0(d.p) + '%', d.name);
+      if (tx + textWidth(t) <= x1) return;
+      t.remove();
+      if (y(acc) - y(a) < 38) numText(svg, 't-lab', tx, ym + 5, f0(d.p) + '%', d.short);
+      else wrapNum(svg, 't-lab', tx, ym - 3, f0(d.p) + '%', d.name, x1, 17, true);
+    });
+  }
   charts.push(function () {
-    var el = document.getElementById('ring-eu'), W = el.clientWidth, c = EU, lead = W >= 520, labelW = 210, gapL = 56;
-    var R = lead ? Math.min(165, Math.floor((W - gapL - labelW) / 2) - 2) : Math.min(150, Math.floor((W - 8) / 2));
+    var el = document.getElementById('ring-eu'), W = el.clientWidth, c = EU, lead = W >= 560, labelW = 210, gapL = 56, gapC = 84;
+    // wide screens show what all waste but soil and rock is beside the ring; narrower ones fold it under it
+    var Rw = Math.min(165, Math.floor((W - gapL - labelW - gapC - 300) / 2) - 2), wide = lead && Rw >= 145;
+    var R = wide ? Rw : lead ? Math.min(165, Math.floor((W - gapL - labelW) / 2) - 2) : Math.min(150, Math.floor((W - 8) / 2));
     var sw = Math.round(R * 0.235), cx = lead ? R + 2 : W / 2, cy = R + 10, H = 2 * R + 22;
-    var svg = setupSvg(el, lead ? cx + R + gapL + labelW : W, H, 'The EU: ' + f1(c.rate) + '% of the material it used in 2022 came from recycled waste. Recycling every tonne of waste but soil and rock would give ' +
-      f1(c.ceiling_without_soil_rock) + '%, and recycling every tonne ' + range(c) + ', against a target of ' + EU_TARGET + '% for 2030. The rest of the ring is open.');
+    var svg = setupSvg(el, wide ? W : lead ? cx + R + gapL + labelW : W, H, 'The EU: ' + f1(c.rate) + '% of the material it used in 2022 came from recycled waste. Recycling every tonne of waste but soil and rock would give ' +
+      f1(c.ceiling_without_soil_rock) + '%, and recycling every tonne ' + range(c) + ', against a target of ' + EU_TARGET + '% for 2030. The rest of the ring is open.' +
+      (wide ? ' Beside it, the waste other than soil and rock that the EU treated but didn’t recycle: ' + restItems().map(function (d) { return f0(d.p) + '% ' + d.name.toLowerCase(); }).join(', ') + '.' : ''));
+    document.getElementById('rest-peek').hidden = wide;
     drawRing(svg, cx, cy, R, sw, c);
     var tEnd = tick(svg, cx, cy, R, sw, EU_TARGET, 2.4);
     ringCenter(svg, cx, cy, R, c, ['of the material Europe', 'used in 2022 came from', 'recycled waste']);
     if (!lead) { ladder(el, c, true, EU_TARGET, 'the EU’s target for 2030', REST.join(' ')); return; }
     var lx = cx + R + gapL, bx = lx - 13, mid = R - sw / 2;
     var pA = pt(cx, cy, R + 5, (c.rate + c.ceiling_without_soil_rock) / 2 * 3.6), pB = pt(cx, cy, R + 5, (c.ceiling_without_soil_rock + c.ceiling) / 2 * 3.6);
-    var yA = pA[1] + 3, yB = Math.min(pB[1] - 3, tEnd[1] - 45);
+    var yB = Math.min(pB[1] - 3, tEnd[1] - 45), yA = Math.min(pA[1] + 3, yB - 50);
     // what could be, under one bracket
     text(svg, 't-note', lx, yA - 46, 'If Europe recycled every');
     text(svg, 't-note', lx, yA - 28, 'tonne of waste it treats');
     svg.append('path').attr('d', 'M' + (bx + 5) + ',' + (yA - 16) + ' H' + bx + ' V' + (yB + 32) + ' H' + (bx + 5)).attr('fill', 'none').attr('stroke', COL.ink3).attr('stroke-width', 1.2);
     line(svg, pA[0], pA[1], bx, yA, COL.ink3, 1); line(svg, pB[0], pB[1], bx, yB, COL.ink3, 1);
     text(svg, 't-could', lx, yA + 7, f1(c.ceiling_without_soil_rock) + '%').style('fill', COL.blueInk);
-    text(svg, 't-lab', lx, yA + 25, 'all waste but soil and rock');
+    var labA = text(svg, 't-lab', lx, yA + 25, 'all waste but soil and rock');
     text(svg, 't-could', lx, yB + 7, range(c)).style('fill', COL.ochreInk);
     text(svg, 't-lab', lx, yB + 25, 'soil, mud and mining rock too');
     // the target, as a finish line
-    line(svg, tEnd[0], tEnd[1], lx + labelW, tEnd[1], COL.ink, 2.4);
+    line(svg, tEnd[0], tEnd[1], lx + labelW - (wide ? 12 : 0), tEnd[1], COL.ink, 2.4);
     var tn = text(svg, 't-num', lx, tEnd[1] + 25, EU_TARGET + '%');
     text(svg, 't-lab', lx + textWidth(tn) + 7, tEnd[1] + 25, 'the EU’s target for 2030');
     // the open rest
     var pR = pt(cx, cy, mid + 10, 118), yR = Math.max(pR[1], tEnd[1] + 62);
     line(svg, pR[0], pR[1], lx - 8, yR, COL.ink3, 1);
     REST.forEach(function (s, i) { text(svg, 't-note', lx, yR + 5 + i * 19, s); });
+    if (wide) restCallout(svg, lx + textWidth(labA) + 14, yA - 9, yA + 30, lx + labelW + gapC, W, H);
   });
 
   /* ---------- the country menus, one atop each side panel ---------- */
@@ -986,27 +1043,16 @@ details.how li { margin: 0 0 7px; }
     text(svg, 't-in', (x(wo) + xG) / 2, y4 + bh / 2 + 4.5, cutBoth + '% less', 'middle').style('fill', COL.lessInk);
   });
 
-  /* ---------- what the rest of the unrecycled waste is ---------- */
-  var REST_SHORT = {
-    'Sorting residues and other mixed waste': 'Sorting residues',
-    'Mixed household and similar waste': 'Mixed household',
-    'Ash and residues from burning and treating waste': 'Ash and residues',
-    'Construction and demolition rubble': 'Rubble',
-    'Metal, glass, paper, plastic, wood and textiles': 'Recyclables'
-  };
-  charts.push(function () {
-    var el = document.getElementById('rest-bar'), W = el.clientWidth, wide = W >= 560, all = D.unrecycled;
-    var total = d3.sum(all, function (d) { return d.kt; }), top = all.slice(0, 5);
-    var items = top.map(function (d) { return { name: d.kind, short: REST_SHORT[d.kind] || d.kind, kt: d.kt }; });
-    items.push({ name: 'Chemical waste, sludges, food and the rest', short: 'Other', kt: total - d3.sum(top, function (d) { return d.kt; }) });
-    var x = d3.scaleLinear().domain([0, 100]).range([0, W]), H = 26, acc = 0;
+  /* ---------- what the rest of the unrecycled waste is, as a bar under the ring on narrower screens ---------- */
+  function drawRest() {
+    var el = document.getElementById('rest-bar'), W = el.clientWidth, wide = W >= 560, items = restItems();
+    if (!W) return;
+    var total = d3.sum(items, function (d) { return d.kt; }), x = d3.scaleLinear().domain([0, 100]).range([0, W]), H = 26, acc = 0;
     var svg = setupSvg(el, W, H, 'One bar of ' + f0(total / 1000) + ' million tonnes: ' + items.map(function (d) { return f0(d.kt / total * 100) + '% ' + d.name.toLowerCase(); }).join(', ') + '.');
     var key = document.createElement(wide ? 'div' : 'ul'), small = null; key.className = wide ? 'rest-key' : 'rows';
     items.forEach(function (d) {
-      var p = d.kt / total * 100, a = acc; acc += p;
-      svg.append('rect').attr('x', x(a) + 1.75).attr('y', 0.75).attr('width', Math.max(x(p) - x(0) - 3.5, 0.5)).attr('height', H - 1.5).attr('fill', COL.blueSlot).attr('stroke', COL.blue).attr('stroke-width', 1.5)
-        .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, d.name, [['Million tonnes', f0(d.kt / 1000)], ['Share', f0(p) + '%']]); })
-        .on('pointerleave', hideTip);
+      var p = d.p, a = acc; acc += p;
+      restTip(svg.append('rect').attr('x', x(a) + 1.75).attr('y', 0.75).attr('width', Math.max(x(p) - x(0) - 3.5, 0.5)).attr('height', H - 1.5).attr('fill', COL.blueSlot).attr('stroke', COL.blue).attr('stroke-width', 1.5), d);
       var wpx = x(p) - x(0), b = document.createElement('b'), item;
       b.textContent = f0(p) + '% ';
       if (wide && wpx < 100) {          // the small ones share one label, a line each
@@ -1020,7 +1066,9 @@ details.how li { margin: 0 0 7px; }
       item.appendChild(b); item.appendChild(document.createTextNode(wide && wpx < 150 ? d.short : d.name));
     });
     el.appendChild(key);
-  });
+  }
+  charts.push(drawRest);
+  document.getElementById('rest-peek').addEventListener('toggle', drawRest);
 
   /* ---------- numbers in the text ---------- */
   var T = EU.trend, yrs = D.trend_years, lastYr = yrs[yrs.length - 1], S = EU.steps, SY = D.step_years, iLast = SY.length - 2, iCrisis = SY.indexOf(2008);
