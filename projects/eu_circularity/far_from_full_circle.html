@@ -70,9 +70,6 @@ select:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visib
 .bar nav a { color: var(--ink-3); text-decoration: none; padding: 5px 0 3px; border-bottom: 2px solid transparent; white-space: nowrap; }
 .bar nav a:hover { color: var(--ink); }
 .bar nav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--ink); }
-.pick { display: grid; gap: 5px; }
-.pick label { font-size: 13px; color: var(--ink-3); }
-.pick select { width: 100%; font-size: 18px; font-weight: 650; }
 
 .page { max-width: 1160px; margin: 0 auto; padding: 44px 40px 96px; }
 section { scroll-margin-top: 78px; }
@@ -100,8 +97,8 @@ h1 {
 .sub { font-size: 15px; color: var(--ink-3); margin-top: 9px; max-width: 62ch; }
 figure { margin: 26px 0 0; }
 .chart { position: relative; width: 100%; }
-.chart svg { display: block; overflow: visible; }
-.chart text { font-family: var(--sans); font-stretch: 95%; font-variant-numeric: tabular-nums; }
+.chart svg, .f-cell svg, .f-h svg { display: block; overflow: visible; }
+.chart text, .f-cell text, .f-h text { font-family: var(--sans); font-stretch: 95%; font-variant-numeric: tabular-nums; }
 .txt { font-family: var(--serif); font-size: 19px; line-height: 1.5; max-width: 31em; margin-top: 24px; }
 .txt + .txt { margin-top: 12px; }
 .src { font-size: 13px; color: var(--ink-3); margin-top: 14px; max-width: 72ch; }
@@ -142,7 +139,6 @@ figure { margin: 26px 0 0; }
 .sum { margin-top: 12px; font-size: 14.5px; line-height: 1.45; }
 .sum b { font-weight: 700; color: var(--ink); }
 .t-group .t-b { fill: inherit; }
-.hit { cursor: pointer; }
 .rest-key { display: flex; margin-top: 8px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
 .rest-key div { padding-right: 8px; min-width: 0; }
 .rest-key b { display: block; color: var(--ink); font-weight: 720; font-size: 15px; }
@@ -162,21 +158,24 @@ figure { margin: 26px 0 0; }
 .ladder .is { margin-bottom: 10px; }
 .ladder .is b { font-weight: 740; color: var(--blue-ink); }
 
-/* Every country: all 27 on the left, the chosen one's profile on the right */
-.explore { display: grid; grid-template-columns: minmax(0, 13fr) minmax(0, 10fr); column-gap: 52px; align-items: start; margin-top: 28px; }
-.explore figure { margin: 0; }
-.keyline { display: flex; flex-wrap: wrap; gap: 3px 16px; margin-bottom: 10px; font-size: 12.5px; color: var(--ink-2); }
-.keyline i, .sw { display: inline-block; width: 16px; height: 9px; margin-right: 6px; border: 1.2px solid; }
-.k-is { background: var(--blue); border-color: var(--blue) !important; }
+/* Every country: a row each, in four of the page's charts */
+.sw { display: inline-block; width: 16px; height: 9px; margin-right: 6px; border: 1.2px solid; }
 .k-blue { background: var(--blue-slot); border-color: var(--blue) !important; }
-.k-ochre { background: var(--ochre-slot); border-color: var(--ochre) !important; }
-.profile { border-top: 2px solid var(--ink); padding-top: 12px; scroll-margin-top: 70px; font-size: 14.5px; line-height: 1.45; }
-.p-top { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; margin-top: 12px; }
-.p-top .ladder { margin-top: 0; }
-.profile h4 { margin: 22px 0 8px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 14px; font-weight: 650; color: var(--ink); }
-.profile p b { color: var(--ink); font-weight: 700; }
-.profile .p-why { margin-top: 12px; }
-.profile .chart + p { margin-top: 6px; }
+.swipe { display: none; }
+.f-row { display: grid; grid-template-columns: 104px 70px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr); column-gap: 24px; align-items: center; border-top: 1px solid var(--grid); }
+.f-head { position: sticky; top: 55px; z-index: 5; align-items: end; padding: 10px 0 6px; background: var(--ground); border-top: 0; border-bottom: 1px solid var(--ink-3); }
+.f-h { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.f-h b { display: block; margin-bottom: 3px; font-size: 13.5px; font-weight: 650; color: var(--ink); }
+.f-h .k { display: flex; flex-wrap: wrap; gap: 1px 10px; }
+.f-h .sw { width: 11px; height: 8px; margin-right: 4px; }
+.f-h .ln { display: inline-block; width: 16px; margin-right: 5px; vertical-align: 3px; border-top: 2.2px solid var(--blue); }
+.f-h .ln.eu { border-top: 1.3px solid #8E9893; }
+.f-h .ln.tg { border-top: 1.2px dashed var(--ink); }
+.f-name { align-self: stretch; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; font-size: 14px; line-height: 1.25; color: var(--ink-2); text-align: right; }
+.f-eu .f-name { font-weight: 700; color: var(--ink); }
+.f-note { display: block; font-size: 11.5px; font-weight: 400; color: var(--ink-3); }
+.f-group { padding: 20px 0 8px; border-top: 1px solid var(--rule); font-size: 14px; font-weight: 650; color: var(--ink); }
+.f-row:not(.f-head):hover, .f-row:not(.f-head):hover .f-name { background: #E9EDEB; }
 .end .txt { margin-top: 0; }
 .rows { list-style: none; margin-top: 14px; display: grid; gap: 6px; font-size: 14.5px; line-height: 1.4; }
 .rows b { color: var(--ink); font-weight: 700; }
@@ -190,14 +189,6 @@ figure { margin: 26px 0 0; }
 .tip .row { display: flex; justify-content: space-between; gap: 16px; }
 .tip .row span:last-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
 .nodata { padding: 24px 0; color: var(--ink-3); }
-
-select {
-  font: inherit; font-size: 15px; color: var(--ink); background-color: var(--paper);
-  border: 1px solid var(--rule); border-radius: 4px; padding: 8px 34px 8px 12px; min-height: 42px;
-  appearance: none; -webkit-appearance: none; cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2334403A' stroke-width='1.6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 12px center;
-}
 
 /* Closing, method, footer */
 details.how { margin-top: 28px; font-size: 14.5px; color: var(--ink-2); }
@@ -221,10 +212,15 @@ details.how li { margin: 0 0 7px; }
   .bar-in { gap: 20px; }
   .bar .home span { display: none; }
 }
-@media (max-width: 1000px) {
-  .explore { display: flex; flex-direction: column; gap: 34px; }
-  .explore > * { width: 100%; }
-  .profile { order: -1; }
+@media (max-width: 839px) {
+  .swipe { display: block; margin-bottom: 8px; font-size: 13px; color: var(--ink-3); }
+  .facets-scroll { overflow-x: auto; }
+  .facets { min-width: 740px; }
+  .f-row { grid-template-columns: 90px 64px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.3fr); column-gap: 14px; }
+  .f-name { font-size: 13.5px; }
+  .f-head { position: static; }
+  .f-name { position: sticky; left: 0; z-index: 2; padding-right: 4px; background: var(--ground); }
+  .f-group span { position: sticky; left: 0; display: inline-block; }
 }
 @media (max-width: 900px) {
   .bar nav { display: none; }
@@ -336,21 +332,15 @@ details.how li { margin: 0 0 7px; }
         <div class="head">
         <p class="eyebrow">Every country</p>
         <h2 id="h-countries">Recycling every tonne, <span data-v="below-24">15</span> of 27 countries would still fall short of 24%</h2>
-        <p class="sub">Without soil and rock, all but <span data-v="could-wo">three</span> would. Pick a country to see its numbers.</p>
+        <p class="sub">Without soil and rock, all but <span data-v="could-wo">three</span> would. One row per country, ordered by its ceiling.</p>
         </div>
-        <div class="explore">
-          <figure id="fig-countries">
-            <p class="keyline"><span><i class="k-is"></i>2022</span><span><i class="k-blue"></i>if it recycled all waste but soil and rock</span><span><i class="k-ochre"></i>and the soil and rock too</span></p>
-            <div class="chart"></div>
-          </figure>
-          <div class="profile" id="profile">
-            <div class="pick"><label for="pick">Country</label><select id="pick"></select></div>
-            <div id="profile-body" aria-live="polite"></div>
-          </div>
-        </div>
+        <figure id="fig-countries">
+          <p class="swipe">Swipe sideways for all four charts.</p>
+          <div class="facets-scroll"><div class="facets" id="facets"></div></div>
+        </figure>
         <div class="tail">
         <p class="txt">To reach 24% by recycling alone, a country needs about 32 tonnes of waste for every 100 tonnes of material it consumes. <span data-v="below-24-word">Fifteen</span> don't have that much. <strong>The ceiling follows how much waste a country has, not how well it recycles.</strong> Italy recycles <span data-v="it-recycled">86%</span> of its waste and has almost nothing left to add, while nearly all of Romania's room is mining rock.</p>
-        <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa, env_wastrt, env_ac_sd and env_wassd, 2022, with rates to 2024. Countries are ordered by what recycling every tonne would give with consumption unchanged, the lower end of each range; the thin line runs to the upper end. The black mark on Ireland's row is its own 12% target. Sweden doesn't publish how much of its waste is soil and rock.</span></span></p>
+        <p class="src">Source: my calculation on Eurostat data for 2022. <span class="info"><button type="button" aria-expanded="false" aria-label="Notes on this chart">i</button><span class="note" role="note">Eurostat env_ac_cur, env_ac_mfa, env_wastrt, env_ac_sd and env_wassd, 2022, with rates to 2024. Countries are ordered by what recycling every tonne would give with consumption unchanged, the lower end of each range; the thin line runs to the upper end. Ireland's row also marks its own 12% target. The rates since 2010 share one 0 to 36% scale, and 2024 values build on Eurostat's estimates. Sweden doesn't publish how much of its waste is soil and rock.</span></span></p>
         </div>
       </section>
 
@@ -427,13 +417,7 @@ details.how li { margin: 0 0 7px; }
     ink: '#16201B', ink2: '#34403A', ink3: '#56615B', rule: '#D3DAD6', grid: '#E1E6E3', ground: '#F3F5F4', };
   var EU_TARGET = 24, IE_TARGET = 12, TARGET_YEAR = 2030;
   var WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
-  var state = { geo: 'IE' };
-  try {
-    var q = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
-    if (MEMBERS.indexOf(q) >= 0) state.geo = q;
-  } catch (e) { /* keep the default */ }
 
-  function C() { return D.countries[state.geo]; }
   function f1(v) { return v == null ? 'n/a' : (Math.round(v * 10) / 10).toFixed(1); }
   function f0(v) { return v == null ? 'n/a' : String(Math.round(v)); }
   function word(n) { return WORDS[n] || String(n); }
@@ -479,12 +463,13 @@ details.how li { margin: 0 0 7px; }
     tip.style.left = x + 'px'; tip.style.top = y + 'px';
   }
   function hideTip() { tip.hidden = true; }
-  // hover shows figures (mouse only); a click or tap picks the country
-  function pickable(sel, geo, title, rows) {
-    sel.classed('hit', true)
-      .on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, title, rows); })
-      .on('pointerleave', hideTip)
-      .on('click', function () { if (geo !== EUKEY) choose(geo); });
+  // hover shows the figures; on a touch screen, a tap does
+  var lastPointer = 'mouse';
+  document.addEventListener('pointerdown', function (e) { lastPointer = e.pointerType; }, true);
+  function tipOn(sel, title, rows) {
+    sel.on('pointermove', function (e) { if (e.pointerType === 'mouse') showTip(e, title, rows); })
+      .on('pointerleave', function (e) { if (e.pointerType === 'mouse') hideTip(); })
+      .on('click', function (e) { if (lastPointer !== 'mouse') { e.stopPropagation(); showTip(e, title, rows); } });
   }
   function figures(c) {
     return [['Rate in 2022', f1(c.rate) + '%'],
@@ -494,12 +479,6 @@ details.how li { margin: 0 0 7px; }
 
   var charts = [];
   function drawAll() { hideTip(); charts.forEach(function (f) { f(); }); }
-  function choose(geo) {
-    if (MEMBERS.indexOf(geo) < 0 || geo === state.geo) return;
-    state.geo = geo;
-    try { history.replaceState(null, '', '?country=' + geo); } catch (e) { /* file pages */ }
-    drawAll();
-  }
 
   /* ---------- the ring: solid is what is, slots are what could be ---------- */
   var SLOT = {
@@ -540,8 +519,8 @@ details.how li { margin: 0 0 7px; }
     }
     if (c.rate > 0.05) g.append('path').attr('d', arcBand(R - sw, R, 0, c.rate)).attr('fill', COL.blue);
   }
-  function tick(svg, cx, cy, R, sw, v, w) {
-    var t0 = pt(cx, cy, R - sw - 8, v * 3.6), t1 = pt(cx, cy, R + 16, v * 3.6);
+  function tick(svg, cx, cy, R, sw, v, w, inner, outer) {
+    var t0 = pt(cx, cy, R - sw - (inner == null ? 8 : inner), v * 3.6), t1 = pt(cx, cy, R + (outer == null ? 16 : outer), v * 3.6);
     line(svg, t0[0], t0[1], t1[0], t1[1], COL.ink, w);
     return t1;
   }
@@ -549,7 +528,7 @@ details.how li { margin: 0 0 7px; }
     text(svg, 't-hero', cx, cy - (lines.length ? 8 : -R * 0.13), f1(c.rate) + '%', 'middle').style('font-size', Math.round(R * 0.4) + 'px');
     lines.forEach(function (s, i) { text(svg, 't-lab', cx, cy + 16 + i * 18, s, 'middle'); });
   }
-  // the same labels as a list, for narrow screens and the country profile
+  // the same labels as a list, for narrow screens
   function ladder(el, c, isEU, target, targetText, rest, is) {
     var box = document.createElement('div'); box.className = 'ladder';
     function add(parent, tagName, cls, strong, str) {
@@ -657,14 +636,6 @@ details.how li { margin: 0 0 7px; }
     if (wide) restCallout(svg, lx + textWidth(labA) + 14, yA - 9, yA + 30, lx + labelW + gapC, W, H);
   });
 
-  /* ---------- the country menus, one atop each side panel ---------- */
-  var sels = document.querySelectorAll('.pick select');
-  sels.forEach(function (sel) {
-    MEMBERS.forEach(function (g) { var o = document.createElement('option'); o.value = g; o.textContent = D.countries[g].name; sel.appendChild(o); });
-    sel.addEventListener('change', function () { choose(sel.value); });
-  });
-  charts.push(function () { sels.forEach(function (sel) { sel.value = state.geo; }); });
-
   /* ---------- where material goes: 100 tonnes by material, and where they ended up ---------- */
   var FATES = [
     { key: 'soil', name: 'soil and rock', long: 'came back as waste: soil and rock', fill: COL.ochre },
@@ -762,133 +733,117 @@ details.how li { margin: 0 0 7px; }
     }
   });
 
-  /* ---------- every country: the ring straightened into a row, and one country's profile beside it ---------- */
+  /* ---------- every country: one row each, in four of the page's charts ---------- */
   function targetFor(g) { return g === 'IE' ? IE_TARGET : EU_TARGET; }
-  function targetText(g) { return g === 'IE' ? 'Ireland’s own target for 2030' : 'the EU’s target for 2030'; }
-  function the(c) { return c.name === 'Netherlands' ? 'the Netherlands' : c.name; }
   function node(tagName, cls, str) { var n = document.createElement(tagName); if (cls) n.className = cls; if (str) n.textContent = str; return n; }
-  function rich(p, parts) {       // text with its numbers in bold
-    parts.forEach(function (s) { if (typeof s === 'string') p.appendChild(document.createTextNode(s)); else p.appendChild(node('b', '', s[0])); });
-    return p;
+  function ceilX(W) { return d3.scaleLinear().domain([0, 60]).range([1, W - 46]); }
+  function facetRing(cell, d, S, T, name) {
+    var R = S / 2 - 7, sw = Math.max(5, Math.round(R * 0.25));
+    var svg = setupSvg(cell, S, S, name + ': ' + f1(d.rate) + '% in 2022; recycling every tonne of waste it treats would give ' + range(d) + ', against a target of ' + T + '%.');
+    drawRing(svg, S / 2, S / 2, R, sw, d); tick(svg, S / 2, S / 2, R, sw, T, 1.5, 3, 6);
+    text(svg, 't-hero', S / 2, S / 2 + 4, f1(d.rate) + '%', 'middle').style('font-size', '12px');
+    return svg;
+  }
+  function facetFlow(cell, d, W, H, name) {
+    var h = hundred(d), bh = 20, y0 = Math.round((H - bh) / 2), k = W / 100, acc = 0;
+    var svg = setupSvg(cell, W, H, name + ', of all its material: ' + h.back + '% came back as waste' + (h.split ? ' (' + h.soil + '% soil and rock)' : '') + ', ' + h.built + '% was built in, ' +
+      h.burned + '% burned or eaten, ' + h.exported + '% exported and ' + h.spread + '% spread on land.');
+    FATES.forEach(function (f) {
+      var v = h[f.key], a = acc; acc += v;
+      if (v <= 0) return;
+      svg.append('rect').attr('x', a * k + 0.75).attr('y', y0).attr('width', Math.max(v * k - 1.5, 0.5)).attr('height', bh).attr('fill', f.fill);
+      if (v * k >= 34) text(svg, 't-in' + (f.light ? ' light' : ''), a * k + 5, y0 + bh / 2 + 4.5, v + '%').style('font-weight', 700).style('fill', f.light ? '#FFFFFF' : COL.ink);
+    });
+    return svg;
+  }
+  function flowRows(h) {
+    return [['Came back as waste', h.back + '%'], ['of which soil and rock', h.split ? h.soil + '%' : 'not published'], ['Built in', h.built + '%'], ['Burned or eaten', h.burned + '%'], ['Exported', h.exported + '%'], ['Spread on land', h.spread + '%']];
+  }
+  function facetTrend(cell, d, W, H, T, isEU, name) {
+    var yrs = D.trend_years, n = yrs.length, r = d.trend.rate, isEst = yrs[n - 1] >= D.trend_estimated_from, padR = 44;
+    var sx = d3.scaleLinear().domain([yrs[0], yrs[n - 1]]).range([3, W - padR]), sy = d3.scaleLinear().domain([0, 36]).range([H - 9, 9]);
+    var svg = setupSvg(cell, W, H, name + '’s rate went from ' + f1(r[0]) + '% in ' + yrs[0] + ' to ' + f1(r[n - 1]) + '% in ' + yrs[n - 1] + (isEst ? ', an estimate' : '') + '.');
+    line(svg, 0, sy(0), W - padR, sy(0), COL.ink3);
+    line(svg, 0, sy(T), W - padR, sy(T), COL.ink, 1.2, '4 3');
+    var mk = d3.line().x(function (v, i) { return sx(yrs[i]); }).y(function (v) { return sy(v); });
+    if (!isEU) svg.append('path').attr('d', mk(EU.trend.rate)).attr('fill', 'none').attr('stroke', COL.unknown).attr('stroke-width', 1.3);
+    svg.append('path').attr('d', mk(r)).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', 2.2).attr('stroke-linejoin', 'round');
+    svg.append('circle').attr('cx', sx(yrs[n - 1])).attr('cy', sy(r[n - 1])).attr('r', 3).attr('fill', isEst ? COL.ground : COL.blue).attr('stroke', COL.blue).attr('stroke-width', 1.6);
+    text(svg, 't-sm t-strong', W - padR + 8, sy(r[n - 1]) + 4, f1(r[n - 1]) + '%').style('fill', COL.blueInk);
+    return svg;
+  }
+  function trendRows(d, T) {
+    var yrs = D.trend_years, n = yrs.length, isEst = yrs[n - 1] >= D.trend_estimated_from;
+    return [['In ' + yrs[0], f1(d.trend.rate[0]) + '%'], ['In ' + yrs[n - 1] + (isEst ? ' (estimate)' : ''), f1(d.trend.rate[n - 1]) + '%'], ['EU in ' + yrs[n - 1], f1(EU.trend.rate[n - 1]) + '%'], ['Target for 2030', T + '%']];
+  }
+  function facetCeiling(cell, d, W, H, isEU, name) {
+    var x = ceilX(W), yy = H / 2, bh = 11, y0 = yy - bh / 2;
+    var svg = setupSvg(cell, W, H, name + ': ' + f1(d.rate) + '% in 2022' + (d.ceiling_without_soil_rock == null ? '' : ', ' + f1(d.ceiling_without_soil_rock) + '% recycling all waste but soil and rock') + ', and ' + range(d) + ' recycling every tonne.');
+    d3.range(10, 61, 10).forEach(function (v) { line(svg, x(v), 0, x(v), H, COL.grid); });
+    line(svg, x(0), 0, x(0), H, COL.rule);
+    line(svg, x(EU_TARGET), 0, x(EU_TARGET), H, COL.ink, 1.6);
+    if (d.rate > 0.05) svg.append('rect').attr('x', x(0)).attr('y', y0).attr('width', x(d.rate) - x(0)).attr('height', bh).attr('fill', COL.blue);
+    slotsOf(d).forEach(function (s) { if (x(s[1]) - x(s[0]) > 1.6) slot(svg, x(s[0]) + (s[0] === d.rate ? 1 : 0), x(s[1]), y0, bh, s[2]).attr('stroke-width', 1.2); });
+    if (d.ceiling_replacing_new - d.ceiling > 0.3) {
+      var hue = d.ceiling_without_soil_rock == null ? COL.unknown : COL.ochre;
+      line(svg, x(d.ceiling), yy, x(d.ceiling_replacing_new), yy, hue, 1.2); line(svg, x(d.ceiling_replacing_new), yy - 3.5, x(d.ceiling_replacing_new), yy + 3.5, hue, 1.2);
+    }
+    if (d.geo === 'IE') line(svg, x(IE_TARGET), yy - 11, x(IE_TARGET), yy + 11, COL.ink, 1.8);
+    // the ceiling, named after the bar and clear of the target line
+    var lx = x(d.geo === 'IE' ? Math.max(d.ceiling_replacing_new, IE_TARGET) : d.ceiling_replacing_new) + 6, xG = x(EU_TARGET);
+    var lab = text(svg, 't-sm' + (isEU ? ' t-strong' : ''), lx, yy + 4, f1(d.ceiling) + '%');
+    if (lx < xG + 3 && lx + textWidth(lab) > xG - 3) lab.attr('x', xG + 6);
+    return svg;
+  }
+  function ceilRows(d, T) {
+    var need = d.less_for_target ? d.less_for_target[d.geo === 'IE' ? 'ireland' : 'eu'] : null;
+    return figures(d).concat([['Waste treated per 100 t consumed', f1(d.waste_treated_per_consumption) + ' t'], ['Share of it recycled', f1(d.share_recycled) + '%'],
+      ['Share of it soil and rock', d.share_soil_rock == null ? 'not published' : f1(d.share_soil_rock) + '%'],
+      ['Using less to reach ' + T + '%', d.rate >= T ? 'already there' : need == null ? 'n/a' : f0(need) + '% less']]);
   }
   charts.push(function () {
-    var el = document.querySelector('#fig-countries .chart'), W = el.clientWidth, narrow = W < 520;
+    var box = document.getElementById('facets');
+    box.replaceChildren();
     var rows = MEMBERS.map(function (g) { return Object.assign({ geo: g }, D.countries[g]); }).sort(function (a, b) { return a.ceiling - b.ceiling; });
     var short = rows.filter(function (d) { return d.ceiling < EU_TARGET; }), could = rows.filter(function (d) { return d.ceiling >= EU_TARGET; });
-    var nameW = narrow ? 78 : 96, rightW = narrow ? 42 : 48, rowH = narrow ? 23 : 25, bh = 11, headH = 38, top = 28, max = 60;
-    var x = d3.scaleLinear().domain([0, max]).range([nameW + 10, W - rightW]);
-    var layout = [{ d: Object.assign({ geo: EUKEY }, EU), y: top + rowH / 2, eu: true }], y = top + rowH + 2;
+    // the header: what each column shows
+    var head = node('div', 'f-row f-head'), hc = [node('div', 'f-name')];
+    ['Its circle', 'Where its material goes', 'Its rate since ' + D.trend_years[0], 'Its ceiling, and the 24% target'].forEach(function (t) { var c = node('div', 'f-h'); c.appendChild(node('b', '', t)); hc.push(c); });
+    hc.forEach(function (c) { head.appendChild(c); });
+    box.appendChild(head);
+    var kf = node('div', 'k'), kt = node('div', 'k');
+    hc[2].appendChild(kf); hc[3].appendChild(kt);
+    [[COL.ochre, 'soil and rock'], [COL.blue, 'other waste'], [COL.stock, 'built in'], [COL.quiet, 'burned, exported, spread']].forEach(function (k) {
+      var s = node('span'), i = node('i', 'sw'); i.style.background = k[0]; i.style.borderColor = k[0]; s.appendChild(i); s.appendChild(document.createTextNode(k[1])); kf.appendChild(s);
+    });
+    [['', 'it'], ['eu', 'EU'], ['tg', 'its target']].forEach(function (k) { var s = node('span'); s.appendChild(node('i', 'ln ' + k[0])); s.appendChild(document.createTextNode(k[1])); kt.appendChild(s); });
+    // the rows: the EU, then the countries that fall short and those that could reach it
+    var list = [{ d: Object.assign({ geo: EUKEY }, EU), eu: true }], made = [];
     [[short, short.length + ' would fall short of 24% even recycling every tonne'], [could, could.length + ' could reach it on paper']].forEach(function (b) {
       if (!b[0].length) return;
-      layout.push({ head: b[1], y: y + headH - 11 }); y += headH;
-      b[0].forEach(function (d) { layout.push({ d: d, y: y + rowH / 2 }); y += rowH; });
+      list.push({ head: b[1] });
+      b[0].forEach(function (d) { list.push({ d: d }); });
     });
-    var bottom = y + 5, H = bottom + 44;
-    var svg = setupSvg(el, W, H, 'Every EU country’s circularity rate in 2022 and the rate it would have recycling every tonne of waste it treats, with and without soil and rock. ' + short.length + ' of the 27 stay below 24%.');
-    d3.range(0, max + 1, 10).forEach(function (v) {
-      line(svg, x(v), top - 4, x(v), bottom, v === 0 ? COL.rule : COL.grid);
-      text(svg, 'axis-lab', x(v), bottom + 16, v + '%', 'middle');
+    list.forEach(function (it) {
+      if (it.head) { var gh = node('div', 'f-group'); gh.appendChild(node('span', '', it.head)); box.appendChild(gh); return; }
+      var r = node('div', 'f-row' + (it.eu ? ' f-eu' : '')), nm = node('div', 'f-name', it.eu ? 'EU' : it.d.name);
+      if (it.d.geo === 'IE') nm.appendChild(node('span', 'f-note', 'its own target: 12%'));
+      if (it.d.ceiling_without_soil_rock == null) nm.appendChild(node('span', 'f-note', 'no soil and rock split'));
+      r.appendChild(nm);
+      for (var i = 0; i < 4; i++) r.appendChild(node('div', 'f-cell'));
+      box.appendChild(r); made.push([r, it]);
     });
-    text(svg, 't-sm', x(0), H - 5, narrow ? 'Share of material from recycled waste' : 'Share of material that comes from recycled waste');
-    line(svg, x(EU_TARGET), 16, x(EU_TARGET), bottom, COL.ink, 1.8);
-    numText(svg, 't-name', x(EU_TARGET) + 6, 12, EU_TARGET + '%', narrow ? 'the EU’s target' : 'the EU’s target for 2030');
-    layout.forEach(function (it) {
-      if (it.head) { text(svg, 't-name t-strong t-halo', narrow ? 0 : x(0) + 2, it.y, it.head); return; }
-      var d = it.d, yy = it.y, on = d.geo === state.geo, g = svg.append('g'), y0 = yy - bh / 2;
-      if (on) g.append('rect').attr('x', 0).attr('y', yy - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', COL.ink).attr('opacity', 0.08);
-      text(g, 't-name' + (it.eu || on ? ' t-strong' : ''), nameW, yy + 4.5, it.eu ? 'EU' : d.name, 'end');
-      if (d.rate > 0.05) g.append('rect').attr('x', x(0)).attr('y', y0).attr('width', x(d.rate) - x(0)).attr('height', bh).attr('fill', COL.blue);
-      slotsOf(d).forEach(function (s) { if (x(s[1]) - x(s[0]) > 1.6) slot(g, x(s[0]) + (s[0] === d.rate ? 1 : 0), x(s[1]), y0, bh, s[2]).attr('stroke-width', 1.2); });
-      if (d.ceiling_replacing_new - d.ceiling > 0.3) {
-        var hue = d.ceiling_without_soil_rock == null ? COL.unknown : COL.ochre;
-        line(g, x(d.ceiling), yy, x(d.ceiling_replacing_new), yy, hue, 1.2); line(g, x(d.ceiling_replacing_new), yy - 3.5, x(d.ceiling_replacing_new), yy + 3.5, hue, 1.2);
-      }
-      if (d.geo === 'IE') line(g, x(IE_TARGET), yy - rowH / 2 + 2, x(IE_TARGET), yy + rowH / 2 - 2, COL.ink, 1.8);
-      // the ceiling, named after the bar and clear of the target line
-      var lx = x(d.geo === 'IE' ? Math.max(d.ceiling_replacing_new, IE_TARGET) : d.ceiling_replacing_new) + 6, xG = x(EU_TARGET);
-      var lab = text(g, 't-sm' + (on || it.eu ? ' t-strong' : ''), lx, yy + 4, on && !narrow ? range(d) : f1(d.ceiling) + '%');
-      if (lx + textWidth(lab) > W) lab.text(f1(d.ceiling) + '%');
-      if (lx < xG + 3 && lx + textWidth(lab) > xG - 3) lab.attr('x', xG + 6);
-      var hit = g.append('rect').attr('x', 0).attr('y', yy - rowH / 2).attr('width', W).attr('height', rowH).attr('fill', COL.ink).attr('fill-opacity', 0);
-      if (!it.eu && !on) hit.on('pointerenter', function (e) { if (e.pointerType === 'mouse') hit.attr('fill-opacity', 0.045); }).on('pointerout', function () { hit.attr('fill-opacity', 0); });
-      pickable(hit, d.geo, it.eu ? 'EU' : d.name, figures(d).concat([['Waste treated per 100 t consumed', f1(d.waste_treated_per_consumption) + ' t'], ['Share of it recycled', f1(d.share_recycled) + '%']]));
-      if (it.eu) hit.style('cursor', 'default');
-      else hit.on('click.profile', function () {      // on a narrow screen the profile sits above the chart
-        var p = document.getElementById('profile');
-        if (window.matchMedia('(max-width: 1000px)').matches) p.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+    // each chart at its column's width
+    var cw = [].slice.call(made[0][0].children).map(function (c) { return c.clientWidth; }), S = Math.min(cw[1], 64);
+    made.forEach(function (m) {
+      var cells = m[0].children, d = m[1].d, eu = m[1].eu, name = eu ? 'EU' : d.name, T = targetFor(d.geo);
+      tipOn(facetRing(cells[1], d, S, T, name), name, figures(d).concat([['Target for 2030', T + '%']]));
+      tipOn(facetFlow(cells[2], d, cw[2], S, name), name, flowRows(hundred(d)));
+      tipOn(facetTrend(cells[3], d, cw[3], S, T, eu, name), name, trendRows(d, T));
+      tipOn(facetCeiling(cells[4], d, cw[4], S, eu, name), name, ceilRows(d, T));
     });
-    line(svg, 0, top + rowH + 1, W, top + rowH + 1, COL.rule);
-  });
-
-  // the chosen country: its ring, why its ceiling sits where it does, its 100 tonnes, its trend and what using less would take
-  charts.push(function () {
-    var box = document.getElementById('profile-body'), g = state.geo, c = C(), T = targetFor(g), key = g === 'IE' ? 'ireland' : 'eu', Wp = box.clientWidth;
-    box.replaceChildren();
-    var topRow = node('div', 'p-top'), ringBox = node('div', 'chart'), lad = node('div');
-    box.appendChild(topRow); topRow.appendChild(ringBox); topRow.appendChild(lad);
-    var R = Wp < 380 ? 52 : 60, sw = Math.round(R * 0.25), S = 2 * R + 34;
-    var svg = d3.select(ringBox).append('svg').attr('width', S).attr('height', S).attr('viewBox', '0 0 ' + S + ' ' + S).attr('role', 'img')
-      .attr('aria-label', c.name + ': ' + f1(c.rate) + '% of material came from recycled waste in 2022; recycling every tonne of waste it treats would give ' + range(c) + ', against a target of ' + T + '%.');
-    drawRing(svg, S / 2, S / 2, R, sw, c); tick(svg, S / 2, S / 2, R, sw, T, 1.8); ringCenter(svg, S / 2, S / 2, R, c, []);
-    ladder(lad, c, false, T, targetText(g), null, 'of the material ' + the(c) + ' used in 2022 came from recycled waste');
-
-    box.appendChild(rich(node('p', 'p-why'), ['For every 100 tonnes of material it consumes, ' + the(c) + ' treats ', [f0(c.waste_treated_per_consumption) + ' tonnes'], ' of waste, against the EU’s ' + f0(EU.waste_treated_per_consumption) + ', and recycles ',
-      [f0(c.share_recycled) + '%'], ' of it.' + (c.share_soil_rock == null ? ' It doesn’t publish how much of that waste is soil and rock.' : ''), c.share_soil_rock == null ? '' : ' ', c.share_soil_rock == null ? '' : [f0(c.share_soil_rock) + '%'], c.share_soil_rock == null ? '' : ' of its waste is soil and rock.']));
-
-    // its 100 tonnes, above the EU's
-    var h = hundred(c), hEU = hundred(EU);
-    box.appendChild(node('h4', '', 'Where its material goes, of every 100 tonnes'));
-    if (!h) box.appendChild(node('p', '', 'No flow data.'));
-    else {
-      var fb = node('div', 'chart'); box.appendChild(fb);
-      var sh = 20, k = Wp / 100, fs = d3.select(fb).append('svg').attr('width', Wp).attr('height', 2 * sh + 46).attr('viewBox', '0 0 ' + Wp + ' ' + (2 * sh + 46)).attr('role', 'img')
-        .attr('aria-label', c.name + ', of every 100 tonnes: ' + FATES.map(function (f) { return h[f.key] + ' ' + f.long; }).join(', ') + '.');
-      [[c.name, h, 14], ['EU', hEU, sh + 38]].forEach(function (r) {
-        var acc = 0;
-        text(fs, 't-sm', 0, r[2] - 4, r[0]);
-        FATES.forEach(function (f) {
-          var v = r[1][f.key], a = acc; acc += v;
-          if (v <= 0) return;
-          var fill = f.key === 'other' && !r[1].split ? COL.blue : f.fill;
-          fs.append('rect').attr('x', a * k + 0.75).attr('y', r[2]).attr('width', Math.max(v * k - 1.5, 0.5)).attr('height', sh).attr('fill', fill);
-          if (v * k >= 19) text(fs, 't-in' + (f.light ? ' light' : ''), a * k + 5, r[2] + sh / 2 + 4.5, String(v)).style('font-weight', 700).style('fill', f.light ? '#FFFFFF' : COL.ink);
-        });
-      });
-      box.appendChild(rich(node('p'), [[String(h.back)], ' came back as waste, against the EU’s ' + hEU.back + (h.split ? ', ' + h.soil + ' of them soil and rock' : '') + '. ', [String(h.built)], ' were built in, ', [String(h.burned)], ' burned or eaten, ',
-        [String(h.exported)], ' exported and ', [String(h.spread)], ' spread on land.']));
-    }
-
-    // its rate since 2010, against the EU's and the target
-    var yrs = D.trend_years, n = yrs.length, r = c.trend.rate, isEst = yrs[n - 1] >= D.trend_estimated_from;
-    box.appendChild(node('h4', '', 'Its rate since ' + yrs[0]));
-    var tb = node('div', 'chart'); box.appendChild(tb);
-    var hS = 96, padR = 92, sx = d3.scaleLinear().domain([yrs[0], yrs[n - 1]]).range([3, Wp - padR]), sy = d3.scaleLinear().domain([0, 36]).range([hS - 18, 4]);
-    var ts = d3.select(tb).append('svg').attr('width', Wp).attr('height', hS).attr('viewBox', '0 0 ' + Wp + ' ' + hS).attr('role', 'img')
-      .attr('aria-label', c.name + '’s rate went from ' + f1(r[0]) + '% in ' + yrs[0] + ' to ' + f1(r[n - 1]) + '% in ' + yrs[n - 1] + (isEst ? ', an estimate' : '') + '. The EU’s went from ' + f1(EU.trend.rate[0]) + '% to ' + f1(EU.trend.rate[n - 1]) + '%.');
-    line(ts, 0, sy(0), Wp - padR, sy(0), COL.ink3);
-    line(ts, 0, sy(T), Wp - padR, sy(T), COL.ink, 1.3, '4 3');
-    var mk = d3.line().x(function (v, i) { return sx(yrs[i]); }).y(function (v) { return sy(v); });
-    ts.append('path').attr('d', mk(EU.trend.rate)).attr('fill', 'none').attr('stroke', COL.unknown).attr('stroke-width', 1.5);
-    ts.append('path').attr('d', mk(r)).attr('fill', 'none').attr('stroke', COL.blue).attr('stroke-width', 2.6).attr('stroke-linejoin', 'round');
-    ts.append('circle').attr('cx', sx(yrs[n - 1])).attr('cy', sy(r[n - 1])).attr('r', 3.6).attr('fill', isEst ? COL.ground : COL.blue).attr('stroke', COL.blue).attr('stroke-width', 1.8);
-    text(ts, 'axis-lab', 0, hS - 3, String(yrs[0])); text(ts, 'axis-lab', Wp - padR, hS - 3, String(yrs[n - 1]), 'end');
-    // name the three lines at their right ends, kept apart
-    var labs = [{ y: sy(T), s: T + '% target', cls: 't-sm t-strong' }, { y: sy(EU.trend.rate[n - 1]), s: 'EU ' + f1(EU.trend.rate[n - 1]) + '%', cls: 't-sm' },
-      { y: sy(r[n - 1]), s: f1(r[n - 1]) + '%' + (isEst ? ' (est.)' : ''), cls: 't-sm t-strong', fill: COL.blueInk }].sort(function (a, b) { return a.y - b.y; });
-    for (var i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 14) labs[i].y = labs[i - 1].y + 14;
-    var over = labs[labs.length - 1].y - (hS - 20);
-    if (over > 0) labs.forEach(function (l, j) { l.y -= over; if (j && l.y - labs[j - 1].y < 14) l.y = labs[j - 1].y + 14; });
-    labs.forEach(function (l) { var t = text(ts, l.cls, Wp - padR + 9, l.y + 4, l.s); if (l.fill) t.style('fill', l.fill); });
-    box.appendChild(rich(node('p'), ['From ', [f1(r[0]) + '%'], ' in ' + yrs[0] + ' to ', [f1(r[n - 1]) + '%'], ' in ' + yrs[n - 1] + (isEst ? ', an estimate' : '') + '. The EU went from ' + f1(EU.trend.rate[0]) + '% to ' + f1(EU.trend.rate[n - 1]) + '%.']));
-
-    // what using less would take
-    box.appendChild(node('h4', '', 'What using less would take'));
-    var need = c.less_for_target[key], wo = c.less_for_target_without_soil_rock ? c.less_for_target_without_soil_rock[key] : null;
-    if (c.rate >= T) box.appendChild(node('p', '', cap(the(c)) + ' is already above ' + targetText(g).replace(' for 2030', '') + ' of ' + T + '%.'));
-    else box.appendChild(rich(node('p'), ['To reach ' + T + '% with no more recycling, ' + the(c) + ' would have to use ', [f0(need) + '% less'], ' material' +
-      (wo == null || c.ceiling_without_soil_rock == null ? '.' : wo <= 0 ? '. Recycling all its waste but soil and rock would get it there without using less.' : ', or '),
-      wo != null && c.ceiling_without_soil_rock != null && wo > 0 ? [f0(wo) + '% less'] : '', wo != null && c.ceiling_without_soil_rock != null && wo > 0 ? ' if it also recycled all its waste but soil and rock.' : '']));
+    var ax = d3.select(hc[4]).append('svg').attr('width', cw[4]).attr('height', 16).attr('aria-hidden', 'true'), x = ceilX(cw[4]);
+    [0, 20, 40, 60].forEach(function (v) { text(ax, 'axis-lab', x(v), 13, v + '%', v ? 'middle' : 'start'); });
   });
 
   /* ---------- what moved the rate: the trend, and each two-year step split in two ---------- */
@@ -1134,7 +1089,7 @@ details.how li { margin: 0 0 7px; }
     });
     note.addEventListener('click', function (e) { e.stopPropagation(); });
   });
-  document.addEventListener('click', function () { infos.forEach(function (o) { o.show(false); }); });
+  document.addEventListener('click', function () { infos.forEach(function (o) { o.show(false); }); hideTip(); });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') infos.forEach(function (o) { o.show(false); }); });
 
   /* ---------- the bar shows which section is on screen ---------- */
