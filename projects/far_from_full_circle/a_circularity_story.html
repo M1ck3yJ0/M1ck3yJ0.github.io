@@ -100,10 +100,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .steps > .card:last-child { margin-bottom: 60vh; }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
+.card .eyebrow {
+  margin: 0 0 8px;
+  font-size: 15px; line-height: 1.2;
+  font-weight: 800; font-stretch: 118%;
+  color: var(--ink-2);
+}
 .card h1 {
-  margin: 0 0 10px;
-  font-size: 36px; line-height: 1.02;
-  font-weight: 800; font-stretch: 112%;
+  margin: 0 0 12px;
+  font-size: 29px; line-height: 1.08;
+  font-weight: 800; font-stretch: 100%;
   letter-spacing: -.01em;
 }
 
@@ -147,7 +153,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </div>
     <div class="steps">
       <article class="card" data-state="hero">
-        <h1>Far from Full&nbsp;Circle</h1>
+        <p class="eyebrow">Far from Full&nbsp;Circle</p>
+        <h1>The EU's goal to double circularity is, in effect, a goal to use&nbsp;less</h1>
         <p>In 2022, just 11.4% of the material the EU used came back into use from waste. By 2030, the EU wants that share to reach 24%, more than double. Over the past twenty years, it has risen by about a fifth of a point a year. Getting there now would take about 1.6 points a year. This is a story about what that goal truly asks of us.</p>
       </article>
       <article class="card" data-state="levers">
