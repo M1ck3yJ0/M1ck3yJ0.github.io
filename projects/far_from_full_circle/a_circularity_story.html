@@ -37,6 +37,7 @@
   --target: #6F84C4;      /* the full circle: 24% of all material used */
   --outline: #CBD3E8;     /* the starting circle, faint */
   --impact: #8A4013;      /* climate impact, beside tonnes */
+  --impact-could: #B88A6F; /* climate impact that could have been, and the part never emitted */
   /* Layout */
   --chart: min(calc(100vw - 16px), 544px, 58vh);
 }
@@ -141,6 +142,15 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 #wf-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
 #wf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
 #wf-hatch-back line { stroke: var(--back); stroke-width: 2.2; }
+.zin .impact { fill: var(--impact); }
+.zin .could { fill: var(--impact-could); }
+.zin .mark { stroke: #fff; stroke-width: 2; }
+.zin .onward { stroke: var(--impact-could); stroke-width: 3; }
+.zin .onward-head { fill: var(--impact-could); }
+.zin .axis { stroke: var(--ink-2); stroke-width: 1; }
+.zin-row { font-size: 14px; }
+.zin-state { fill: var(--ink); font-weight: 700; }
+.zin-rest { fill: var(--ink-2); }
 </style>
 </head>
 <body>
@@ -217,6 +227,22 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </article>
       <article class="card" data-state="latest">
         <p>Look at what came back and what stayed down. The dip in sand, gravel and stone had no decision behind it, and most of it returned within a year. The fall in coal, oil and gas had years of decisions behind it, and it held. For using less to last, it has to be chosen: keeping the buildings we already have, using what we make for longer, and wasting less of it. The hopeful part is that some are already choosing it.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="burst" data-chart="zin">
+    <div class="pin">
+      <figure class="chart" id="zin">
+        <svg viewBox="0 0 400 400" role="img" aria-label="ZIN's carbon per square meter. An efficient new build would have emitted 561 kilograms of CO2 per square meter upfront. ZIN emitted 377, so 184 were never emitted, 21,400 tonnes in all, once. Over 60 years, ZIN will reach 572 kilograms per square meter, or 501 with credits for reuse and recycling.">
+          <g class="zin"></g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
+    </div>
+    <div class="steps">
+      <article class="card" data-state="zin">
+        <p>In Brussels, the old World Trade Center towers weren't torn down. Their owner kept 85% of the structure, 171,000 tonnes of concrete, and built ZIN around it. Compared with an efficient new building, that halved the structure's upfront carbon and cut the whole building's by a third: 21,400 tonnes of CO2 that were never emitted. The 30,000 tonnes that did come down became new aggregate within 15 km. For every tonne recycled, almost six stayed standing, and those never had to be made again.</p>
       </article>
     </div>
   </section>
@@ -436,8 +462,66 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
   }
 
+  /* ---------- ZIN, Brussels: could have been, is, will be ----------
+     Carbon per m², from Leroy, Gomez and Nosiglia (IABSE 2025). The new build's upfront
+     carbon is ZIN's upfront plus what keeping the structure saved, reading the paper's
+     377 as the whole building, which matches its one-third cut. */
+  const ZIN = DATA.examples.zin;
+  const zx = d3.scaleLinear().domain([0, 600]).range([20, 380]);
+  const ZH = 30;
+  const fmtK = d3.format(",");
+
+  function inline(parent, x, y, parts) {
+    const t = parent.append("text").attr("class", "zin-row").attr("x", x).attr("y", y);
+    parts.forEach(function (p) { t.append("tspan").attr("class", p[1]).text(p[0]); });
+  }
+
+  function zbar(g, cls, a, b, y) {
+    g.append("rect").attr("class", cls).attr("x", zx(a)).attr("y", y).attr("width", zx(b) - zx(a)).attr("height", ZH);
+  }
+
+  function drawZin() {
+    const svg = d3.select("#zin svg");
+    const g = svg.select("g.zin");
+    const L = svg.select("g.labels");
+    g.selectAll("*").remove();
+    L.selectAll("*").remove();
+    const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
+    const life = ZIN.whole_life_per_m2, credits = ZIN.whole_life_with_credits_per_m2;
+    const mid = function (y) { return y + ZH / 2 + 5; };
+
+    inline(L, 20, 56, [["Could have been:", "zin-state"], [" an efficient new build", "zin-rest"]]);
+    zbar(g, "could", 0, could, 66);
+    label(L, zx(could) - 6, mid(66), [[String(could), "lab-strong"]], "end");
+    // upfront only: the new build would add its own 60 years
+    g.append("line").attr("class", "onward").attr("x1", zx(could) + 4).attr("x2", 386).attr("y1", 66 + ZH / 2).attr("y2", 66 + ZH / 2);
+    g.append("path").attr("class", "onward-head").attr("d", "M386," + (66 + ZH / 2 - 5) + "L394," + (66 + ZH / 2) + "L386," + (66 + ZH / 2 + 5) + "Z");
+    label(L, 394, 66 + ZH + 16, [["plus its own 60 years", "lab"]], "end");
+
+    inline(L, 20, 140, [["Is:", "zin-state"], [" " + fmtK(ZIN.upfront_saved_total) + " t of CO2 saved, once", "zin-rest"]]);
+    zbar(g, "impact", 0, is, 150);
+    zbar(g, "could", is, could, 150);
+    label(L, zx(is) - 6, mid(150), [[String(is), "lab-strong lab-white"]], "end");
+    label(L, (zx(is) + zx(could)) / 2, mid(150), [[ZIN.upfront_saved_per_m2 + " saved", "lab-strong"]], "middle");
+
+    inline(L, 20, 224, [["Will be:", "zin-state"], [" " + life + " kg of CO2 per m² over 60 years,", "zin-rest"]]);
+    inline(L, 20, 242, [[credits + " with credits for reuse and recycling", "zin-rest"]]);
+    zbar(g, "impact", 0, life, 252);
+    g.append("line").attr("class", "mark").attr("x1", zx(credits)).attr("x2", zx(credits)).attr("y1", 252).attr("y2", 252 + ZH);
+    label(L, zx(credits) - 6, mid(252), [[String(credits), "lab lab-white"]], "end");
+    label(L, zx(life) + 6, mid(252), [[String(life), "lab-strong"]]);
+
+    g.append("line").attr("class", "axis").attr("x1", zx(0)).attr("x2", zx(600)).attr("y1", 300).attr("y2", 300);
+    [0, 200, 400, 600].forEach(function (v) {
+      g.append("line").attr("class", "axis").attr("x1", zx(v)).attr("x2", zx(v)).attr("y1", 300).attr("y2", 304);
+      label(L, zx(v), 320, [[String(v), "lab"]], "middle");
+    });
+    label(L, 200, 340, [["kg of CO2 per m²", "lab"]], "middle");
+    label(L, 6, 394, [["Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025", "lab-src"]]);
+  }
+
   /* ---------- Cards drive the charts ---------- */
-  const CHARTS = { ring: drawRing, waterfall: drawWaterfall };
+  const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin };
 
   function show(card) {
     const burst = card.closest(".burst");
