@@ -105,6 +105,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 }
 .steps > .card:first-child { margin-top: calc(var(--chart) + 24px); }
 .steps > .card:last-child { margin-bottom: 60vh; }
+/* The closer: cards alone, with no chart */
+.closer .steps { margin-top: 0; }
+.closer .steps > .card { margin-bottom: 40vh; }
+.closer .steps > .card:first-child { margin-top: 0; }
+.closer .steps > .card:last-child { margin-bottom: 60vh; }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
 .card .eyebrow {
@@ -321,6 +326,20 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="steps">
       <article class="card" data-state="compare">
         <p>Set the two side by side, and the difference is striking. By weight, the way the rate counts, ZIN kept about 19 times more material in use than IKEA's kitchens saved: 171,000 tonnes against an estimated 8,900. By climate, IKEA's kitchens did more: 36,000 tonnes of CO2e over four years, against ZIN's one-time 21,400 tonnes of CO2. Tonne for tonne, saving food did about 30 times more for the climate than keeping concrete.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="closer">
+    <div class="steps">
+      <article class="card" data-state="closer">
+        <p>So what would help? First, honesty in the target. When the EU first set this goal, in 2020, it came in the same sentence as another: to reduce its consumption footprint. In 2025, its industrial plan put a number on the rate, 24%, and left the footprint out. It would help to say plainly that this goal, and any higher one after 2030, is a goal to use less. Austria already has: alongside its 18% rate target for 2030, it aims to bring material use down to 14 tonnes per person. The EU's coming Circular Economy Act is a chance to do the same.</p>
+      </article>
+      <article class="card" data-state="closer">
+        <p>Second, counting what materials cost, not just what they weigh. A 24% rate met by giving up the heaviest materials first would cut only about a quarter of the climate impact of making materials, and about a tenth of the tonnes the EU imports. Some rules already look past weight: from 2028, large new buildings in the EU must disclose their carbon over their whole life, and every new building from 2030. In our own reports, we can do the same, counting the tonnes we avoid beside the tonnes we recycle, and measuring both by what they cost the climate.</p>
+      </article>
+      <article class="card" data-state="closer">
+        <p>And most of all, making what we already have last: keeping our buildings standing, using what we make for longer, wasting less of what we grow. For homes, the International Resource Panel found that using them more intensively could cut the emissions of their materials by up to 70% by 2050 in the G7, against 14 to 18% from better recycling. ZIN didn't wait for a target, and neither did IKEA's kitchens. We don't have to either. The ring won't close by recycling alone. It closes when we choose to need less.</p>
       </article>
     </div>
   </section>
@@ -766,7 +785,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   function show(card) {
     const burst = card.closest(".burst");
-    const draw = CHARTS[burst.dataset.chart];
+    const draw = burst && CHARTS[burst.dataset.chart];
     if (draw) draw(card.dataset.state);
     document.querySelectorAll(".card.is-active").forEach(function (c) { c.classList.remove("is-active"); });
     card.classList.add("is-active");
