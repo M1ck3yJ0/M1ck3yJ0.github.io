@@ -146,6 +146,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .wf .dim { opacity: .2; }
 #wf-hatch-used rect, #cmp-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
 #wf-hatch-used line, #cmp-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
+#cmp-hatch-impact rect { fill: color-mix(in srgb, var(--impact) 22%, #fff); }
+#cmp-hatch-impact line { stroke: var(--impact); stroke-width: 2.2; }
 #wf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
 #wf-hatch-back line { stroke: var(--back); stroke-width: 2.2; }
 .zin .impact { fill: var(--impact); }
@@ -156,9 +158,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .cmp .tonnes { fill: var(--used); }
 .cmp .tonnes.est { fill: url(#cmp-hatch-used); }
 .cmp .climate { fill: var(--impact); }
-.cmp .link { stroke-width: 3; }
-.blend .from { stop-color: var(--used); }
-.blend .to { stop-color: var(--impact); }
+.cmp .climate.est { fill: url(#cmp-hatch-impact); }
+.cmp .gap { stroke: var(--ink-2); stroke-width: 3; }
 .ex-row { font-size: 14px; }
 .ex-state { fill: var(--ink); font-weight: 700; }
 .ex-rest { fill: var(--ink-2); }
@@ -307,9 +308,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="compare">
     <div class="pin">
       <figure class="chart" id="compare">
-        <svg viewBox="0 0 400 400" role="img" aria-label="ZIN and IKEA's kitchens compared by weight and by climate impact. ZIN kept 171,000 tonnes of concrete in use, and 21,400 tonnes of CO2 were never emitted, once: 0.13 tonnes of CO2 per tonne kept. IKEA's kitchens saved an estimated 8,900 tonnes of food and avoided 36,000 tonnes of CO2e in total to 2022: 4.1 tonnes per tonne saved.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="ZIN and IKEA's kitchens compared three ways, each on its own scale. By weight, ZIN kept 171,000 tonnes of concrete in use, against an estimated 8,900 tonnes of food the kitchens saved. By climate, the kitchens avoided 36,000 tonnes of CO2e in total to 2022, against ZIN's one-off 21,400 tonnes of CO2. Tonne for tonne, that is 4.1 tonnes against 0.13.">
           <defs>
             <pattern id="cmp-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+            <pattern id="cmp-hatch-impact" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
           </defs>
           <g class="cmp"></g>
           <g class="labels"></g>
@@ -713,19 +715,20 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     label(L, 6, 394, [["Source: Ingka Group, 2022 release and FY24 report", "lab-src"]]);
   }
 
-  /* ---------- The two examples compared: tonnes, and climate impact ----------
-     A placeholder dumbbell. For each example, the tonnes of material kept in use or saved
-     (blue) and the tonnes of CO2 or CO2e not emitted (copper), on one axis, joined by the
-     blue-to-copper blend. ZIN's CO2 is one-off; IKEA's CO2e is read as a total to 2022, and
-     its tonnes of food are estimated from meals (examples.csv), so they are hatched. */
-  const cx = d3.scaleLinear().domain([0, 200000]).range([24, 372]);
+  /* ---------- The two examples compared: by weight, by climate, tonne for tonne ----------
+     A placeholder dumbbell, one row per measure, each on its own scale from zero. Blue for
+     tonnes of material, copper for climate impact. ZIN's CO2 is one-off; IKEA's CO2e is read
+     as a total to 2022, and its tonnes of food are estimated from meals (examples.csv), so
+     the values built on those tonnes are hatched. */
   const DOT = 8;
-  const t100 = function (v) { return fmtK(Math.round(v / 100) * 100); };
+  const fmtT = function (v) { return v >= 1000 ? fmtK(Math.round(v / 100) * 100) : fmt2(v); };
   const CMP = [
-    { key: "zin", y: 96, name: "ZIN, Brussels:", per: " t of CO2 per tonne kept",
-      tonnes: ZIN.structure_kept, climate: ZIN.upfront_saved_total, what: "of concrete kept", gas: "of CO2 never emitted" },
-    { key: "ikea", y: 212, name: "IKEA's kitchens:", per: " t of CO2e per tonne saved", est: true,
-      tonnes: IKEA.food_saved_to_2022, climate: IKEA.co2e_avoided, what: "of food saved", gas: "of CO2e avoided" }
+    { name: "By weight:", rest: " tonnes kept in use or saved", cls: "tonnes", max: 200000, est: true,
+      zin: ZIN.structure_kept, ikea: IKEA.food_saved_to_2022 },
+    { name: "By climate:", rest: " tonnes of CO2 or CO2e not emitted", cls: "climate", max: 40000, est: false,
+      zin: ZIN.upfront_saved_total, ikea: IKEA.co2e_avoided },
+    { name: "Tonne for tonne:", rest: " t of CO2 or CO2e per tonne", cls: "climate", max: 5, est: true,
+      zin: ZIN.upfront_saved_total / ZIN.structure_kept, ikea: IKEA.co2e_avoided / IKEA.food_saved_to_2022 }
   ];
 
   function drawCompare() {
@@ -734,38 +737,26 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const L = svg.select("g.labels");
     g.selectAll("*").remove();
     L.selectAll("*").remove();
-    svg.selectAll("linearGradient").remove();
+    const x = d3.scaleLinear().range([24, 372]);
 
-    CMP.forEach(function (d) {
-      const xt = cx(d.tonnes), xc = cx(d.climate), y = d.y, id = "cmp-blend-" + d.key;
-      inline(L, 20, y - 26, [[d.name, "ex-state"], [" " + fmt2(d.climate / d.tonnes) + d.per, "ex-rest"]]);
-      const blend = svg.select("defs").append("linearGradient").attr("class", "blend").attr("id", id)
-        .attr("gradientUnits", "userSpaceOnUse").attr("x1", xt).attr("x2", xc).attr("y1", y).attr("y2", y);
-      blend.append("stop").attr("class", "from").attr("offset", 0);
-      blend.append("stop").attr("class", "to").attr("offset", 1);
-      g.append("line").attr("class", "link").attr("stroke", "url(#" + id + ")")
-        .attr("x1", xt).attr("x2", xc).attr("y1", y).attr("y2", y);
-      g.append("circle").attr("class", "tonnes" + (d.est ? " est" : "")).attr("cx", xt).attr("cy", y).attr("r", DOT);
-      g.append("circle").attr("class", "climate").attr("cx", xc).attr("cy", y).attr("r", DOT);
-
-      const tonnes = [[t100(d.tonnes) + " t", "lab-strong"], [d.what, "lab"]];
-      const climate = [[t100(d.climate) + " t", "lab-strong"], [d.gas, "lab"]];
-      if (xt > xc) {                       // tonnes to the right: both labels under their dots
-        label(L, xt + DOT, y + 28, tonnes, "end");
-        label(L, xc - DOT, y + 28, climate);
-      } else {                             // dots close together: tonnes under, climate to the right
-        label(L, xt - DOT, y + 28, tonnes);
-        label(L, xc + DOT + 6, y + 5, climate);
-      }
+    CMP.forEach(function (r, k) {
+      const y0 = 40 + k * 102, y = y0 + 60;
+      x.domain([0, r.max]);
+      inline(L, 20, y0, [[r.name, "ex-state"], [r.rest, "ex-rest"]]);
+      g.append("line").attr("class", "axis").attr("x1", x(0)).attr("x2", x(r.max)).attr("y1", y).attr("y2", y);
+      [0, r.max].forEach(function (v) {
+        g.append("line").attr("class", "axis").attr("x1", x(v)).attr("x2", x(v)).attr("y1", y - 4).attr("y2", y + 4);
+        label(L, x(v), y + 22, [[fmtK(v), "lab"]], "middle");
+      });
+      g.append("line").attr("class", "gap").attr("x1", x(r.zin)).attr("x2", x(r.ikea)).attr("y1", y).attr("y2", y);
+      [["ZIN", r.zin, false], ["IKEA's kitchens", r.ikea, r.est]].forEach(function (d) {
+        const xd = x(d[1]), left = xd < 100;   // near zero: label runs right, otherwise left
+        g.append("circle").attr("class", r.cls + (d[2] ? " est" : "")).attr("cx", xd).attr("cy", y).attr("r", DOT);
+        label(L, left ? xd - DOT : xd + DOT, y0 + 26, [[fmtT(d[1]), "lab-strong"], [d[0], "lab", "1.15em"]],
+              left ? "start" : "end");
+      });
     });
-
-    g.append("line").attr("class", "axis").attr("x1", cx(0)).attr("x2", cx(200000)).attr("y1", 284).attr("y2", 284);
-    [0, 50000, 100000, 150000, 200000].forEach(function (v) {
-      g.append("line").attr("class", "axis").attr("x1", cx(v)).attr("x2", cx(v)).attr("y1", 284).attr("y2", 288);
-      label(L, cx(v), 304, [[fmtK(v), "lab"]], "middle");
-    });
-    label(L, 200, 324, [["Tonnes", "lab"]], "middle");
-    label(L, 200, 350, [["IKEA's tonnes estimated from meals", "lab"], ["ZIN: one-off. IKEA: total to 2022.", "lab"]], "middle");
+    label(L, 200, 352, [["IKEA's tonnes estimated from meals", "lab"], ["ZIN: one-off. IKEA: total to 2022.", "lab"]], "middle");
     label(L, 6, 394, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"]]);
   }
 
