@@ -545,7 +545,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      from extraction to the factory gate (ETC CE Report 2025/3, Figure 3-4). Both columns
      stack in the same order, so each ribbon only changes width. */
   const MAT = [
-    { key: "minerals", group: "Non-metallic minerals", name: "Minerals" },
+    { key: "minerals", group: "Non-metallic minerals", name: "Minerals", note: "(sand, gravel, stone)" },
     { key: "metals",   group: "Metal ores",            name: "Metal ores" },
     { key: "fossil",   group: "Fossil fuels",          name: "Fossil fuels" },
     { key: "biomass",  group: "Biomass",               name: "Biomass" }
@@ -553,7 +553,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const row = DATA.weight_vs_climate.find(function (r) { return r.material_group === m.group; });
     return Object.assign({ weight: row.share_of_weight_pct, climate: row.share_of_climate_impact_pct }, m);
   });
-  const RX0 = 100, RX1 = 128, RX2 = 284, RX3 = 312, RGAP = 3;  // the two columns, and the ribbons' gap to them
+  const RX0 = 110, RX1 = 138, RX2 = 296, RX3 = 324, RGAP = 3;  // the two columns, and the ribbons' gap to them
   const RY0 = 60, RY1 = 330, RPAD = 2;
   const RK = (RY1 - RY0 - RPAD * (MAT.length - 1)) / 100;       // units per point of share
   function stack(field) {
@@ -574,16 +574,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
            "L" + xb + "," + r[1] + "C" + xm + "," + r[1] + " " + xm + "," + l[1] + " " + xa + "," + l[1] + "Z";
   }
 
-  // Label centers pushed apart until each pair is at least gap apart, within lo to hi
-  function spread(ys, gap, lo, hi) {
-    const out = ys.slice();
+  // Label blocks of heights hs pushed apart until pad separates each pair, within lo to hi
+  function spread(ys, hs, pad, lo, hi) {
+    const out = ys.slice(), n = out.length;
     for (let k = 0; k < 60; k++) {
-      for (let i = 1; i < out.length; i++) {
-        const d = out[i] - out[i - 1];
-        if (d < gap) { out[i - 1] -= (gap - d) / 2; out[i] += (gap - d) / 2; }
+      for (let i = 1; i < n; i++) {
+        const need = (hs[i - 1] + hs[i]) / 2 + pad, d = out[i] - out[i - 1];
+        if (d < need) { out[i - 1] -= (need - d) / 2; out[i] += (need - d) / 2; }
       }
-      out[0] = Math.max(out[0], lo);
-      out[out.length - 1] = Math.min(out[out.length - 1], hi);
+      out[0] = Math.max(out[0], lo + hs[0] / 2);
+      out[n - 1] = Math.min(out[n - 1], hi - hs[n - 1] / 2);
     }
     return out;
   }
@@ -609,9 +609,15 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     });
 
     label(L, (RX0 + RX1) / 2, 44, [["By weight", "lab-strong"]], "middle");
-    const ly = spread(WSTK.map(mid), 42, RY0 + 16, RY1 - 18);
+    // Share of weight over the name, and any note in small type: blocks 33.6 or 47.4 units tall,
+    // centered 1.7 or 8.6 below the share's baseline
+    const hs = MAT.map(function (m) { return m.note ? 47.4 : 33.6; });
+    const ly = spread(WSTK.map(mid), hs, 8, RY0, RY1 + 6);
     MAT.forEach(function (m, i) {
-      if (shown(m)) label(L, RX0 - 8, ly[i] - 2, [[fmt1(m.weight) + "%", "lab-num"], [m.name, "lab", "1.15em"]], "end");
+      if (!shown(m)) return;
+      const lines = [[fmt1(m.weight) + "%", "lab-num"], [m.name, "lab", "1.15em"]];
+      if (m.note) lines.push([m.note, "lab-src", "1.3em"]);
+      label(L, RX0 - 8, ly[i] - (m.note ? 8.6 : 1.7), lines, "end");
     });
     if (s.climate) {
       label(L, (RX2 + RX3) / 2, 44, [["By climate impact", "lab-strong"]], "middle");
