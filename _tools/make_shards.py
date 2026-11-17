@@ -2,15 +2,12 @@
 material's shards covering exactly its share of the EU's material use by weight.
 
 Usage:
-    python3 -I _tools/make_shards.py <env_ac_mfa_linear_2_0.csv.gz> [--check]
+    python3 -I _tools/make_shards.py [--check]
 
-Reads Eurostat's material flow accounts (the raw file in the far-from-full-circle repo,
-data/raw), takes the EU's 2022 domestic material consumption by material, and writes the
-shards into the page's data file under "center_shards". With --check, writes nothing and
-re-measures the shards already in the data file.
-
-Shares are of the four material groups, which make up 99.5% of material use; other
-products and waste for final treatment (MF5, MF6) are left out.
+Takes the weight shares from the data file's "weight_vs_climate" block (ETC CE Report
+2025/3, Figure 3-4, EU 2022), the same shares the ribbon chart draws, and writes the shards
+into the data file under "center_shards". With --check, writes nothing and re-measures the
+shards already in the data file.
 
 How the shards are made: shard sizes for each material are drawn across a 14-fold range
 (so every material gets small and large shards) and scaled to its exact share. Shards are
@@ -23,7 +20,6 @@ every shard's final area, gaps taken out, proportional to its target. Coordinate
 convention (x right, y down) on a disc of radius 1, rounded to 5 decimals; the check
 measures the rounded shards, which is what the page draws.
 """
-import gzip
 import json
 import os
 import sys
@@ -34,8 +30,9 @@ from scipy.optimize import brentq
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "projects", "far_from_full_circle", "far_from_full_circle_data.js")
 PREFIX = "window.FAR_FROM_FULL_CIRCLE_DATA = "
-MATERIALS = [("minerals", "MF3"), ("biomass", "MF1"), ("fossil", "MF4"), ("metals", "MF2")]
-SETTINGS = dict(seed=3, n_pieces=115, ratio=14.0, gap=0.015, jitter=0.8, group_p=(0.2, 0.5, 0.3))
+MATERIALS = [("minerals", "Non-metallic minerals"), ("biomass", "Biomass"), ("fossil", "Fossil fuels"),
+             ("metals", "Metal ores")]
+SETTINGS = dict(seed=23, n_pieces=115, ratio=14.0, gap=0.015, jitter=0.8, group_p=(0.2, 0.5, 0.3))
 K = 256                                              # vertices on the disc's edge
 CIRCLE = np.stack([np.cos(t := np.linspace(0, 2 * np.pi, K, endpoint=False)), np.sin(t)], 1)
 
@@ -258,21 +255,12 @@ def report(shards, shares, label):
     return got
 
 
-def shares_from(mfa_path):
-    import csv
-    want = {code for _, code in MATERIALS} | {"MF5", "MF6", "TOTAL"}
-    kt = {}
-    with gzip.open(mfa_path, "rt", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if (row["indic_env"] == "DMC" and row["unit"] == "THS_T" and row["geo"] == "EU27_2020"
-                    and row["TIME_PERIOD"] == "2022" and row["material"] in want):
-                kt[row["material"]] = float(row["OBS_VALUE"])
-    four = sum(kt[code] for _, code in MATERIALS)
-    return kt, [100 * kt[code] / four for _, code in MATERIALS]
+def shares_from(data):
+    rows = {r["material_group"]: r["share_of_weight_pct"] for r in data["weight_vs_climate"]}
+    return [rows[group] for _, group in MATERIALS]
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--")]
     with open(DATA, encoding="utf-8") as f:
         text = f.read()
     tail = text[text.rindex(";"):]
@@ -282,16 +270,14 @@ def main():
         shards = [(s["m"], np.array(s["p"]).reshape(-1, 2)) for s in cs["shards"]]
         report(shards, [cs["shares_pct"][name] for name, _ in MATERIALS], "In the data file")
         return
-    kt, shares = shares_from(args[0])
+    shares = shares_from(data)
     shards, err = make(np.array(shares) / 100, **SETTINGS)
     rounded = [(m, np.round(V, 5)) for m, V in shards]
     report(shards, shares, f"Solved (largest error in a cell {err:.0e})")
     report(rounded, shares, "Rounded to 5 decimals, as stored")
     data["center_shards"] = {
-        "source": "Eurostat env_ac_mfa, domestic material consumption, EU27_2020, 2022",
+        "source": "weight_vs_climate: ETC CE Report 2025/3, Figure 3-4, EU 2022",
         "materials": [name for name, _ in MATERIALS],
-        "materials_kt": {name: kt[code] for name, code in MATERIALS},
-        "other_kt": kt["MF5"] + kt["MF6"],
         "shares_pct": {name: round(s, 4) for (name, _), s in zip(MATERIALS, shares)},
         "gap": SETTINGS["gap"],
         "shards": [{"m": m, "p": [float(x) for x in V.ravel()]} for m, V in rounded],
