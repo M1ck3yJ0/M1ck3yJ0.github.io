@@ -33,9 +33,10 @@
   /* Series */
   --used: #003399;        /* material used: the center, "used less" bars */
   --used-could: #7893C9;  /* material that could have been used, and the part never used */
-  --back: #A67F22;        /* what comes back: the rope, recycling bars */
+  --back: #A67F22;        /* what comes back: the recycling bars */
   --back-could: #D2BF90;  /* waste that could come back: the 31%, the every-tonne band */
-  --target: #6F84C4;      /* the full circle: 24% of all material used */
+  --target: #A67F22;      /* the 24% target circle */
+  --rate: #EBB30B;        /* the circularity rate arc */
   --outline: #CBD3E8;     /* the starting circle, faint */
   --impact: #8A4013;      /* climate impact, beside tonnes */
   --impact-could: #B88A6F; /* climate impact that could have been, and the part never emitted */
@@ -130,7 +131,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .outline { fill: none; stroke: var(--outline); stroke-width: 1.2; }
 .ring .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .band { fill: none; stroke: var(--back-could); stroke-width: 9; }
-.ring .rope { fill: none; stroke: var(--back); stroke-width: 9; stroke-linecap: round; }
+.ring .rope { fill: none; stroke: var(--rate); stroke-width: 9; stroke-linecap: round; }
 .ring .waste path { fill: var(--back-could); }
 .lab { fill: var(--ink-2); font-size: 13.5px; }
 .lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
