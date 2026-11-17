@@ -366,9 +366,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const fmt1 = d3.format(".1f");
 
   /* ---------- Ring: the target as a ring, EU 2022 ----------
-     The circle is the 24% target and holds still. The arc is the rate as a share of the
-     target, so it closes the ring at 24%. The disc's area is material consumed. Recycling
-     every tonne adds to the arc in striped gold. */
+     The disc's area is material consumed. The ring is drawn around it at a set gap, and the
+     arc shades the rate as a share of the 24% target, so it closes the ring at 24%. Using less,
+     with recycling held at its 2022 level, shrinks the disc, and the ring with it, and lifts
+     the rate. Recycling every tonne adds to the arc in striped gold. */
   const U = EU.circular_use_kt;
   const DMC = EU.consumption_kt;
   const U_ALL = U + EU.not_recycled_kt;            // every tonne of treated waste recycled
@@ -379,7 +380,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CEILING = U_ALL / (DMC + U_ALL);
 
   const R0 = 118;                                  // the target circle, in viewBox units
-  const RC0 = R0 - 4.5 - 10.7;                     // the 2022 disc, 10.7 units inside the arc
+  const RING_GAP = 10.7;                           // from the disc's edge to the arc
+  const RC0 = R0 - 4.5 - RING_GAP;                 // the 2022 disc
   const CX = 200, CY = 176, RING_DOT = 6;
   const TAU = 2 * Math.PI;
 
@@ -481,13 +483,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function drawRing(name) {
     const s = RING[name] || RING.hero;
     const svg = d3.select("#ring svg");
-    const R = R0;
-    const rc = s.disc ? RC0 * Math.sqrt(s.dmc / DMC) : 0;
+    const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius, whether shown or not
+    const rc = s.disc ? size : 0;
+    const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
     const g = svg.select("g.ring");
 
     g.select(".target").attr("r", R);
-    // Turns round the ring: the 2022 rate, and the rate the step adds up to
-    const f = RATE / TARGET, fe = s.to ? s.to / TARGET : f;
+    // Turns round the ring: the rate at this material use, and the rate the step adds up to
+    const f = Math.min(1, U / (s.dmc + U) / TARGET), fe = s.to ? s.to / TARGET : f;
     const sector = function (a, b) {
       return d3.arc()({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
     };
@@ -533,12 +536,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const d = at(fe, R);
       top(fmt1(CEILING * 100) + "%", " circularity with every tonne recycled", d[0], d[1] - RING_DOT - 2);
     }
-    if (s.call === "less") {                // in the space the material left
-      label(L, CX, 86, [[fmt1(LESS * 100) + "% less", "lab-strong"], ["material than in 2022", "lab"]], "middle");
+    if (s.call === "less") {                // below the ring
+      label(L, CX, CY + R + 28.5, [[fmt1(LESS * 100) + "% less material", "lab-strong"], ["recycling held at its 2022 level", "lab"]], "middle");
     }
 
     // The key
-    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [KEY.rate, fmt1(RATE * 100) + "% circularity in 2022"]]];
+    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [KEY.rate, s.dmc === DMC ? fmt1(RATE * 100) + "% circularity in 2022" : TARGET * 100 + "% circularity reached"]]];
     if (has("mats")) rows.push(SH.materials.map(function (m) {
       return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name];
     }));
