@@ -1,7 +1,6 @@
 /* Far from Full Circle: the ring's center as terrazzo, solved in the page.
 
-   The solver of _tools/make_shards.py, ported to JavaScript for the ring game and for panel 5's
-   in-between layouts. build() makes a disc of shards, one material per shard, each material's
+   The solver of _tools/make_shards.py, ported to JavaScript for the ring game. build() makes a disc of shards, one material per shard, each material's
    shards covering its share of the shards' area. remove() takes whole shards out and re-solves the
    disc from its current layout, so the neighbors close over the gap and the rest barely move.
 
