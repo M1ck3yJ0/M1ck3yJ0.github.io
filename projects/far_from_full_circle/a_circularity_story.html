@@ -478,7 +478,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (has("met")) label(L, CX + R + 14, CY - 4, [[TARGET * 100 + "%", "lab-num"], ["reached", "lab"]]);
     if (has("less")) label(L, CX, CY + R + 26, [[fmt1(LESS * 100) + "% less material", "lab-strong"]], "middle");
     if (has("held")) label(L, CX, 374, [["Recycling held at its 2022 level", "lab"]], "middle");
-    label(L, 6, 394, [["Source: Eurostat, 2022", "lab-src"]]);
+    label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022" : "Source: Eurostat, 2022", "lab-src"]]);
   }
 
   /* ---------- Waterfall: what each lever did to the rate, EU, two-year steps ----------
