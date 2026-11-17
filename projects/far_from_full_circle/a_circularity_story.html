@@ -37,7 +37,6 @@
   --back-could: #D2BF90;  /* waste that could come back: the 31%, the every-tonne band */
   --target: #A67F22;      /* the 24% target circle */
   --rate: #EBB30B;        /* the circularity rate arc */
-  --outline: #CBD3E8;     /* the starting circle, faint */
   --impact: #8A4013;      /* climate impact, beside tonnes */
   --impact-could: #B88A6F; /* climate impact that could have been, and the part never emitted */
   /* Materials: one color per material, wherever materials appear */
@@ -128,11 +127,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
 /* Chart marks and labels */
 .chart text { font-family: inherit; font-stretch: 94%; }
-.ring .outline { fill: none; stroke: var(--outline); stroke-width: 1.2; }
 .ring .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
-.ring .rope, .ring .dot { fill: var(--rate); }
+.ring .rope, .ring .dot.rate { fill: var(--rate); }
+.ring .dot.used { fill: var(--used); }
 .ring .stripes.rate .tint { fill: color-mix(in srgb, var(--rate) 22%, #fff); }
 .ring .stripes.rate line { stroke: var(--rate); stroke-width: 2.2; }
+.ring .stripes.used .tint { fill: color-mix(in srgb, var(--used) 22%, #fff); }
+.ring .stripes.used line { stroke: var(--used); stroke-width: 2.2; }
 .ring .waste path { fill: var(--back-could); }
 .lab { fill: var(--ink-2); font-size: 13.5px; }
 .lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
@@ -190,8 +191,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <clipPath id="ring-stripe-clip"><path></path></clipPath>
           </defs>
           <g class="ring" transform="translate(200,200)">
-            <circle class="outline" r="0" transform="rotate(-90)"></circle>
-            <circle class="target" r="0" transform="rotate(-90)"></circle>
+            <circle class="target" r="0"></circle>
             <path class="rope"></path>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
             <circle class="dot" r="6"></circle>
@@ -364,30 +364,30 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const fmt1 = d3.format(".1f");
 
   /* ---------- Ring: the target as a ring, EU 2022 ----------
-     The rope is as long as circular use; the full circle is 24% of all material
-     used (consumption plus circular use); the disc's area is consumption.
-     Using less shrinks consumption with recycling held at its 2022 level. */
+     The circle is the 24% target and holds still. The arc is the rate as a share of the
+     target, so it closes the ring at 24%. The disc's area is material consumed. Recycling
+     every tonne adds to the arc in striped gold; using less, with recycling held at its 2022
+     level, shrinks the disc and adds the points it gains in striped blue. */
   const U = EU.circular_use_kt;
   const DMC = EU.consumption_kt;
   const U_ALL = U + EU.not_recycled_kt;            // every tonne of treated waste recycled
-  const M0 = DMC + U;
   const DMC_CLOSED = U / TARGET - U;               // consumption at which the ring closes
   const LESS = 1 - DMC_CLOSED / DMC;
   const WASTE = EU.waste_treated_per_consumption / 100;
+  const RATE = U / (DMC + U);
   const CEILING = U_ALL / (DMC + U_ALL);
 
-  const R0 = 118;                                  // the 2022 circle, in viewBox units
-  const RC0 = 0.6 * R0;                            // the 2022 disc
-  const PX = 2 * Math.PI * R0 / (TARGET * M0);     // units per kt of rope
+  const R0 = 118;                                  // the target circle, in viewBox units
+  const RC0 = R0 - 4.5 - 10.7;                     // the 2022 disc, 10.7 units inside the arc
   const CX = 200, CY = 200;
   const TAU = 2 * Math.PI;
 
   const RING = {
-    hero:   { dmc: DMC,        all: false, disc: false, waste: false, outline: false, labels: ["rope", "target"] },
-    levers: { dmc: DMC,        all: false, disc: true,  waste: false, outline: false, labels: ["rope", "target", "disc"] },
-    back:   { dmc: DMC,        all: false, disc: true,  waste: true,  outline: false, labels: ["rope", "target", "disc", "waste"] },
-    every:  { dmc: DMC,        all: true,  disc: true,  waste: true,  outline: false, labels: ["every"] },
-    less:   { dmc: DMC_CLOSED, all: false, disc: true,  waste: false, outline: true,  labels: ["met", "less", "disc", "held"] }
+    hero:   { dmc: DMC,        disc: false, waste: false, labels: ["rope", "target"] },
+    levers: { dmc: DMC,        disc: true,  waste: false, labels: ["rope", "target", "disc"] },
+    back:   { dmc: DMC,        disc: true,  waste: true,  labels: ["rope", "target", "disc", "waste"] },
+    every:  { dmc: DMC,        disc: true,  waste: true,  add: "rate", to: CEILING, labels: ["every"] },
+    less:   { dmc: DMC_CLOSED, disc: true,  waste: false, add: "used", to: TARGET, labels: ["met", "less", "disc", "held"] }
   };
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
@@ -446,21 +446,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function drawRing(name) {
     const s = RING[name] || RING.hero;
     const svg = d3.select("#ring svg");
-    const R = R0 * (s.dmc + U) / M0;
-    const circ = 2 * Math.PI * R;
-    const rope = U * PX;
+    const R = R0;
     const rc = s.disc ? RC0 * Math.sqrt(s.dmc / DMC) : 0;
     const g = svg.select("g.ring");
 
-    g.select(".outline").attr("r", R0).attr("opacity", s.outline ? 1 : 0);
     g.select(".target").attr("r", R);
-    // Turns round the ring: the rate, and with every tonne recycled, the rate it would reach
-    const f = Math.min(1, rope / circ), fe = s.all ? CEILING / TARGET : f;
+    // Turns round the ring: the 2022 rate, and the rate the step adds up to
+    const f = RATE / TARGET, fe = s.add ? s.to / TARGET : f;
     const sector = function (a, b) {
       return d3.arc()({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
     };
     g.select(".rope").attr("d", sector(0, f));
-    const st = g.select(".stripes").attr("display", fe > f ? null : "none");
+    const st = g.select(".stripes").attr("class", "stripes " + (s.add || "")).attr("display", fe > f ? null : "none");
     st.selectAll("line").remove();
     if (fe > f) {                         // the added part, striped: lines at 45 degrees to the arc, 4 units apart
       d3.select("#ring-stripe-clip path").attr("d", sector(f, fe));
@@ -472,7 +469,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           .attr("x2", (R + h) * Math.sin(a + h / R)).attr("y2", -(R + h) * Math.cos(a + h / R));
       }
     }
-    g.select(".dot").attr("cx", R * Math.sin(fe * TAU)).attr("cy", -R * Math.cos(fe * TAU));
+    g.select(".dot").attr("class", "dot " + (s.add || "rate"))
+      .attr("cx", R * Math.sin(fe * TAU)).attr("cy", -R * Math.cos(fe * TAU));
     g.select(".disc").attr("transform", "scale(" + rc + ")");
     g.select(".disc .waste").attr("display", s.waste ? null : "none");
 
