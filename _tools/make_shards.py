@@ -9,6 +9,16 @@ Takes the weight shares from the data file's "weight_vs_climate" block (ETC CE R
 into the data file under "center_shards". With --check, writes nothing and re-measures the
 shards already in the data file.
 
+It also writes panel 5's disc under "center_shards" -> "less": the same disc with the
+material taken out that closes the ring at 24% with recycling held at its 2022 level, as
+the page computes it, taken out of every material alike as whole shards. For each
+material, about that share of its shards goes at every size, then swaps between shards
+close in size bring the area taken out to the share. Of many such picks, the one that
+leaves the disc most evenly covered is kept. The shards left are resized so every
+material keeps its exact share, and the disc is re-solved from its current layout, with
+the gap set so the slivers keep their share of the disc. The page draws it at the square
+root of the material left.
+
 How the shards are made: shard sizes for each material are drawn across a 14-fold range
 (so every material gets small and large shards) and scaled to its exact share. Shards are
 grouped one to three to a cell, the cells placed by a random packing, and a power diagram
@@ -33,7 +43,9 @@ PREFIX = "window.FAR_FROM_FULL_CIRCLE_DATA = "
 MATERIALS = [("minerals", "Non-metallic minerals"), ("biomass", "Biomass"), ("fossil", "Fossil fuels"),
              ("metals", "Metal ores")]
 SETTINGS = dict(seed=23, n_pieces=115, ratio=14.0, gap=0.015, jitter=0.8, group_p=(0.2, 0.5, 0.3))
-K = 256                                              # vertices on the disc's edge
+LESS_SETTINGS = dict(seed=12, tries=3000)
+TARGET = 0.24                                        # the EU's circularity target for 2030
+K = 256                                             # vertices on the disc's edge
 CIRCLE = np.stack([np.cos(t := np.linspace(0, 2 * np.pi, K, endpoint=False)), np.sin(t)], 1)
 
 
@@ -234,7 +246,95 @@ def make(shares, seed, n_pieces, ratio, gap, jitter, group_p, min_w=0.06):
                 break
         angles.append(best)
     W, cells, shards, err = solve(P, W, t, gap, groups, sizes, angles)
-    return [(int(mats[k]), shards[k]) for k in sorted(shards)], err
+    state = dict(P=P, W=W, groups=groups, angles=angles, sizes=sizes, mats=mats)
+    return [(int(mats[k]), shards[k]) for k in sorted(shards)], err, state
+
+
+# ---------- Using less: panel 5's disc ----------
+
+def unevenness(shards, gone, less):
+    """How unevenly the shards left cover the disc: over 17 regions (a middle, a ring of 6 and
+    a ring of 10), the area-weighted root mean square of each region's share left, against the
+    share left overall."""
+    C = np.array([V.mean(0) for _, V in shards])
+    A = np.array([area(V) for _, V in shards])
+    r, th = np.hypot(*C.T), np.arctan2(C[:, 1], C[:, 0]) % (2 * np.pi)
+    reg = np.where(r < 0.4, 0, np.where(r < 0.75, 1 + np.minimum(th // (np.pi / 3), 5),
+                                        7 + np.minimum(th // (np.pi / 5), 9))).astype(int)
+    left = A * ~np.isin(np.arange(len(A)), list(gone))
+    tot, kept = np.bincount(reg, A, 17), np.bincount(reg, left, 17)
+    share = np.divide(kept, tot, out=np.full(17, 1 - less), where=tot > 0)
+    return np.sqrt(np.sum(tot * (share - (1 - less)) ** 2) / tot.sum())
+
+
+def pick(rng, sizes, mats, less):
+    """Whole shards to take out: for each material, its shards in order of size, in fives (threes
+    for a material with under ten), each five giving up its share of shards, carried over, at
+    random; then swaps within a five bring the area taken out closest to `less` of the material's."""
+    gone = []
+    for m in range(len(MATERIALS)):
+        ids = sorted((int(k) for k in np.flatnonzero(mats == m)), key=lambda k: sizes[k])
+        w = 5 if len(ids) >= 10 else 3
+        acc, out = rng.uniform(), []
+        for s in (ids[i:i + w] for i in range(0, len(ids), w)):
+            acc += less * len(s)
+            c = int(acc)
+            acc -= c
+            out += [int(k) for k in rng.choice(s, size=min(c, len(s)), replace=False)]
+        five = {k: i // w for i, k in enumerate(ids)}
+        target = less * sizes[ids].sum()
+        while True:
+            now = sizes[out].sum()
+            moves = [(abs(now - sizes[a] + sizes[b] - target), a, b)
+                     for a in out for b in ids if b not in out and five[a] == five[b]]
+            if not moves or min(moves)[0] >= abs(now - target) - 1e-15:
+                break
+            _, a, b = min(moves)
+            out.remove(a)
+            out.append(b)
+        gone += out
+    return set(gone)
+
+
+def remove(state, gone, sizes, gap):
+    """The disc re-solved from its current layout with whole shards taken out, so the shards
+    left close over the gaps; sizes gives each shard left its target."""
+    keep = [(p, w, [k for k in g if k not in gone], a)
+            for p, w, g, a in zip(state["P"], state["W"], state["groups"], state["angles"])]
+    keep = [c for c in keep if c[2]]
+    P, W = np.array([c[0] for c in keep]), np.array([c[1] for c in keep])
+    groups, angles = [c[2] for c in keep], [c[3] for c in keep]
+    usize = np.array([sizes[g].sum() for g in groups])
+    t = usize / usize.sum()
+    try:
+        return solve(P, W, t, gap, groups, sizes, angles)
+    except RuntimeError:                             # as make() does: the cells first, then the cracks
+        return solve(P, solve(P, W, t, gap)[0], t, gap, groups, sizes, angles)
+
+
+def use_less(shards, state, less, seed, tries):
+    """Panel 5's disc: `less` of every material taken out as whole shards, the most even of
+    `tries` picks; the shards left resized so every material keeps its exact share, and the gap
+    set so the slivers keep their share of the disc. Returns the gap and the shards left."""
+    rng = np.random.default_rng(seed)
+    sizes0, mats = state["sizes"], state["mats"]
+    gone = min((pick(rng, sizes0, mats, less) for _ in range(tries)),
+               key=lambda g: unevenness(shards, g, less))
+    sizes = sizes0.copy()
+    out = np.isin(np.arange(len(sizes)), list(gone))
+    for m in range(len(MATERIALS)):
+        mine, left = mats == m, (mats == m) & ~out
+        sizes[left] *= (1 - less) * sizes0[mine].sum() / sizes0[left].sum()
+    slivers = 1 - sum(area(V) for _, V in shards) / np.pi
+    found = {}
+    def miss(gap):
+        if gap not in found:
+            found[gap] = remove(state, gone, sizes, gap)[2]
+        return 1 - sum(area(V) for V in found[gap].values()) / np.pi - slivers
+    g0 = SETTINGS["gap"] / np.sqrt(1 - less)         # a gap of the same width on screen
+    gap = brentq(miss, 0.6 * g0, 1.4 * g0, xtol=1e-7)
+    miss(gap)
+    return gap, found[gap]
 
 
 # ---------- Measuring ----------
@@ -268,23 +368,37 @@ def main():
     if "--check" in sys.argv:
         cs = data["center_shards"]
         shards = [(s["m"], np.array(s["p"]).reshape(-1, 2)) for s in cs["shards"]]
-        report(shards, [cs["shares_pct"][name] for name, _ in MATERIALS], "In the data file")
+        shares = [cs["shares_pct"][name] for name, _ in MATERIALS]
+        report(shards, shares, "In the data file")
+        if "less" in cs:
+            left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in cs["less"]["shards"]]
+            report(left, shares, f"Panel 5, {cs['less']['less_pct']}% less, in the data file")
         return
     shares = shares_from(data)
-    shards, err = make(np.array(shares) / 100, **SETTINGS)
+    shards, err, state = make(np.array(shares) / 100, **SETTINGS)
     rounded = [(m, np.round(V, 5)) for m, V in shards]
     report(shards, shares, f"Solved (largest error in a cell {err:.0e})")
     report(rounded, shares, "Rounded to 5 decimals, as stored")
+    eu = data["countries"]["EU27_2020"]                # as the page: the cut that closes the ring
+    u, dmc = eu["circular_use_kt"], eu["consumption_kt"]
+    less = 1 - (u / TARGET - u) / dmc
+    gap, left = use_less(rounded, state, less, **LESS_SETTINGS)
+    left = {k: np.round(V, 5) for k, V in sorted(left.items())}
+    report([(int(state["mats"][k]), V) for k, V in left.items()], shares,
+           f"Panel 5, {100 * less:.1f}% less, rounded as stored")
     data["center_shards"] = {
         "source": "weight_vs_climate: ETC CE Report 2025/3, Figure 3-4, EU 2022",
         "materials": [name for name, _ in MATERIALS],
         "shares_pct": {name: round(s, 4) for (name, _), s in zip(MATERIALS, shares)},
         "gap": SETTINGS["gap"],
         "shards": [{"m": m, "p": [float(x) for x in V.ravel()]} for m, V in rounded],
+        "less": {"less_pct": round(100 * less, 4), "gap": round(gap, 6),
+                 "shards": [{"k": int(k), "p": [float(x) for x in V.ravel()]} for k, V in left.items()]},
     }
+    out = PREFIX + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + tail
     with open(DATA, "w", encoding="utf-8") as f:
-        f.write(PREFIX + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + tail)
-    print("Wrote", len(rounded), "shards to", os.path.relpath(DATA, ROOT))
+        f.write(out)
+    print("Wrote", len(rounded), "shards and panel 5's", len(left), "to", os.path.relpath(DATA, ROOT))
 
 
 if __name__ == "__main__":
