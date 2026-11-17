@@ -131,7 +131,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .outline { fill: none; stroke: var(--outline); stroke-width: 1.2; }
 .ring .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .band { fill: none; stroke: var(--back-could); stroke-width: 9; }
-.ring .rope { fill: none; stroke: var(--rate); stroke-width: 9; stroke-linecap: round; }
+.ring .rope, .ring .dot { fill: var(--rate); }
 .ring .waste path { fill: var(--back-could); }
 .lab { fill: var(--ink-2); font-size: 13.5px; }
 .lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
@@ -189,7 +189,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <circle class="outline" r="0" transform="rotate(-90)"></circle>
             <circle class="target" r="0" transform="rotate(-90)"></circle>
             <circle class="band" r="0" transform="rotate(-90)"></circle>
-            <circle class="rope" r="0" transform="rotate(-90)"></circle>
+            <path class="rope"></path>
+            <circle class="dot" r="6"></circle>
             <g class="disc" transform="scale(0)">
               <g class="mats"></g>
               <g class="waste" clip-path="url(#ring-waste-clip)"></g>
@@ -452,8 +453,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     g.select(".target").attr("r", R);
     g.select(".band").attr("r", R).attr("opacity", band > 0 ? 1 : 0)
       .attr("stroke-dasharray", "0 " + rope + " " + band + " " + circ);
-    g.select(".rope").attr("r", R)
-      .attr("stroke-dasharray", rope >= circ - 0.5 ? null : rope + " " + circ);
+    const f = Math.min(1, rope / circ), fe = Math.min(1, (rope + band) / circ);   // turns round the ring
+    g.select(".rope").attr("d", d3.arc()({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: 0, endAngle: f * 2 * Math.PI }));
+    g.select(".dot").attr("cx", R * Math.sin(fe * 2 * Math.PI)).attr("cy", -R * Math.cos(fe * 2 * Math.PI));
     g.select(".disc").attr("transform", "scale(" + rc + ")");
     g.select(".disc .waste").attr("display", s.waste ? null : "none");
 
