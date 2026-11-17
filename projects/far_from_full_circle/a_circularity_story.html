@@ -549,6 +549,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      the shards left close up as the disc shrinks, the ring tightens around it and the arc
      closes, with recycling held at its 2022 level. */
   const FLY = 2.3;                                 // the flight, in disc radii
+  const DIM = 0.2;                                 // the arc and dot through the first beat, as the piece's other dimmed marks
   const sector = function (R, a, b) {              // a stretch of the band, with rounded ends
     return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
   };
@@ -569,7 +570,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far o's extras have gone
 
     g.select(".target").attr("r", R);
-    g.select(".rope").attr("d", sector(R, 0, f));
+    const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
+    const lit = q > 0 ? 1 - (1 - DIM) * q : null;
+    g.select(".rope").attr("d", sector(R, 0, f)).attr("opacity", lit);
     const striped = fe > f && z < 1;
     const st = g.select(".stripes").attr("display", striped ? null : "none").attr("opacity", 1 - z);
     const at = striped ? [R, f, fe].join() : "";
@@ -589,7 +592,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       }
     }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
-    g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU));
+    g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
     g.select(".disc").attr("transform", "scale(" + size + ")");
     g.select(".disc .waste").attr("display", o.waste && z < 1 ? null : "none").attr("opacity", 1 - z);
 
