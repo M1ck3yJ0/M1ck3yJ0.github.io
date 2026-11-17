@@ -220,8 +220,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <article class="card" data-state="every">
         <p>So imagine the EU recycled every tonne that comes back, the rubble, soil, stone and ash included. The arc would reach 99% of the way round, a rate of 23.7%, and still fall just short. Recycling all of it isn't practical, either. Even perfect recycling, on its own, can't close the ring.</p>
       </article>
+      <article class="card" data-state="gone">
+        <p>Now the other lever. Keep recycling where it was in 2022, and use less instead. To close the ring this way, the EU would need to use 59.3% less material than it did in 2022: about 8.5 of those 14 tonnes per person. It's a great deal to ask.</p>
+      </article>
       <article class="card" data-state="less">
-        <p>Now the other lever. Keep recycling where it was in 2022, and use less instead. As the material in the middle shrinks, the ring tightens around it, and the same recycling covers more of the ring, until the arc's two ends finally meet. That happens when the EU uses 59.3% less material than it did in 2022: about 8.5 of those 14 tonnes per person. It's a great deal to ask. But it's the only lever that can close the ring on its own.</p>
+        <p>As the material in the middle shrinks, the ring tightens around it, and the same recycling covers more of the ring, until the arc's two ends finally meet. Using less is the only lever that can close the ring on its own.</p>
       </article>
       <article class="card" data-state="less">
         <p>So the EU's target, which reads like a goal for recycling, is in effect a goal for using less. It isn't a choice between the two; we need both. But there's no realistic route to 24% that doesn't run through using much less. Even if the EU recycled 70% of its waste instead of 41%, it would still need to use about 31% less material.</p>
@@ -384,22 +387,68 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CX = 200, CY = 176, RING_DOT = 7.5;
   const TAU = 2 * Math.PI;
 
+  // p: where panel 5's two beats stand, 0 before them, 0.5 after the first, 1 after the second
   const RING = {
-    hero:   { dmc: DMC,        disc: true,  waste: false, key: [] },
-    levers: { dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
-    back:   { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
-    every:  { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
-    less:   { dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats"],                  call: "less" }
+    hero:   { p: 0,   dmc: DMC,        disc: true,  waste: false, key: [] },
+    levers: { p: 0,   dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
+    back:   { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
+    every:  { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
+    gone:   { p: 0.5, dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "less" },
+    less:   { p: 1,   dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats"],                  call: "less" }
   };
+  const RING_MOVING = { p: 0, dmc: DMC, disc: true, waste: false, key: ["mats"] };   // labels while the beats play
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
      covering exactly its share of material use by weight (_tools/make_shards.py). They sit
      on a disc of radius 1, y down, so the disc scales as one piece. */
   const SH = DATA.center_shards;
-  const SHARDS = SH.shards.map(function (s) {
+  const toPts = function (p) {
     const pts = [];
-    for (let k = 0; k < s.p.length; k += 2) pts.push([s.p[k], s.p[k + 1]]);
-    return { m: SH.materials[s.m], pts: pts };
+    for (let k = 0; k < p.length; k += 2) pts.push([p[k], p[k + 1]]);
+    return pts;
+  };
+  const SHARDS = SH.shards.map(function (s, k) {
+    return { k: k, m: SH.materials[s.m], pts: toPts(s.p) };
+  });
+
+  /* Panel 5's disc: the shards left once the material that closes the ring is taken out of
+     every material alike, re-solved to fill a smaller disc (_tools/make_shards.py, "less").
+     For the second beat, each shard left is resampled at its start and end to the same number
+     of points, matched up, and blended. */
+  const LEFT = new Map(SH.less.shards.map(function (s) { return [s.k, toPts(s.p)]; }));
+  function resample(pts, n) {                      // n points evenly round the outline, from pts[0]
+    const len = pts.map(function (p, i) { const q = pts[(i + 1) % pts.length]; return Math.hypot(q[0] - p[0], q[1] - p[1]); });
+    const per = d3.sum(len) / n, out = [];
+    let i = 0, along = 0;
+    for (let j = 0; j < n; j++) {
+      while (i < len.length - 1 && along + len[i] < j * per) { along += len[i]; i++; }
+      const p = pts[i], q = pts[(i + 1) % pts.length], f = len[i] ? (j * per - along) / len[i] : 0;
+      out.push([p[0] + f * (q[0] - p[0]), p[1] + f * (q[1] - p[1])]);
+    }
+    return out;
+  }
+  function matched(a, b) {                         // b, wound as a is and started where it best follows a
+    if ((d3.polygonArea(a) > 0) !== (d3.polygonArea(b) > 0)) b = b.slice().reverse();
+    const ca = d3.polygonCentroid(a), cb = d3.polygonCentroid(b), n = a.length;
+    let best = 0, bestD = Infinity;
+    for (let s = 0; s < n; s++) {
+      let d = 0;
+      for (let i = 0; i < n; i++) {
+        const p = a[i], q = b[(i + s) % n];
+        d += (p[0] - ca[0] - q[0] + cb[0]) ** 2 + (p[1] - ca[1] - q[1] + cb[1]) ** 2;
+      }
+      if (d < bestD) { bestD = d; best = s; }
+    }
+    return b.slice(best).concat(b.slice(0, best));
+  }
+  SHARDS.forEach(function (s) {
+    s.d0 = "M" + s.pts.join("L") + "Z";
+    s.delay = (s.k * 0.6180339887) % 1;            // when it leaves in the first beat, spread evenly
+    if (LEFT.has(s.k)) {
+      s.d1 = "M" + LEFT.get(s.k).join("L") + "Z";
+      const a = resample(s.pts, 40);
+      s.morph = [a, matched(a, resample(LEFT.get(s.k), 40))];
+    }
   });
 
   // Area of the shards' parts at or below a level
@@ -430,11 +479,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return (lo + hi) / 2;
   })();
 
-  const shardPath = function (s) { return "M" + s.pts.join("L") + "Z"; };
   const ringDisc = d3.select("#ring svg g.disc");
-  ringDisc.select(".mats").selectAll("path").data(SHARDS).join("path")
-    .attr("class", function (s) { return s.m; }).attr("d", shardPath);
-  ringDisc.select(".waste").selectAll("path").data(SHARDS).join("path").attr("d", shardPath);
+  const ringShards = ringDisc.select(".mats").selectAll("path").data(SHARDS).join("path")
+    .attr("class", function (s) { return s.m; }).attr("d", function (s) { return s.d0; });
+  ringDisc.select(".waste").selectAll("path").data(SHARDS).join("path").attr("d", function (s) { return s.d0; });
   d3.select("#ring-waste-clip rect").attr("y", WASTE_Y);
 
   function label(parent, x, y, lines, anchor) {
@@ -479,41 +527,82 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     L.append("line").attr("class", "leader").attr("x1", a[0]).attr("y1", a[1]).attr("x2", b[0]).attr("y2", b[1]);
   }
 
-  function drawRing(name) {
-    const s = RING[name] || RING.hero;
-    const svg = d3.select("#ring svg");
-    const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius, whether shown or not
-    const rc = s.disc ? size : 0;
+  /* The ring, drawn from p (RING). Before panel 5, the full disc's state o adds its stripes, gold
+     and dot. Panel 5 plays in two beats, drawn from p alone, so either beat plays either way and
+     can turn mid-way. From 0 to P0, o's stripes and gold fade and the dot goes back to the rate;
+     to 0.5, the shards taken out fly off to the right and fade, leaving their places blank; to 1,
+     the shards left close up as the disc shrinks, the ring tightens around it and the arc
+     closes, with recycling held at its 2022 level. */
+  const P0 = 0.12;
+  const FLY = 2.3, LATE = 0.5;                     // the flight, in disc radii; the last shard's start, as a share of it
+  const BEAT = 1100;                               // each beat, in ms
+  const sector = function (R, a, b) {              // a stretch of the band, with rounded ends
+    return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
+  };
+  const turns = function (dmc) {                   // turns round the ring: the rate at this material use
+    const f = Math.min(1, U / (dmc + U) / TARGET);
+    return f > 0.9999 ? 1 : f;                     // closed: a full ring, with no ends
+  };
+  let stripesAt = "";
+
+  function ringFrame(p, o) {
+    const g = d3.select("#ring svg g.ring");
+    const w = p > 0.5 ? d3.easeCubicInOut((p - 0.5) / 0.5) : 0;     // the second beat
+    const dmc = DMC + (DMC_CLOSED - DMC) * w;
+    const size = RC0 * Math.sqrt(dmc / DMC);       // the disc's radius
     const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
-    const g = svg.select("g.ring");
+    const f = turns(dmc);
+    const fe = o.to ? o.to / TARGET : f;           // where o's stripes end
+    const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far o's extras have gone
 
     g.select(".target").attr("r", R);
-    // Turns round the ring: the rate at this material use, and the rate the step adds up to
-    let f = Math.min(1, U / (s.dmc + U) / TARGET);
-    if (f > 0.9999) f = 1;                         // closed: a full ring, with no ends
-    const fe = s.to ? s.to / TARGET : f;
-    const sector = function (a, b) {               // a stretch of the band, with rounded ends
-      return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
-    };
-    g.select(".rope").attr("d", sector(0, f));
-    const st = g.select(".stripes").attr("display", fe > f ? null : "none");
-    st.selectAll("line").remove();
-    if (fe > f) {                         // the added part, striped, from under the arc's rounded end:
-      const a0 = f - 9 / (TAU * R);       // lines at 45 degrees to the arc, 4 units apart
-      d3.select("#ring-stripe-clip path").attr("d", sector(a0, fe));
-      st.select(".tint").attr("d", sector(a0, fe));
-      const h = 6.5, step = 4 * Math.SQRT2 / R;
-      for (let a = a0 * TAU - h / R; a < fe * TAU + h / R; a += step) {
-        st.append("line")
-          .attr("x1", (R - h) * Math.sin(a - h / R)).attr("y1", -(R - h) * Math.cos(a - h / R))
-          .attr("x2", (R + h) * Math.sin(a + h / R)).attr("y2", -(R + h) * Math.cos(a + h / R));
+    g.select(".rope").attr("d", sector(R, 0, f));
+    const striped = fe > f && z < 1;
+    const st = g.select(".stripes").attr("display", striped ? null : "none").attr("opacity", 1 - z);
+    const at = striped ? [R, f, fe].join() : "";
+    if (at !== stripesAt) {                        // the added part, striped, from under the arc's rounded end:
+      stripesAt = at;                              // lines at 45 degrees to the arc, 4 units apart
+      st.selectAll("line").remove();
+      if (striped) {
+        const a0 = f - 9 / (TAU * R);
+        d3.select("#ring-stripe-clip path").attr("d", sector(R, a0, fe));
+        st.select(".tint").attr("d", sector(R, a0, fe));
+        const h = 6.5, step = 4 * Math.SQRT2 / R;
+        for (let a = a0 * TAU - h / R; a < fe * TAU + h / R; a += step) {
+          st.append("line")
+            .attr("x1", (R - h) * Math.sin(a - h / R)).attr("y1", -(R - h) * Math.cos(a - h / R))
+            .attr("x2", (R + h) * Math.sin(a + h / R)).attr("y2", -(R + h) * Math.cos(a + h / R));
+        }
       }
     }
-    g.select(".dot").attr("r", RING_DOT)
-      .attr("cx", R * Math.sin(fe * TAU)).attr("cy", -R * Math.cos(fe * TAU));
-    g.select(".disc").attr("transform", "scale(" + rc + ")");
-    g.select(".disc .waste").attr("display", s.waste ? null : "none");
+    const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
+    g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU));
+    g.select(".disc").attr("transform", "scale(" + size + ")");
+    g.select(".disc .waste").attr("display", o.waste && z < 1 ? null : "none").attr("opacity", 1 - z);
 
+    const u = p > P0 ? Math.min(1, (p - P0) / (0.5 - P0)) : 0;     // the first beat's flight
+    ringShards.each(function (s) {
+      const el = d3.select(this);
+      if (s.morph) {                               // a shard left: blended toward its place in the smaller disc
+        el.attr("d", w <= 0 ? s.d0 : w >= 1 ? s.d1 : "M" + s.morph[0].map(function (a, i) {
+          const b = s.morph[1][i];
+          return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
+        }).join("L") + "Z");
+      } else {                                     // a shard taken out: off to the right, fading
+        const v = Math.max(0, Math.min(1, (u - LATE * s.delay) / (1 - LATE)));
+        el.attr("display", v >= 1 ? "none" : null)
+          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeCubicIn(v)).toFixed(4) + ",0)" : null)
+          .attr("opacity", v > 0 ? 1 - v : null);
+      }
+    });
+  }
+
+  function ringLabels(s) {
+    const svg = d3.select("#ring svg");
+    const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius
+    const rc = s.disc ? size : 0;
+    const R = size + RING_GAP + 4.5;
+    const fe = s.to ? s.to / TARGET : turns(s.dmc);
     const L = svg.select("g.labels");
     L.selectAll("*").remove();
     const has = function (k) { return s.key.indexOf(k) > -1; };
@@ -538,8 +627,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const d = at(fe, R);
       top(fmt1(CEILING * 100) + "%", " circularity with every tonne recycled", d[0], d[1] - RING_DOT - 2);
     }
-    if (s.call === "less") {                // below the ring
-      label(L, CX, CY + R + 28.5, [[fmt1(LESS * 100) + "% less material", "lab-strong"], ["recycling held at its 2022 level", "lab"]], "middle");
+    if (s.call === "less") {                // above the ring, for both of panel 5's beats
+      label(L, CX, 24, [[fmt1(LESS * 100) + "% less material", "lab-strong"], ["recycling held at its 2022 level", "lab"]], "middle");
     }
 
     // The key
@@ -553,6 +642,36 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
     label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022" : "Source: Eurostat, 2022", "lab-src"]]);
+  }
+
+  /* Scrolled from card to card, panel 5's beats play from where the ring stands. With reduced
+     motion, on the first card scrolled to, and otherwise, the ring is drawn as the card declares. */
+  const STILL = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let ringName = null, ringP = 0, ringOuter = RING.hero, ringTimer = null, ringScrolled = false;
+
+  function drawRing(name, scrolled) {
+    const s = RING[name] || RING.hero;
+    if (name === ringName && ringTimer) return;    // already on its way there
+    const play = scrolled && ringScrolled && !STILL;
+    if (scrolled) ringScrolled = true;
+    const prev = RING[ringName];
+    ringName = name;
+    if (s.p === 0) ringOuter = s;
+    else if (prev && prev.p === 0) ringOuter = prev;
+    if (ringTimer) { ringTimer.stop(); ringTimer = null; }
+    if (!play || s.p === ringP) {
+      ringP = s.p;
+      ringFrame(ringP, ringOuter);
+      ringLabels(s);
+      return;
+    }
+    ringLabels(s.p > 0 ? RING.gone : RING_MOVING);
+    const from = ringP, dur = Math.abs(s.p - from) * 2 * BEAT;
+    ringTimer = d3.timer(function (t) {
+      ringP = t >= dur ? s.p : from + (s.p - from) * t / dur;
+      ringFrame(ringP, ringOuter);
+      if (t >= dur) { ringTimer.stop(); ringTimer = null; ringLabels(s); }
+    });
   }
 
   /* ---------- Waterfall: what each lever did to the rate, EU, two-year steps ----------
@@ -892,7 +1011,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function show(card) {
     const burst = card.closest(".burst");
     const draw = burst && CHARTS[burst.dataset.chart];
-    if (draw) draw(card.dataset.state);
+    if (draw) draw(card.dataset.state, true);
     document.querySelectorAll(".card.is-active").forEach(function (c) { c.classList.remove("is-active"); });
     card.classList.add("is-active");
   }
