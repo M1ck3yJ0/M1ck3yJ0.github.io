@@ -381,7 +381,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const R0 = 118;                                  // the target circle, in viewBox units
   const RING_GAP = 10.7;                           // from the disc's edge to the arc
   const RC0 = R0 - 4.5 - RING_GAP;                 // the 2022 disc
-  const CX = 200, CY = 176, RING_DOT = 6;
+  const CX = 200, CY = 176, RING_DOT = 7.5;
   const TAU = 2 * Math.PI;
 
   const RING = {
@@ -453,7 +453,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     },
     rate: function (g) {
       g.append("rect").attr("class", "rope").attr("y", -8).attr("width", 13).attr("height", 7).attr("rx", 3.5);
-      g.append("circle").attr("class", "dot rate").attr("cx", 13).attr("cy", -4.5).attr("r", 4.5);
+      g.append("circle").attr("class", "dot rate").attr("cx", 13).attr("cy", -4.5).attr("r", 5.5);
       return 17.5;
     },
     box: function (cls) {
