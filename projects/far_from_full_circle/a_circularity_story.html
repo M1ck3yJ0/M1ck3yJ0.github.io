@@ -131,8 +131,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .band { fill: none; stroke: var(--back-could); stroke-width: 9; }
 .ring .rope { fill: none; stroke: var(--back); stroke-width: 9; stroke-linecap: round; }
-.ring .disc { fill: var(--used); }
-.ring .waste { fill: var(--back-could); }
+.ring .waste path { fill: var(--back-could); }
 .lab { fill: var(--ink-2); font-size: 13.5px; }
 .lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
 .lab-strong { fill: var(--ink); font-size: 15px; font-weight: 700; }
@@ -168,10 +167,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ex-row { font-size: 14px; }
 .ex-state { fill: var(--ink); font-weight: 700; }
 .ex-rest { fill: var(--ink-2); }
-.rib .minerals { fill: var(--mat-minerals); }
-.rib .metals { fill: var(--mat-metals); }
-.rib .fossil { fill: var(--mat-fossil); }
-.rib .biomass { fill: var(--mat-biomass); }
+.rib .minerals, .ring .minerals { fill: var(--mat-minerals); }
+.rib .metals, .ring .metals { fill: var(--mat-metals); }
+.rib .fossil, .ring .fossil { fill: var(--mat-fossil); }
+.rib .biomass, .ring .biomass { fill: var(--mat-biomass); }
 .rib .dim { opacity: .2; }
 </style>
 </head>
@@ -183,15 +182,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="ring">
     <div class="pin">
       <figure class="chart" id="ring">
-        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a gold arc for what the EU recycles, a thin blue circle for 24% of all the material it uses, and a blue disc in the middle for the material it consumes.">
-          <defs><clipPath id="ring-disc-clip"><circle cx="0" cy="0" r="0"></circle></clipPath></defs>
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a gold arc for what the EU recycles, a thin blue circle for 24% of all the material it uses, and a disc in the middle for the material it consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52%, biomass 23%, fossil fuels 19% and metal ores 5%.">
+          <defs><clipPath id="ring-waste-clip"><rect x="-1.1" width="2.2" y="1.1" height="2.2"></rect></clipPath></defs>
           <g class="ring" transform="translate(200,200)">
             <circle class="outline" r="0" transform="rotate(-90)"></circle>
             <circle class="target" r="0" transform="rotate(-90)"></circle>
             <circle class="band" r="0" transform="rotate(-90)"></circle>
             <circle class="rope" r="0" transform="rotate(-90)"></circle>
-            <circle class="disc" r="0"></circle>
-            <rect class="waste" clip-path="url(#ring-disc-clip)"></rect>
+            <g class="disc" transform="scale(0)">
+              <g class="mats"></g>
+              <g class="waste" clip-path="url(#ring-waste-clip)"></g>
+            </g>
           </g>
           <g class="labels"></g>
         </svg>
@@ -382,16 +383,50 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     less:   { dmc: DMC_CLOSED, all: false, disc: true,  waste: false, outline: true,  labels: ["met", "less", "disc", "held"] }
   };
 
-  // Height of the circular segment holding a given share of a disc's area
-  function segmentHeight(r, share) {
-    let lo = 0, hi = 2 * r;
+  /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
+     covering exactly its share of material use by weight (_tools/make_shards.py). They sit
+     on a disc of radius 1, y down, so the disc scales as one piece. */
+  const SH = DATA.center_shards;
+  const SHARDS = SH.shards.map(function (s) {
+    const pts = [];
+    for (let k = 0; k < s.p.length; k += 2) pts.push([s.p[k], s.p[k + 1]]);
+    return { m: SH.materials[s.m], pts: pts };
+  });
+
+  // Area of the shards' parts at or below a level
+  function areaBelow(level) {
+    let a = 0;
+    SHARDS.forEach(function (s) {
+      const out = [], n = s.pts.length;
+      for (let k = 0; k < n; k++) {
+        const p = s.pts[k], q = s.pts[(k + 1) % n];
+        if (p[1] >= level) out.push(p);
+        if ((p[1] >= level) !== (q[1] >= level)) {
+          const t = (level - p[1]) / (q[1] - p[1]);
+          out.push([p[0] + t * (q[0] - p[0]), level]);
+        }
+      }
+      if (out.length > 2) a += Math.abs(d3.polygonArea(out));
+    });
+    return a;
+  }
+  // The gold fill's level: the shards' parts below it hold the waste's share of their area
+  const SHARD_AREA = areaBelow(-2);
+  const WASTE_Y = (function () {
+    let lo = -1, hi = 1;
     for (let i = 0; i < 50; i++) {
-      const h = (lo + hi) / 2, d = r - h;
-      const area = r * r * Math.acos(d / r) - d * Math.sqrt(Math.max(0, 2 * r * h - h * h));
-      if (area / (Math.PI * r * r) < share) lo = h; else hi = h;
+      const y = (lo + hi) / 2;
+      if (areaBelow(y) / SHARD_AREA > WASTE) lo = y; else hi = y;
     }
     return (lo + hi) / 2;
-  }
+  })();
+
+  const shardPath = function (s) { return "M" + s.pts.join("L") + "Z"; };
+  const ringDisc = d3.select("#ring svg g.disc");
+  ringDisc.select(".mats").selectAll("path").data(SHARDS).join("path")
+    .attr("class", function (s) { return s.m; }).attr("d", shardPath);
+  ringDisc.select(".waste").selectAll("path").data(SHARDS).join("path").attr("d", shardPath);
+  d3.select("#ring-waste-clip rect").attr("y", WASTE_Y);
 
   function label(parent, x, y, lines, anchor) {
     const t = parent.append("text").attr("x", x).attr("y", y).attr("text-anchor", anchor || "start");
@@ -410,7 +445,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const rope = U * PX;
     const band = (uAll - U) * PX;
     const rc = s.disc ? RC0 * Math.sqrt(s.dmc / DMC) : 0;
-    const h = segmentHeight(rc || 1, WASTE) * (rc ? 1 : 0);
     const g = svg.select("g.ring");
 
     g.select(".outline").attr("r", R0).attr("opacity", s.outline ? 1 : 0);
@@ -419,10 +453,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       .attr("stroke-dasharray", "0 " + rope + " " + band + " " + circ);
     g.select(".rope").attr("r", R)
       .attr("stroke-dasharray", rope >= circ - 0.5 ? null : rope + " " + circ);
-    g.select(".disc").attr("r", rc);
-    svg.select("#ring-disc-clip circle").attr("r", rc);
-    g.select(".waste").attr("x", -rc).attr("y", rc - h).attr("width", 2 * rc)
-      .attr("height", s.waste ? h : 0);
+    g.select(".disc").attr("transform", "scale(" + rc + ")");
+    g.select(".disc .waste").attr("display", s.waste ? null : "none");
 
     const L = svg.select("g.labels");
     L.selectAll("*").remove();
@@ -430,12 +462,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
     if (has("rope")) label(L, CX + R + 12, CY - 6, [[EU.rate + "%", "lab-num"], ["in 2022", "lab"]]);
     if (has("target")) label(L, CX - R - 12, CY - 22, [[TARGET * 100 + "%", "lab-num"], ["target", "lab"], ["for 2030", "lab"]], "end");
-    if (has("disc")) {
-      const y0 = s.waste ? CY + rc - h - 30 : CY - 2;
-      label(L, CX, y0, [[fmt1(s.dmc / 1e6) + " billion", "lab-strong lab-white"],
-                        [s.dmc === DMC ? "tonnes consumed" : "tonnes", "lab lab-white"]], "middle");
+    if (has("disc")) {                    // labels stay off the shards
+      const lines = [[fmt1(s.dmc / 1e6) + " billion", "lab-strong"], [s.dmc === DMC ? "tonnes consumed" : "tonnes", "lab"]];
+      if (s.dmc === DMC) label(L, CX, CY - rc - 24, lines, "middle");
+      else label(L, CX - R - 14, CY - 4, lines, "end");
     }
-    if (has("waste")) label(L, CX, CY + rc - h + 18, [[Math.round(WASTE * 100) + "% comes back", "lab-strong"], ["as waste", "lab"]], "middle");
+    if (has("waste")) label(L, CX, CY + rc + 19, [[Math.round(WASTE * 100) + "% comes back", "lab-strong"], ["as waste", "lab"]], "middle");
     if (has("every")) {
       const capFrac = 4.5 / circ;                                   // the rope's round cap reaches into the gap
       const gapAngle = Math.PI * (U_ALL * PX / circ + 1 - capFrac); // middle of the visible gap at the top
