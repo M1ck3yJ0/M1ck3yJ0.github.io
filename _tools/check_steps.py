@@ -4,6 +4,7 @@ Usage:
     python3 -I _tools/check_steps.py <page.html> <outdir> [d3.min.js] [scrollama.min.js]
 
 Serves the repo on a local server, so the page's own fonts and images load.
+The browser asks for reduced motion, so each step shows its end state.
 Scrolls each step (any element with a data-state attribute) until its top sits
 at 60% of the screen, then screenshots the screen. Prints, for each width, the
 steps not marked active (class is-active) when shown, and any errors. Saves
@@ -68,7 +69,7 @@ def sheet(tiles, cols, width, path):
 
 
 async def check(browser, base, name, width, height, cols, tile):
-    ctx = await browser.new_context(viewport={'width': width, 'height': height})
+    ctx = await browser.new_context(viewport={'width': width, 'height': height}, reduced_motion='reduce')
 
     async def route(r):
         url = r.request.url
