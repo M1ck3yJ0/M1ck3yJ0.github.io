@@ -387,13 +387,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CX = 200, CY = 176, RING_DOT = 7.5;
   const TAU = 2 * Math.PI;
 
-  // p: where panel 5's two beats stand, 0 before them, 0.5 after the first, 1 after the second
+  // p: where panel 5's two beats stand: 0 before them, PG after the first (set below), 1 after the second
   const RING = {
     hero:   { p: 0,   dmc: DMC,        disc: true,  waste: false, key: [] },
     levers: { p: 0,   dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
     back:   { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
     every:  { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
-    gone:   { p: 0.5, dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "less" },
+    gone:   { p: NaN, dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "less" },
     less:   { p: 1,   dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats"],                  call: "less" }
   };
   const RING_MOVING = { p: 0, dmc: DMC, disc: true, waste: false, key: ["mats"] };   // labels while the beats play
@@ -443,13 +443,27 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   SHARDS.forEach(function (s) {
     s.d0 = "M" + s.pts.join("L") + "Z";
-    s.delay = (s.k * 0.6180339887) % 1;            // when it leaves in the first beat, spread evenly
     if (LEFT.has(s.k)) {
       s.d1 = "M" + LEFT.get(s.k).join("L") + "Z";
       const a = resample(s.pts, 40);
       s.morph = [a, matched(a, resample(LEFT.get(s.k), 40))];
     }
   });
+
+  /* Panel 5's timing, in ms: the full disc's stripes and gold fade; the shards taken out fly off
+     one after another, in a scattered order, each leaving T_GAP after the one before and taking
+     T_FLY to go; then the shards left close up. p runs in step with time, so P0 and PG mark the
+     end of the fade and of the first beat. */
+  const T_FADE = 260, T_GAP = 28, T_FLY = 300, T_SETTLE = 1100;
+  const OUT = SHARDS.filter(function (s) { return !s.morph; }).sort(function (a, b) {
+    return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
+  });
+  const T_OUT = (OUT.length - 1) * T_GAP + T_FLY;  // the flight
+  const T_ALL = T_FADE + T_OUT + T_SETTLE;
+  const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL;
+  const FLIGHT = T_FLY / T_OUT;                    // one shard's flight, as a share of the whole
+  OUT.forEach(function (s, i) { s.leaves = i * T_GAP / T_OUT; });
+  RING.gone.p = PG;
 
   // Area of the shards' parts at or below a level
   function areaBelow(level) {
@@ -530,12 +544,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   /* The ring, drawn from p (RING). Before panel 5, the full disc's state o adds its stripes, gold
      and dot. Panel 5 plays in two beats, drawn from p alone, so either beat plays either way and
      can turn mid-way. From 0 to P0, o's stripes and gold fade and the dot goes back to the rate;
-     to 0.5, the shards taken out fly off to the right and fade, leaving their places blank; to 1,
+     to PG, the shards taken out fly off to the right one after another, fading, and leave their
+     places blank; to 1,
      the shards left close up as the disc shrinks, the ring tightens around it and the arc
      closes, with recycling held at its 2022 level. */
-  const P0 = 0.12;
-  const FLY = 2.3, LATE = 0.5;                     // the flight, in disc radii; the last shard's start, as a share of it
-  const BEAT = 1100;                               // each beat, in ms
+  const FLY = 2.3;                                 // the flight, in disc radii
   const sector = function (R, a, b) {              // a stretch of the band, with rounded ends
     return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
   };
@@ -547,7 +560,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   function ringFrame(p, o) {
     const g = d3.select("#ring svg g.ring");
-    const w = p > 0.5 ? d3.easeCubicInOut((p - 0.5) / 0.5) : 0;     // the second beat
+    const w = p > PG ? d3.easeCubicInOut((p - PG) / (1 - PG)) : 0;  // the second beat
     const dmc = DMC + (DMC_CLOSED - DMC) * w;
     const size = RC0 * Math.sqrt(dmc / DMC);       // the disc's radius
     const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
@@ -580,7 +593,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     g.select(".disc").attr("transform", "scale(" + size + ")");
     g.select(".disc .waste").attr("display", o.waste && z < 1 ? null : "none").attr("opacity", 1 - z);
 
-    const u = p > P0 ? Math.min(1, (p - P0) / (0.5 - P0)) : 0;     // the first beat's flight
+    const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
     ringShards.each(function (s) {
       const el = d3.select(this);
       if (s.morph) {                               // a shard left: blended toward its place in the smaller disc
@@ -589,10 +602,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
         }).join("L") + "Z");
       } else {                                     // a shard taken out: off to the right, fading
-        const v = Math.max(0, Math.min(1, (u - LATE * s.delay) / (1 - LATE)));
-        el.attr("display", v >= 1 ? "none" : null)
-          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeCubicIn(v)).toFixed(4) + ",0)" : null)
-          .attr("opacity", v > 0 ? 1 - v : null);
+        const v = Math.max(0, Math.min(1, (u - s.leaves) / FLIGHT));
+        el.attr("display", v > 0.9999 ? "none" : null)
+          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+          .attr("opacity", v > 0 ? 1 - v * v : null);
       }
     });
   }
@@ -666,7 +679,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       return;
     }
     ringLabels(s.p > 0 ? RING.gone : RING_MOVING);
-    const from = ringP, dur = Math.abs(s.p - from) * 2 * BEAT;
+    const from = ringP, dur = Math.abs(s.p - from) * T_ALL / (s.p < from ? 2 : 1);   // back at double speed
     ringTimer = d3.timer(function (t) {
       ringP = t >= dur ? s.p : from + (s.p - from) * t / dur;
       ringFrame(ringP, ringOuter);
