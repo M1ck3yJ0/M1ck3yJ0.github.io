@@ -385,7 +385,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const TAU = 2 * Math.PI;
 
   const RING = {
-    hero:   { dmc: DMC,        disc: false, waste: false, key: [] },
+    hero:   { dmc: DMC,        disc: true,  waste: false, key: [] },
     levers: { dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
     back:   { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
     every:  { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
