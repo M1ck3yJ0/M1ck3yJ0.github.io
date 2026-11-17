@@ -129,14 +129,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .chart text { font-family: inherit; font-stretch: 94%; }
 .ring .target, .ring-key .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .rope, .ring .dot.rate, .ring-key .rope, .ring-key .dot { fill: var(--rate); }
-.ring .dot.used { fill: var(--used); }
 .ring .stripes.rate .tint { fill: color-mix(in srgb, var(--rate) 22%, #fff); }
 .ring .stripes.rate line { stroke: var(--rate); stroke-width: 2.2; }
-.ring .stripes.used .tint { fill: color-mix(in srgb, var(--used) 22%, #fff); }
-.ring .stripes.used line { stroke: var(--used); stroke-width: 2.2; }
 .ring .waste path, .ring-key .waste { fill: var(--back-could); }
 .ring-key .hatch-rate { fill: url(#ring-hatch-rate); }
-.ring-key .hatch-used { fill: url(#ring-hatch-used); }
 .key { fill: var(--ink-2); font-size: 13px; }
 .lab { fill: var(--ink-2); font-size: 13.5px; }
 .lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
@@ -154,8 +150,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .wf .net-head { fill: var(--ink-2); }
 .wf .faint { opacity: .3; }
 .wf .dim { opacity: .2; }
-#wf-hatch-used rect, #cmp-hatch-used rect, #ring-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
-#wf-hatch-used line, #cmp-hatch-used line, #ring-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
+#wf-hatch-used rect, #cmp-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
+#wf-hatch-used line, #cmp-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
 #cmp-hatch-impact rect { fill: color-mix(in srgb, var(--impact) 22%, #fff); }
 #cmp-hatch-impact line { stroke: var(--impact); stroke-width: 2.2; }
 #wf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
@@ -195,13 +191,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <clipPath id="ring-waste-clip"><rect x="-1.1" width="2.2" y="1.1" height="2.2"></rect></clipPath>
             <clipPath id="ring-stripe-clip"><path></path></clipPath>
             <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
-            <pattern id="ring-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
           </defs>
           <g class="ring" transform="translate(200,176)">
             <circle class="target" r="0"></circle>
             <path class="rope"></path>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
-            <circle class="dot"></circle>
+            <circle class="dot rate"></circle>
             <g class="disc" transform="scale(0)">
               <g class="mats"></g>
               <g class="waste" clip-path="url(#ring-waste-clip)"></g>
@@ -373,8 +368,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   /* ---------- Ring: the target as a ring, EU 2022 ----------
      The circle is the 24% target and holds still. The arc is the rate as a share of the
      target, so it closes the ring at 24%. The disc's area is material consumed. Recycling
-     every tonne adds to the arc in striped gold; using less, with recycling held at its 2022
-     level, shrinks the disc and adds the points it gains in striped blue. */
+     every tonne adds to the arc in striped gold. */
   const U = EU.circular_use_kt;
   const DMC = EU.consumption_kt;
   const U_ALL = U + EU.not_recycled_kt;            // every tonne of treated waste recycled
@@ -393,8 +387,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     hero:   { dmc: DMC,        disc: false, waste: false, key: [] },
     levers: { dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
     back:   { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
-    every:  { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", add: "rate", to: CEILING },
-    less:   { dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats", "used"],          call: "less",  add: "used", to: TARGET }
+    every:  { dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
+    less:   { dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats"],                  call: "less" }
   };
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
@@ -493,12 +487,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
     g.select(".target").attr("r", R);
     // Turns round the ring: the 2022 rate, and the rate the step adds up to
-    const f = RATE / TARGET, fe = s.add ? s.to / TARGET : f;
+    const f = RATE / TARGET, fe = s.to ? s.to / TARGET : f;
     const sector = function (a, b) {
       return d3.arc()({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
     };
     g.select(".rope").attr("d", sector(0, f));
-    const st = g.select(".stripes").attr("class", "stripes " + (s.add || "")).attr("display", fe > f ? null : "none");
+    const st = g.select(".stripes").attr("display", fe > f ? null : "none");
     st.selectAll("line").remove();
     if (fe > f) {                         // the added part, striped: lines at 45 degrees to the arc, 4 units apart
       d3.select("#ring-stripe-clip path").attr("d", sector(f, fe));
@@ -510,7 +504,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           .attr("x2", (R + h) * Math.sin(a + h / R)).attr("y2", -(R + h) * Math.cos(a + h / R));
       }
     }
-    g.select(".dot").attr("class", "dot " + (s.add || "rate")).attr("r", RING_DOT)
+    g.select(".dot").attr("r", RING_DOT)
       .attr("cx", R * Math.sin(fe * TAU)).attr("cy", -R * Math.cos(fe * TAU));
     g.select(".disc").attr("transform", "scale(" + rc + ")");
     g.select(".disc .waste").attr("display", s.waste ? null : "none");
@@ -551,7 +545,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const extra = [];
     if (has("waste")) extra.push([KEY.box("waste"), "Comes back as waste"]);
     if (has("rate")) extra.push([KEY.band("hatch-rate"), "Added by recycling all of it"]);
-    if (has("used")) extra.push([KEY.band("hatch-used"), "Added by using less, with recycling as in 2022"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
     label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022" : "Source: Eurostat, 2022", "lab-src"]]);
