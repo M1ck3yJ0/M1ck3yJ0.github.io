@@ -744,7 +744,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
 
   /* ---------- Waterfall: what each lever did to the rate, EU, two-year steps ----------
-     Points gained since 2004, step by step. Blue: the effect of the change in material
+     The rate itself, step by step from 2004's, on an axis fitted to its range rather than
+     starting at 0% (from 0%, the bars were slivers). Blue: the effect of the change in material
      use (up when the EU used less). Gold: the effect of the change in recycling, floating
      from the blue bar's tip. Each bar ends in a point at its value, so its shape shows
      which way it moved the rate. Arrow: the net change, on a highlighted step only.
@@ -762,12 +763,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const WX0 = 52, WX1 = 380, BW = 11, WHEAD = BW / 2;   // WHEAD: the height of a bar's point
   const SW = (WX1 - WX0) / NS;
   const WPAD = (SW - 2 * BW - 1.5) / 2;           // centers each step's two bars in its slot
-  const wy = d3.scaleLinear().domain([-0.4, 4.4]).range([336, 64]);
+  const wy = d3.scaleLinear().domain([LEVEL[0] - 0.4, LEVEL[0] + 4.4]).range([336, 64]);   // the rate, %
   const WYEAR = 356, WYEAR_TOP = 346;              // the year labels' baseline, and their digits' top
-  let gained = 0;
+  let level = LEVEL[0];
   const WSTEP = d3.range(NS).map(function (i) {
-    const x0 = WX0 + i * SW, s = gained, c = ST.consumption[i], r = ST.recycling[i];
-    gained = s + ST.change[i];
+    const x0 = WX0 + i * SW, s = level, c = ST.consumption[i], r = ST.recycling[i];
+    level = s + ST.change[i];
     return { i: i, bx: x0 + WPAD, gx: x0 + WPAD + BW + 1.5, ax: x0 + SW,
              start: s, mid: s + c, end: s + c + r, c: c, r: r, net: ST.change[i],
              less: -ST.consumption_change_pct[i], est: YRS[i + 1] >= DATA.trend_estimated_from };
@@ -791,6 +792,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const y0 = yb - dir * len, yh = yb - dir * head;
     return bar.attr("d", "M" + x + "," + y0 + "H" + (x + BW) + "V" + yh +
                          "L" + (x + BW / 2) + "," + yb + "L" + x + "," + yh + "Z");
+  }
+
+  // The rate's gridlines and their labels, on the scale y; the darker line marks 0%, drawn
+  // only when the axis reaches it
+  function wticks(g, L, y) {
+    y.ticks(5).forEach(function (v) {
+      g.append("line").attr("class", v ? "grid" : "base").attr("x1", WX0 - 4).attr("x2", WX1)
+        .attr("y1", y(v)).attr("y2", y(v));
+      label(L, WX0 - 8, y(v) + 4.5, [[v + "%", "lab"]], "end");
+    });
   }
 
   function wbar(g, cls, d, x, a, b, v, k, y) {
@@ -874,12 +885,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     wfLands = [];
     const lands = function (t, d) { wfLands.push([t, (d.i + 1) * T_WSTEP]); };   // shown once d's step is drawn
 
-    // Points gained since 2004, and the step years
-    [1, 2, 3, 4].forEach(function (v) {
-      g.append("line").attr("class", "grid").attr("x1", WX0 - 4).attr("x2", WX1).attr("y1", wy(v)).attr("y2", wy(v));
-    });
-    g.append("line").attr("class", "base").attr("x1", WX0 - 4).attr("x2", WX1).attr("y1", wy(0)).attr("y2", wy(0));
-    [0, 1, 2, 3, 4].forEach(function (v) { label(L, WX0 - 8, wy(v) + 4.5, [[(v ? "+" : "") + v, "lab"]], "end"); });
+    // The rate, the title and the step years
+    wticks(g, L, wy);
     label(L, WX0 - 4, 48, [["Points gained since " + YRS[0], "lab"]]);
     YRS.forEach(function (yr, i) {
       if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
@@ -902,7 +909,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       lands(label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end"), dl);
       lands(label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle"), dm);
       lands(label(L, dr.gx + BW / 2 - 4, wy(dr.end) - 9, [["recycling", "lab"]], "middle"), dr);
-      label(L, WSTEP[1].bx - 4, wy(0) + 17, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);
+      label(L, WSTEP[1].bx - 4, wy(LEVEL[0]) + 5, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);   // level with the start
       lands(label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
     } else {
       const d = WSTEP[s.focus];
@@ -1267,8 +1274,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   /* ---------- Explorer 20b: a country's waterfall, 2010 to 2024 ----------
      Panel 7's waterfall for one EU country at a time, picked in its own dropdown, from 2010,
-     when country rates start. The axis fits the country's own range of points, but never
-     spans less than panel 7's 4.8, so small moves are drawn at the EU chart's scale. Not
+     when country rates start, on the rate's own axis from the country's 2010 rate. The axis
+     fits the country's own range, but never spans less than panel 7's 4.8, so small moves are
+     drawn at the EU chart's scale, and never goes below 0%. Not
      pinned: it builds as panel 7 does when its year labels come onto the screen from below,
      and again whenever the country changes. It waits at its start again only once it's off
      screen below. With reduced motion, it's drawn whole. */
@@ -1284,19 +1292,21 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   // The country's steps, and an axis fitted to their range
   function xSetup(code) {
-    const st = DATA.countries[code].steps;
-    let gained = 0;
+    const ct = DATA.countries[code], st = ct.steps;
+    const start = ct.trend.rate[DATA.trend_years.indexOf(XYRS[0])];   // the recorded 2010 rate
+    let level = start;
     xSteps = d3.range(XNS).map(function (i) {
-      const k = XK + i, x0 = WX0 + i * XSW, s = gained, c = st.consumption[k], r = st.recycling[k];
-      gained = s + st.change[k];
+      const k = XK + i, x0 = WX0 + i * XSW, s = level, c = st.consumption[k], r = st.recycling[k];
+      level = s + st.change[k];
       return { i: i, bx: x0 + XPAD, gx: x0 + XPAD + BW + 1.5, start: s, mid: s + c, end: s + c + r,
                c: c, r: r, est: XYRS[i + 1] >= DATA.trend_estimated_from };
     });
-    let lo = Math.min(0, d3.min(xSteps, function (d) { return Math.min(d.mid, d.end); }));
-    let hi = Math.max(0, d3.max(xSteps, function (d) { return Math.max(d.mid, d.end); }));
+    let lo = Math.min(start, d3.min(xSteps, function (d) { return Math.min(d.mid, d.end); }));
+    let hi = Math.max(start, d3.max(xSteps, function (d) { return Math.max(d.mid, d.end); }));
     const pad = Math.max(0.4, (hi - lo) * 0.08);
     lo -= pad; hi += pad;
     if (hi - lo < XSPAN) { const m = (XSPAN - hi + lo) / 2; lo -= m; hi += m; }
+    if (lo < 0) { hi -= lo; lo = 0; }               // no rate below 0%
     xy = d3.scaleLinear().domain([lo, hi]).range([336, 64]);
   }
 
@@ -1314,11 +1324,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       fmt1(rate[0]) + "% in " + XYRS[0] + " to an estimated " + fmt1(rate[rate.length - 1]) + "% in " +
       XYRS[XNS] + ".");
 
-    xy.ticks(5).forEach(function (v) {             // the change since 2010
-      g.append("line").attr("class", v ? "grid" : "base").attr("x1", WX0 - 4).attr("x2", WX1)
-        .attr("y1", xy(v)).attr("y2", xy(v));
-      label(L, WX0 - 8, xy(v) + 4.5, [[v > 0 ? "+" + v : v < 0 ? "−" + -v : "0", "lab"]], "end");
-    });
+    wticks(g, L, xy);
     label(L, WX0 - 4, 48, [["Change in circularity rate since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
