@@ -36,6 +36,7 @@
   --back: #EBB30B;        /* what comes back: the rate arc, the recycling bars */
   --back-could: #D2BF90;  /* waste that could come back: the 31%, the every-tonne band */
   --target: #A67F22;      /* the 24% target circle */
+  --back-lap: #B45309;    /* the arc's second lap, past 24%: drawn over the first, translucent */
   --impact: #8A4013;      /* climate impact, beside tonnes */
   /* ZIN's towers, two looks of its glass: brown at dusk, clear in daylight (roles set in drawZin) */
   --dusk-frame: #241D18;
@@ -207,6 +208,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   min-height: 44px; padding: 8px 40px 8px 12px; cursor: pointer;
 }
 .pick select:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
+.explore-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.skip { margin: 12px 12px 0 0; font-size: 15px; color: var(--ink-2); }
+.skip:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
+.explorer { scroll-margin-top: 48px; }     /* lands clear of the home icon */
+.explore-text { padding: 4px 16px 16px; }
+.explore-text p { margin: 0; }
+.explore-text p + p { margin-top: .6em; }
+.ring .lap .band, .ring-key .lap { fill: var(--back-lap); fill-opacity: .6; }
+.ring .lap line { stroke: var(--back-lap); stroke-width: 2.2; stroke-opacity: .85; }
+.ring .dot.lap { fill: var(--back-lap); }
 .pick::after {                                     /* the chevron */
   content: ""; position: absolute; right: 16px; top: 50%;
   width: 7px; height: 7px; margin-top: -6px;
@@ -378,6 +389,33 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </div>
   </section>
 
+  <section class="explorer" id="explore-ring">
+    <div class="explore">
+      <div class="explore-top">
+        <div class="pick"><select aria-label="Country"></select></div>
+        <a class="skip" href="#explore-waterfall">Skip ahead &#8595;</a>
+      </div>
+      <figure class="chart" id="explore-ring-chart">
+        <svg viewBox="0 0 400 400" role="img">
+          <defs>
+            <clipPath id="xr-clip1"><path></path></clipPath>
+            <clipPath id="xr-clip2"><path></path></clipPath>
+          </defs>
+          <g class="ring" transform="translate(200,176)">
+            <circle class="target" r="0"></circle>
+            <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
+            <path class="rope"></path>
+            <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
+            <circle class="dot rate"></circle>
+            <g class="disc"><g class="mats"></g></g>
+          </g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
+      <div class="explore-text" aria-live="polite"></div>
+    </div>
+  </section>
+
   <section class="explorer" id="explore-waterfall">
     <div class="explore">
       <div class="pick"><select aria-label="Country"></select></div>
@@ -412,6 +450,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/scrollama@3.2.0/build/scrollama.min.js"></script>
 <script src="far_from_full_circle_data.js"></script>
+<script src="far_from_full_circle_shards.js"></script>
 <script>
 (function () {
   "use strict";
@@ -1270,6 +1309,327 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
                       ["Shares, food tonnes and per tonne: our calculation", "lab-src"]]);
   }
 
+  /* ---------- Explorer 20a: a country's ring, closed by both levers ----------
+     Panels 1 to 5's ring for one EU country at a time, picked in its own dropdown. Every disc
+     starts at the same size, its area 100% of that country's material use, in shards of its own
+     mix of the four materials by weight (Eurostat). One beat: recycling rises to 70% of treated
+     waste, the EEA's 2030 scenario, or holds at a higher share, lengthening the arc in stripes
+     as in panel 4; then the material that still has to go to close the ring at 24% is taken out
+     of every material alike, as whole shards that fly off to the right as in panel 5, and the
+     disc shrinks until the arc's ends meet. Past 24%, the arc runs on as a second lap over the
+     first, thicker and translucent. The discs are solved in the page (far_from_full_circle_shards.js),
+     in a Web Worker where one starts, and the smaller disc is drawn at the solver's radius, which
+     keeps the shards' area in proportion to the material left. Not pinned: the beat plays when
+     the ring comes onto the screen from below, and again whenever the country changes; it waits
+     at its start again only once it's off screen below. With reduced motion, the end is drawn. */
+  const XNAME = { NL: "the Netherlands" };         // names as they read inside a sentence, for both explorers
+  const XR_FIG = document.querySelector("#explore-ring");
+  const XR_RECYCLED = 70;                          // % of treated waste recycled, the EEA's 2030 scenario
+  const XR_HW2 = 7;                                // the second lap's half-width; the first lap's is 4.5
+  const T_XREC = 900, T_XPAUSE = 200, T_XOUT = 1400;   // recycling's rise; a pause; the flight, at most
+  const XR_EU_WASTE = Math.round(EU.waste_treated_per_consumption);
+  const XR_LINES = {                               // hand-written lines: the default, and data warnings
+    DE: "Germany has already set the two side by side: its 2024 circular economy strategy aims to double its rate by 2030 and to use significantly less primary raw material by 2045.",
+    RO: "Read Romania's ring with care. Eurostat estimated its material use for 2009 to 2019, and the minerals it reported then rose 42% from 2018 to 2020, so its material use is less certain than most.",
+    SE: "Read Sweden's ring with care. The waste it recycled doubled from 2020 to 2022, from 17.2 to 33.9 million tonnes, in mineral wastes whose kinds aren't published for 2022. By Eurostat's estimate, its rate fell back to 10.4% in 2024.",
+    EE: "Read Estonia's ring with care. Its rate swings widely from one report to the next on changes in recycling alone, from 19.2% in 2012 to 11.3% in 2014, so 2022 may not be a typical year.",
+    FI: "Read Finland's ring with care. Its rate swings widely from one report to the next on changes in recycling alone, from 11.9% in 2012 to 5.6% in 2014, so 2022 may not be a typical year.",
+    BG: "Read Bulgaria's ring with care. Its rate swings widely from one report to the next on changes in recycling alone, from 2.4% in 2018 to 5.8% in 2020 and back to 3.0% in 2022, so 2022 may not be a typical year."
+  };
+  let xrP = 0, xrTimer = null, xrPending = false, XR = null;
+  const clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
+
+  KEY.lap = function (g) {
+    g.append("rect").attr("class", "lap").attr("y", -10).attr("width", 18).attr("height", 11).attr("rx", 5.5);
+    return 18;
+  };
+  const band = function (R, a, b, hw) {            // a stretch of a band of half-width hw, with rounded ends
+    return d3.arc().cornerRadius(hw)({ innerRadius: R - hw, outerRadius: R + hw, startAngle: a * TAU, endAngle: b * TAU });
+  };
+
+  // The country's numbers: the rate's tonnes now and at 70% recycled, and the material use that closes the ring
+  function xrState(code) {
+    const c = DATA.countries[code], r70 = c.rate_70pct_recycled / 100;
+    const q = { code: code, c: c, name: XNAME[code] || c.name, dmc: c.consumption_kt, u: c.circular_use_kt,
+                cut: Math.max(0, c.less_for_target_70pct_recycled.eu), held: c.share_recycled >= XR_RECYCLED };
+    q.u70 = q.dmc * r70 / (1 - r70);
+    q.closed = q.cut > 0 ? q.u70 / TARGET - q.u70 : q.dmc;
+    q.disc = null;
+    xrTimeline(q, Math.round(q.cut / 100 * 116));  // until the disc is solved, its shard count estimated
+    return q;
+  }
+
+  // The beat's timing, in ms, and where each part ends as a share of it
+  function xrTimeline(q, n) {
+    const tRec = q.held ? 0 : T_XREC;
+    q.gapT = n > 1 ? Math.min(T_GAP, (T_XOUT - T_FLY) / (n - 1)) : 0;
+    q.tOut = n ? (n - 1) * q.gapT + T_FLY : 0;
+    q.T = tRec + (q.cut > 0 ? T_XPAUSE + q.tOut + T_SETTLE : 0);
+    q.pA = q.T ? tRec / q.T : 0;
+    q.pB0 = q.T ? (tRec + (q.cut > 0 ? T_XPAUSE : 0)) / q.T : 0;
+    q.pB1 = q.T ? q.pB0 + q.tOut / q.T : 0;
+    q.flight = q.tOut ? T_FLY / q.tOut : 1;
+  }
+
+  /* Solving the discs: in a Web Worker that loads the solver, or on the page if none starts (as
+     from a file). Each country is solved once and kept. */
+  const xrSolved = new Map(), xrOwed = new Map();
+  let xrWorker;
+  const xrPack = function (d) {
+    const shards = [];
+    d.shards.forEach(function (V, k) { shards.push([k, d.mats[k], V]); });
+    return { shards: shards, radius: d.radius, gone: d.gone || [] };
+  };
+  function xrHere(job) {
+    try {
+      const S = window.FAR_FROM_FULL_CIRCLE_SHARDS, full = S.build(job.mix);
+      return { full: xrPack(full), less: job.less > 0 ? xrPack(S.useLess(full, job.less)) : null };
+    } catch (e) { return null; }
+  }
+  function xrStartWorker() {
+    if (xrWorker !== undefined) return xrWorker;
+    xrWorker = null;
+    if (!window.Worker || !window.Blob || !window.URL) return null;
+    try {
+      const src = "importScripts(" + JSON.stringify(new URL("far_from_full_circle_shards.js", document.baseURI).href) + ");" +
+        "var pack = " + xrPack.toString() + ";" +
+        "onmessage = function (e) { var j = e.data, S = FAR_FROM_FULL_CIRCLE_SHARDS, out = null;" +
+        " try { var full = S.build(j.mix); out = { full: pack(full), less: j.less > 0 ? pack(S.useLess(full, j.less)) : null }; } catch (err) {}" +
+        " postMessage({ code: j.code, out: out }); };";
+      xrWorker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+      xrWorker.onmessage = function (e) {
+        const done = xrOwed.get(e.data.code);
+        xrOwed.delete(e.data.code);
+        if (done) done(e.data.out);
+      };
+      xrWorker.onerror = function (e) {            // the worker can't load the solver: solve on the page
+        if (e.preventDefault) e.preventDefault();
+        xrWorker.terminate();
+        xrWorker = null;
+        xrOwed.forEach(function (done, code) { setTimeout(function () { done(xrHere(xrJob(code))); }, 0); });
+        xrOwed.clear();
+      };
+    } catch (e) { xrWorker = null; }
+    return xrWorker;
+  }
+  function xrJob(code) {
+    const c = DATA.countries[code];
+    return { code: code, mix: SH.materials.map(function (m) { return c.mix[m]; }),
+             less: Math.max(0, c.less_for_target_70pct_recycled.eu) / 100 };
+  }
+  function xrSolve(code) {
+    if (!xrSolved.has(code)) xrSolved.set(code, new Promise(function (done) {
+      const w = xrStartWorker();
+      if (w) { xrOwed.set(code, done); w.postMessage(xrJob(code)); }
+      else setTimeout(function () { done(xrHere(xrJob(code))); }, 30);
+    }));
+    return xrSolved.get(code);
+  }
+  function xrEnsure() {                            // the picked country's discs, drawn when solved
+    const code = XR.code;
+    xrSolve(code).then(function (r) { if (XR.code === code && !XR.disc) xrDisc(r); });
+  }
+
+  // The solved discs: each shard left blends toward its place in the smaller disc; the rest fly off
+  function xrDisc(r) {
+    const q = XR, g = d3.select(XR_FIG).select("g.ring");
+    if (!r) { if (xrPending) { xrPending = false; xrRun(); } return; }   // unsolved: the ring plays without its disc
+    const left = r.less ? new Map(r.less.shards.map(function (s) { return [s[0], s[2]]; })) : null;
+    const gone = new Set(r.less ? r.less.gone : []);
+    const shards = r.full.shards.map(function (s) {
+      const o = { k: s[0], m: SH.materials[s[1]], pts: s[2] };
+      o.d0 = "M" + o.pts.join("L") + "Z";
+      if (left && left.has(o.k)) {
+        o.d1 = "M" + left.get(o.k).join("L") + "Z";
+        const a = resample(o.pts, 40);
+        o.morph = [a, matched(a, resample(left.get(o.k), 40))];
+      } else if (gone.has(o.k)) o.gone = true;
+      return o;
+    });
+    const out = shards.filter(function (s) { return s.gone; }).sort(function (a, b) {
+      return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
+    });
+    xrTimeline(q, out.length);
+    out.forEach(function (s, i) { s.leaves = q.tOut ? i * q.gapT / q.tOut : 0; });
+    q.disc = { shards: shards, r2: r.less ? r.less.radius * r.less.radius : 1 };
+    g.select(".mats").selectAll("path").remove();
+    g.select(".mats").selectAll("path").data(shards).join("path")
+      .attr("class", function (s) { return s.m; }).attr("d", function (s) { return s.d0; });
+    if (!STILL && xrP === 0 && !xrTimer) g.select(".disc").attr("opacity", 0).transition().duration(240).attr("opacity", 1);
+    if (xrPending) { xrPending = false; xrRun(); } else xrFrame(xrP);
+  }
+
+  // Stripes along the ring from a to b, at 45 degrees to it, 4 units apart, as panel 4's
+  function xrStripes(st, clip, R, a, b, hw, tuck) {
+    st.selectAll("line").remove();
+    if (!(b > a + 1e-6)) return st.attr("display", "none");
+    st.attr("display", null);
+    const a0 = tuck ? a - 9 / (TAU * R) : a;        // from under the solid arc's rounded end
+    const d = band(R, a0, b, hw);
+    d3.select(clip + " path").attr("d", d);
+    st.select(".tint").attr("d", d);
+    const h = hw + 2, step = 4 * Math.SQRT2 / R;
+    for (let x = a0 * TAU - h / R; x < b * TAU + h / R; x += step) {
+      st.append("line")
+        .attr("x1", (R - h) * Math.sin(x - h / R)).attr("y1", -(R - h) * Math.cos(x - h / R))
+        .attr("x2", (R + h) * Math.sin(x + h / R)).attr("y2", -(R + h) * Math.cos(x + h / R));
+    }
+  }
+
+  // The ring, drawn from p alone: to pA recycling rises; from pB0 to pB1 the shards fly; then the disc shrinks
+  function xrFrame(p) {
+    const q = XR, g = d3.select(XR_FIG).select("g.ring");
+    const rho = q.pA > 0 ? d3.easeCubicInOut(clamp01(p / q.pA)) : 1;
+    const u = q.pB1 > q.pB0 ? clamp01((p - q.pB0) / (q.pB1 - q.pB0)) : +(p >= q.pB1);
+    const w = q.cut > 0 ? d3.easeCubicInOut(clamp01((p - q.pB1) / (1 - q.pB1))) : 0;
+    const dmc = q.dmc + (q.closed - q.dmc) * w;
+    const r2 = q.disc ? q.disc.r2 : 1 - q.cut / 100;
+    const size = RC0 * Math.sqrt(1 - w * (1 - r2));
+    const R = size + RING_GAP + 4.5;
+    const ur = q.u + (q.u70 - q.u) * rho;
+    const solid = q.u / (dmc + q.u) / TARGET;      // the rate with 2022's recycling, in turns
+    let total = ur / (dmc + ur) / TARGET;           // with recycling raised
+    if (q.cut > 0 && w >= 1 || Math.abs(total - 1) < 1e-4) total = 1;   // closed: a full ring
+    const s1 = solid > 0.9999 ? 1 : solid, t1 = Math.min(1, total);
+
+    g.select(".target").attr("r", R);
+    g.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
+    xrStripes(g.select(".stripes.rate"), "#xr-clip1", R, Math.min(1, s1), t1, 4.5, true);
+    const s2 = Math.max(0, solid - 1), t2 = Math.max(0, total - 1);   // the second lap
+    g.select(".lap .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
+    xrStripes(g.select(".lap .stripes"), "#xr-clip2", R, s2, t2, XR_HW2, s2 > 0);
+    const lap = total > 1, tip = lap ? total - 1 : total;
+    g.select(".dot").attr("class", lap ? "dot lap" : "dot rate").attr("r", lap ? RING_DOT + 1 : RING_DOT)
+      .attr("cx", R * Math.sin(tip * TAU)).attr("cy", -R * Math.cos(tip * TAU));
+    g.select(".disc").attr("transform", "scale(" + size + ")");
+    if (!q.disc) return;
+    g.select(".mats").selectAll("path").each(function (s) {
+      const el = d3.select(this);
+      if (s.morph) {
+        el.attr("d", w <= 0 ? s.d0 : w >= 1 ? s.d1 : "M" + s.morph[0].map(function (a, i) {
+          const b = s.morph[1][i];
+          return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
+        }).join("L") + "Z");
+      } else if (s.gone) {
+        const v = clamp01((u - s.leaves) / q.flight);
+        el.attr("display", v > 0.9999 ? "none" : null)
+          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+          .attr("opacity", v > 0 ? 1 - v * v : null);
+      }
+    });
+  }
+
+  // The highlight above the ring, the key under it and the source; stage is "start", "moving" or "end"
+  function xrLabels(stage) {
+    const q = XR, c = q.c, L = d3.select(XR_FIG).select("svg g.labels");
+    L.selectAll("*").remove();
+    label(L, CX, 24, [[q.cut > 0 ? fmt1(q.cut) + "% less material" : "No less material needed", "lab-strong"],
+      [q.held ? "with recycling held at its " + fmt1(c.share_recycled) + "% of waste" : "with recycling raised to 70% of waste", "lab"]], "middle");
+    const reached = q.cut > 0 ? TARGET * 100 + "%" : fmt1(c.rate_70pct_recycled) + "%";
+    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
+                   [KEY.rate, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in 2022"]]];
+    rows.push(SH.materials.map(function (m) { return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name]; }));
+    const extra = [];
+    if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
+    if (stage === "start" ? c.rate > TARGET * 100 : q.cut === 0 && c.rate_70pct_recycled > TARGET * 100) extra.push([KEY.lap, "Past the target"]);
+    if (extra.length) rows.push(extra);
+    rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
+    label(L, 6, 394, [["Source: Eurostat, 2022; 70% recycled, EEA scenario. Cut: our calculation", "lab-src"]]);
+  }
+
+  // The card under the chart: one template, with hand-written lines for the default and data warnings
+  function xrText() {
+    const q = XR, c = q.c, n = q.name;
+    const tpp = c.materials_total * 365 / 1000, w = Math.round(c.waste_treated_per_consumption);
+    const times = XR_RECYCLED / c.share_recycled;
+    const cmp = Math.abs(w - XR_EU_WASTE) <= 3 ? "about the same as" : w < XR_EU_WASTE ? (w < XR_EU_WASTE / 2 ? "far less than" : "less than")
+              : (w > XR_EU_WASTE * 1.5 ? "far more than" : "more than");
+    let a = "In 2022, " + fmt1(c.rate) + "% of the material " + n + " used came back into use from waste" +
+            (c.rate > TARGET * 100 ? ", already past the target." : ".");
+    if (q.held) a += " It already recycles " + fmt1(c.share_recycled) + "% of its waste, more than 70%, so recycling stays where it is.";
+    else a += " Recycling 70% of its waste, up from " + fmt1(c.share_recycled) + "%" +
+              (times >= 2.5 ? ", about " + Math.round(times) + " times as much," : ",") + " would lift that to " +
+              fmt1(c.rate_70pct_recycled) + "%" + (q.cut > 0 || c.rate > TARGET * 100 ? "." :
+              (c.rate_70pct_recycled < 25 ? ", just" : ",") + " past the target without using less.");
+    let b;
+    if (q.cut > 0) {
+      a += " To close the ring, " + n + " would still need to use " + fmt1(q.cut) + "% less material, about " +
+           fmt1(tpp * q.cut / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
+      if (q.cut > 14) a += " For scale, the EU's biggest two-year fall in material use since 2004 was 14%.";
+      b = "The size of the cut isn't a ranking of who uses the most. It depends on how much waste there is to recycle for each tonne a country uses. In " +
+          n + ", the waste it treats each year equals " + w + "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%.";
+    } else {
+      b = "It gets there because there is so much waste to recycle for each tonne it uses: the waste it treats each year equals " + w +
+          "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%.";
+    }
+    const box = d3.select(XR_FIG).select(".explore-text");
+    box.selectAll("p").remove();
+    [a, b, XR_LINES[q.code]].forEach(function (t) { if (t) box.append("p").text(t); });
+    d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the material it used in 2022, in shards of four blues for minerals, biomass, fossil fuels and metal ores. In 2022, its rate was " +
+      fmt1(c.rate) + "%. With 70% of its waste recycled" + (q.held ? "" : ", up from " + fmt1(c.share_recycled) + "%") + ", it would be " + fmt1(c.rate_70pct_recycled) +
+      "%" + (q.cut > 0 ? ". To close the ring at the 24% target, it would also need to use " + fmt1(q.cut) + "% less material, so the disc shrinks until the ring closes." :
+      ", past the 24% target, so the arc runs on into a second lap and the disc keeps its size."));
+  }
+
+  function xrSet(code) {                           // the country's ring at its start, its discs drawn once solved
+    XR = xrState(code);
+    const g = d3.select(XR_FIG).select("g.ring");
+    g.select(".disc").interrupt().attr("opacity", null);
+    g.select(".mats").selectAll("path").remove();
+    xrText();
+  }
+
+  function xrShow(p) {                             // a still: 0 waits at the start, 1 is the end
+    if (xrTimer) { xrTimer.stop(); xrTimer = null; }
+    xrPending = false;
+    xrP = p;
+    xrFrame(p);
+    xrLabels(p === 0 ? "start" : "end");
+  }
+
+  function xrRun() {
+    if (!XR.T) return xrShow(1);
+    xrLabels("moving");
+    xrTimer = d3.timer(function (t) {
+      xrFrame(xrP = Math.min(1, t / XR.T));
+      if (xrP === 1) { xrTimer.stop(); xrTimer = null; xrLabels("end"); }
+    });
+  }
+
+  function xrPlay() {                              // plays from the start, once the discs are solved
+    if (STILL) return xrShow(1);
+    xrShow(0);
+    if (XR.disc) xrRun();
+    else { xrPending = true; xrEnsure(); }
+  }
+
+  const xrPick = d3.select(XR_FIG).select("select");
+  Object.keys(DATA.countries).filter(function (k) { return k !== "EU27_2020"; })
+    .sort(function (a, b) { return DATA.countries[a].name.localeCompare(DATA.countries[b].name); })
+    .forEach(function (k) { xrPick.append("option").attr("value", k).text(DATA.countries[k].name); });
+  xrPick.property("value", "DE").on("change", function () {
+    const waiting = xrP === 0 && !xrTimer && !xrPending;   // not reached yet, it keeps waiting
+    xrSet(this.value);
+    xrEnsure();
+    if (STILL || !window.IntersectionObserver) xrShow(1); else if (waiting) xrShow(0); else xrPlay();
+  });
+  xrSet("DE");
+  xrShow(STILL || !window.IntersectionObserver ? 1 : 0);
+
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (es, ob) {   // solved before it's reached
+      if (es[es.length - 1].isIntersecting) { xrEnsure(); ob.disconnect(); }
+    }, { rootMargin: "200% 0px" }).observe(XR_FIG);
+  } else xrEnsure();
+  if (!STILL && window.IntersectionObserver) {     // the ring's foot reaching the screen's bottom
+    const at = (CY + R0 + 12) / 400;
+    new IntersectionObserver(function (es) {
+      const e = es[es.length - 1], below = e.boundingClientRect.top > 0;
+      if (!e.isIntersecting && below) xrShow(0);
+      else if (xrP === 0 && !xrTimer && !xrPending && (!below || e.intersectionRatio >= at - 0.01)) xrPlay();
+    }, { threshold: [0, at] }).observe(XR_FIG.querySelector(".chart"));
+  }
+
   /* ---------- Explorer 20b: a country's waterfall, 2010 to 2024 ----------
      Panel 7's waterfall for one EU country at a time, picked in its own dropdown, from 2010,
      when country rates start, on the rate's own axis from the country's 2010 rate. The axis
@@ -1284,7 +1644,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XSW = (WX1 - WX0) / XNS, XPAD = (XSW - 2 * BW - 1.5) / 2;
   const XSPAN = 4.8;                               // panel 7's span, in points
   const T_XBUILD = XNS * T_WSTEP;
-  const XNAME = { NL: "the Netherlands" };         // names as they read inside a sentence
   const XFIG = document.querySelector("#explore-waterfall");
   let xCode = "NL", xP = 0, xTimer = null, xSteps = [], xBars = [], xy = wy;
 
