@@ -887,7 +887,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
     // The rate, the title and the step years
     wticks(g, L, wy);
-    label(L, WX0 - 4, 48, [["Points gained since " + YRS[0], "lab"]]);
+    label(L, WX0 - 4, 48, [["Change in circularity rate since " + YRS[0], "lab"]]);
     YRS.forEach(function (yr, i) {
       if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
     });
