@@ -741,16 +741,20 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   };
   const fmt2 = d3.format(".2~r");
 
-  // A bar from a to b, its point ending exactly at b. Bars shorter than the point are
-  // just the point.
-  function wbar(g, cls, d, x, a, b, v) {
-    const yb = wy(b), dir = v < 0 ? 1 : -1;          // screen y grows downward
+  // A bar from a to b, drawn to k of its length, its point ending where it has reached.
+  // Bars shorter than the point are just the point; at k = 0, nothing.
+  function wshape(bar, x, a, b, v, k) {
+    if (!(k > 0)) return bar.attr("d", null);
+    const yb = wy(a + (b - a) * Math.min(1, k)), dir = v < 0 ? 1 : -1;   // screen y grows downward
     const len = Math.max(1, Math.abs(wy(a) - yb)), head = Math.min(WHEAD, len);
     const y0 = yb - dir * len, yh = yb - dir * head;
-    g.append("path")
-      .attr("class", cls + (d.est ? " est" : "") + (Math.abs(v) < 0.1 ? " faint" : ""))
-      .attr("d", "M" + x + "," + y0 + "H" + (x + BW) + "V" + yh +
-                 "L" + (x + BW / 2) + "," + yb + "L" + x + "," + yh + "Z");
+    return bar.attr("d", "M" + x + "," + y0 + "H" + (x + BW) + "V" + yh +
+                         "L" + (x + BW / 2) + "," + yb + "L" + x + "," + yh + "Z");
+  }
+
+  function wbar(g, cls, d, x, a, b, v, k) {
+    const bar = g.append("path").attr("class", cls + (d.est ? " est" : "") + (Math.abs(v) < 0.1 ? " faint" : ""));
+    return wshape(bar, x, a, b, v, k === undefined ? 1 : k);
   }
 
   function warrow(g, x, a, b) {
@@ -761,13 +765,63 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       .attr("d", "M" + (x - w) + "," + yb + "L" + (x + w) + "," + yb + "L" + x + "," + y2 + "Z");
   }
 
-  function drawWaterfall(name) {
+  /* Panel 7's build, drawn from wfP alone, from 0 (the axes and the 2004 rate) to 1 (every
+     bar), so it can stop mid-way. Left to right, a step every T_WSTEP: the blue bar grows from
+     its base to its point, then the gold bar from the blue bar's tip, as one stroke sharing the
+     step's time by length. Each label fades in as its step ends, the 2024 rate as the last
+     step does. The waterfall waits at its start whenever a card above it is shown, which
+     happens only once it's off screen, and builds when its first card is scrolled to. With
+     reduced motion, or from any other card, it's drawn as the card declares. */
+  const T_WSTEP = 220, T_WLAB = 200;
+  const T_WBUILD = NS * T_WSTEP + T_WLAB;
+  let wfName = null, wfP = 1, wfTimer = null, wfBars = [], wfLands = [];
+
+  function wfFrame(p) {
+    const t = p * T_WBUILD;
+    WSTEP.forEach(function (d, i) {
+      const u = d3.easeCubicInOut(Math.max(0, Math.min(1, (t - i * T_WSTEP) / T_WSTEP)));
+      const lc = Math.abs(d.c), lr = Math.abs(d.r), run = u * (lc + lr);
+      wshape(wfBars[i].used, d.bx, d.start, d.mid, d.c, lc ? run / lc : u);
+      wshape(wfBars[i].back, d.gx, d.mid, d.end, d.r, lr ? (run - lc) / lr : +(u >= 1));
+    });
+    wfLands.forEach(function (l) { l[0].attr("opacity", Math.max(0, Math.min(1, (t - l[1]) / T_WLAB))); });
+  }
+
+  function drawWaterfall(name, scrolled) {
+    if (name === wfName && wfTimer) return;        // already on its way there
+    if (wfTimer) { wfTimer.stop(); wfTimer = null; }
+    const play = scrolled && name === "steps" && wfName === "steps" && wfP < 1 && !STILL;
+    wfName = name;
+    wfDraw(name);
+    if (!play) { wfP = 1; wfFrame(1); return; }
+    const from = wfP, dur = (1 - from) * T_WBUILD;
+    wfFrame(from);
+    wfTimer = d3.timer(function (t) {
+      wfP = t >= dur ? 1 : from + (1 - from) * t / dur;
+      wfFrame(wfP);
+      if (t >= dur) { wfTimer.stop(); wfTimer = null; }
+    });
+  }
+
+  // The start of the build, waiting for panel 7: the axes and the 2004 rate
+  function waterfallStart() {
+    if (STILL || (wfName === "steps" && wfP === 0 && !wfTimer)) return;
+    if (wfTimer) { wfTimer.stop(); wfTimer = null; }
+    wfName = "steps";
+    wfDraw("steps");
+    wfP = 0;
+    wfFrame(0);
+  }
+
+  function wfDraw(name) {
     const s = WF[name] || WF.steps;
     const svg = d3.select("#waterfall svg");
     const g = svg.select("g.wf");
     const L = svg.select("g.labels");
     g.selectAll("*").remove();
     L.selectAll("*").remove();
+    wfLands = [];
+    const lands = function (t, d) { wfLands.push([t, (d.i + 1) * T_WSTEP]); };   // shown once d's step is drawn
 
     // Points gained since 2004, and the step years
     [1, 2, 3, 4].forEach(function (v) {
@@ -780,11 +834,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       if (i % 2 === 0) label(L, WX0 + i * SW, 356, [[String(yr), "lab"]], "middle");
     });
 
-    WSTEP.forEach(function (d) {
+    wfBars = WSTEP.map(function (d) {             // shaped by wfFrame
       const sg = g.append("g").attr("class", s.focus > -1 && s.focus !== d.i ? "dim" : null);
-      wbar(sg, "used", d, d.bx, d.start, d.mid, d.c);
-      wbar(sg, "back", d, d.gx, d.mid, d.end, d.r);
+      const bars = { used: wbar(sg, "used", d, d.bx, d.start, d.mid, d.c, 0),
+                     back: wbar(sg, "back", d, d.gx, d.mid, d.end, d.r, 0) };
       if (s.focus === d.i) warrow(sg, d.ax, d.start, d.end);
+      return bars;
     });
 
     const last = WSTEP[NS - 1];
@@ -793,11 +848,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const dm = WSTEP[d3.minIndex(WSTEP, function (d) { return d.c; })];
       // the step where recycling did nearly all the work, so its label can't be misread
       const dr = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.r > 0 ? d.r / Math.max(Math.abs(d.c), 0.01) : 0; })];
-      label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end");
-      label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle");
-      label(L, dr.gx + BW / 2 - 4, wy(dr.end) - 9, [["recycling", "lab"]], "middle");
+      lands(label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end"), dl);
+      lands(label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle"), dm);
+      lands(label(L, dr.gx + BW / 2 - 4, wy(dr.end) - 9, [["recycling", "lab"]], "middle"), dr);
       label(L, WSTEP[1].bx - 4, wy(0) + 17, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);
-      label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end");
+      lands(label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
     } else {
       const d = WSTEP[s.focus];
       const less = "Used " + fmt2(d.less) + "% less";
@@ -1163,10 +1218,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea,
                    compare: drawCompare };
 
+  // Charts below the card shown wait at the start of their builds, so each plays when reached
+  const STARTS = { waterfall: waterfallStart };
+
   function show(card) {
     const burst = card.closest(".burst");
     const draw = burst && CHARTS[burst.dataset.chart];
     if (draw) draw(card.dataset.state, true);
+    if (burst) document.querySelectorAll(".burst").forEach(function (b) {
+      const start = STARTS[b.dataset.chart];
+      if (start && burst.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) start();
+    });
     document.querySelectorAll(".card.is-active").forEach(function (c) { c.classList.remove("is-active"); });
     card.classList.add("is-active");
   }
