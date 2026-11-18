@@ -182,8 +182,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ikea .used { fill: var(--used); }
 .ikea .could { fill: var(--used-could); }
 .cmp .biomass.est { fill: url(#cmp-hatch-biomass); }
-.cmp .ref { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
-.cmp .ref.on { stroke: #fff; }
 .ex-row { font-size: 14px; }
 .ex-state { fill: var(--ink); font-weight: 700; }
 .ex-rest { fill: var(--ink-2); }
@@ -341,10 +339,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="compare">
     <div class="pin">
       <figure class="chart" id="compare">
-        <svg viewBox="0 0 400 400" role="img" aria-label="ZIN and IKEA's kitchens side by side, on one scale in tonnes. For each, the tonnes of material saved are joined by a ribbon to the tonnes of carbon saved. ZIN kept 171,000 tonnes of concrete standing and saved 21,400 tonnes of CO2, once: 0.13 tonnes for every tonne. IKEA's kitchens saved an estimated 8,900 tonnes of food and 36,000 tonnes of CO2e in total to 2022: 4.1 tonnes for every tonne.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="ZIN and IKEA's kitchens as shares of what the two saved together, by tonnes and by carbon, joined by ribbons. By tonnes, ZIN's 171,000 tonnes of concrete kept standing are 95% and the kitchens' estimated 8,900 tonnes of food 5%. By carbon, ZIN's 21,400 tonnes of CO2 are 37% and the kitchens' 36,000 tonnes of CO2e 63%. Per tonne, that is 0.13 tonnes of CO2 for the concrete and 4.1 tonnes of CO2e for the food. The two are not like for like: ZIN's figure is CO2 for the construction stage only, saved once, and IKEA's is CO2e from about 400 restaurants over the four years to 2022. The chart compares materials, not projects.">
           <defs>
             <pattern id="cmp-hatch-biomass" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
-            <clipPath id="cmp-clip"></clipPath>
           </defs>
           <g class="cmp"></g>
           <g class="labels"></g>
@@ -1065,69 +1062,75 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     label(L, 6, 394, [["Source: Ingka Group, 2022 release and FY24 report", "lab-src"]]);
   }
 
-  /* ---------- The two examples compared: weight against carbon, on one scale ----------
-     A ribbon chart for each example, as for the EU's materials, but in tonnes rather than
-     shares: tonnes of material saved, joined by a ribbon to tonnes of carbon saved, both on one
-     scale from a shared baseline. ZIN's concrete takes the minerals color and IKEA's food the
-     biomass color. ZIN's CO2 is one-off; IKEA's CO2e is read as a total to 2022, and its tonnes
-     of food are estimated from meals (examples.csv), so that column is hatched. A dashed line
-     carries ZIN's carbon across to IKEA's chart, white where it crosses IKEA's marks. */
-  const CB = 262, CTOP = 88, CW = 24;                // baseline, top of the tallest column, column width
-  const CK = (CB - CTOP) / ZIN.structure_kept;       // units per tonne
-  const CMP = [
-    { name: "ZIN", what: "Concrete: minerals", cls: "minerals", x0: 16, x1: 182, est: false, gas: "CO2",
+  /* ---------- The two examples compared: shares of tonnes saved and of carbon saved ----------
+     One ribbon chart in the form of the EU's materials chart. Each column is 100% of what the
+     two examples saved together, by tonnes and by carbon. ZIN's concrete takes the minerals
+     color and IKEA's food the biomass color, with a wider gap between the two bands. ZIN's
+     figure is CO2 for the construction stage only, saved once; IKEA's is CO2e from about 400
+     restaurants over the four years to 2022, and its tonnes of food are estimated from meals
+     (examples.csv), so that band is hatched. */
+  const QX0 = 128, QX1 = 156, QX2 = 262, QX3 = 290;   // the two columns
+  const QY0 = 78, QY1 = 236, QPAD = 8;                // top and bottom of the columns, gap between bands
+  const EXS = [
+    { key: "minerals", name: "ZIN", stuff: "concrete", gas: "CO2", est: false,
       tonnes: ZIN.structure_kept, carbon: ZIN.upfront_saved_total },
-    { name: "IKEA's kitchens", what: "Food: biomass", cls: "biomass", x0: 218, x1: 384, est: true, gas: "CO2e",
+    { key: "biomass", name: "IKEA's kitchens", stuff: "food", gas: "CO2e", est: true,
       tonnes: IKEA.food_saved_to_2022, carbon: IKEA.co2e_avoided }
   ];
+  // Each band's top, bottom and share of the column, stacked from the top
+  function shareStack(field) {
+    const sum = d3.sum(EXS, function (e) { return e[field]; });
+    const k = (QY1 - QY0 - QPAD * (EXS.length - 1)) / sum;
+    let y = QY0;
+    return EXS.map(function (e) { const a = y; y += e[field] * k + QPAD; return [a, a + e[field] * k, 100 * e[field] / sum]; });
+  }
+  const QW = shareStack("tonnes"), QC = shareStack("carbon");
 
-  // A band on the baseline, its top an S-curve from (xa, ta) to (xb, tb)
-  function bandPath(xa, xb, ta, tb) {
-    const xm = (xa + xb) / 2;
-    return "M" + xa + "," + ta + "C" + xm + "," + ta + " " + xm + "," + tb + " " + xb + "," + tb +
-           "L" + xb + "," + CB + "L" + xa + "," + CB + "Z";
+  function cmpRibbon(l, r) {
+    const xa = QX1 + RGAP, xb = QX2 - RGAP, xm = (xa + xb) / 2;
+    return "M" + xa + "," + l[0] + "C" + xm + "," + l[0] + " " + xm + "," + r[0] + " " + xb + "," + r[0] +
+           "L" + xb + "," + r[1] + "C" + xm + "," + r[1] + " " + xm + "," + l[1] + " " + xa + "," + l[1] + "Z";
   }
 
   function drawCompare() {
     const svg = d3.select("#compare svg");
     const g = svg.select("g.cmp");
     const L = svg.select("g.labels");
-    const clip = svg.select("#cmp-clip");
     g.selectAll("*").remove();
     L.selectAll("*").remove();
-    clip.selectAll("*").remove();
-    const top = function (t) { return CB - t * CK; };
+    const mid = function (b) { return (b[0] + b[1]) / 2; };
+    const pct = function (v) { return Math.round(v) + "%"; };
 
-    CMP.forEach(function (c, k) {
-      const tw = top(c.tonnes), tc = top(c.carbon);
-      const marks = [
-        ["rect", { x: c.x0, y: tw, width: CW, height: CB - tw }, c.est ? " est" : ""],
-        ["path", { d: bandPath(c.x0 + CW + RGAP, c.x1 - CW - RGAP, tw, tc) }, ""],
-        ["rect", { x: c.x1 - CW, y: tc, width: CW, height: CB - tc }, ""]
-      ];
-      marks.forEach(function (m) {
-        const el = g.append(m[0]).attr("class", c.cls + m[2]);
-        Object.keys(m[1]).forEach(function (a) { el.attr(a, m[1][a]); });
-        if (k === 1) {
-          const cl = clip.append(m[0]);
-          Object.keys(m[1]).forEach(function (a) { cl.attr(a, m[1][a]); });
-        }
-      });
-
-      label(L, c.x0, 60, [[c.name, "lab-strong"], [c.what, "lab", "1.25em"]]);
-      label(L, c.x0, CB + 26, [[fmtK(Math.round(c.tonnes / 100) * 100), "lab-num"], ["t saved", "lab", "1.15em"]]);
-      label(L, c.x1, CB + 26, [[fmtK(c.carbon), "lab-num"], ["t of " + c.gas + " saved", "lab", "1.15em"]], "end");
-      label(L, (c.x0 + c.x1) / 2, CB + 68, [[fmt2(c.carbon / c.tonnes) + " t of " + c.gas + " per tonne", "lab-strong"]], "middle");
+    EXS.forEach(function (e, i) {
+      g.append("rect").attr("class", e.key + (e.est ? " est" : "")).attr("x", QX0).attr("width", QX1 - QX0)
+        .attr("y", QW[i][0]).attr("height", QW[i][1] - QW[i][0]);
+      g.append("path").attr("class", e.key).attr("d", cmpRibbon(QW[i], QC[i]));
+      g.append("rect").attr("class", e.key).attr("x", QX2).attr("width", QX3 - QX2)
+        .attr("y", QC[i][0]).attr("height", QC[i][1] - QC[i][0]);
     });
 
-    const yr = top(CMP[0].carbon);
-    [["ref", null], ["ref on", "url(#cmp-clip)"]].forEach(function (r) {
-      g.append("line").attr("class", r[0]).attr("clip-path", r[1])
-        .attr("x1", CMP[0].x1).attr("x2", CMP[1].x1).attr("y1", yr).attr("y2", yr);
+    label(L, (QX0 + QX1) / 2, 44, [["Tonnes saved", "lab-strong"]], "middle");
+    label(L, (QX2 + QX3) / 2, 44, [["Carbon saved", "lab-strong"]], "middle");
+    label(L, (QX0 + QX3) / 2, 63, [["Shares of what the two saved together", "lab"]], "middle");
+
+    // Share over the name and tonnes beside the tonnes column; share over the carbon beside the other
+    const lw = spread(QW.map(mid), [47.4, 47.4], 8, QY0, QY1 + 6);
+    const lc = spread(QC.map(mid), [33.6, 33.6], 8, QY0, QY1 + 6);
+    EXS.forEach(function (e, i) {
+      label(L, QX0 - 8, lw[i] - 8.6, [[pct(QW[i][2]), "lab-num"], [e.name, "lab", "1.15em"],
+        [fmtK(Math.round(e.tonnes / 100) * 100) + " t of " + e.stuff, "lab-src", "1.3em"]], "end");
+      label(L, QX3 + 8, lc[i] - 1.7, [[pct(QC[i][2]), "lab-num"], [fmtK(e.carbon) + " t of " + e.gas, "lab-src", "1.3em"]]);
     });
 
-    label(L, 200, 352, [["IKEA's tonnes estimated from meals", "lab"], ["ZIN: one-off. IKEA: total to 2022.", "lab"]], "middle");
-    label(L, 6, 394, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"]]);
+    label(L, 200, 262, EXS.map(function (e) {
+      return [e.name + ": " + fmt2(e.carbon / e.tonnes) + " t of " + e.gas + " per tonne of " + e.stuff, "lab-strong"];
+    }), "middle");
+    label(L, 200, 304, [["Not like for like: compares materials, not projects", "lab"],
+                        ["ZIN: CO2 for the construction stage only, saved once", "lab"],
+                        ["IKEA: CO2e from about 400 restaurants, four years to 2022", "lab"],
+                        ["Hatched: IKEA's food tonnes, estimated from meals", "lab"]], "middle");
+    label(L, 6, 380, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"],
+                      ["Shares, food tonnes and per tonne: our calculation", "lab-src"]]);
   }
 
   /* ---------- Cards drive the charts ---------- */
