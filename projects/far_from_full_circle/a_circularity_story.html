@@ -1314,12 +1314,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       fmt1(rate[0]) + "% in " + XYRS[0] + " to an estimated " + fmt1(rate[rate.length - 1]) + "% in " +
       XYRS[XNS] + ".");
 
-    xy.ticks(5).forEach(function (v) {             // points gained since 2010
+    xy.ticks(5).forEach(function (v) {             // the change since 2010
       g.append("line").attr("class", v ? "grid" : "base").attr("x1", WX0 - 4).attr("x2", WX1)
         .attr("y1", xy(v)).attr("y2", xy(v));
       label(L, WX0 - 8, xy(v) + 4.5, [[v > 0 ? "+" + v : v < 0 ? "−" + -v : "0", "lab"]], "end");
     });
-    label(L, WX0 - 4, 48, [["Points gained since " + XYRS[0], "lab"]]);
+    label(L, WX0 - 4, 48, [["Change in circularity rate since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
 
