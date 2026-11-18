@@ -773,7 +773,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
              start: s, mid: s + c, end: s + c + r, c: c, r: r, net: ST.change[i],
              less: -ST.consumption_change_pct[i], est: YRS[i + 1] >= DATA.trend_estimated_from };
   });
-  const EST = WSTEP.filter(function (d) { return d.est; });
   const WF = {
     steps:   { focus: -1 },
     biggest: { focus: d3.maxIndex(WSTEP, function (d) { return d.net; }) },
@@ -926,9 +925,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         L.append("line").attr("class", "leader").attr("x1", d.bx + BW / 2).attr("x2", d.bx + BW / 2)
           .attr("y1", wy(d.start) + 3).attr("y2", yl - 15);
       }
-    }
-    if (EST.length) {
-      label(L, WX1, 48, [[YRS[EST[0].i] + " to " + YRS[EST[EST.length - 1].i + 1] + ": estimate", "lab"]], "end");
     }
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
   }
