@@ -1321,10 +1321,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     });
     label(L, WX0 - 4, 48, [["Points gained since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
-    const est = xSteps.filter(function (d) { return d.est; });
-    if (est.length) {
-      label(L, WX1, 48, [[XYRS[est[0].i] + " to " + XYRS[est[est.length - 1].i + 1] + ": estimate", "lab"]], "end");
-    }
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
 
     xBars = xSteps.map(function (d) {
