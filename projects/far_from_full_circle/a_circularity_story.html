@@ -772,7 +772,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      step does. The waterfall waits at its start whenever a card above it is shown, which
      happens only once it's off screen, and builds when its first card is scrolled to. With
      reduced motion, or from any other card, it's drawn as the card declares. */
-  const T_WSTEP = 220, T_WLAB = 200;
+  const T_WSTEP = 160, T_WLAB = 200;
   const T_WBUILD = NS * T_WSTEP + T_WLAB;
   let wfName = null, wfP = 1, wfTimer = null, wfBars = [], wfLands = [];
 
