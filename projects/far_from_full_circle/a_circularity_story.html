@@ -903,11 +903,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (name === "steps") {
       const dl = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.c; })];
       const dm = WSTEP[d3.minIndex(WSTEP, function (d) { return d.c; })];
-      // the step where recycling did nearly all the work, so its label can't be misread
-      const dr = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.r > 0 ? d.r / Math.max(Math.abs(d.c), 0.01) : 0; })];
       lands(label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end"), dl);
       lands(label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle"), dm);
-      lands(label(L, dr.gx + BW / 2 - 4, wy(dr.end) - 9, [["recycling", "lab"]], "middle"), dr);
       label(L, WSTEP[1].bx - 4, wy(LEVEL[0]) + 5, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);   // level with the start
       lands(label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
     } else {
