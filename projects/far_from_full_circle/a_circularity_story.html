@@ -1136,14 +1136,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       label(L, QX3 + 8, lc[i] - 1.7, [[pct(QC[i][2]), "lab-num"], [fmtK(e.carbon) + " t of " + e.gas, "lab-src", "1.3em"]]);
     });
 
-    // Each name inside its ribbon, centered in the depth the ribbon has across the name's width
+    // Each name level with the midpoint of its two shares, matching the centers of their capitals
+    // (half a cap height is 0.35 em: shares at 21 units, names at 14), and kept inside its ribbon
     EXS.forEach(function (e, i) {
       const cx = QX1 + RGAP + (QX2 - QX1 - 2 * RGAP) * e.at;
       const t = label(L, cx, 0, [[e.name, "lab-on"]], "middle");
       const box = t.node().getBBox(), w = box.width / 2 + 4;
-      const top = Math.max(edgeAt(cx - w, QW[i][0], QC[i][0]), edgeAt(cx + w, QW[i][0], QC[i][0]));
-      const bot = Math.min(edgeAt(cx - w, QW[i][1], QC[i][1]), edgeAt(cx + w, QW[i][1], QC[i][1]));
-      t.attr("transform", "translate(0," + ((top + bot) / 2 - (box.y + box.height / 2)) + ")");
+      const lo = Math.max(edgeAt(cx - w, QW[i][0], QC[i][0]), edgeAt(cx + w, QW[i][0], QC[i][0])) - box.y + 3;
+      const hi = Math.min(edgeAt(cx - w, QW[i][1], QC[i][1]), edgeAt(cx + w, QW[i][1], QC[i][1])) - box.y - box.height - 3;
+      const y = (lw[i] + lc[i]) / 2 - 1.7 - 0.35 * (21 - 14);
+      t.attr("y", Math.max(lo, Math.min(hi, y)));
     });
 
     label(L, 200, 262, EXS.map(function (e) {
