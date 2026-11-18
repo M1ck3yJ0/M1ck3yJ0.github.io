@@ -903,8 +903,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (name === "steps") {
       const dl = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.c; })];
       const dm = WSTEP[d3.minIndex(WSTEP, function (d) { return d.c; })];
-      lands(label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end"), dl);
-      lands(label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle"), dm);
+      const yl = (wy(dl.start) + wy(dl.mid)) / 2, ym = wy(dm.mid);   // each label with a short leader to its bar
+      lands(L.append("line").attr("class", "leader").attr("x1", dl.bx - 10).attr("x2", dl.bx - 2)
+        .attr("y1", yl).attr("y2", yl), dl);
+      lands(label(L, dl.bx - 14, yl + 4.5, [["used less", "lab"]], "end"), dl);
+      lands(L.append("line").attr("class", "leader").attr("x1", dm.bx + BW / 2).attr("x2", dm.bx + BW / 2)
+        .attr("y1", ym + 2).attr("y2", ym + 10), dm);
+      lands(label(L, dm.bx + BW / 2, ym + 23, [["used more", "lab"]], "middle"), dm);
       label(L, WSTEP[1].bx - 4, wy(LEVEL[0]) + 5, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);   // level with the start
       lands(label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
     } else {
