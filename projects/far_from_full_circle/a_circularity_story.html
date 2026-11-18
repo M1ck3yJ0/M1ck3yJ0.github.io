@@ -725,6 +725,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const SW = (WX1 - WX0) / NS;
   const WPAD = (SW - 2 * BW - 1.5) / 2;           // centers each step's two bars in its slot
   const wy = d3.scaleLinear().domain([-0.4, 4.4]).range([336, 64]);
+  const WYEAR = 356, WYEAR_TOP = 346;              // the year labels' baseline, and their digits' top
   let gained = 0;
   const WSTEP = d3.range(NS).map(function (i) {
     const x0 = WX0 + i * SW, s = gained, c = ST.consumption[i], r = ST.recycling[i];
@@ -770,8 +771,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      its base to its point, then the gold bar from the blue bar's tip, as one stroke sharing the
      step's time by length. Each label fades in as its step ends, the 2024 rate as the last
      step does. The waterfall waits at its start whenever a card above it is shown, which
-     happens only once it's off screen, and builds when its first card is scrolled to. With
-     reduced motion, or from any other card, it's drawn as the card declares. */
+     happens only once it's off screen, and builds as its year labels come onto the screen
+     from below, or when its first card is scrolled to, if it hasn't yet. With reduced
+     motion, or from any other card, it's drawn as the card declares. */
   const T_WSTEP = 160, T_WLAB = 200;
   const T_WBUILD = NS * T_WSTEP + T_WLAB;
   let wfName = null, wfP = 1, wfTimer = null, wfBars = [], wfLands = [];
@@ -813,6 +815,15 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     wfFrame(0);
   }
 
+  if (window.IntersectionObserver) {               // the year labels' tops reaching the screen's bottom
+    const at = WYEAR_TOP / 400;
+    new IntersectionObserver(function (es) {
+      const e = es[0];
+      if (wfName === "steps" && wfP === 0 && !wfTimer && e.intersectionRatio >= at - 0.01 &&
+          e.boundingClientRect.top > 0) drawWaterfall("steps", true);
+    }, { threshold: at }).observe(document.querySelector("#waterfall"));
+  }
+
   function wfDraw(name) {
     const s = WF[name] || WF.steps;
     const svg = d3.select("#waterfall svg");
@@ -831,7 +842,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     [0, 1, 2, 3, 4].forEach(function (v) { label(L, WX0 - 8, wy(v) + 4.5, [[(v ? "+" : "") + v, "lab"]], "end"); });
     label(L, WX0 - 4, 48, [["Points gained since " + YRS[0], "lab"]]);
     YRS.forEach(function (yr, i) {
-      if (i % 2 === 0) label(L, WX0 + i * SW, 356, [[String(yr), "lab"]], "middle");
+      if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
     });
 
     wfBars = WSTEP.map(function (d) {             // shaped by wfFrame
