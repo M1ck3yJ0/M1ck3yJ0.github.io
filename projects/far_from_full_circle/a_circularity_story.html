@@ -1072,11 +1072,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      (examples.csv), so that band is hatched. */
   const QX0 = 124, QX1 = 150, QX2 = 272, QX3 = 298;   // the two columns
   const QY0 = 78, QY1 = 236, QPAD = 8;                // top and bottom of the columns, gap between bands
-  const QNAME = 0.7;    // where along the ribbons the names sit, from the tonnes column (0) to the carbon column (1)
+  // at: where along its ribbon each name sits, from the tonnes column (0) to the carbon column (1)
   const EXS = [
-    { key: "minerals", name: "ZIN", stuff: "concrete", gas: "CO2", est: false,
+    { key: "minerals", name: "ZIN", at: 0.3, stuff: "concrete", gas: "CO2", est: false,
       tonnes: ZIN.structure_kept, carbon: ZIN.upfront_saved_total },
-    { key: "biomass", name: "IKEA", stuff: "food", gas: "CO2e", est: true,
+    { key: "biomass", name: "IKEA", at: 0.7, stuff: "food", gas: "CO2e", est: true,
       tonnes: IKEA.food_saved_to_2022, carbon: IKEA.co2e_avoided }
   ];
   // Each band's top, bottom and share of the column, stacked from the top
@@ -1138,7 +1138,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
     // Each name inside its ribbon, centered in the depth the ribbon has across the name's width
     EXS.forEach(function (e, i) {
-      const cx = QX1 + RGAP + (QX2 - QX1 - 2 * RGAP) * QNAME;
+      const cx = QX1 + RGAP + (QX2 - QX1 - 2 * RGAP) * e.at;
       const t = label(L, cx, 0, [[e.name, "lab-on"]], "middle");
       const box = t.node().getBBox(), w = box.width / 2 + 4;
       const top = Math.max(edgeAt(cx - w, QW[i][0], QC[i][0]), edgeAt(cx + w, QW[i][0], QC[i][0]));
