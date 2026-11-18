@@ -257,7 +257,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="waterfall">
     <div class="pin">
       <figure class="chart" id="waterfall">
-        <svg viewBox="0 0 400 400" role="img" aria-label="A waterfall of the points the EU's circularity rate gained from 2004 to 2024, in two-year steps. For each step, a blue bar shows what the change in material use did to the rate, a gold bar what the change in recycling did, and an arrow the net change. The rate rose from 8.2% to an estimated 12.2%.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="A waterfall of the points the EU's circularity rate gained from 2004 to 2024, in two-year steps. For each step, a blue bar shows what the change in material use did to the rate and a gold bar what the change in recycling did, each pointing up or down the way it moved the rate. The rate rose from 8.2% to an estimated 12.2%.">
           <defs>
             <pattern id="wf-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
             <pattern id="wf-hatch-back" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
@@ -713,8 +713,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      Points gained since 2004, step by step. Blue: the effect of the change in material
      use (up when the EU used less). Gold: the effect of the change in recycling, floating
      from the blue bar's tip. Each bar ends in a point at its value, so its shape shows
-     which way it moved the rate. Arrow: the net change. Steps reaching past Eurostat's
-     last full year are hatched. */
+     which way it moved the rate. Arrow: the net change, on a highlighted step only.
+     Steps reaching past Eurostat's last full year are hatched. */
   const ST = EU.steps;
   const YRS = DATA.step_years;
   const NS = ST.change.length;
@@ -787,7 +787,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const sg = g.append("g").attr("class", s.focus > -1 && s.focus !== d.i ? "dim" : null);
       wbar(sg, "used", d, d.bx, d.start, d.mid, d.c);
       wbar(sg, "back", d, d.gx, d.mid, d.end, d.r);
-      warrow(sg, d.ax, d.start, d.end);
+      if (s.focus === d.i) warrow(sg, d.ax, d.start, d.end);
     });
 
     const last = WSTEP[NS - 1];
@@ -797,7 +797,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       // the step where recycling did nearly all the work, so its label can't be misread
       const dr = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.r > 0 ? d.r / Math.max(Math.abs(d.c), 0.01) : 0; })];
       label(L, dl.bx - 4, (wy(dl.start) + wy(dl.mid)) / 2 + 5, [["used less", "lab"]], "end");
-      label(L, dl.ax + 6, (wy(dl.start) + wy(dl.end)) / 2 + 5, [["net", "lab"]]);
       label(L, dm.bx + BW / 2, wy(dm.mid) + 17, [["used more", "lab"]], "middle");
       label(L, dr.gx + BW / 2 - 4, wy(dr.end) - 9, [["recycling", "lab"]], "middle");
       label(L, WSTEP[1].bx - 4, wy(0) + 17, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);
