@@ -913,7 +913,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     } else {
       const d = WSTEP[s.focus];
       const less = "Used " + fmt2(d.less) + "% less";
-      const net = fmt1(LEVEL[d.i]) + "% to " + fmt1(LEVEL[d.i + 1]) + "%";
+      const net = (d.net > 0 ? "+" : "") + fmt1(d.net) + "%";
       if (d.i < NS - 1) {
         label(L, d.bx - 4, (wy(d.start) + wy(d.mid)) / 2 + 5, [[less, "lab-strong"]], "end");
         label(L, d.ax + 6, (wy(d.start) + wy(d.end)) / 2 + 5, [[net, "lab-strong"]]);
