@@ -157,12 +157,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .wf .net-head { fill: var(--ink-2); }
 .wf .faint { opacity: .3; }
 .wf .dim { opacity: .2; }
-#wf-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
-#wf-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
+#wf-hatch-used rect, #xwf-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
+#wf-hatch-used line, #xwf-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
+.explore .wf .used.est { fill: url(#xwf-hatch-used); }
+.explore .wf .back.est { fill: url(#xwf-hatch-back); }
 #cmp-hatch-biomass rect { fill: color-mix(in srgb, var(--mat-biomass) 22%, #fff); }
 #cmp-hatch-biomass line { stroke: var(--mat-biomass); stroke-width: 2.2; }
-#wf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
-#wf-hatch-back line { stroke: var(--back); stroke-width: 2.2; }
+#wf-hatch-back rect, #xwf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
+#wf-hatch-back line, #xwf-hatch-back line { stroke: var(--back); stroke-width: 2.2; }
 #ring-hatch-rate rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
 #ring-hatch-rate line { stroke: var(--back); stroke-width: 2.2; }
 .zin .dusk-frame { fill: var(--dusk-frame); }
@@ -191,6 +193,26 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .rib .fossil, .ring .fossil, .ring-key .fossil { fill: var(--mat-fossil); }
 .rib .biomass, .ring .biomass, .ring-key .biomass, .cmp .biomass { fill: var(--mat-biomass); }
 .rib .dim { opacity: .2; }
+
+/* Explorers: standalone figures, not pinned, each with its own country picker */
+.explorer { position: relative; z-index: 1; padding: 0 8px; margin: 0 0 40vh; }
+.explore { width: var(--chart); margin: 0 auto; background: #fff; border: 1px solid var(--hairline); }
+.explore .chart { width: auto; height: auto; }
+.explore .chart svg { height: auto; }
+.pick { position: relative; display: inline-block; margin: 12px 0 0 12px; }
+.pick select {
+  -webkit-appearance: none; appearance: none;
+  font: inherit; font-size: 17px; font-weight: 700; color: var(--ink);
+  background: #fff; border: 1px solid var(--hairline); border-radius: 0;
+  min-height: 44px; padding: 8px 40px 8px 12px; cursor: pointer;
+}
+.pick select:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
+.pick::after {                                     /* the chevron */
+  content: ""; position: absolute; right: 16px; top: 50%;
+  width: 7px; height: 7px; margin-top: -6px;
+  border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  transform: rotate(45deg); pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -353,6 +375,22 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <article class="card" data-state="compare">
         <p>Side by side, the two aren't like for like. ZIN's figure is CO2 for its construction stage only, saved once, while IKEA's kitchens' figure is CO2e from about 400 restaurants over four years. So this isn't about which did more. It's about how much carbon a tonne carries, depending on the material. By weight, the rate's only measure, ZIN's 171,000 tonnes of concrete kept standing are 95% of what the two saved, against an estimated 8,900 tonnes of food. By carbon, the kitchens' 5% becomes 63%. Each tonne of concrete kept standing saved an eighth of a tonne of CO2; each tonne of food kept out of the bin, about four tonnes of CO2e, roughly 30 times as much.</p>
       </article>
+    </div>
+  </section>
+
+  <section class="explorer" id="explore-waterfall">
+    <div class="explore">
+      <div class="pick"><select aria-label="Country"></select></div>
+      <figure class="chart" id="explore-waterfall-chart">
+        <svg viewBox="0 0 400 400" role="img">
+          <defs>
+            <pattern id="xwf-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+            <pattern id="xwf-hatch-back" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+          </defs>
+          <g class="wf"></g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
     </div>
   </section>
 
@@ -1225,6 +1263,121 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
                         ["IKEA's food tonnes are estimated from meals", "lab"]], "middle");
     label(L, 6, 380, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"],
                       ["Shares, food tonnes and per tonne: our calculation", "lab-src"]]);
+  }
+
+  /* ---------- Explorer 20b: a country's waterfall, 2010 to 2024 ----------
+     Panel 7's waterfall for one EU country at a time, picked in its own dropdown, from 2010,
+     when country rates start. The axis fits the country's own range of points, but never
+     spans less than panel 7's 4.8, so small moves are drawn at the EU chart's scale. Not
+     pinned: it builds as panel 7 does when its year labels come onto the screen from below,
+     and again whenever the country changes. It waits at its start again only once it's off
+     screen below. With reduced motion, it's drawn whole. */
+  const XK = DATA.step_years.indexOf(2010);
+  const XYRS = DATA.step_years.slice(XK);
+  const XNS = XYRS.length - 1;
+  const XSW = (WX1 - WX0) / XNS, XPAD = (XSW - 2 * BW - 1.5) / 2;
+  const XSPAN = 4.8;                               // panel 7's span, in points
+  const T_XBUILD = XNS * T_WSTEP;
+  const XNAME = { NL: "the Netherlands" };         // names as they read inside a sentence
+  const XFIG = document.querySelector("#explore-waterfall");
+  let xCode = "NL", xP = 0, xTimer = null, xSteps = [], xBars = [], xy = wy;
+
+  // The country's steps, and an axis fitted to their range
+  function xSetup(code) {
+    const st = DATA.countries[code].steps;
+    let gained = 0;
+    xSteps = d3.range(XNS).map(function (i) {
+      const k = XK + i, x0 = WX0 + i * XSW, s = gained, c = st.consumption[k], r = st.recycling[k];
+      gained = s + st.change[k];
+      return { i: i, bx: x0 + XPAD, gx: x0 + XPAD + BW + 1.5, start: s, mid: s + c, end: s + c + r,
+               c: c, r: r, est: XYRS[i + 1] >= DATA.trend_estimated_from };
+    });
+    let lo = Math.min(0, d3.min(xSteps, function (d) { return Math.min(d.mid, d.end); }));
+    let hi = Math.max(0, d3.max(xSteps, function (d) { return Math.max(d.mid, d.end); }));
+    const pad = Math.max(0.4, (hi - lo) * 0.08);
+    lo -= pad; hi += pad;
+    if (hi - lo < XSPAN) { const m = (XSPAN - hi + lo) / 2; lo -= m; hi += m; }
+    xy = d3.scaleLinear().domain([lo, hi]).range([336, 64]);
+  }
+
+  // The frame, and the bars for xFrame to shape
+  function xDraw() {
+    xSetup(xCode);
+    const c = DATA.countries[xCode], rate = c.trend.rate;
+    const svg = d3.select(XFIG).select("svg"), g = svg.select("g.wf"), L = svg.select("g.labels");
+    g.selectAll("*").remove();
+    L.selectAll("*").remove();
+    svg.attr("aria-label", "A waterfall of how the circularity rate of " + (XNAME[xCode] || c.name) +
+      " moved from " + XYRS[0] + " to " + XYRS[XNS] + ", in two-year steps. For each step, a blue bar" +
+      " shows what the change in material use did to the rate and a gold bar what the change in" +
+      " recycling did, each pointing up or down the way it moved the rate. The rate went from " +
+      fmt1(rate[0]) + "% in " + XYRS[0] + " to an estimated " + fmt1(rate[rate.length - 1]) + "% in " +
+      XYRS[XNS] + ".");
+
+    xy.ticks(5).forEach(function (v) {             // points gained since 2010
+      g.append("line").attr("class", v ? "grid" : "base").attr("x1", WX0 - 4).attr("x2", WX1)
+        .attr("y1", xy(v)).attr("y2", xy(v));
+      label(L, WX0 - 8, xy(v) + 4.5, [[v > 0 ? "+" + v : v < 0 ? "−" + -v : "0", "lab"]], "end");
+    });
+    label(L, WX0 - 4, 48, [["Points gained since " + XYRS[0], "lab"]]);
+    XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
+    const est = xSteps.filter(function (d) { return d.est; });
+    if (est.length) {
+      label(L, WX1, 48, [[XYRS[est[0].i] + " to " + XYRS[est[est.length - 1].i + 1] + ": estimate", "lab"]], "end");
+    }
+    label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
+
+    xBars = xSteps.map(function (d) {
+      return { used: wbar(g, "used", d, d.bx, d.start, d.mid, d.c, 0, xy),
+               back: wbar(g, "back", d, d.gx, d.mid, d.end, d.r, 0, xy) };
+    });
+  }
+
+  // Panel 7's build, drawn from p alone, from 0 (the frame) to 1 (every bar)
+  function xFrame(p) {
+    const t = p * T_XBUILD;
+    xSteps.forEach(function (d, i) {
+      const u = d3.easeCubicInOut(Math.max(0, Math.min(1, (t - i * T_WSTEP) / T_WSTEP)));
+      const lc = Math.abs(d.c), lr = Math.abs(d.r), run = u * (lc + lr);
+      wshape(xBars[i].used, d.bx, d.start, d.mid, d.c, lc ? run / lc : u, xy);
+      wshape(xBars[i].back, d.gx, d.mid, d.end, d.r, lr ? (run - lc) / lr : +(u >= 1), xy);
+    });
+  }
+
+  function xShow(p) {                              // a still: 0 waits at the start, 1 is whole
+    if (xTimer) { xTimer.stop(); xTimer = null; }
+    xP = p;
+    xFrame(p);
+  }
+
+  function xPlay() {                               // builds from the start
+    if (STILL) return xShow(1);
+    xShow(0);
+    xTimer = d3.timer(function (t) {
+      xFrame(xP = Math.min(1, t / T_XBUILD));
+      if (xP === 1) { xTimer.stop(); xTimer = null; }
+    });
+  }
+
+  const xPick = d3.select(XFIG).select("select");
+  Object.keys(DATA.countries).filter(function (k) { return k !== "EU27_2020"; })
+    .sort(function (a, b) { return DATA.countries[a].name.localeCompare(DATA.countries[b].name); })
+    .forEach(function (k) { xPick.append("option").attr("value", k).text(DATA.countries[k].name); });
+  xPick.property("value", xCode).on("change", function () {
+    xCode = this.value;
+    xDraw();
+    if (xP === 0 && !xTimer) xShow(0); else xPlay();   // not reached yet, it keeps waiting
+  });
+  xDraw();
+  xShow(STILL || !window.IntersectionObserver ? 1 : 0);
+
+  if (!STILL && window.IntersectionObserver) {     // the year labels' tops reaching the screen's bottom
+    const at = WYEAR_TOP / 400;
+    new IntersectionObserver(function (es) {
+      const e = es[es.length - 1], below = e.boundingClientRect.top > 0;
+      if (!e.isIntersecting && below) xShow(0);
+      else if (xP === 0 && !xTimer && (!below || e.intersectionRatio >= at - 0.01)) xPlay();
+    }, { threshold: [0, at] }).observe(XFIG.querySelector(".chart"));
   }
 
   /* ---------- Cards drive the charts ---------- */
