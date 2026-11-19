@@ -64,6 +64,10 @@
   --egg-1: #F4DFC0; --egg-2: #EBCFA8; --egg-3: #E0BD91; --egg-4: #D1A87B; --egg-5: #BD9367;
   /* Layout */
   --chart: min(calc(100vw - 16px), 544px, 58vh);
+  --nav: 0px;
+}
+@media (min-width: 800px) {
+  :root { --nav: 56px; }
 }
 @supports (height: 1svh) {
   :root { --chart: min(calc(100vw - 16px), 544px, 58svh); }
@@ -81,9 +85,15 @@ body {
   line-height: 1.45;
 }
 
+/* Nav: the home icon sits at the top and scrolls away on a phone; on wide screens it
+   sits in a fixed bar */
+.nav { position: absolute; top: 0; left: 0; right: 0; z-index: 10; height: 56px; pointer-events: none; }
 .home {
-  position: fixed; top: 14px; left: 14px; z-index: 10;
+  position: absolute; top: 14px; left: 14px; pointer-events: auto;
   display: block; width: 28px; height: 28px; opacity: .85;
+}
+@media (min-width: 800px) {
+  .nav { position: fixed; height: var(--nav); background: #fff; border-bottom: 1px solid var(--hairline); pointer-events: auto; }
 }
 .home:hover, .home:focus-visible { opacity: 1; }
 .home img { display: block; border-radius: 4px; }
@@ -91,8 +101,8 @@ body {
 /* Terrazzo: one static print for the whole piece, faded where the pinned chart sits */
 .terrazzo {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle at 50% calc(8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
-          mask-image: radial-gradient(circle at 50% calc(8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+  -webkit-mask-image: radial-gradient(circle at 50% calc(var(--nav) + 8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+          mask-image: radial-gradient(circle at 50% calc(var(--nav) + 8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
 }
 .terrazzo { background: no-repeat center / cover; }
 
@@ -101,8 +111,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 /* Bursts: a square chart pinned while its cards scroll over it */
 .burst { position: relative; }
 .pin {
-  position: sticky; top: 0;
-  height: 100vh; height: 100svh;
+  position: sticky; top: var(--nav);
+  height: calc(100vh - var(--nav)); height: calc(100svh - var(--nav));
   display: flex; justify-content: center; align-items: flex-start;
   padding-top: 8px;
   pointer-events: none;
@@ -112,7 +122,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .steps {
   position: relative; z-index: 1;
   display: flow-root;
-  margin-top: -100vh; margin-top: -100svh;
+  margin-top: calc(var(--nav) - 100vh); margin-top: calc(var(--nav) - 100svh);
   padding: 0 8px;
 }
 .card {
@@ -222,7 +232,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .explore-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .skip { margin: 12px 12px 0 0; font-size: 15px; color: var(--ink-2); }
 .skip:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
-.explorer { scroll-margin-top: 48px; }     /* lands clear of the home icon */
+.explorer { scroll-margin-top: calc(var(--nav) + 16px); }
 .explore-text { padding: 4px 16px 16px; }
 .explore-text p { margin: 0; }
 .explore-text p + p { margin-top: .6em; }
@@ -238,7 +248,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 </style>
 </head>
 <body>
-<a class="home" href="https://milcahjoseph.com"><img src="../../assets/favicon.png" width="28" height="28" alt="Home"></a>
+<nav class="nav"><a class="home" href="https://milcahjoseph.com"><img src="../../assets/favicon.png" width="28" height="28" alt="Home"></a></nav>
 <div class="terrazzo" aria-hidden="true"></div>
 
 <main>
