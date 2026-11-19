@@ -290,8 +290,8 @@ def heap_2022(keep):
     b, a, f = bounds(broc), bounds(avo), bounds(fish)
     items = [
         ("broccoli", place(broc, -42 - b[0], -3 - b[3])),
-        ("egg", place(egg(), -40, -27)),
-        ("avocado", place(avo, 20 - a[0], 5 - a[3], -6, origin=(a[0], a[3]))),
+        ("avocado", place(avo, 30 - a[0], 5 - a[3], -6, origin=(a[0], a[3]))),
+        ("egg", place(egg(), 13, -14, 14, origin=(0, 15))),
         ("salmon", place(fish, -44 - f[0], 0)),
     ]
     x0 = min(bounds(p)[0] for _, p in items)
