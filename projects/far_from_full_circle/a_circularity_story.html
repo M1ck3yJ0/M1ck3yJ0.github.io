@@ -161,6 +161,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   .burst[data-chart="ring"] .pin { z-index: 2; }  /* panel 5's shards fly over the cards */
   #ring svg { overflow: visible; }
 }
+.card, .explore-text { font-size: 18px; }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
 .card .eyebrow {
@@ -283,7 +284,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   transform: rotate(45deg); pointer-events: none;
 }
 /* Section titles: above the chart on a phone, at the top of the first card on wide screens */
-.sec-title { margin: 0 0 12px; font-size: 25px; line-height: 1.12; font-weight: 800; letter-spacing: -.01em; }
+.sec-title { margin: 0 0 12px; font-size: 24px; line-height: 1.12; font-weight: 800; letter-spacing: -.01em; }
 .sec-title-m { position: relative; z-index: 1; margin: 0 auto; padding: 14px 16px 6px; width: var(--chart); background: #fff; }
 .sec-title-d { display: none; }
 .burst, .closer { scroll-margin-top: var(--nav); }
@@ -312,7 +313,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .note-back { font-size: 15px; }
 .notes a, .note-link a { color: var(--ink-2); }
 .notes a:focus-visible, .note-link a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
-@media (min-width: 800px) { .notes { margin-left: auto; margin-right: auto; } }
+@media (min-width: 800px) { .card h1 { font-size: 31px; } }
 /* Links from each section to its notes */
 .note-link { font-size: 15px; }
 .explore > .note-link { margin: 0; padding: 0 16px 16px; }
