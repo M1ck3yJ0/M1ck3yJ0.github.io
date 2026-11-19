@@ -12,13 +12,12 @@
 <meta property="og:image" content="https://milcahjoseph.com/assets/far_from_full_circle_meta_thumb.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../../assets/favicon.png">
-<link rel="preload" href="archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face {
-  font-family: "Archivo";
-  src: url("archivo-latin-wdth-normal.woff2") format("woff2-variations"), url("archivo-latin-wdth-normal.woff2") format("woff2");
-  font-weight: 100 900;
-  font-stretch: 62% 125%;
+  font-family: "Newsreader";
+  src: url("newsreader-latin-opsz-normal.woff2") format("woff2-variations"), url("newsreader-latin-opsz-normal.woff2") format("woff2");
+  font-weight: 200 800;
   font-style: normal;
   font-display: swap;
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
@@ -90,8 +89,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--ink);
-  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
-  font-stretch: 96%;
+  font-family: "Newsreader", Georgia, "Times New Roman", serif;
   font-size: 17px;
   line-height: 1.45;
 }
@@ -168,18 +166,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .card .eyebrow {
   margin: 0 0 8px;
   font-size: 15px; line-height: 1.2;
-  font-weight: 800; font-stretch: 118%;
+  font-weight: 800;
   color: var(--ink-2);
 }
 .card h1 {
   margin: 0 0 12px;
   font-size: 29px; line-height: 1.08;
-  font-weight: 800; font-stretch: 100%;
+  font-weight: 800;
   letter-spacing: -.01em;
 }
 
 /* Chart marks and labels */
-.chart text { font-family: inherit; font-stretch: 94%; }
+.chart text { font-family: inherit; }
 .ring .target, .ring-key .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .rope, .ring .dot.rate, .ring-key .rope, .ring-key .dot { fill: var(--back); }
 .ring .stripes.rate .tint { fill: color-mix(in srgb, var(--back) 22%, #fff); }
@@ -288,14 +286,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .sec-head { position: relative; z-index: 1; padding: 0 8px; margin: 0 0 30vh; scroll-margin-top: calc(var(--nav) + 16px); }
 .sec-head h2 {
   margin: 0 auto; max-width: 30ch; background: #fff; padding: 14px 16px;
-  font-size: 25px; line-height: 1.12; font-weight: 800; font-stretch: 100%; letter-spacing: -.01em;
+  font-size: 25px; line-height: 1.12; font-weight: 800; letter-spacing: -.01em;
 }
 @media (min-width: 800px) {
   .sec-head h2 { max-width: calc(var(--chart) + var(--col-gap) + var(--cards)); font-size: 29px; padding: 14px 0; }
 }
 /* Sources and notes: one section at the end, a subsection per section of the story */
 .notes { position: relative; z-index: 1; max-width: 640px; margin: 0 auto 20vh; padding: 20px; background: #fff; font-size: 16px; }
-.notes h2 { margin: 0 0 8px; font-size: 25px; line-height: 1.12; font-weight: 800; font-stretch: 100%; }
+.notes h2 { margin: 0 0 8px; font-size: 25px; line-height: 1.12; font-weight: 800; }
 .note { scroll-margin-top: calc(var(--nav) + 16px); padding-top: 16px; }
 .note + .note { border-top: 1px solid var(--hairline); margin-top: 16px; }
 .note h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.2; font-weight: 700; }
