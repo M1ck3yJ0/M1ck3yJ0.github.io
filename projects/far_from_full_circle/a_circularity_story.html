@@ -75,12 +75,12 @@
 /* Wide screens: the chart in the left column, the cards in the right */
 @media (min-width: 800px) {
   :root {
-    --chart: min(55vw, calc(100vw - 440px), calc(100vh - var(--nav) - 32px), 600px);
+    --chart: min(55vw, calc(100vw - 440px), calc(100vh - var(--nav) - 128px), 560px);
     --cards: min(420px, calc(100vw - var(--chart) - 80px));
     --col-gap: 48px;
   }
   @supports (height: 1svh) {
-    :root { --chart: min(55vw, calc(100vw - 440px), calc(100svh - var(--nav) - 32px), 600px); }
+    :root { --chart: min(55vw, calc(100vw - 440px), calc(100svh - var(--nav) - 128px), 560px); }
   }
 }
 
