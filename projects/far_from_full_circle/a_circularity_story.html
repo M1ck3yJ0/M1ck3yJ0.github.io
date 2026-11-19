@@ -161,7 +161,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     -webkit-mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
             mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
   }
-  #ring svg { overflow: visible; }                 /* panel 5's shards leave off the page's left edge */
+  .burst[data-chart="ring"] .pin { z-index: 2; }  /* panel 5's shards fly over the cards */
+  #ring svg { overflow: visible; }
 }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
@@ -726,10 +727,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      recycling every tonne run on from the arc's end, the dot with them. Panel 5's beats run
      on p, from 0 at 3 to PG at 4 and 1 at 5. From 0 to P0, the stripes and gold fade and the
      dot goes back to the rate; to PG, the shards taken out fly off one after another, fading,
-     and leave their places blank (to the right on a phone, off the page's left edge on wide
-     screens, never behind the cards); to 1, the shards left close up as the disc shrinks, the
+     and leave their places blank, off to the right (on wide screens, over the cards); to 1,
+     the shards left close up as the disc shrinks, the
      ring tightens around it and the arc closes, with recycling held at its 2022 level. */
-  const FLY = 2.3, FLY_WIDE = 3.6;                 // the flight, in disc radii
+  const FLY = 2.3, FLY_WIDE = 5.5;                 // the flight, in disc radii
   const DIM = 0.2;                                 // the arc and dot through the first beat, as the piece's other dimmed marks
   const sector = function (R, a, b) {              // a stretch of the band, with rounded ends
     return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
@@ -780,7 +781,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     d3.select("#ring-waste-clip rect").attr("y", 1.1 + (WASTE_Y - 1.1) * rise);
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
-    const fly = wideMQ.matches ? -FLY_WIDE : FLY;
+    const fly = wideMQ.matches ? FLY_WIDE : FLY;
     ringShards.each(function (s) {
       const el = d3.select(this);
       if (s.morph) {                               // a shard left: blended toward its place in the smaller disc
