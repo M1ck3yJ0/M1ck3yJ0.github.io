@@ -273,7 +273,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     display: grid; grid-template-columns: var(--chart) var(--cards); grid-template-rows: auto 1fr;
     column-gap: var(--col-gap); align-items: start;
   }
-  .explore .chart { grid-column: 1; grid-row: 1 / span 2; width: var(--chart); }
+  .explore .chart { grid-column: 1; grid-row: 1 / span 2; width: var(--chart); position: relative; z-index: 1; }
+  #explore-ring-chart svg { overflow: visible; }   /* its shards fly over the text */
   .explore-top, .explore > .pick { grid-column: 2; grid-row: 1; }
   .explore-top .pick, .explore > .pick { margin-left: 0; }
   .explore-text { grid-column: 2; grid-row: 2; padding: 16px 0 0; }
@@ -1574,6 +1575,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XR_RECYCLED = 70;                          // % of treated waste recycled, the EEA's 2030 scenario
   const XR_HW2 = 7;                                // the second lap's half-width; the first lap's is 4.5
   const T_XREC = 900, T_XPAUSE = 200, T_XOUT = 1400;   // recycling's rise; a pause; the flight, at most
+  const T_XGAP = 28, T_XFLY = 300;                 // one shard after another, each taking T_XFLY to go
   const XR_EU_WASTE = Math.round(EU.waste_treated_per_consumption);
   const XR_LINES = {                               // hand-written lines: the default, and data warnings
     DE: "Germany has already set the two side by side: its 2024 circular economy strategy aims to double its rate by 2030 and to use significantly less primary raw material by 2045.",
@@ -1608,13 +1610,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   // The beat's timing, in ms, and where each part ends as a share of it
   function xrTimeline(q, n) {
     const tRec = q.held ? 0 : T_XREC;
-    q.gapT = n > 1 ? Math.min(T_GAP, (T_XOUT - T_FLY) / (n - 1)) : 0;
-    q.tOut = n ? (n - 1) * q.gapT + T_FLY : 0;
+    q.gapT = n > 1 ? Math.min(T_XGAP, (T_XOUT - T_XFLY) / (n - 1)) : 0;
+    q.tOut = n ? (n - 1) * q.gapT + T_XFLY : 0;
     q.T = tRec + (q.cut > 0 ? T_XPAUSE + q.tOut + T_SETTLE : 0);
     q.pA = q.T ? tRec / q.T : 0;
     q.pB0 = q.T ? (tRec + (q.cut > 0 ? T_XPAUSE : 0)) / q.T : 0;
     q.pB1 = q.T ? q.pB0 + q.tOut / q.T : 0;
-    q.flight = q.tOut ? T_FLY / q.tOut : 1;
+    q.flight = q.tOut ? T_XFLY / q.tOut : 1;
   }
 
   /* Solving the discs: in a Web Worker that loads the solver, or on the page if none starts (as
@@ -1759,7 +1761,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       } else if (s.gone) {
         const v = clamp01((u - s.leaves) / q.flight);
         el.attr("display", v > 0.9999 ? "none" : null)
-          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+          .attr("transform", v > 0 ? "translate(" + ((wideMQ.matches ? FLY_WIDE : FLY) * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
           .attr("opacity", v > 0 ? 1 - v * v : null);
       }
     });
