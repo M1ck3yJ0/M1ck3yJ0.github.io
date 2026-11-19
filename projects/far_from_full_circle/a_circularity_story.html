@@ -72,6 +72,17 @@
 @supports (height: 1svh) {
   :root { --chart: min(calc(100vw - 16px), 544px, 58svh); }
 }
+/* Wide screens: the chart in the left column, the cards in the right */
+@media (min-width: 800px) {
+  :root {
+    --chart: min(55vw, calc(100vw - 440px), calc(100vh - var(--nav) - 32px), 600px);
+    --cards: min(420px, calc(100vw - var(--chart) - 80px));
+    --col-gap: 48px;
+  }
+  @supports (height: 1svh) {
+    :root { --chart: min(55vw, calc(100vw - 440px), calc(100svh - var(--nav) - 32px), 600px); }
+  }
+}
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -129,7 +140,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   background: #fff;
   border: 1px solid var(--hairline);
   padding: 14px 16px 16px;
-  margin: 0 0 88vh;
+  margin: 0 0 calc(var(--chart) + 162px);          /* the next card reaches its place 170 px after this one is almost clear (setupSteps) */
 }
 .steps > .card:first-child { margin-top: calc(var(--chart) + 24px); }
 .steps > .card:last-child { margin-bottom: 60vh; }
@@ -138,6 +149,20 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .closer .steps > .card { margin-bottom: 40vh; }
 .closer .steps > .card:first-child { margin-top: 0; }
 .closer .steps > .card:last-child { margin-bottom: 60vh; }
+@media (min-width: 800px) {
+  main { max-width: none; padding-top: var(--nav); }
+  .burst, .closer {
+    display: grid; grid-template-columns: var(--chart) var(--cards);
+    column-gap: var(--col-gap); justify-content: center; align-items: start;
+  }
+  .pin { grid-column: 1; grid-row: 1; align-items: center; padding-top: 0; }
+  .steps, .closer .steps { grid-column: 2; grid-row: 1; margin-top: 0; padding: 0; }
+  .terrazzo {
+    -webkit-mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+            mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+  }
+  #ring svg { overflow: visible; }                 /* panel 5's shards leave off the page's left edge */
+}
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
 .card .eyebrow {
@@ -204,7 +229,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .zin .day-4 { fill: var(--day-4); }
 .zin .day-5 { fill: var(--day-5); }
 .zin .day-6 { fill: var(--day-6); }
-.zin .axis, .cmp .axis { stroke: var(--ink-2); stroke-width: 1; }
+#zin .axis, .cmp .axis { stroke: var(--ink-2); stroke-width: 1; }
 .ikea .steel-1 { fill: var(--steel-1); } .ikea .steel-2 { fill: var(--steel-2); }
 .ikea .steel-3 { fill: var(--steel-3); } .ikea .steel-4 { fill: var(--steel-4); }
 .cmp .biomass.est { fill: url(#cmp-hatch-biomass); }
@@ -240,6 +265,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .lap .band, .ring-key .lap { fill: var(--back-lap); fill-opacity: .6; }
 .ring .lap line { stroke: var(--back-lap); stroke-width: 2.2; stroke-opacity: .85; }
 .ring .dot.lap { fill: var(--back-lap); }
+@media (min-width: 800px) {
+  .explorer { padding: 0; }
+  .explore {
+    width: max-content; max-width: 100%; padding: 16px 16px 16px 0;
+    display: grid; grid-template-columns: var(--chart) var(--cards); grid-template-rows: auto 1fr;
+    column-gap: var(--col-gap); align-items: start;
+  }
+  .explore .chart { grid-column: 1; grid-row: 1 / span 2; width: var(--chart); }
+  .explore-top, .explore > .pick { grid-column: 2; grid-row: 1; }
+  .explore-top .pick, .explore > .pick { margin-left: 0; }
+  .explore-text { grid-column: 2; grid-row: 2; padding: 16px 0 0; }
+}
 .pick::after {                                     /* the chevron */
   content: ""; position: absolute; right: 16px; top: 50%;
   width: 7px; height: 7px; margin-top: -6px;
@@ -479,6 +516,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const EU = DATA.countries.EU27_2020;
   const TARGET = 0.24;
   const fmt1 = d3.format(".1f");
+  const clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
+  const wideMQ = window.matchMedia("(min-width: 800px)");
 
   /* ---------- Ring: the target as a ring, EU 2022 ----------
      The disc's area is material consumed. The ring is drawn around it at a set gap, and the
@@ -500,16 +539,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CX = 200, CY = 176, RING_DOT = 7.5;
   const TAU = 2 * Math.PI;
 
-  // p: where panel 5's two beats stand: 0 before them, PG after the first (set below), 1 after the second
   const RING = {
-    hero:   { p: 0,   dmc: DMC,        disc: true,  waste: false, key: [] },
-    levers: { p: 0,   dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "tonnes" },
-    back:   { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste"],         call: "waste" },
-    every:  { p: 0,   dmc: DMC,        disc: true,  waste: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
-    gone:   { p: NaN, dmc: DMC,        disc: true,  waste: false, key: ["mats"],                  call: "less" },
-    less:   { p: 1,   dmc: DMC_CLOSED, disc: true,  waste: false, key: ["mats"],                  call: "less" }
+    hero:   { at: 0, dmc: DMC,        disc: true,  key: [] },
+    levers: { at: 1, dmc: DMC,        disc: true,  key: ["mats"],                  call: "tonnes" },
+    back:   { at: 2, dmc: DMC,        disc: true,  key: ["mats", "waste"],         call: "waste" },
+    every:  { at: 3, dmc: DMC,        disc: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
+    gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less" },
+    less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less" }
   };
-  const RING_MOVING = { p: 0, dmc: DMC, disc: true, waste: false, key: ["mats"] };   // labels while the beats play
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
      covering exactly its share of material use by weight (_tools/make_shards.py). They sit
@@ -563,20 +600,22 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }
   });
 
-  /* Panel 5's timing, in ms: the full disc's stripes and gold fade; the shards taken out fly off
-     one after another, in a scattered order, each leaving T_GAP after the one before and taking
-     T_FLY to go; then the shards left close up. p runs in step with time, so P0 and PG mark the
-     end of the fade and of the first beat. */
-  const T_FADE = 260, T_GAP = 28, T_FLY = 300, T_SETTLE = 1100;
+  /* The ring's beats, in ms: RDUR[k] is the beat into RING's position k. Panel 5's first beat:
+     the full disc's stripes and gold fade; the shards taken out fly off one after another, in
+     a scattered order, each leaving T_GAP after the one before and taking T_FLY to go; its
+     second, the shards left close up. p runs from 0 to 1 over the two, in step with time, so
+     P0 and PG mark the end of the fade and of the first beat. */
+  const T_FADE = 180, T_FLY = 260, T_SETTLE = 900;
   const OUT = SHARDS.filter(function (s) { return !s.morph; }).sort(function (a, b) {
     return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
   });
-  const T_OUT = (OUT.length - 1) * T_GAP + T_FLY;  // the flight
+  const T_OUT = 900 - T_FADE;                      // the flight
+  const T_GAP = (T_OUT - T_FLY) / Math.max(1, OUT.length - 1);
   const T_ALL = T_FADE + T_OUT + T_SETTLE;
   const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL;
   const FLIGHT = T_FLY / T_OUT;                    // one shard's flight, as a share of the whole
+  const RDUR = [0, 600, 800, 800, T_FADE + T_OUT, T_SETTLE];
   OUT.forEach(function (s, i) { s.leaves = i * T_GAP / T_OUT; });
-  RING.gone.p = PG;
 
   // Area of the shards' parts at or below a level
   function areaBelow(level) {
@@ -620,6 +659,33 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return t;
   }
 
+  /* A chart's labels for a new state, built by build(L) into a fresh group in its g.labels.
+     Over dur ms, labels the old state had too stay put, the old state's others fade out, and
+     the new state's others fade in; at 0, the new labels just replace the old. */
+  const labelKey = function (n) { return n.outerHTML.replace(/ (opacity|style)="[^"]*"/g, ""); };
+  function relabel(svg, dur, build) {
+    const host = svg.select("g.labels");
+    host.selectAll(":scope > .gone").remove();
+    const old = host.select(":scope > .now");
+    const L = host.append("g").attr("class", "now");
+    build(L);
+    if (old.empty()) return L;
+    if (!(dur > 0)) { old.remove(); return L; }
+    const had = new Map();
+    old.selectAll(":scope > *").each(function () {
+      const k = labelKey(this);
+      if (!had.has(k)) had.set(k, []);
+      had.get(k).push(this);
+    });
+    L.selectAll(":scope > *").each(function () {
+      const same = had.get(labelKey(this));
+      if (same && same.length) same.shift().remove();
+      else d3.select(this).attr("opacity", 0).transition().delay(dur * 0.3).duration(dur * 0.7).attr("opacity", 1);
+    });
+    old.attr("class", "gone").transition().duration(dur * 0.4).attr("opacity", 0).remove();
+    return L;
+  }
+
   // The key: rows of swatches and names, each centered under the ring
   const KEY = {
     target: function (g) {
@@ -654,14 +720,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     L.append("line").attr("class", "leader").attr("x1", a[0]).attr("y1", a[1]).attr("x2", b[0]).attr("y2", b[1]);
   }
 
-  /* The ring, drawn from p (RING). Before panel 5, the full disc's state o adds its stripes, gold
-     and dot. Panel 5 plays in two beats, drawn from p alone, so either beat plays either way and
-     can turn mid-way. From 0 to P0, o's stripes and gold fade and the dot goes back to the rate;
-     to PG, the shards taken out fly off to the right one after another, fading, and leave their
-     places blank; to 1,
-     the shards left close up as the disc shrinks, the ring tightens around it and the arc
-     closes, with recycling held at its 2022 level. */
-  const FLY = 2.3;                                 // the flight, in disc radii
+  /* The ring, drawn from r, RING's position, which runs on between the cards' whole numbers
+     so each beat can play either way and turn mid-way. To 1, nothing moves but the labels; to
+     2, the gold of the waste that comes back rises through the disc; to 3, the stripes of
+     recycling every tonne run on from the arc's end, the dot with them. Panel 5's beats run
+     on p, from 0 at 3 to PG at 4 and 1 at 5. From 0 to P0, the stripes and gold fade and the
+     dot goes back to the rate; to PG, the shards taken out fly off one after another, fading,
+     and leave their places blank (to the right on a phone, off the page's left edge on wide
+     screens, never behind the cards); to 1, the shards left close up as the disc shrinks, the
+     ring tightens around it and the arc closes, with recycling held at its 2022 level. */
+  const FLY = 2.3, FLY_WIDE = 3.6;                 // the flight, in disc radii
   const DIM = 0.2;                                 // the arc and dot through the first beat, as the piece's other dimmed marks
   const sector = function (R, a, b) {              // a stretch of the band, with rounded ends
     return d3.arc().cornerRadius(4.5)({ innerRadius: R - 4.5, outerRadius: R + 4.5, startAngle: a * TAU, endAngle: b * TAU });
@@ -672,16 +740,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   };
   let stripesAt = "";
 
-  function ringFrame(p, o) {
+  function ringFrame(r) {
     const g = d3.select("#ring svg g.ring");
+    const p = r <= 3 ? 0 : r <= 4 ? (r - 3) * PG : PG + (r - 4) * (1 - PG);
     const w = p > PG ? d3.easeCubicInOut((p - PG) / (1 - PG)) : 0;  // the second beat
     const dmc = DMC + (DMC_CLOSED - DMC) * w;
     const size = RC0 * Math.sqrt(dmc / DMC);       // the disc's radius
     const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
     const f = turns(dmc);
-    const fe = o.to ? o.to / TARGET : f;           // where o's stripes end
-    const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far o's extras have gone
-
+    const rise = d3.easeCubicInOut(clamp01(r - 1)); // the waste's gold, risen
+    const fe = f + (CEILING / TARGET - f) * d3.easeCubicInOut(clamp01(r - 2));   // where the stripes end
+    const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far the extras have gone
     g.select(".target").attr("r", R);
     const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
     const lit = q > 0 ? 1 - (1 - DIM) * q : null;
@@ -707,9 +776,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
     g.select(".disc").attr("transform", "scale(" + size + ")");
-    g.select(".disc .waste").attr("display", o.waste && z < 1 ? null : "none").attr("opacity", 1 - z);
+    g.select(".disc .waste").attr("display", rise > 0 && z < 1 ? null : "none").attr("opacity", 1 - z);
+    d3.select("#ring-waste-clip rect").attr("y", 1.1 + (WASTE_Y - 1.1) * rise);
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
+    const fly = wideMQ.matches ? -FLY_WIDE : FLY;
     ringShards.each(function (s) {
       const el = d3.select(this);
       if (s.morph) {                               // a shard left: blended toward its place in the smaller disc
@@ -717,23 +788,23 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           const b = s.morph[1][i];
           return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
         }).join("L") + "Z");
-      } else {                                     // a shard taken out: off to the right, fading
+      } else {                                     // a shard taken out: flying off, fading
         const v = Math.max(0, Math.min(1, (u - s.leaves) / FLIGHT));
         el.attr("display", v > 0.9999 ? "none" : null)
-          .attr("transform", v > 0 ? "translate(" + (FLY * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+          .attr("transform", v > 0 ? "translate(" + (fly * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
           .attr("opacity", v > 0 ? 1 - v * v : null);
       }
     });
   }
 
-  function ringLabels(s) {
-    const svg = d3.select("#ring svg");
+  function ringLabels(s, dur) {
+    relabel(d3.select("#ring svg"), dur, function (L) { ringLabelsIn(L, s); });
+  }
+  function ringLabelsIn(L, s) {
     const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius
     const rc = s.disc ? size : 0;
     const R = size + RING_GAP + 4.5;
     const fe = s.to ? s.to / TARGET : turns(s.dmc);
-    const L = svg.select("g.labels");
-    L.selectAll("*").remove();
     const has = function (k) { return s.key.indexOf(k) > -1; };
     const at = function (turn, r) { return [CX + r * Math.sin(turn * TAU), CY - r * Math.cos(turn * TAU)]; };
     const top = function (strong, rest, x, y) {   // one line above the ring, a leader down to (x, y)
@@ -773,33 +844,29 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022" : "Source: Eurostat, 2022", "lab-src"]]);
   }
 
-  /* Scrolled from card to card, panel 5's beats play from where the ring stands. With reduced
-     motion, on the first card scrolled to, and otherwise, the ring is drawn as the card declares. */
+  /* Each card's ring plays from where the ring stands, through the beats between, in the
+     longest of their times; labels cross-fade to the card's as it starts, except that "24%
+     reached" waits for the ring to close. dir: 1 forward, -1 back, 0 drawn at once. */
   const STILL = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let ringName = null, ringP = 0, ringOuter = RING.hero, ringTimer = null, ringScrolled = false;
+  let ringName = "hero", ringR = 0, ringTimer = null;
 
-  function drawRing(name, scrolled) {
-    const s = RING[name] || RING.hero;
-    if (name === ringName && ringTimer) return;    // already on its way there
-    const play = scrolled && ringScrolled && !STILL;
-    if (scrolled) ringScrolled = true;
-    const prev = RING[ringName];
+  function drawRing(name, dir) {
+    const s = RING[name] || RING.hero, to = s.at;
     ringName = name;
-    if (s.p === 0) ringOuter = s;
-    else if (prev && prev.p === 0) ringOuter = prev;
     if (ringTimer) { ringTimer.stop(); ringTimer = null; }
-    if (!play || s.p === ringP) {
-      ringP = s.p;
-      ringFrame(ringP, ringOuter);
-      ringLabels(s);
-      return;
-    }
-    ringLabels(s.p > 0 ? RING.gone : RING_MOVING);
-    const from = ringP, dur = Math.abs(s.p - from) * T_ALL / (s.p < from ? 2 : 1);   // back at double speed
+    if (!dir || to === ringR) { ringR = to; ringFrame(to); ringLabels(s, 0); return; }
+    const from = ringR;
+    let dur = 0;
+    for (let k = Math.floor(Math.min(from, to)) + 1; k <= Math.ceil(Math.max(from, to)); k++) dur = Math.max(dur, RDUR[k]);
+    dur = beatDur(dur * Math.min(1, Math.abs(to - from)), dir);
+    ringLabels(to === RING.less.at ? RING.gone : s, dur);
     ringTimer = d3.timer(function (t) {
-      ringP = t >= dur ? s.p : from + (s.p - from) * t / dur;
-      ringFrame(ringP, ringOuter);
-      if (t >= dur) { ringTimer.stop(); ringTimer = null; ringLabels(s); }
+      ringR = t >= dur ? to : from + (to - from) * t / dur;
+      ringFrame(ringR);
+      if (t >= dur) {
+        ringTimer.stop(); ringTimer = null;
+        if (to === RING.less.at) ringLabels(s, beatDur(400, 1));
+      }
     });
   }
 
@@ -834,6 +901,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
              less: -ST.consumption_change_pct[i], est: YRS[i + 1] >= DATA.trend_estimated_from };
   });
   const WF = {
+    pre:     { focus: -1, build: 0 },
     steps:   { focus: -1 },
     biggest: { focus: d3.maxIndex(WSTEP, function (d) { return d.net; }) },
     latest:  { focus: NS - 1 }
@@ -868,127 +936,135 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return wshape(bar, x, a, b, v, k === undefined ? 1 : k, y);
   }
 
-  function warrow(g, x, a, b) {
-    const y1 = wy(a), y2 = wy(b), up = y2 < y1;
+  // The net arrow from a to b, drawn to k of its length, its head at the tip
+  function warrow(arrow, x, a, b, k) {
+    const shown = k > 0;
+    arrow.line.attr("display", shown ? null : "none");
+    arrow.head.attr("display", shown ? null : "none");
+    if (!shown) return;
+    const y1 = wy(a), y2 = y1 + (wy(b) - y1) * Math.min(1, k), up = y2 < y1;
     const h = Math.min(5, Math.abs(y2 - y1)), w = 3.2, yb = up ? y2 + h : y2 - h;
-    g.append("line").attr("class", "net").attr("x1", x).attr("x2", x).attr("y1", y1).attr("y2", yb);
-    g.append("path").attr("class", "net-head")
-      .attr("d", "M" + (x - w) + "," + yb + "L" + (x + w) + "," + yb + "L" + x + "," + y2 + "Z");
+    arrow.line.attr("x1", x).attr("x2", x).attr("y1", y1).attr("y2", yb);
+    arrow.head.attr("d", "M" + (x - w) + "," + yb + "L" + (x + w) + "," + yb + "L" + x + "," + y2 + "Z");
   }
 
-  /* Panel 7's build, drawn from wfP alone, from 0 (the axes and the 2004 rate) to 1 (every
-     bar), so it can stop mid-way. Left to right, a step every T_WSTEP: the blue bar grows from
-     its base to its point, then the gold bar from the blue bar's tip, as one stroke sharing the
-     step's time by length. Each label fades in as its step ends, the 2024 rate as the last
-     step does. The waterfall waits at its start whenever a card above it is shown, which
-     happens only once it's off screen, and builds as its year labels come onto the screen
-     from below, or when its first card is scrolled to, if it hasn't yet. With reduced
-     motion, or from any other card, it's drawn as the card declares. */
-  const T_WSTEP = 160, T_WLAB = 200;
-  const T_WBUILD = NS * T_WSTEP + T_WLAB;
-  let wfName = null, wfP = 1, wfTimer = null, wfBars = [], wfLands = [];
-
-  function wfFrame(p) {
-    const t = p * T_WBUILD;
-    WSTEP.forEach(function (d, i) {
-      const u = d3.easeCubicInOut(Math.max(0, Math.min(1, (t - i * T_WSTEP) / T_WSTEP)));
-      const lc = Math.abs(d.c), lr = Math.abs(d.r), run = u * (lc + lr);
-      wshape(wfBars[i].used, d.bx, d.start, d.mid, d.c, lc ? run / lc : u);
-      wshape(wfBars[i].back, d.gx, d.mid, d.end, d.r, lr ? (run - lc) / lr : +(u >= 1));
-    });
-    wfLands.forEach(function (l) { l[0].attr("opacity", Math.max(0, Math.min(1, (t - l[1]) / T_WLAB))); });
-  }
-
-  function drawWaterfall(name, scrolled) {
-    if (name === wfName && wfTimer) return;        // already on its way there
-    if (wfTimer) { wfTimer.stop(); wfTimer = null; }
-    const play = scrolled && name === "steps" && wfName === "steps" && wfP < 1 && !STILL;
-    wfName = name;
-    wfDraw(name);
-    if (!play) { wfP = 1; wfFrame(1); return; }
-    const from = wfP, dur = (1 - from) * T_WBUILD;
-    wfFrame(from);
-    wfTimer = d3.timer(function (t) {
-      wfP = t >= dur ? 1 : from + (1 - from) * t / dur;
-      wfFrame(wfP);
-      if (t >= dur) { wfTimer.stop(); wfTimer = null; }
-    });
-  }
-
-  // The start of the build, waiting for panel 7: the axes and the 2004 rate
-  function waterfallStart() {
-    if (STILL || (wfName === "steps" && wfP === 0 && !wfTimer)) return;
-    if (wfTimer) { wfTimer.stop(); wfTimer = null; }
-    wfName = "steps";
-    wfDraw("steps");
-    wfP = 0;
-    wfFrame(0);
-  }
-
-  if (window.IntersectionObserver) {               // the year labels' tops reaching the screen's bottom
-    const at = WYEAR_TOP / 400;
-    new IntersectionObserver(function (es) {
-      const e = es[0];
-      if (wfName === "steps" && wfP === 0 && !wfTimer && e.intersectionRatio >= at - 0.01 &&
-          e.boundingClientRect.top > 0) drawWaterfall("steps", true);
-    }, { threshold: at }).observe(document.querySelector("#waterfall"));
-  }
-
-  function wfDraw(name) {
+  /* The waterfall's state: build, from 0 (the axes and the 2004 rate) to 1 (every bar); dim,
+     each step's dimming, from 0 to 1; and arrow, how much of each step's net arrow is drawn.
+     The build runs left to right, a step every T_WGAP, each taking T_WDUR: the blue bar grows
+     from its base to its point, then the gold bar from the blue bar's tip, as one stroke
+     sharing the step's time by length. Each label fades in as its step ends, the 2024 rate as
+     the last step does. A highlighted step (8, 9, 11) dims the others, then draws its net
+     arrow after its bars; a highlight leaving takes its arrow back first. */
+  const T_WGAP = 60, T_WDUR = 200, T_WLAB = 150;
+  const T_WBUILD = (NS - 1) * T_WGAP + T_WDUR + T_WLAB;
+  const T_WFOCUS = 800;
+  const wfTarget = function (name) {
     const s = WF[name] || WF.steps;
-    const svg = d3.select("#waterfall svg");
-    const g = svg.select("g.wf");
-    const L = svg.select("g.labels");
-    g.selectAll("*").remove();
-    L.selectAll("*").remove();
-    wfLands = [];
-    const lands = function (t, d) { wfLands.push([t, (d.i + 1) * T_WSTEP]); };   // shown once d's step is drawn
+    return { build: s.build === undefined ? 1 : s.build,
+             dim: WSTEP.map(function (d) { return s.focus > -1 && s.focus !== d.i ? 1 : 0; }),
+             arrow: WSTEP.map(function (d) { return s.focus === d.i ? 1 : 0; }) };
+  };
+  let WFS = null, wfName = null, wfTimer = null, wfMarks = null, wfLands = [];
 
-    // The rate, the title and the step years
-    wticks(g, L, wy);
-    label(L, WX0 - 4, 48, [["Change in circularity rate since " + YRS[0], "lab"]]);
-    YRS.forEach(function (yr, i) {
-      if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
+  function wfFrame(st) {
+    const t = st.build * T_WBUILD;
+    WSTEP.forEach(function (d, i) {
+      const m = wfMarks[i];
+      const u = d3.easeCubicInOut(clamp01((t - i * T_WGAP) / T_WDUR));
+      const lc = Math.abs(d.c), lr = Math.abs(d.r), run = u * (lc + lr);
+      wshape(m.used, d.bx, d.start, d.mid, d.c, lc ? run / lc : u);
+      wshape(m.back, d.gx, d.mid, d.end, d.r, lr ? (run - lc) / lr : +(u >= 1));
+      m.g.attr("opacity", st.dim[i] > 0 ? 1 - 0.8 * st.dim[i] : null);
+      warrow(m.arrow, d.ax, d.start, d.end, d3.easeCubicOut(st.arrow[i]));
     });
+    wfLands.forEach(function (l) { l[0].style("opacity", clamp01((t - l[1]) / T_WLAB)); });
+  }
 
-    wfBars = WSTEP.map(function (d) {             // shaped by wfFrame
-      const sg = g.append("g").attr("class", s.focus > -1 && s.focus !== d.i ? "dim" : null);
-      const bars = { used: wbar(sg, "used", d, d.bx, d.start, d.mid, d.c, 0),
-                     back: wbar(sg, "back", d, d.gx, d.mid, d.end, d.r, 0) };
-      if (s.focus === d.i) warrow(sg, d.ax, d.start, d.end);
-      return bars;
+  // The frame and the marks, drawn once; wfFrame shapes them
+  function wfBuild() {
+    const g = d3.select("#waterfall svg g.wf");
+    wticks(g, d3.select("#waterfall svg g.labels").append("g").attr("class", "axis-labels"), wy);
+    wfMarks = WSTEP.map(function (d) {
+      const sg = g.append("g");
+      return { g: sg, used: wbar(sg, "used", d, d.bx, d.start, d.mid, d.c, 0),
+               back: wbar(sg, "back", d, d.gx, d.mid, d.end, d.r, 0),
+               arrow: { line: sg.append("line").attr("class", "net"), head: sg.append("path").attr("class", "net-head") } };
     });
+  }
 
-    const last = WSTEP[NS - 1];
-    if (name === "steps") {
-      const dl = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.c; })];
-      const dm = WSTEP[d3.minIndex(WSTEP, function (d) { return d.c; })];
-      const yl = (wy(dl.start) + wy(dl.mid)) / 2, ym = wy(dm.mid);   // each label with a short leader to its bar
-      lands(L.append("line").attr("class", "leader").attr("x1", dl.bx - 10).attr("x2", dl.bx - 2)
-        .attr("y1", yl).attr("y2", yl), dl);
-      lands(label(L, dl.bx - 14, yl + 4.5, [["used less", "lab"]], "end"), dl);
-      lands(L.append("line").attr("class", "leader").attr("x1", dm.bx + BW / 2).attr("x2", dm.bx + BW / 2)
-        .attr("y1", ym + 2).attr("y2", ym + 10), dm);
-      lands(label(L, dm.bx + BW / 2, ym + 23, [["used more", "lab"]], "middle"), dm);
-      label(L, WSTEP[1].bx - 4, wy(LEVEL[0]) + 5, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);   // level with the start
-      lands(label(L, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
-    } else {
-      const d = WSTEP[s.focus];
-      const less = "Used " + fmt2(d.less) + "% less";
-      const net = (d.net > 0 ? "+" : "") + fmt1(d.net) + "%";
-      if (d.i < NS - 1) {
-        label(L, d.bx - 4, (wy(d.start) + wy(d.mid)) / 2 + 5, [[less, "lab-strong"]], "end");
-        label(L, d.ax + 6, (wy(d.start) + wy(d.end)) / 2 + 5, [[net, "lab-strong"]]);
+  /* Each card's state plays from where the waterfall stands: the build at its own pace, a
+     change of highlight in T_WFOCUS, dimming over its first half, an arrow leaving over its
+     first 40% and one arriving over the rest. */
+  function drawWaterfall(name, dir) {
+    if (!wfMarks) wfBuild();
+    const to = wfTarget(name), from = WFS || to;
+    const labelsFor = function (n) { return n === "pre" ? "steps" : n; };
+    if (wfTimer) { wfTimer.stop(); wfTimer = null; }
+    const relabelled = labelsFor(name) !== labelsFor(wfName);
+    const building = to.build !== from.build;
+    const dur = beatDur(building ? Math.abs(to.build - from.build) * T_WBUILD : T_WFOCUS, dir);
+    if (relabelled || !dir) wfLabels(labelsFor(name), dur);
+    wfName = name;
+    if (!dur) { WFS = to; wfFrame(WFS); return; }
+    const mix = function (a, b, k) { return a + (b - a) * clamp01(k); };
+    wfTimer = d3.timer(function (t) {
+      const k = Math.min(1, t / dur);
+      WFS = { build: mix(from.build, to.build, k),
+              dim: from.dim.map(function (v, i) { return mix(v, to.dim[i], building ? k : k / 0.5); }),
+              arrow: from.arrow.map(function (v, i) {
+                const b = to.arrow[i];
+                return b < v ? mix(v, b, building ? k : k / 0.4) : mix(v, b, building ? k : (k - 0.4) / 0.6);
+              }) };
+      wfFrame(WFS);
+      if (k >= 1) { wfTimer.stop(); wfTimer = null; WFS = to; }
+    });
+  }
+
+  function wfLabels(name, dur) {
+    const s = WF[name] || WF.steps;
+    relabel(d3.select("#waterfall svg"), dur, function (L) {
+      wfLands = [];
+      const LG = L.append("g");                     // labels that land with their step
+      const lands = function (t, d) { wfLands.push([t, d.i * T_WGAP + T_WDUR]); };   // shown once d's step is drawn
+
+      // The title and the step years
+      label(L, WX0 - 4, 48, [["Change in circularity rate since " + YRS[0], "lab"]]);
+      YRS.forEach(function (yr, i) {
+        if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
+      });
+
+      const last = WSTEP[NS - 1];
+      if (name === "steps") {
+        const dl = WSTEP[d3.maxIndex(WSTEP, function (d) { return d.c; })];
+        const dm = WSTEP[d3.minIndex(WSTEP, function (d) { return d.c; })];
+        const yl = (wy(dl.start) + wy(dl.mid)) / 2, ym = wy(dm.mid);   // each label with a short leader to its bar
+        lands(LG.append("line").attr("class", "leader").attr("x1", dl.bx - 10).attr("x2", dl.bx - 2)
+          .attr("y1", yl).attr("y2", yl), dl);
+        lands(label(LG, dl.bx - 14, yl + 4.5, [["used less", "lab"]], "end"), dl);
+        lands(LG.append("line").attr("class", "leader").attr("x1", dm.bx + BW / 2).attr("x2", dm.bx + BW / 2)
+          .attr("y1", ym + 2).attr("y2", ym + 10), dm);
+        lands(label(LG, dm.bx + BW / 2, ym + 23, [["used more", "lab"]], "middle"), dm);
+        label(L, WSTEP[1].bx - 4, wy(LEVEL[0]) + 5, [[fmt1(LEVEL[0]) + "% in " + YRS[0], "lab-strong"]]);   // level with the start
+        lands(label(LG, WX1, wy(last.end) - 9, [[fmt1(LEVEL[NS]) + "% in " + YRS[NS], "lab-strong"]], "end"), last);
       } else {
-        const below = d3.max(WSTEP.slice(-3), function (e) { return wy(Math.min(e.start, e.mid, e.end)); });
-        const yl = below + 20;
-        label(L, WX1, wy(d.end) - 9, [[net, "lab-strong"]], "end");
-        label(L, WX1, yl, [[less, "lab-strong"]], "end");
-        L.append("line").attr("class", "leader").attr("x1", d.bx + BW / 2).attr("x2", d.bx + BW / 2)
-          .attr("y1", wy(d.start) + 3).attr("y2", yl - 15);
+        const d = WSTEP[s.focus];
+        const less = "Used " + fmt2(d.less) + "% less";
+        const net = (d.net > 0 ? "+" : "") + fmt1(d.net) + "%";
+        if (d.i < NS - 1) {
+          label(L, d.bx - 4, (wy(d.start) + wy(d.mid)) / 2 + 5, [[less, "lab-strong"]], "end");
+          label(L, d.ax + 6, (wy(d.start) + wy(d.end)) / 2 + 5, [[net, "lab-strong"]]);
+        } else {
+          const below = d3.max(WSTEP.slice(-3), function (e) { return wy(Math.min(e.start, e.mid, e.end)); });
+          const yl = below + 20;
+          label(L, WX1, wy(d.end) - 9, [[net, "lab-strong"]], "end");
+          label(L, WX1, yl, [[less, "lab-strong"]], "end");
+          L.append("line").attr("class", "leader").attr("x1", d.bx + BW / 2).attr("x2", d.bx + BW / 2)
+            .attr("y1", wy(d.start) + 3).attr("y2", yl - 15);
+        }
       }
-    }
-    label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
+      label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
+    });
+    if (WFS) wfFrame(WFS);
   }
 
   /* ---------- ZIN, Brussels: could have been, is ----------
@@ -997,10 +1073,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      377 as the whole building, which matches its one-third cut.
      Drawn as two of ZIN's towers on one axis from 0 to 600, 30 floors each (CTBUH: 111 m,
      30 floors), both roofs at the new build's 561. The new build's glass is brown, at dusk.
-     ZIN_DAY names the part of ZIN in clear glass, in daylight: "saved" (the 184 never
-     emitted, with its 377 brown) or "emitted" (its 377, with the 184 brown). Each part is
+     ZIN's 184 never emitted are in clear glass, in daylight, with its 377 brown. Each part is
      cut exactly at its value. */
-  const ZIN_DAY = "saved";
   const ZIN = DATA.examples.zin;
   const fmtK = d3.format(",");
   const ZB = 334;                                 // the ground
@@ -1080,44 +1154,75 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     zpart(g, x, roof, split, roof, above, t);
   }
 
-  function drawZin() {
+  /* Before card 12 ("pre"), both towers stand all brown; on card 12, ZIN's top floors clear to
+     daylight from the roof down to its 377, over T_ZIN, and its numbers fade in. Both towers
+     are drawn once, ZIN's all brown with its clear glass laid over, shown down to zinK of the
+     way from the roof to 377. */
+  const T_ZIN = 900;
+  let zinK = 0, zinTimer = null, zinState = null, zinClip = null;
+
+  function zinBuild() {
     const svg = d3.select("#zin svg");
     const g = svg.select("g.zin");
-    const L = svg.select("g.labels");
-    g.selectAll("*").remove();
-    L.selectAll("*").remove();
     const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
-
+    zinClip = svg.insert("defs", ":first-child").append("clipPath").attr("id", "zin-day-clip").append("rect")
+      .attr("x", ZX.is - 1).attr("width", ZTW + 2).attr("y", zy(could) - 1).attr("height", 0);
     zinTower(g, ZX.could, could, could, "dusk", "day", 1);
-    if (ZIN_DAY === "saved") zinTower(g, ZX.is, could, is, "dusk", "day", 2);
-    else zinTower(g, ZX.is, could, is, "day", "dusk", 2);
+    zpart(g, ZX.is, could, 0, could, "dusk", 2);
+    zpart(g.append("g").attr("clip-path", "url(#zin-day-clip)"), ZX.is, could, is, could, "day", 2);
 
     // Axis and ground
     g.append("line").attr("class", "axis").attr("x1", 44).attr("x2", 44).attr("y1", zy(0)).attr("y2", zy(600));
     g.append("line").attr("class", "axis").attr("x1", 44).attr("x2", 396).attr("y1", zy(0)).attr("y2", zy(0));
     [0, 200, 400, 600].forEach(function (v) {
       g.append("line").attr("class", "axis").attr("x1", 40).attr("x2", 44).attr("y1", zy(v)).attr("y2", zy(v));
-      label(L, 36, zy(v) + 4.5, [[String(v), "lab"]], "end");
     });
-    label(L, 6, 40, [["kg of CO2 per m², upfront", "lab"]]);
+  }
 
-    // The new build: its value over the roof
-    const cx = ZX.could + ZTW / 2, ix = ZX.is + ZTW / 2;
-    label(L, cx, zy(could) - 8, [[String(could), "lab-strong"]], "middle");
-    label(L, cx, ZB + 20, [["Could have been:", "ex-row ex-state"], ["a new build", "ex-row ex-rest"]], "middle");
+  function zinFrame(k) {
+    const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
+    zinClip.attr("height", (zy(is) - zy(could) + 1) * d3.easeCubicInOut(k) + (k > 0 ? 1 : 0));
+  }
 
-    // ZIN: a dimension line up its right side, split at its value
-    const dx = ZX.is + ZTW + 8;
-    g.append("line").attr("class", "axis").attr("x1", dx).attr("x2", dx).attr("y1", zy(0)).attr("y2", zy(could));
-    [is, could].forEach(function (v) {
-      g.append("line").attr("class", "axis").attr("x1", dx - 4).attr("x2", dx + 4).attr("y1", zy(v)).attr("y2", zy(v));
+  function zinLabels(name, dur) {
+    const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
+    relabel(d3.select("#zin svg"), dur, function (L) {
+      [0, 200, 400, 600].forEach(function (v) { label(L, 36, zy(v) + 4.5, [[String(v), "lab"]], "end"); });
+      label(L, 6, 40, [["kg of CO2 per m², upfront", "lab"]]);
+
+      // The new build: its value over the roof
+      const cx = ZX.could + ZTW / 2, ix = ZX.is + ZTW / 2;
+      label(L, cx, zy(could) - 8, [[String(could), "lab-strong"]], "middle");
+      label(L, cx, ZB + 20, [["Could have been:", "ex-row ex-state"], ["a new build", "ex-row ex-rest"]], "middle");
+      label(L, ix, ZB + 20, [["Is:", "ex-row ex-state"], ["ZIN", "ex-row ex-rest"]], "middle");
+      label(L, 6, 394, [["Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025", "lab-src"]]);
+      if (name === "pre") return;
+
+      // ZIN: a dimension line up its right side, split at its value
+      const dx = ZX.is + ZTW + 8;
+      L.append("line").attr("class", "axis").attr("x1", dx).attr("x2", dx).attr("y1", zy(0)).attr("y2", zy(could));
+      [is, could].forEach(function (v) {
+        L.append("line").attr("class", "axis").attr("x1", dx - 4).attr("x2", dx + 4).attr("y1", zy(v)).attr("y2", zy(v));
+      });
+      label(L, dx + 8, (zy(0) + zy(is)) / 2 + 5, [[String(is), "lab-strong"]]);
+      label(L, dx + 8, (zy(is) + zy(could)) / 2 - 11, [[ZIN.upfront_saved_per_m2 + " saved", "lab-strong"],
+        [fmtK(ZIN.upfront_saved_total) + " t of CO2", "lab"], ["in all, once", "lab"]]);
     });
-    label(L, dx + 8, (zy(0) + zy(is)) / 2 + 5, [[String(is), "lab-strong"]]);
-    label(L, dx + 8, (zy(is) + zy(could)) / 2 - 11, [[ZIN.upfront_saved_per_m2 + " saved", "lab-strong"],
-      [fmtK(ZIN.upfront_saved_total) + " t of CO2", "lab"], ["in all, once", "lab"]]);
-    label(L, ix, ZB + 20, [["Is:", "ex-row ex-state"], ["ZIN", "ex-row ex-rest"]], "middle");
+  }
 
-    label(L, 6, 394, [["Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025", "lab-src"]]);
+  function drawZin(name, dir) {
+    if (!zinClip) zinBuild();
+    const to = name === "pre" ? 0 : 1, from = zinK;
+    if (zinTimer) { zinTimer.stop(); zinTimer = null; }
+    const dur = beatDur(Math.abs(to - from) * T_ZIN, dir);
+    if (name !== zinState || !dir) zinLabels(name, dur);
+    zinState = name;
+    if (!dur) { zinK = to; zinFrame(to); return; }
+    zinTimer = d3.timer(function (t) {
+      zinK = t >= dur ? to : from + (to - from) * t / dur;
+      zinFrame(zinK);
+      if (t >= dur) { zinTimer.stop(); zinTimer = null; }
+    });
   }
 
   /* ---------- Weight versus climate impact: four kinds of material, EU 2022 ----------
@@ -1142,6 +1247,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   const WSTK = stack("weight"), CSTK = stack("climate");
   const RIB = {
+    pre:      { climate: false, focus: null },
     weight:   { climate: false, focus: null },
     ribbons:  { climate: true,  focus: null },
     minerals: { climate: true,  focus: "minerals" },
@@ -1168,46 +1274,81 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return out;
   }
 
-  function drawRibbon(name) {
+  /* Each card's state, drawn from its unfolding (0, the weight column alone, to 1, the
+     ribbons run across to the climate column, left to right) and each material's dimming.
+     Unfolding takes T_RUNFOLD; a change of highlight T_RFOCUS. The marks are drawn once. */
+  const T_RUNFOLD = 900, T_RFOCUS = 700;
+  let RIBS = null, ribName = null, ribTimer = null, ribMarks = null;
+  const ribTarget = function (name) {
     const s = RIB[name] || RIB.weight;
+    return { unfold: s.climate ? 1 : 0, dim: MAT.map(function (m) { return s.focus && s.focus !== m.key ? 1 : 0; }) };
+  };
+
+  function ribBuild() {
     const svg = d3.select("#ribbon svg");
     const g = svg.select("g.rib");
-    const L = svg.select("g.labels");
-    g.selectAll("*").remove();
-    L.selectAll("*").remove();
+    const clip = svg.insert("defs", ":first-child").append("clipPath").attr("id", "rib-unfold-clip").append("rect")
+      .attr("x", RX1).attr("y", 0).attr("height", 400).attr("width", 0);
+    ribMarks = { clip: clip, mats: MAT.map(function (m, i) {
+      const mg = g.append("g").attr("class", m.key);
+      mg.append("rect").attr("x", RX0).attr("width", RX1 - RX0).attr("y", WSTK[i][0]).attr("height", WSTK[i][1] - WSTK[i][0]);
+      const cg = mg.append("g").attr("clip-path", "url(#rib-unfold-clip)");
+      cg.append("path").attr("d", ribbonPath(WSTK[i], CSTK[i]));
+      cg.append("rect").attr("x", RX2).attr("width", RX3 - RX2).attr("y", CSTK[i][0]).attr("height", CSTK[i][1] - CSTK[i][0]);
+      return mg;
+    }) };
+  }
+
+  function ribFrame(st) {
+    ribMarks.clip.attr("width", (RX3 + 1 - RX1) * d3.easeCubicInOut(st.unfold));
+    ribMarks.mats.forEach(function (mg, i) { mg.attr("opacity", st.dim[i] > 0 ? 1 - 0.8 * st.dim[i] : null); });
+  }
+
+  function drawRibbon(name, dir) {
+    if (!ribMarks) ribBuild();
+    const to = ribTarget(name), from = RIBS || to;
+    if (ribTimer) { ribTimer.stop(); ribTimer = null; }
+    const unfolding = to.unfold !== from.unfold;
+    const dur = beatDur(unfolding ? Math.abs(to.unfold - from.unfold) * T_RUNFOLD : T_RFOCUS, dir);
+    const labelsFor = function (n) { return n === "pre" ? "weight" : n; };
+    if (labelsFor(name) !== labelsFor(ribName) || !dir) ribLabels(labelsFor(name), dur);
+    ribName = name;
+    if (!dur) { RIBS = to; ribFrame(RIBS); return; }
+    ribTimer = d3.timer(function (t) {
+      const k = Math.min(1, t / dur);
+      RIBS = { unfold: from.unfold + (to.unfold - from.unfold) * k,
+               dim: from.dim.map(function (v, i) { return v + (to.dim[i] - v) * d3.easeCubicInOut(k); }) };
+      ribFrame(RIBS);
+      if (k >= 1) { ribTimer.stop(); ribTimer = null; RIBS = to; }
+    });
+  }
+
+  function ribLabels(name, dur) {
+    const s = RIB[name] || RIB.weight;
     const shown = function (m) { return !s.focus || s.focus === m.key; };
     const mid = function (b) { return (b[0] + b[1]) / 2; };
-
-    MAT.forEach(function (m, i) {
-      const cls = m.key + (shown(m) ? "" : " dim");
-      g.append("rect").attr("class", cls).attr("x", RX0).attr("width", RX1 - RX0)
-        .attr("y", WSTK[i][0]).attr("height", WSTK[i][1] - WSTK[i][0]);
-      if (!s.climate) return;
-      g.append("path").attr("class", cls).attr("d", ribbonPath(WSTK[i], CSTK[i]));
-      g.append("rect").attr("class", cls).attr("x", RX2).attr("width", RX3 - RX2)
-        .attr("y", CSTK[i][0]).attr("height", CSTK[i][1] - CSTK[i][0]);
-    });
-
-    label(L, (RX0 + RX1) / 2, 44, [["By weight", "lab-strong"]], "middle");
-    // Share of weight over the name, and any note in small type: blocks 33.6 or 47.4 units tall,
-    // centered 1.7 or 8.6 below the share's baseline
-    const hs = MAT.map(function (m) { return m.note ? 47.4 : 33.6; });
-    const ly = spread(WSTK.map(mid), hs, 8, RY0, RY1 + 6);
-    MAT.forEach(function (m, i) {
-      if (!shown(m)) return;
-      const lines = [[fmt1(m.weight) + "%", "lab-num"], [m.name, "lab", "1.15em"]];
-      if (m.note) lines.push([m.note, "lab-src", "1.3em"]);
-      label(L, RX0 - 8, ly[i] - (m.note ? 8.6 : 1.7), lines, "end");
-    });
-    if (s.climate) {
-      label(L, (RX2 + RX3) / 2, 44, [["By climate impact", "lab-strong"]], "middle");
+    relabel(d3.select("#ribbon svg"), dur, function (L) {
+      label(L, (RX0 + RX1) / 2, 44, [["By weight", "lab-strong"]], "middle");
+      // Share of weight over the name, and any note in small type: blocks 33.6 or 47.4 units tall,
+      // centered 1.7 or 8.6 below the share's baseline
+      const hs = MAT.map(function (m) { return m.note ? 47.4 : 33.6; });
+      const ly = spread(WSTK.map(mid), hs, 8, RY0, RY1 + 6);
       MAT.forEach(function (m, i) {
-        if (shown(m)) label(L, RX3 + 8, mid(CSTK[i]) + 7, [[fmt1(m.climate) + "%", "lab-num"]]);
+        if (!shown(m)) return;
+        const lines = [[fmt1(m.weight) + "%", "lab-num"], [m.name, "lab", "1.15em"]];
+        if (m.note) lines.push([m.note, "lab-src", "1.3em"]);
+        label(L, RX0 - 8, ly[i] - (m.note ? 8.6 : 1.7), lines, "end");
       });
-      label(L, 200, 354, [["Climate impact of making materials, up to the", "lab"],
-                          ["factory gate. Burning fuel isn't counted.", "lab"]], "middle");
-    }
-    label(L, 6, 394, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"]]);
+      if (s.climate) {
+        label(L, (RX2 + RX3) / 2, 44, [["By climate impact", "lab-strong"]], "middle");
+        MAT.forEach(function (m, i) {
+          if (shown(m)) label(L, RX3 + 8, mid(CSTK[i]) + 7, [[fmt1(m.climate) + "%", "lab-num"]]);
+        });
+        label(L, 200, 354, [["Climate impact of making materials, up to the", "lab"],
+                            ["factory gate. Burning fuel isn't counted.", "lab"]], "middle");
+      }
+      label(L, 6, 394, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"]]);
+    });
   }
 
   /* ---------- IKEA's kitchens: a balance, 2017 against 2022 ----------
@@ -1228,7 +1369,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const ISTEM = 13;                                // stem, from the beam up to the pan
   const IPAN = { rx: HEAPS.pan.rx + 2, ry: HEAPS.pan.ry + 0.8, lip: 3.5 };
   const IBASE = 302;                               // the top of the base
-  const T_ITIP = 1100, T_ILAB = 350, T_ILAB_AT = 0.7 * T_ITIP;
+  const T_ITIP = 750, T_ILAB = 300, T_ILAB_AT = 0.6 * T_ITIP;
   const T_IKEA = Math.max(T_ITIP, T_ILAB_AT + T_ILAB);
   const itipEase = d3.easeBackOut.overshoot(1.4);
 
@@ -1301,28 +1442,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     IK.less.attr("opacity", Math.max(0, Math.min(1, (t - T_ILAB_AT) / T_ILAB)));
   }
 
-  /* Reached by scrolling, the beam tips from wherever it stands. It waits level whenever a
-     card above it is shown, which happens only once it's off screen. With reduced motion,
-     or from any other card, it's drawn tipped, as the card declares. */
-  function drawIkea(name, scrolled) {
+  /* The beam waits level before card 18 ("pre"), and tips from wherever it stands. */
+  function drawIkea(name, dir) {
     if (!IK) ikeaBuild();
-    if (ikeaTimer) return;                         // already on its way there
-    if (!(scrolled && ikeaP < 1 && !STILL)) { ikeaP = 1; ikeaFrame(1); return; }
-    const from = ikeaP, dur = (1 - from) * T_IKEA;
+    const to = name === "pre" ? 0 : 1, from = ikeaP;
+    if (ikeaTimer) { ikeaTimer.stop(); ikeaTimer = null; }
+    const dur = beatDur(Math.abs(to - from) * T_IKEA, dir);
+    if (!dur) { ikeaP = to; ikeaFrame(to); return; }
     ikeaTimer = d3.timer(function (t) {
-      ikeaP = t >= dur ? 1 : from + (1 - from) * t / dur;
+      ikeaP = t >= dur ? to : from + (to - from) * t / dur;
       ikeaFrame(ikeaP);
       if (t >= dur) { ikeaTimer.stop(); ikeaTimer = null; }
     });
-  }
-
-  // The start of the beat, waiting for card 18: the beam level
-  function ikeaStart() {
-    if (STILL || (ikeaP === 0 && !ikeaTimer)) return;
-    if (!IK) ikeaBuild();
-    if (ikeaTimer) { ikeaTimer.stop(); ikeaTimer = null; }
-    ikeaP = 0;
-    ikeaFrame(0);
   }
 
   /* ---------- The two examples compared: shares of tonnes saved and of carbon saved ----------
@@ -1368,7 +1499,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return ya + (yb - ya) * t * t * (3 - 2 * t);
   }
 
-  function drawCompare() {
+  let cmpDrawn = false;
+  function drawCompare() {                         // one state, drawn once
+    if (cmpDrawn) return;
+    cmpDrawn = true;
     const svg = d3.select("#compare svg");
     const g = svg.select("g.cmp");
     const L = svg.select("g.labels");
@@ -1449,7 +1583,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     BG: "Read Bulgaria's ring with care. Its rate swings widely from one report to the next on changes in recycling alone, from 2.4% in 2018 to 5.8% in 2020 and back to 3.0% in 2022, so 2022 may not be a typical year."
   };
   let xrP = 0, xrTimer = null, xrPending = false, XR = null;
-  const clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
 
   KEY.lap = function (g) {
     g.append("rect").attr("class", "lap").attr("y", -10).attr("width", 18).attr("height", 11).attr("rx", 5.5);
@@ -1755,6 +1888,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XNS = XYRS.length - 1;
   const XSW = (WX1 - WX0) / XNS, XPAD = (XSW - 2 * BW - 1.5) / 2;
   const XSPAN = 4.8;                               // panel 7's span, in points
+  const T_WSTEP = 160;
   const T_XBUILD = XNS * T_WSTEP;
   const XFIG = document.querySelector("#explore-waterfall");
   let xCode = "NL", xP = 0, xTimer = null, xSteps = [], xBars = [], xy = wy;
@@ -1855,51 +1989,92 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea,
                    compare: drawCompare };
 
-  // Charts below the card shown wait at the start of their builds, so each plays when reached
-  const STARTS = { waterfall: waterfallStart, ikea: ikeaStart };
+  /* Timing. Each beat's transition starts when the card before it is almost clear of the top
+     edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
+     that chart is 90% visible. Each runs for its own fixed duration, set so it ends about when
+     the card reaches its place: right below the chart on a phone, centered on wide screens,
+     STRETCH px of scrolling after the start. Cards are spaced to match: in CSS on a phone,
+     here on wide screens. Scrolling back plays at BACK times the speed, and reduced motion at
+     REDUCED times. Every chart is drawn from the card shown: a chart below it waits at its
+     state before its first card ("pre"), one above it holds its last card's state. */
+  const STRETCH = 170, ALMOST = 32, BACK = 2.5, REDUCED = 3;
+  // A beat's duration in ms, in the direction it plays (1 forward, -1 back, 0 at once)
+  const beatDur = function (ms, dir) {
+    return dir ? ms / ((dir < 0 ? BACK : 1) * (STILL ? REDUCED : 1)) : 0;
+  };
 
-  function show(card) {
-    const burst = card.closest(".burst");
-    const draw = burst && CHARTS[burst.dataset.chart];
-    if (draw) draw(card.dataset.state, true);
-    if (burst) document.querySelectorAll(".burst").forEach(function (b) {
-      const start = STARTS[b.dataset.chart];
-      if (start && burst.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) start();
+  let cardShown = -1;
+  const CARDS = Array.prototype.slice.call(document.querySelectorAll(".card[data-state]"));
+  const BURSTS = Array.prototype.map.call(document.querySelectorAll(".burst"), function (b) {
+    const cards = Array.prototype.slice.call(b.querySelectorAll(".card[data-state]"));
+    return { chart: b.dataset.chart, fig: b.querySelector(".chart"), cards: cards,
+             first: CARDS.indexOf(cards[0]), last: CARDS.indexOf(cards[cards.length - 1]), state: null };
+  });
+
+  function show(i, dir) {
+    const prev = cardShown;
+    cardShown = i;
+    if (dir === undefined) dir = prev < 0 ? 0 : Math.sign(i - prev);
+    BURSTS.forEach(function (b) {
+      const state = i < b.first ? "pre" : CARDS[Math.min(i, b.last)].dataset.state;
+      if (state === b.state && dir) return;
+      b.state = state;
+      CHARTS[b.chart](state, dir);
     });
-    document.querySelectorAll(".card.is-active").forEach(function (c) { c.classList.remove("is-active"); });
-    card.classList.add("is-active");
+    CARDS.forEach(function (c, k) { c.classList.toggle("is-active", k === i); });
   }
 
   function setupSteps() {
-    const cards = document.querySelectorAll(".card[data-state]");
-    document.querySelectorAll(".burst").forEach(function (b) {
-      const first = b.querySelector(".card[data-state]");
-      if (first) CHARTS[b.dataset.chart](first.dataset.state);
-    });
-    /* The trigger line sits at 70% of the small viewport height, in px, so mobile
-       toolbars showing and hiding don't move it. It changes only with the width. */
+    // The small viewport's height, which mobile toolbars showing and hiding don't change
     const probe = document.createElement("div");
     probe.style.cssText = "position:absolute;top:0;left:0;width:0;visibility:hidden;pointer-events:none;height:100vh;height:100svh";
     document.body.appendChild(probe);
-    const line = function () { return Math.round(probe.getBoundingClientRect().height * 0.7); };
-    let trigger = line(), width = innerWidth;
-    const widthChanged = function () {
-      if (innerWidth === width) return false;
-      width = innerWidth; trigger = line();
-      return true;
+    const view = function () { return probe.getBoundingClientRect().height; };
+    const nav = function () { return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav")) || 0; };
+
+    // Wide screens: each card centered on screen STRETCH px after the one before it is almost clear
+    const space = function () {
+      const wide = wideMQ.matches, half = (view() - nav()) / 2;
+      BURSTS.forEach(function (b) {
+        b.cards.forEach(function (c, k) {
+          const next = b.cards[k + 1];
+          c.style.marginTop = wide && !k ? Math.max(0, half - c.offsetHeight / 2) + "px" : "";
+          c.style.marginBottom = wide && next ? Math.max(48, half - next.offsetHeight / 2 + STRETCH - ALMOST) + "px" : "";
+        });
+      });
+    };
+
+    const reached = function (i, top, bottom) {
+      const b = BURSTS.find(function (b) { return b.first === i; });
+      if (b) { const r = b.fig.getBoundingClientRect(); return r.top + 0.9 * r.height <= bottom; }
+      return !i || CARDS[i - 1].getBoundingClientRect().bottom <= top + ALMOST;
     };
     let queued = false;
-    const pick = function () {
+    const pick = function (dir) {
       queued = false;
-      let active = null;
-      cards.forEach(function (c) { if (c.getBoundingClientRect().top < trigger) active = c; });
-      if (active && !active.classList.contains("is-active")) show(active);
+      const top = nav(), bottom = view();
+      let at = 0;
+      CARDS.forEach(function (c, i) { if (reached(i, top, bottom)) at = i; });
+      if (at !== cardShown) show(at, dir);
     };
     window.addEventListener("scroll", function () {
-      if (!queued) { queued = true; requestAnimationFrame(pick); }
+      if (!queued) { queued = true; requestAnimationFrame(function () { pick(); }); }
     }, { passive: true });
-    window.addEventListener("resize", function () { if (widthChanged()) pick(); });
-    pick();
+    let width = innerWidth;
+    window.addEventListener("resize", function () {
+      if (innerWidth !== width) { width = innerWidth; space(); }
+      else if (wideMQ.matches) space();
+      pick(0);
+    });
+    // The scroll position that puts card i in its place, for checking
+    window.FFC.place = function (i) {
+      const c = CARDS[i], r = c.getBoundingClientRect(), b = BURSTS.find(function (b) { return b.cards.indexOf(c) > -1; });
+      const top = wideMQ.matches || !b ? nav() + (view() - nav()) / 2 - r.height / 2 : nav() + 8 + b.fig.getBoundingClientRect().height + 16;
+      return Math.max(0, scrollY + r.top - top);
+    };
+    space();
+    pick(0);
+    if (document.fonts) document.fonts.ready.then(function () { space(); pick(0); });
   }
 
   /* ---------- Terrazzo: offcuts set into something that lasts ---------- */
@@ -1930,14 +2105,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     document.querySelector(".terrazzo").style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
+  window.FFC = { show: show, draw: CHARTS };
   terrazzo();
   setupSteps();
   if (document.fonts) document.fonts.ready.then(function () {   // the ring's key is laid out from measured text
-    const card = document.querySelector('.burst[data-chart="ring"] .card.is-active') ||
-                 document.querySelector('.burst[data-chart="ring"] .card[data-state]');
-    drawRing(card.dataset.state);
+    if (!ringTimer) ringLabels(RING[ringName], 0);
   });
-  window.FFC = { show: show, draw: CHARTS };
 })();
 </script>
 </body>
