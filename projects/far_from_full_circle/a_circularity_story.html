@@ -294,6 +294,19 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 @media (min-width: 800px) {
   .sec-head h2 { max-width: calc(var(--chart) + var(--col-gap) + var(--cards)); font-size: 29px; padding: 14px 0; }
 }
+/* Sources and notes: one section at the end, a subsection per section of the story */
+.notes { position: relative; z-index: 1; max-width: 640px; margin: 0 auto 20vh; padding: 16px; background: #fff; border: 1px solid var(--hairline); font-size: 16px; }
+.notes h2 { margin: 0 0 8px; font-size: 25px; line-height: 1.12; font-weight: 800; font-stretch: 100%; }
+.note { scroll-margin-top: calc(var(--nav) + 16px); padding-top: 16px; }
+.note + .note { border-top: 1px solid var(--hairline); margin-top: 16px; }
+.note h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.2; font-weight: 700; }
+.note p { margin: 0; }
+.note p + p { margin-top: .5em; }
+.note-src { color: var(--ink-2); }
+.note-back { font-size: 15px; }
+.notes a, .note-link a { color: var(--ink-2); }
+.notes a:focus-visible, .note-link a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
+@media (min-width: 800px) { .notes { margin-left: auto; margin-right: auto; } }
 </style>
 </head>
 <body>
@@ -528,6 +541,60 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         <p>And most of all, making what we already have last: keeping our buildings standing, using what we make for longer, wasting less of what we grow. For homes, the International Resource Panel found that using them more intensively could cut the emissions of their materials by up to 70% by 2050 in the G7, against 14 to 18% from better recycling. ZIN didn't wait for a target, and neither did IKEA's kitchens. We don't have to either. The ring won't close by recycling alone. It closes when we choose to need less.</p>
       </article>
     </div>
+  </section>
+  <section class="notes" id="notes">
+    <h2>Sources and notes</h2>
+    <section class="note" id="notes-method">
+      <h3>Method</h3>
+      <p>Notes to come.</p>
+    </section>
+    <section class="note" id="notes-ring">
+      <h3>The EU's goal to double circularity is, in effect, a goal to use less</h3>
+      <p class="note-src">Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-ring">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-waterfall">
+      <h3>The rate's biggest jumps came from using less, not recycling more</h3>
+      <p class="note-src">Source: Eurostat. Split by lever: our calculation.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-waterfall">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-zin">
+      <h3>Keeping a building standing halved its structure's upfront carbon</h3>
+      <p class="note-src">Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-zin">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-ribbon">
+      <h3>The rate is mostly sand and stone, the materials that cost the climate least</h3>
+      <p class="note-src">Source: ETC CE Report 2025/3. EU, 2022.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-ribbon">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-ikea">
+      <h3>By weighing it, IKEA's kitchens cut their food waste per meal by more than half</h3>
+      <p class="note-src">Source: Ingka Group, annual reports FY22 and FY24.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-ikea">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-compare">
+      <h3>In these two examples, a tonne of food saved about 30 times the carbon of a tonne of concrete</h3>
+      <p class="note-src">Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow. Shares, food tonnes and per tonne: our calculation.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-compare">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-explore">
+      <h3>23 of 27 EU countries would still need to use less, even recycling 70%</h3>
+      <p class="note-src">Source: Eurostat, 2022; 70% recycled, EEA scenario. Cut: our calculation.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-explore">Back to the chart &#8593;</a></p>
+    </section>
+    <section class="note" id="notes-closer">
+      <h3>A better target would count what materials cost, not what they weigh</h3>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-closer">Back to the story &#8593;</a></p>
+    </section>
   </section>
 </main>
 
