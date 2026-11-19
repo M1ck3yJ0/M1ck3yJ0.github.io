@@ -4,9 +4,10 @@ Usage:
     python3 -I _tools/check_steps.py <page.html> <outdir> [d3.min.js] [scrollama.min.js]
 
 Serves the repo on a local server, so the page's own fonts and images load.
-The browser asks for reduced motion, so each step shows its end state.
-Scrolls each step (any element with a data-state attribute) until its top sits
-at 60% of the screen, then screenshots the screen. Prints, for each width, the
+The browser asks for reduced motion, so each step's transition runs fast and
+the screenshot shows its end state. Scrolls each step (any element with a
+data-state attribute) to its place, by the page's window.FFC.place(i) if it has
+one, or else until its top sits at 60% of the screen, then screenshots the screen. Prints, for each width, the
 steps not marked active (class is-active) when shown, and any errors. Saves
 phone_steps.png and desktop_steps.png in <outdir>, one numbered tile per step.
 
@@ -40,6 +41,7 @@ STEP = '[data-state]'
 WIDTHS = {'phone': (390, 844, 4, 300), 'desktop': (1280, 800, 3, 420)}
 
 SCROLL_JS = """([sel, i]) => {
+  if (window.FFC && FFC.place) return scrollTo(0, FFC.place(i));
   const s = document.querySelectorAll(sel)[i];
   scrollTo(0, Math.max(0, s.getBoundingClientRect().top + scrollY - innerHeight * 0.6));
 }"""
@@ -93,7 +95,7 @@ async def check(browser, base, name, width, height, cols, tile):
     tiles, inactive = [], []
     for i in range(n):
         await page.evaluate(SCROLL_JS, [STEP, i])
-        await page.wait_for_timeout(400)
+        await page.wait_for_timeout(600)
         if await page.evaluate(ACTIVE_JS, [STEP, i]) is False:
             inactive.append(i + 1)
         tiles.append(Image.open(io.BytesIO(await page.screenshot())))
