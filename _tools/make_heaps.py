@@ -11,9 +11,9 @@ solved so the 2022 heap's visible area is exactly what's left of 2017's by the d
 
 Each food is terrazzo, as the ring's center is: shards random in shape, size and placement,
 each in one of the food's shades, from its lit side to its dark side, with fine lines of
-background between them. Shards are Voronoi cells of seeds spaced by sizes drawn across a
-16-fold range of area, about half of them cracked along random lines, then cut along the
-food's features (the pit, the fat lines). Foods in front hide the parts of foods behind
+background between them. Each part of a food (a floret, the skin, a fat line) is tiled on
+its own: Voronoi cells of seeds spaced by sizes drawn across a 16-fold range of area, about
+half of them cracked along random lines. Foods in front hide the parts of foods behind
 them, so only visible parts get shards. A heap's area is the area its foods cover, lines
 included; the check also reports the shards' area alone.
 
@@ -70,8 +70,8 @@ def spline(pts, n=10):
 
 
 def clean(g):
-    """g as a valid polygon or multipolygon, dropping stray lines and points."""
-    g = shapely.make_valid(g)
+    """g as a valid polygon or multipolygon on a 0.001 grid, dropping stray lines and points."""
+    g = shapely.set_precision(shapely.make_valid(g), 1e-3)
     polys = [x for x in getattr(g, "geoms", [g]) if x.geom_type in ("Polygon", "MultiPolygon")]
     return unary_union(polys).buffer(0) if polys else Polygon()
 
@@ -180,6 +180,28 @@ def avocado():
     return zones, [out.boundary, pit.boundary]
 
 
+def quarter():
+    """A quarter of an avocado lying on its skin, the pit's hollow scooped from its cut edge."""
+    a = 25.0
+    xs = np.linspace(-a, a, 81)
+
+    def low(x):
+        return 16 * np.sqrt(max(0.0, 1 - (x / a) ** 2))
+
+    def top(x):
+        return -9 * np.sqrt(max(0.0, 1 - (x / a) ** 2)) + 9 * np.sqrt(max(0.0, 1 - (x / 11) ** 2))
+
+    shape = Polygon([(x, top(x)) for x in xs] + [(x, low(x)) for x in xs[::-1]]).buffer(0)
+    skin = clean(shape.difference(affinity.translate(shape, 0, -2.8)))
+    flesh = clean(shape.difference(skin))
+
+    def lit(p, rng, ramp):
+        x, y = p
+        return shade(rng, 0.9 * (y - top(x)) / max(1e-6, low(x) - top(x)) + 0.03, 0.1)
+
+    return [(skin, "skin", lambda p, rng, ramp: shade(rng, 0.45, 0.25)), (flesh, "flesh", lit)], [shape.boundary]
+
+
 def egg():
     t = np.linspace(0, 2 * np.pi, 64, endpoint=False)
     shape = Polygon(np.c_[12.5 * np.cos(t) * (1 + 0.09 * np.sin(t)), 15.5 * np.sin(t)])
@@ -228,10 +250,11 @@ def stack(items):
     pan = inside_pan()
     out, covered = [], Polygon()
     for kind, (zones, outlines) in reversed(items):
-        whole = unary_union([g for g, _, _ in zones]).intersection(pan)
+        whole = clean(unary_union([g for g, _, _ in zones]).intersection(pan))
+        whole = clean(whole.buffer(0.05, join_style="mitre").buffer(-0.05, join_style="mitre"))   # no hairline gaps
         vis = [(clean(g.intersection(pan).difference(covered)), ramp, lit) for g, ramp, lit in zones]
         vis = [z for z in vis if not z[0].is_empty and z[0].area > 0.01]
-        out.append((kind, vis, [o.intersection(pan.buffer(1)) for o in outlines], whole.difference(covered)))
+        out.append((kind, vis, [o.intersection(pan.buffer(1)) for o in outlines], clean(whole.difference(covered))))
         covered = covered.union(whole)
     return out[::-1], covered
 
@@ -250,16 +273,26 @@ def bounds(piece):
     return unary_union([g for g, _, _ in piece[0]]).bounds
 
 
+HALF_AVOCADO = unary_union([g for g, _, _ in avocado()[0]]).area
+QUARTER = unary_union([g for g, _, _ in quarter()[0]]).area
+
+
 def heap_2022(keep):
-    """The same food cut down, packed close so the pieces lean on one another."""
-    broc = place(cut(broccoli(), keep), 0, -32)
-    avo = place(cut(avocado(), keep), 0, -40, 8, origin=(0, 26))
+    """The same food cut down: the broccoli half lies on its cut face and the avocado
+    quarter on its skin, sized to keep the same share of the half's area, pit and all."""
+    broc = cut(broccoli(), keep)
+    x0, y0, x1, y1 = bounds(broc)
+    broc = place(broc, 0, 0, 90, origin=(x1, y1))           # the cut face down
+    k = np.sqrt(keep * HALF_AVOCADO / QUARTER)
+    avo = ([(affinity.scale(g, k, k, origin=(0, 0)), r,
+             (lambda p, rng, ramp, lit=lit: lit((p[0] / k, p[1] / k), rng, ramp))) for g, r, lit in quarter()[0]], [])
     fish = place(cut(salmon(), keep), 0, -4, -2)
+    b, a, f = bounds(broc), bounds(avo), bounds(fish)
     items = [
-        ("broccoli", place(broc, 6 - bounds(broc)[2], 0)),
-        ("avocado", place(avo, -9 - bounds(avo)[0], 0)),
-        ("salmon", place(fish, -34 - bounds(fish)[0], 0)),
-        ("egg", place(egg(), 21, -12)),
+        ("broccoli", place(broc, -42 - b[0], -3 - b[3])),
+        ("egg", place(egg(), -40, -27)),
+        ("avocado", place(avo, 20 - a[0], 5 - a[3], -6, origin=(a[0], a[3]))),
+        ("salmon", place(fish, -44 - f[0], 0)),
     ]
     x0 = min(bounds(p)[0] for _, p in items)
     x1 = max(bounds(p)[2] for _, p in items)
@@ -303,37 +336,44 @@ def crack(piece, rng, times):
         p = np.array([c.x, c.y]) + rng.uniform(-0.25, 0.25, 2) * size
         a = rng.uniform(0, np.pi)
         d = np.array([np.cos(a), np.sin(a)]) * 4 * size
-        parts = [g for g in shapely.ops.split(big, LineString([p - d, p + d])).geoms if g.area > 1.2]
-        if len(parts) > 1:
+        parts = list(shapely.ops.split(big, LineString([p - d, p + d])).geoms)
+        if len(parts) > 1 and min(g.area for g in parts) > 1.2:
             out.remove(big)
             out.extend(parts)
     return out
 
 
 def shards(stacked, rng):
+    """Each zone of each food tiled on its own, so a fine line runs along every edge between zones."""
     by_tone, covered = {}, []
     for kind, zones, outlines, visible in stacked:
         if visible.is_empty:
             continue
         covered.append(visible)
-        cells = shapely.voronoi_polygons(MultiPoint(seeds(visible, rng, SCALE[kind])),
-                                         extend_to=visible.envelope.buffer(12), ordered=True)
-        for cell in cells.geoms:
-            piece = cell.intersection(visible)
-            for chip in (crack(p, rng, 2) for p in getattr(piece, "geoms", [piece]) if p.geom_type == "Polygon"):
-                for c in chip:
-                    for g, ramp, lit in zones:
-                        t = c.intersection(g)
-                        if t.is_empty or t.area < 0.1:
-                            continue
-                        t = t.buffer(-LINE / 2, join_style="mitre", mitre_limit=2).simplify(0.06)
+        for g, ramp, lit in zones:
+            for zone in getattr(g, "geoms", [g]):
+                if zone.geom_type != "Polygon" or zone.area < 0.2:
+                    continue
+                pieces = [zone]
+                if zone.area > 6:
+                    pts = seeds(zone, rng, SCALE[kind])
+                    if len(pts) > 1:
+                        cells = shapely.voronoi_polygons(MultiPoint(pts), extend_to=zone.envelope.buffer(12))
+                        pieces = [q for cell in cells.geoms for q in getattr(cell.intersection(zone), "geoms",
+                                  [cell.intersection(zone)]) if q.geom_type == "Polygon"]
+                for piece in pieces:
+                    for c in crack(piece, rng, 2):
+                        t = c.buffer(-LINE / 2, join_style="mitre", mitre_limit=2).simplify(0.06)
                         for bit in getattr(t, "geoms", [t]):
                             if bit.geom_type != "Polygon" or bit.area < 0.1:
                                 continue
                             m = bit.centroid
                             tone = f"{ramp}-{1 + int(lit((m.x, m.y), rng, ramp) * RAMPS[ramp])}"
                             by_tone.setdefault(tone, []).append(bit)
-    return by_tone, unary_union(covered)
+    drawn = unary_union([g.buffer(LINE / 2 + 0.05, join_style="mitre") for v in by_tone.values() for g in v])
+    gaps = unary_union(covered).difference(drawn)
+    worst = max((g.area for g in getattr(gaps, "geoms", [gaps])), default=0.0)
+    return by_tone, worst
 
 
 def path(geoms):
@@ -386,7 +426,8 @@ def main():
     heaps = []
     for items in (heap_2017(), heap_2022(keep)):
         stacked, covered = stack(items)
-        by_tone, _ = shards(stacked, rng)
+        by_tone, worst = shards(stacked, rng)
+        print(f"Largest gap left by the shards: {worst:.2f} square units")
         heaps.append({"area": round(covered.area, 3), "shards": {k: path(v) for k, v in sorted(by_tone.items())}})
     a, sh = [x["area"] for x in heaps], [measure(x) for x in heaps]
     print(f"Cut share {100 * keep:.2f}%; 2022's heap covers {100 * a[1] / a[0]:.3f}% of 2017's area "
