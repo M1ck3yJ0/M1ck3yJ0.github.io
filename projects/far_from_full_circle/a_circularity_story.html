@@ -307,6 +307,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .notes a, .note-link a { color: var(--ink-2); }
 .notes a:focus-visible, .note-link a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 @media (min-width: 800px) { .notes { margin-left: auto; margin-right: auto; } }
+/* Links from each section to its notes */
+.note-link { font-size: 15px; }
+.explore > .note-link { margin: 0; padding: 0 16px 16px; }
+@media (min-width: 800px) {
+  .explore { grid-template-rows: auto auto 1fr; }
+  .explore .chart { grid-row: 1 / span 3; }
+  .explore > .note-link { grid-column: 2; padding: 12px 0 0; }
+  #explore-ring .explore > .note-link { grid-row: 3; }
+  #explore-waterfall .explore > .note-link { grid-row: 2; }
+}
 </style>
 </head>
 <body>
@@ -363,6 +373,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </article>
       <article class="card" data-state="less">
         <p>The European Environment Agency came to the same conclusion. It modeled the EU recycling 70% of its waste, using 15% less material and a third less fossil fuel, all at once. Even then, the rate reached only about 22% by 2030.</p>
+        <p class="note-link"><a href="#notes-ring">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -394,6 +405,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </article>
       <article class="card" data-state="latest">
         <p>Look at what came back and what stayed down. The dip in sand, gravel and stone had no decision behind it, and most of it returned within a year. The fall in coal, oil and gas had years of decisions behind it, and it held. For using less to last, it has to be chosen: keeping the buildings we already have, using what we make for longer, and wasting less of it. The hopeful part is that some are already choosing it.</p>
+        <p class="note-link"><a href="#notes-waterfall">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -412,6 +424,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="steps">
       <article class="card" data-state="zin">
         <p>In Brussels, the old World Trade Center towers weren't torn down. Their owner kept 85% of the structure, 171,000 tonnes of concrete, and built ZIN around it. Compared with an efficient new building, that halved the structure's upfront carbon and cut the whole building's by a third: 21,400 tonnes of CO2 that were never emitted. The 30,000 tonnes that did come down became new aggregate within 15 km. For every tonne recycled, almost six stayed standing, and those never had to be made again.</p>
+        <p class="note-link"><a href="#notes-zin">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -439,6 +452,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </article>
       <article class="card" data-state="biomass">
         <p>Biomass, the crops, feed and wood we grow and harvest, runs the other way. It's 22.7% of the weight, but 45.7% of the climate impact, the largest share of any of the four.</p>
+        <p class="note-link"><a href="#notes-ribbon">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -457,6 +471,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="steps">
       <article class="card" data-state="ikea">
         <p>Food shows what this means in practice. In the restaurants of IKEA stores run by Ingka, which makes about 87% of IKEA's sales, kitchen teams began weighing what they threw away, on smart scales from Winnow and Leanpath, and by 2022 they had cut their food waste by 57.8% from 2017. That saved more than 20 million meals over four years, and 36,000 tonnes of CO2e. By 2024, the cut had reached 60.5%. It saves money too: Winnow says most commercial kitchens waste 5 to 15% of the food they buy, so halving that trims the food bill by 2.5 to 7.5%. Ingka has held a stake in Winnow since 2019.</p>
+        <p class="note-link"><a href="#notes-ikea">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -478,6 +493,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="steps">
       <article class="card" data-state="compare">
         <p>Side by side, the two aren't like for like. ZIN's figure is CO2 for its construction stage only, saved once, while IKEA's kitchens' figure is CO2e from about 400 restaurants over four years. So this isn't about which did more. It's about how much carbon a tonne carries, depending on the material. By weight, the rate's only measure, ZIN's 171,000 tonnes of concrete kept standing are 95% of what the two saved, against an estimated 8,900 tonnes of food. By carbon, the kitchens' 5% becomes 63%. Each tonne of concrete kept standing saved an eighth of a tonne of CO2; each tonne of food kept out of the bin, about four tonnes of CO2e, roughly 30 times as much.</p>
+        <p class="note-link"><a href="#notes-compare">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
@@ -508,6 +524,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         </svg>
       </figure>
       <div class="explore-text" aria-live="polite"></div>
+      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
     </div>
   </section>
 
@@ -524,6 +541,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <g class="labels"></g>
         </svg>
       </figure>
+      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
     </div>
   </section>
 
@@ -539,6 +557,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </article>
       <article class="card" data-state="closer">
         <p>And most of all, making what we already have last: keeping our buildings standing, using what we make for longer, wasting less of what we grow. For homes, the International Resource Panel found that using them more intensively could cut the emissions of their materials by up to 70% by 2050 in the G7, against 14 to 18% from better recycling. ZIN didn't wait for a target, and neither did IKEA's kitchens. We don't have to either. The ring won't close by recycling alone. It closes when we choose to need less.</p>
+        <p class="note-link"><a href="#notes-closer">Sources and notes &#8595;</a></p>
       </article>
     </div>
   </section>
