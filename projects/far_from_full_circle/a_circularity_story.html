@@ -1190,7 +1190,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      per percentage point. */
   const IKEA = DATA.examples.ikea;
   const HEAPS = DATA.food_heaps;
-  const TILT = 0.2;                                // degrees per percentage point between the pans
+  const TILT = 0.28;                               // degrees per percentage point between the pans
   const IPIV = [200, 224];                         // the beam's pivot
   const IARM = 104;                                // pivot to each pan's stem
   const IBEAM = 116;                               // pivot to each end of the beam
@@ -1251,9 +1251,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     g.append("circle").attr("class", "steel-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 8);
     g.append("circle").attr("class", "steel-4").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 2.8);
     label(L, 44, 40, [["Food waste in IKEA's kitchens", "lab"]]);
-    label(L, IPIV[0] - IARM, IPIV[1] + 47, [["2017", "lab-strong"]], "middle");
-    label(L, IPIV[0] + IARM, IPIV[1] + 47, [["2022", "lab-strong"]], "middle");
-    const less = label(L, IPIV[0] + IARM, IPIV[1] + 72, [[IKEA.food_waste_cut + "% less", "lab-num"],
+    label(L, IPIV[0] - IARM, IPIV[1] + 53, [["2017", "lab-strong"]], "middle");
+    label(L, IPIV[0] + IARM, IPIV[1] + 53, [["2022", "lab-strong"]], "middle");
+    const less = label(L, IPIV[0] + IARM, IPIV[1] + 78, [[IKEA.food_waste_cut + "% less", "lab-num"],
       ["per meal served", "lab", "1.35em"]], "middle");
     label(L, 6, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]]);
     IK = { pans: pans, beam: beam, less: less };
