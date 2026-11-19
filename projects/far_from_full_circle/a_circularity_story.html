@@ -459,7 +459,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/scrollama@3.2.0/build/scrollama.min.js"></script>
 <script src="far_from_full_circle_data.js"></script>
 <script src="far_from_full_circle_shards.js"></script>
 <script>
@@ -1845,21 +1844,30 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const first = b.querySelector(".card[data-state]");
       if (first) CHARTS[b.dataset.chart](first.dataset.state);
     });
-    if (window.scrollama) {
-      const scroller = scrollama();
-      scroller.setup({ step: ".card[data-state]", offset: 0.7 })
-        .onStepEnter(function (r) { show(r.element); });
-      window.addEventListener("resize", function () { scroller.resize(); });
-    } else {
-      const pick = function () {
-        let active = null;
-        cards.forEach(function (c) { if (c.getBoundingClientRect().top < innerHeight * 0.7) active = c; });
-        if (active && !active.classList.contains("is-active")) show(active);
-      };
-      window.addEventListener("scroll", pick, { passive: true });
-      window.addEventListener("resize", pick);
-      pick();
-    }
+    /* The trigger line sits at 70% of the small viewport height, in px, so mobile
+       toolbars showing and hiding don't move it. It changes only with the width. */
+    const probe = document.createElement("div");
+    probe.style.cssText = "position:absolute;top:0;left:0;width:0;visibility:hidden;pointer-events:none;height:100vh;height:100svh";
+    document.body.appendChild(probe);
+    const line = function () { return Math.round(probe.getBoundingClientRect().height * 0.7); };
+    let trigger = line(), width = innerWidth;
+    const widthChanged = function () {
+      if (innerWidth === width) return false;
+      width = innerWidth; trigger = line();
+      return true;
+    };
+    let queued = false;
+    const pick = function () {
+      queued = false;
+      let active = null;
+      cards.forEach(function (c) { if (c.getBoundingClientRect().top < trigger) active = c; });
+      if (active && !active.classList.contains("is-active")) show(active);
+    };
+    window.addEventListener("scroll", function () {
+      if (!queued) { queued = true; requestAnimationFrame(pick); }
+    }, { passive: true });
+    window.addEventListener("resize", function () { if (widthChanged()) pick(); });
+    pick();
   }
 
   /* ---------- Terrazzo: offcuts set into something that lasts ---------- */
