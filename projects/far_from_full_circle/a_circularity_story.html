@@ -51,12 +51,17 @@
   --mat-metals: #06BCFF;   /* metal ores: sky */
   --mat-fossil: #2D82D8;   /* fossil fuels: azure */
   --mat-biomass: #0239EB;  /* biomass: cobalt */
-  /* IKEA's kitchens: the balance in bronze, each food in its own tones, light to dark */
-  --bronze-1: #DCC08E; --bronze-2: #B8925A; --bronze-3: #8F6B3A; --bronze-4: #6B4E28;
-  --meatball-1: #A0704A; --meatball-2: #8C5E3A; --meatball-3: #7A4F30; --meatball-4: #684126;
-  --potato-1: #E8C676; --potato-2: #DBB35C; --potato-3: #CBA049;
-  --leaf-1: #82B657; --leaf-2: #6EA547; --leaf-3: #5C933B; --leaf-4: #4B8030;
-  --berry-1: #C9384D; --berry-2: #B02A40; --berry-3: #962237;
+  /* IKEA's kitchens: the balance in plain steel; the food in its own shades, light to dark */
+  --steel-1: #E6EAEE; --steel-2: #C3CBD2; --steel-3: #A1ABB5; --steel-4: #6E7883;
+  --salmon-1: #FBC0A0; --salmon-2: #F7A984; --salmon-3: #F2946C; --salmon-4: #EA7F57; --salmon-5: #DD6C45; --salmon-6: #C95B37;
+  --fat-1: #FDEFE6; --fat-2: #FADFCF; --fat-3: #F4CBB6;
+  --salmon-side-1: #D66A45; --salmon-side-2: #C25836; --salmon-side-3: #A9492B;
+  --floret-1: #97C266; --floret-2: #7DAE4D; --floret-3: #66983D; --floret-4: #517F31; --floret-5: #3F6826; --floret-6: #30521C;
+  --stalk-1: #D3E4AB; --stalk-2: #BBD38D; --stalk-3: #A0BD70;
+  --flesh-1: #F4EFB4; --flesh-2: #E4E79C; --flesh-3: #CDDD80; --flesh-4: #B2CD66; --flesh-5: #96BB52;
+  --skin-1: #46642E; --skin-2: #344D22;
+  --pit-1: #AC7E53; --pit-2: #926540; --pit-3: #7A5031; --pit-4: #613E25;
+  --egg-1: #F4DFC0; --egg-2: #EBCFA8; --egg-3: #E0BD91; --egg-4: #D1A87B; --egg-5: #BD9367;
   /* Layout */
   --chart: min(calc(100vw - 16px), 544px, 58vh);
 }
@@ -189,15 +194,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .zin .day-4 { fill: var(--day-4); }
 .zin .day-depth { fill: var(--day-depth); }
 .zin .axis, .cmp .axis { stroke: var(--ink-2); stroke-width: 1; }
-.ikea .bronze-1 { fill: var(--bronze-1); } .ikea .bronze-2 { fill: var(--bronze-2); }
-.ikea .bronze-3 { fill: var(--bronze-3); } .ikea .bronze-4 { fill: var(--bronze-4); }
-.ikea .chain { fill: none; stroke: var(--bronze-3); stroke-width: 1.1; stroke-dasharray: 2.6 1.3; }
-.ikea .meatball-1 { fill: var(--meatball-1); } .ikea .meatball-2 { fill: var(--meatball-2); }
-.ikea .meatball-3 { fill: var(--meatball-3); } .ikea .meatball-4 { fill: var(--meatball-4); }
-.ikea .potato-1 { fill: var(--potato-1); } .ikea .potato-2 { fill: var(--potato-2); } .ikea .potato-3 { fill: var(--potato-3); }
-.ikea .leaf-1 { fill: var(--leaf-1); } .ikea .leaf-2 { fill: var(--leaf-2); }
-.ikea .leaf-3 { fill: var(--leaf-3); } .ikea .leaf-4 { fill: var(--leaf-4); }
-.ikea .berry-1 { fill: var(--berry-1); } .ikea .berry-2 { fill: var(--berry-2); } .ikea .berry-3 { fill: var(--berry-3); }
+.ikea .steel-1 { fill: var(--steel-1); } .ikea .steel-2 { fill: var(--steel-2); }
+.ikea .steel-3 { fill: var(--steel-3); } .ikea .steel-4 { fill: var(--steel-4); }
 .cmp .biomass.est { fill: url(#cmp-hatch-biomass); }
 .ex-row { font-size: 14px; }
 .ex-state { fill: var(--ink); font-weight: 700; }
@@ -370,7 +368,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="ikea">
     <div class="pin">
       <figure class="chart" id="ikea">
-        <svg viewBox="0 0 400 400" role="img" aria-label="Food thrown away in the kitchens per meal served, in the restaurants of IKEA stores run by Ingka, drawn as two heaps of meatballs, potatoes, salad leaves and lingonberries on a balance. 2022's heap is 57.8% smaller than 2017's, with every food cut by the same share, and the balance tips toward 2017.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="Food thrown away in the kitchens per meal served, in the restaurants of IKEA stores run by Ingka, drawn as two heaps of food on a balance. 2017's pan holds a salmon fillet, half an avocado, two eggs and a head of broccoli. 2022's holds the same food cut down, with one egg gone, a heap 57.8% smaller, and the balance tips toward 2017.">
           <g class="ikea"></g>
           <g class="labels"></g>
         </svg>
@@ -1184,271 +1182,57 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   /* ---------- IKEA's kitchens: a balance, 2017 against 2022 ----------
      Food thrown away in the kitchens per meal served, in the restaurants of Ingka's IKEA
      stores: 2017 on the left pan, 2022 on the right, 57.8% less by Ingka's FY22 report. Read
-     as a cut per meal: the FY24 report measures it in grams per cover. Each heap is terrazzo,
-     pieces of four foods cut into chips with slivers of white between them. Every food is in
-     both heaps, and in 2022's each covers exactly what's left of its 2017 area, measured on
-     its chips, so no food reads as cut more than another. The beam tips by the difference
-     between its pans, TILT degrees per percentage point. */
+     as a cut per meal: the FY24 report measures it in grams per cover. The heaps are terrazzo,
+     built by _tools/make_heaps.py into the data file ("food_heaps"): a salmon fillet, half an
+     avocado, two eggs and a head of broccoli, then the same food cut down, with one egg taken
+     away, so 2022's heap covers exactly what's left of 2017's area. The balance is plain
+     steel, its pans on top. The beam tips by the difference between its pans, TILT degrees
+     per percentage point. */
   const IKEA = DATA.examples.ikea;
-  const IKEEP = 1 - IKEA.food_waste_cut / 100;    // 2022's heap, as a share of 2017's
+  const HEAPS = DATA.food_heaps;
   const TILT = 0.2;                                // degrees per percentage point between the pans
-  const IPIV = [200, 94];                          // the beam's pivot
-  const IARM = 122, IHOOK = 1.5;                   // pivot to each hook, along the beam and under it
-  const IDROP = 166;                               // hook to the pan's rim
-  const IPAN = { rx: 74, ry: 7.5, deep: 15, rim: 1.6 };
-  const ICHIP = 0.9, IGAP = 0.3;                   // white between chips, and between pieces
-  const IFOOD = [                                  // pieces in 2017's heap, and their mean radius
-    { key: "meatball", n: 7, r: 9.4, tones: 4 },
-    { key: "potato",   n: 5, r: 9.8, tones: 3 },
-    { key: "leaf",     n: 5, r: 10.2, tones: 4 },
-    { key: "berry",    n: 5, r: 9, tones: 3 }
-  ];
+  const IPIV = [200, 224];                         // the beam's pivot
+  const IARM = 104;                                // pivot to each pan's stem
+  const IBEAM = 116;                               // pivot to each end of the beam
+  const ISTEM = 13;                                // stem, from the beam up to the pan
+  const IPAN = { rx: HEAPS.pan.rx + 2, ry: HEAPS.pan.ry + 0.8, lip: 3.5 };
+  const IBASE = 302;                               // the top of the base
   const T_ITIP = 1100, T_ILAB = 350, T_ILAB_AT = 0.7 * T_ITIP;
   const T_IKEA = Math.max(T_ITIP, T_ILAB_AT + T_ILAB);
   const itipEase = d3.easeBackOut.overshoot(1.4);
 
-  function irand(seed) {                           // seeded, so the heaps are the same on every visit
-    return function () {
-      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
-      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
-      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-      return ((t ^ t >>> 14) >>> 0) / 4294967296;
-    };
-  }
-  const iring = function (n, f) { return d3.range(n).map(function (i) { return f(i / n * TAU); }); };
-  const iarea = function (P) {                     // signed: positive when the inside is on the left
-    let a = 0;
-    P.forEach(function (p, i) { const q = P[(i + 1) % P.length]; a += p[0] * q[1] - q[0] * p[1]; });
-    return a / 2;
-  };
-  function ihalf(P, nx, ny, c) {                   // the part of P where nx x + ny y >= c
-    const out = [];
-    P.forEach(function (a, i) {
-      const b = P[(i + 1) % P.length];
-      const da = nx * a[0] + ny * a[1] - c, db = nx * b[0] + ny * b[1] - c;
-      if (da >= 0) out.push(a);
-      if ((da >= 0) !== (db >= 0)) { const t = da / (da - db); out.push([a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])]); }
-    });
-    return out;
-  }
-  function icut(P, C, d) {                         // P cut to the convex C, moved d in from C's sides
-    if (iarea(C) < 0) C = C.slice().reverse();
-    for (let i = 0; i < C.length && P.length > 2; i++) {
-      const a = C[i], b = C[(i + 1) % C.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]);
-      if (len < 1e-9) continue;
-      const nx = (a[1] - b[1]) / len, ny = (b[0] - a[0]) / len;
-      P = ihalf(P, nx, ny, nx * a[0] + ny * a[1] + d);
-    }
-    return P;
-  }
-  const iclip = function (P, C, d) {               // P cut to the convex C, then moved in by d all round
-    P = icut(P, C, 0);
-    return P.length < 3 ? P : icut(P, P, d);
-  };
-
-  // One piece of food in its own frame, radius 1: its outline and where its chips' seeds fall
-  function itemplate(f, rnd) {
-    const k = { food: f, size: 1 + 0.12 * (2 * rnd() - 1), seeds: [], jit: [], berries: [] };
-    if (f.key === "berry") {                       // a spoonful of lingonberries, one chip each
-      const turn0 = rnd() * TAU;
-      for (let i = 0; i < 7; i++) {
-        const a = turn0 + i * TAU / 6, d = i ? 0.66 : 0, r = 0.31 + 0.03 * rnd();
-        k.berries.push({ x: d * Math.cos(a) + 0.04 * (rnd() - 0.5), y: d * Math.sin(a) + 0.04 * (rnd() - 0.5), r: r, jit: rnd() });
-      }
-      return k;
-    }
-    const rot = f.key === "leaf" ? rnd() * Math.PI : f.key === "potato" ? (rnd() - 0.5) * 1.2 : 0;
-    const c = Math.cos(rot), s = Math.sin(rot);
-    const turn = function (p) { return [p[0] * c - p[1] * s, p[0] * s + p[1] * c]; };
-    if (f.key === "leaf") {                        // two arcs meeting in points, split along its rib
-      const w = 0.7, R = (1 + w * w) / (2 * w), top = [], bot = [];
-      for (let i = 0; i <= 14; i++) {
-        const x = -Math.cos(i / 14 * Math.PI), y = R - w - Math.sqrt(R * R - x * x);
-        top.push([x, y]); bot.push([x, -y]);
-      }
-      k.outline = top.concat(bot.reverse().slice(1, -1)).map(turn);
-      const m = 3 + (rnd() < 0.5 ? 1 : 0);
-      for (let j = 0; j < m; j++) {
-        const x = ((j + 0.5) / m * 2 - 1) * 0.66 + (rnd() - 0.5) * 0.1;
-        k.seeds.push(turn([x + 0.08, 0.3]), turn([x + 0.08, -0.3]));
-        k.jit.push(rnd(), rnd());
-      }
-      return k;
-    }
-    const sq = f.key === "potato" ? 0.86 : 1;     // potatoes are oval
-    k.outline = iring(32, function (a) { return turn([Math.cos(a), sq * Math.sin(a)]); });
-    const n = (f.key === "meatball" ? 8 : 6) + (rnd() < 0.5 ? 1 : 0);
-    for (let t = 0; k.seeds.length < n && t < 600; t++) {
-      const p = [2 * rnd() - 1, 2 * rnd() - 1], q = [p[0] * c + p[1] * s, (p[1] * c - p[0] * s) / sq];
-      if (q[0] * q[0] + q[1] * q[1] < 0.8 &&
-          k.seeds.every(function (o) { return Math.hypot(p[0] - o[0], p[1] - o[1]) >= 0.42; })) { k.seeds.push(p); k.jit.push(rnd()); }
-    }
-    return k;
+  // A round steel part, lit from the left: its left half lighter
+  function isteel(g, x0, x1, y0, y1) {
+    const m = (x0 + x1) / 2;
+    g.append("rect").attr("class", "steel-2").attr("x", x0).attr("y", y0).attr("width", m - x0).attr("height", y1 - y0);
+    g.append("rect").attr("class", "steel-3").attr("x", m).attr("y", y0).attr("width", x1 - m).attr("height", y1 - y0);
   }
 
-  // The piece's chips at radius r: Voronoi cells of its seeds, cut to its outline
-  function ichips(k, r) {
-    if (k.food.key === "berry") return k.berries.map(function (b) {
-      const rb = b.r * r - ICHIP / 2;
-      return { at: [b.x, b.y], jit: b.jit, pts: iring(14, function (a) { return [b.x * r + rb * Math.cos(a), b.y * r + rb * Math.sin(a)]; }) };
-    });
-    const C = k.outline.map(function (p) { return [p[0] * r, p[1] * r]; });
-    const S = k.seeds.map(function (p) { return [p[0] * r, p[1] * r]; });
-    const v = d3.Delaunay.from(S).voronoi([-r - 2, -r - 2, r + 2, r + 2]);
-    const out = [];
-    S.forEach(function (sd, i) {
-      const cell = v.cellPolygon(i);
-      if (!cell) return;
-      const P = iclip(cell.slice(0, -1), C, ICHIP / 2);
-      if (P.length < 3) return;
-      const m = d3.polygonCentroid(P);
-      out.push({ at: [m[0] / r, m[1] / r], jit: k.jit[i], pts: P });
-    });
-    return out;
-  }
-  const ichipArea = function (k, r) { return d3.sum(ichips(k, r), function (c) { return Math.abs(iarea(c.pts)); }); };
-
-  // A chip's shade: lighter toward the upper left, as if lit from there
-  function itone(f, at, jit) {
-    const lit = -(at[0] * 0.6 + at[1] * 0.8);
-    const t = Math.max(0, Math.min(0.999, (1 - lit) / 2 + (jit - 0.5) * 0.45));
-    return f.key + "-" + (1 + Math.floor(t * f.tones));
-  }
-
-  // Pieces dropped into a pan one by one, each resting on the dish or on two pieces, held a
-  // little past them as food would be, wherever it sits closest to the middle of the dish,
-  // with height counted 1/IDOME as much as width: so both heaps grow as domes of one shape.
-  const IDOME = 1.2;
-  function ipack(rs, rnd) {
-    const floor = IPAN.ry * 0.3, edge = IPAN.rx - 4;
-    const placed = [];
-    const fits = function (c, r) {
-      return Math.abs(c[0]) <= edge - r && c[1] <= floor - r + 1e-6 &&
-        placed.every(function (q) { return Math.hypot(q.x - c[0], q.y - c[1]) >= r + q.r + IGAP - 1e-6; });
-    };
-    rs.forEach(function (r) {
-      const cands = [[0, floor - r, 0]];             // x, y, and how far past its supports it's held
-      placed.forEach(function (a, i) {
-        const y = floor - r, Ra = r + a.r + IGAP, dy = a.y - y;
-        if (Math.abs(dy) < Ra) { const dx = Math.sqrt(Ra * Ra - dy * dy); cands.push([a.x - dx, y, 0], [a.x + dx, y, 0]); }
-        for (let j = i + 1; j < placed.length; j++) {
-          const b = placed[j], Rb = r + b.r + IGAP;
-          const ex = b.x - a.x, ey = b.y - a.y, d = Math.hypot(ex, ey);
-          if (d === 0 || d > Ra + Rb || d < Math.abs(Ra - Rb)) continue;
-          const l = (Ra * Ra - Rb * Rb + d * d) / (2 * d), h = Math.sqrt(Math.max(0, Ra * Ra - l * l));
-          const mx = a.x + l * ex / d, my = a.y + l * ey / d;
-          const p1 = [mx + h * ey / d, my - h * ex / d], p2 = [mx - h * ey / d, my + h * ex / d];
-          const p = p1[1] < p2[1] ? p1 : p2;
-          p.push(Math.max(0, Math.min(a.x, b.x) - p[0], p[0] - Math.max(a.x, b.x)) / r);
-          cands.push(p);
-        }
-      });
-      let best = null, cost = Infinity;
-      for (let grip = 0.35; !best && grip < 9; grip += 0.35) {   // held further past its supports only if it must be
-        cands.forEach(function (c) {
-          if (c[2] > grip || !fits(c, r)) return;
-          const k = Math.hypot(c[0], (floor - c[1]) / IDOME) + 2.5 * rnd();
-          if (k < cost) { cost = k; best = c; }
-        });
-      }
-      if (!best) {                                   // nowhere else: on top
-        const t = placed.reduce(function (m, q) { return q.y - q.r < m.y - m.r ? q : m; });
-        best = [t.x, t.y - t.r - r - IGAP];
-      }
-      placed.push({ x: best[0], y: best[1], r: r });
-    });
-    return placed;
-  }
-
-  // Both heaps, as chips relative to their pan's rim. 2022's pieces are drawn like 2017's,
-  // fewer of each food, then sized so each food's chips cover exactly IKEEP of its 2017 area.
-  function iheaps() {
-    const rnd = irand(20171122);
-    const heaps = [[], []];
-    IFOOD.forEach(function (f) {
-      const was = d3.range(f.n).map(function () { return itemplate(f, rnd); });
-      const now = d3.range(Math.max(1, Math.round(f.n * IKEEP))).map(function () { return itemplate(f, rnd); });
-      const area = function (ks, s) { return d3.sum(ks, function (k) { return ichipArea(k, f.r * k.size * s); }); };
-      const want = IKEEP * area(was, 1);
-      let lo = 0.5, hi = 2;
-      for (let i = 0; i < 48; i++) { const mid = (lo + hi) / 2; if (area(now, mid) < want) lo = mid; else hi = mid; }
-      was.forEach(function (k) { heaps[0].push({ k: k, r: f.r * k.size }); });
-      now.forEach(function (k) { heaps[1].push({ k: k, r: f.r * k.size * (lo + hi) / 2 }); });
-    });
-    return heaps.map(function (ps) {
-      d3.shuffler(rnd)(ps);
-      const at = ipack(ps.map(function (p) { return p.r; }), rnd);
-      const out = [];
-      ps.forEach(function (p, i) {
-        ichips(p.k, p.r).forEach(function (c) {
-          out.push({ cls: p.k.food.key + " " + itone(p.k.food, c.at, c.jit),
-                     pts: c.pts.map(function (q) { return [q[0] + at[i].x, q[1] + at[i].y]; }) });
-        });
-      });
-      return out;
-    });
-  }
-
-  const ipath = function (P) {
-    return "M" + P.map(function (p) { return p[0].toFixed(2) + "," + p[1].toFixed(2); }).join("L") + "Z";
-  };
-  const ihalves = function (g, l, r) {             // a round part, lit on its left half
-    g.append("path").attr("class", "bronze-2").attr("d", l);
-    g.append("path").attr("class", "bronze-3").attr("d", r);
-  };
-
-  // What stays still: the column, its finial, the steps and the base
+  // What stays still: the base, the column and the pivot's cap
   function istand(g) {
-    const x = IPIV[0], top = IPIV[1] + 6, foot = 270;
-    g.append("rect").attr("class", "bronze-2").attr("x", x - 3.6).attr("y", top).attr("width", 7.2).attr("height", foot - top);
-    for (let y = top + 6; y < foot - 2; y += 7.5) {   // the twist
-      g.append("path").attr("class", "bronze-3").attr("d", ipath([[x - 3.6, y], [x + 3.6, y - 3.4], [x + 3.6, y - 0.8], [x - 3.6, y + 2.6]]));
-    }
-    g.append("rect").attr("class", "bronze-3").attr("x", x - 5.5).attr("y", top - 2).attr("width", 11).attr("height", 3.2);
-    g.append("rect").attr("class", "bronze-3").attr("x", x - 6).attr("y", foot - 2).attr("width", 12).attr("height", 3.5);
-    ihalves(g, "M" + (x - 4) + "," + (foot + 1.5) + "C" + (x - 4) + ",292 " + (x - 8.5) + ",309 " + (x - 10.5) + ",320H" + x + "V" + (foot + 1.5) + "Z",
-               "M" + (x + 4) + "," + (foot + 1.5) + "C" + (x + 4) + ",292 " + (x + 8.5) + ",309 " + (x + 10.5) + ",320H" + x + "V" + (foot + 1.5) + "Z");
-    [[320, 6, 14], [326, 7, 21], [333, 8, 30]].forEach(function (t) {   // the steps: top, height, half-width
-      ihalves(g, ipath([[x - t[2], t[0]], [x, t[0]], [x, t[0] + t[1]], [x - t[2], t[0] + t[1]]]),
-                 ipath([[x, t[0]], [x + t[2], t[0]], [x + t[2], t[0] + t[1]], [x, t[0] + t[1]]]));
-      g.append("rect").attr("class", "bronze-1").attr("x", x - t[2]).attr("y", t[0]).attr("width", 2 * t[2]).attr("height", 1.3);
-    });
-    const by = 344, brx = 74, bry = 6, bh = 8;      // the base: a disc
-    g.append("ellipse").attr("class", "bronze-1").attr("cx", x).attr("cy", by).attr("rx", brx).attr("ry", bry);
-    ihalves(g, "M" + (x - brx) + "," + by + "A" + brx + "," + bry + " 0 0 0 " + x + "," + (by + bry) + "V" + (by + bry + bh) +
-               "A" + brx + "," + bry + " 0 0 1 " + (x - brx) + "," + (by + bh) + "Z",
-               "M" + x + "," + (by + bry) + "A" + brx + "," + bry + " 0 0 0 " + (x + brx) + "," + by + "V" + (by + bh) +
-               "A" + brx + "," + bry + " 0 0 1 " + x + "," + (by + bry + bh) + "Z");
-    const fy = IPIV[1];                            // the finial, over the pivot
-    g.append("ellipse").attr("class", "bronze-2").attr("cx", x).attr("cy", fy - 10).attr("rx", 3.6).attr("ry", 2.8);
-    ihalves(g, ipath([[x - 2.4, fy - 12], [x, fy - 40], [x, fy - 12]]), ipath([[x, fy - 12], [x, fy - 40], [x + 2.4, fy - 12]]));
+    const x = IPIV[0];
+    isteel(g, x - 4.5, x + 4.5, IPIV[1], IBASE);
+    g.append("path").attr("class", "steel-2").attr("d", "M" + (x - 50) + "," + (IBASE + 2) + "L" + (x - 56) + "," + (IBASE + 15) +
+      "H" + (x + 56) + "L" + (x + 50) + "," + (IBASE + 2) + "Z");
+    g.append("path").attr("class", "steel-3").attr("d", "M" + x + "," + (IBASE + 2) + "V" + (IBASE + 15) + "H" + (x + 56) +
+      "L" + (x + 50) + "," + (IBASE + 2) + "Z");
+    g.append("rect").attr("class", "steel-1").attr("x", x - 50).attr("y", IBASE).attr("width", 100).attr("height", 2.5);
   }
 
-  // A pan, hanging from its hook at (0, 0): its chains, its dish and its heap
+  // A pan on its stem, the stem's foot at (0, 0) on the beam: the plate, then its heap
   function ipan(g, heap) {
-    const D = IDROP, rx = IPAN.rx + IPAN.rim, ry = IPAN.ry + IPAN.rim * 0.75, dp = IPAN.deep;
-    g.append("path").attr("class", "chain").attr("d", "M0,2V" + (D - ry));
-    g.append("ellipse").attr("class", "bronze-2").attr("cy", D).attr("rx", rx).attr("ry", ry);
-    g.append("ellipse").attr("class", "bronze-1").attr("cy", D).attr("rx", IPAN.rx).attr("ry", IPAN.ry);
-    const h = g.append("g").attr("transform", "translate(0," + D + ")");
-    heap.forEach(function (c) { h.append("path").attr("class", c.cls).attr("d", ipath(c.pts)); });
-    g.append("path").attr("class", "bronze-3").attr("d", "M" + -rx + "," + D + "A" + rx + "," + ry + " 0 0 0 0," + (D + ry) +
-      "V" + (D + ry + dp) + "A" + rx + "," + (ry + dp) + " 0 0 1 " + -rx + "," + D + "Z");
-    g.append("path").attr("class", "bronze-4").attr("d", "M0," + (D + ry) + "A" + rx + "," + ry + " 0 0 0 " + rx + "," + D +
-      "A" + rx + "," + (ry + dp) + " 0 0 1 0," + (D + ry + dp) + "Z");
-    g.append("path").attr("class", "chain").attr("d", "M" + (-rx + 1) + "," + D + "L0,2L" + (rx - 1) + "," + D);
-    g.append("circle").attr("class", "bronze-3").attr("r", 2.4);
-  }
-
-  // The beam, level about its pivot at (0, 0), with a horn curling up past each hook
-  function ibeam(g) {
-    const half = "M0,-6.2C34,-6.2 64,-2.6 120,-2.3C125,-2.2 128.5,-5 130.6,-11.2C129.8,-6 127.6,-0.8 123.5,2C80,2.2 40,3.2 0,3.6Z";
-    const shine = "M0,-6.2C34,-6.2 64,-2.6 120,-2.3L120,-0.9C64,-1.2 34,-4.6 0,-4.6Z";
-    [1, -1].forEach(function (s) {
-      const side = g.append("g").attr("transform", "scale(" + s + ",1)");
-      side.append("path").attr("class", "bronze-2").attr("d", half);
-      side.append("path").attr("class", "bronze-1").attr("d", shine);
+    const top = -ISTEM - IPAN.lip;                 // the plate's top, where the food sits
+    isteel(g, -3, 3, -ISTEM - 1, 0);
+    g.append("path").attr("class", "steel-3").attr("d", "M" + -IPAN.rx + "," + top + "A" + IPAN.rx + "," + IPAN.ry +
+      " 0 0 0 " + IPAN.rx + "," + top + "V" + (top + IPAN.lip) + "A" + IPAN.rx + "," + IPAN.ry + " 0 0 1 " + -IPAN.rx + "," +
+      (top + IPAN.lip) + "Z");
+    g.append("ellipse").attr("class", "steel-1").attr("cy", top).attr("rx", IPAN.rx).attr("ry", IPAN.ry);
+    const h = g.append("g").attr("transform", "translate(0," + top + ") scale(0.1)");
+    Object.keys(heap.shards).forEach(function (tone) {
+      h.append("path").attr("d", heap.shards[tone]).style("fill", "var(--" + tone + ")");
     });
+    g.append("circle").attr("class", "steel-3").attr("r", 4.5);
+    g.append("circle").attr("class", "steel-1").attr("r", 1.6);
   }
 
   let IK = null, ikeaP = 1, ikeaTimer = null;
@@ -1459,21 +1243,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const L = svg.select("g.labels");
     g.selectAll("*").remove();
     L.selectAll("*").remove();
-    const heaps = iheaps();
     istand(g);
-    const pans = ["2017", "2022"].map(function (yr, i) {
-      const p = g.append("g");
-      ipan(p, heaps[i]);
-      label(p, 0, IDROP + IPAN.ry + IPAN.deep + 21, [[yr, "lab-strong"]], "middle");
-      return p;
-    });
-    const less = label(pans[1], 0, IDROP + IPAN.ry + IPAN.deep + 45, [[IKEA.food_waste_cut + "% less", "lab-num"]], "middle");
     const beam = g.append("g");
-    ibeam(beam);
-    g.append("circle").attr("class", "bronze-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 7);
-    g.append("circle").attr("class", "bronze-3").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 4.4);
-    g.append("circle").attr("class", "bronze-1").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 1.8);
+    beam.append("rect").attr("class", "steel-2").attr("x", -IBEAM).attr("y", -3).attr("width", 2 * IBEAM).attr("height", 6).attr("rx", 3);
+    beam.append("rect").attr("class", "steel-1").attr("x", -IBEAM + 3).attr("y", -3).attr("width", 2 * IBEAM - 6).attr("height", 1.6);
+    const pans = HEAPS.heaps.map(function (heap) { const p = g.append("g"); ipan(p, heap); return p; });
+    g.append("circle").attr("class", "steel-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 8);
+    g.append("circle").attr("class", "steel-4").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 2.8);
     label(L, 44, 40, [["Food thrown away in the kitchens, per meal served", "lab"]]);
+    label(L, IPIV[0] - IARM, IPIV[1] + 47, [["2017", "lab-strong"]], "middle");
+    label(L, IPIV[0] + IARM, IPIV[1] + 47, [["2022", "lab-strong"]], "middle");
+    const less = label(L, IPIV[0] + IARM, IPIV[1] + 72, [[IKEA.food_waste_cut + "% less", "lab-num"]], "middle");
     label(L, 6, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]]);
     IK = { pans: pans, beam: beam, less: less };
   }
@@ -1484,8 +1264,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const deg = TILT * IKEA.food_waste_cut * itipEase(Math.min(1, t / T_ITIP));
     const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
     IK.beam.attr("transform", "translate(" + IPIV + ") rotate(" + -deg + ")");
-    IK.pans[0].attr("transform", "translate(" + [IPIV[0] - IARM * c + IHOOK * s, IPIV[1] + IARM * s + IHOOK * c] + ")");
-    IK.pans[1].attr("transform", "translate(" + [IPIV[0] + IARM * c + IHOOK * s, IPIV[1] - IARM * s + IHOOK * c] + ")");
+    IK.pans[0].attr("transform", "translate(" + [IPIV[0] - IARM * c, IPIV[1] + IARM * s] + ")");
+    IK.pans[1].attr("transform", "translate(" + [IPIV[0] + IARM * c, IPIV[1] - IARM * s] + ")");
     IK.less.attr("opacity", Math.max(0, Math.min(1, (t - T_ILAB_AT) / T_ILAB)));
   }
 
