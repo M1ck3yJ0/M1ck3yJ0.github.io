@@ -12,6 +12,7 @@
                                                      // minerals, biomass, fossil fuels, metal ores
      S.remove(disc, [id1, id2]);                     // whole shards out; the disc is re-solved in place
      const less = S.useLess(disc, 0.282);            // a new disc: 28.2% less of every material, as panel 5
+     const rec = S.useLess(disc, [0.24, 0.06, 0.02, 0.02]);   // or a share for each material, as panel 4
      disc.shards      // Map: shard id -> polygon [[x, y], ...] on a disc of radius 1, SVG's y down
      disc.mats[id]    // the shard's material index; disc.sizes[id], its share of the starting material
      disc.remaining   // share of the starting material left
@@ -40,7 +41,8 @@
    are resized so every material keeps its exact share, and the disc is re-solved once from its
    current layout, at a gap of the same width on screen; it isn't root-found to keep the slivers'
    share, so draw it at its radius. It returns a new disc, with gone, the shards taken out, and
-   leaves the one passed in as it was.
+   leaves the one passed in as it was. Passed a list with one share per material, it takes each
+   material's own share out the same way, and judges evenness against each region's own mix.
 
    fromState() rebuilds a full disc from its solver state: sites P, weights W, groups (the shards in
    each cell), sizes, mats, crack angles and gap, as make_shards.py's make() holds them.
@@ -373,8 +375,8 @@
     return finish(d, { P, W: Array.from(res.W), groups, angles, remaining, gap, shards: res.shards });
   }
 
-  function unevenness(d, gone, less) {             // over 17 regions (a middle, a ring of 6 and a ring of 10), the
-    const tot = new Float64Array(17), kept = new Float64Array(17);   // area-weighted root mean square of each
+  function unevenness(d, gone, less) {             // less: one share for every material, or one per material             // over 17 regions (a middle, a ring of 6 and a ring of 10), the
+    const tot = new Float64Array(17), kept = new Float64Array(17), due = new Float64Array(17);   // area-weighted root mean square of each
     for (const [k, V] of d.shards) {               // region's share left, against the share left overall
       let cx = 0, cy = 0;
       for (const v of V) { cx += v[0]; cy += v[1]; }
@@ -385,16 +387,18 @@
       const a = area(V);
       tot[reg] += a;
       if (!gone.has(k)) kept[reg] += a;
+      if (Array.isArray(less)) due[reg] += a * (1 - less[d.mats[k]]);
     }
     let s = 0;
-    for (let i = 0; i < 17; i++) if (tot[i] > 0) s += tot[i] * (kept[i] / tot[i] - (1 - less)) ** 2;
+    for (let i = 0; i < 17; i++) if (tot[i] > 0) s += tot[i] * (kept[i] / tot[i] - (Array.isArray(less) ? due[i] / tot[i] : 1 - less)) ** 2;
     return Math.sqrt(s / sum(tot));
   }
 
-  function pick(rnd, d, less) {                    // whole shards to take out, `less` of every material's
+  function pick(rnd, d, shares) {                  // whole shards to take out, `shares` of every material's, or one per material
     const gone = [], sizes = d.sizes;
     const ids0 = [...d.shards.keys()];
     for (const m of [...new Set(ids0.map(k => d.mats[k]))]) {
+      const less = Array.isArray(shares) ? shares[m] || 0 : shares;
       const ids = ids0.filter(k => d.mats[k] === m).sort((a, b) => sizes[a] - sizes[b]);
       const w = ids.length >= 10 ? 5 : 3, five = new Map(ids.map((k, i) => [k, Math.floor(i / w)]));
       let acc = rnd(), out = [];
@@ -434,7 +438,13 @@
     const rnd = rng(o.pickSeed), tries = [];
     for (let i = 0; i < o.picks; i++) { const g = pick(rnd, d, less); tries.push([unevenness(d, g, less), g]); }
     tries.sort((a, b) => a[0] - b[0]);
-    const remaining = (1 - less) * d.remaining, gap = d.gap0 / Math.sqrt(remaining);
+    const lessOf = m => Array.isArray(less) ? less[m] || 0 : less;
+    let remaining = (1 - less) * d.remaining;
+    if (Array.isArray(less)) {
+      remaining = 0;
+      for (const k of d.shards.keys()) remaining += (1 - lessOf(d.mats[k])) * d.sizes[k];
+    }
+    const gap = d.gap0 / Math.sqrt(remaining);
     let err = null;
     for (const [, gone] of tries.slice(0, 5)) {    // the most even pick that solves
       const sizes = d.sizes.slice(), mine = new Map(), left = new Map();
@@ -443,7 +453,7 @@
         mine.set(m, (mine.get(m) || 0) + sizes[k]);
         if (!gone.has(k)) left.set(m, (left.get(m) || 0) + sizes[k]);
       }
-      for (const k of d.shards.keys()) if (!gone.has(k)) sizes[k] *= (1 - less) * mine.get(d.mats[k]) / left.get(d.mats[k]);
+      for (const k of d.shards.keys()) if (!gone.has(k)) sizes[k] *= (1 - lessOf(d.mats[k])) * mine.get(d.mats[k]) / left.get(d.mats[k]);
       const keep = d.groups.map((g, u) => [u, g.filter(k => !gone.has(k))]).filter(c => c[1].length);
       const P = keep.map(c => d.P[c[0]].slice()), W = keep.map(c => d.W[c[0]]);
       const groups = keep.map(c => c[1]), angles = keep.map(c => d.angles[c[0]].slice());
