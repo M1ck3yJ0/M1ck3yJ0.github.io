@@ -667,7 +667,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
           <div><dt>Climate impact removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO2e</dd></div>
           <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
-          <div><dt>Recycling</dt><dd class="v" data-n="mult">1.0× 2022</dd></div>
+          <div><dt>Waste recycled</dt><dd class="v" data-n="share">41%</dd><dd class="t" data-n="mult">1.0× 2022's recycling</dd><dd class="t">The EEA's scenarios: 70% by 2030, 90% by 2050</dd></div>
         </dl>
         <p class="game-caveats"><span>Recycling at its best: each recycled tonne replacing a new one</span><span>Climate impact of making materials, up to the factory gate</span></p>
         <button type="button" class="game-reset">Start again</button>
@@ -2692,7 +2692,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     set("climate-t", gmFmtC(q.climate / 100 * DATA.climate_total_mt) + " million tonnes of CO2e");
     set("imports", fmt1(100 * q.imports / DATA.imports.imports_kt) + "%");
     set("imports-t", gmFmtC(q.imports / 1000) + " million tonnes");
-    set("mult", gmMult(q.mult) + "× 2022");
+    set("share", Math.round(q.s) + "%");
+    set("mult", gmMult(q.mult) + "× 2022's recycling");
     gmKnob.setAttribute("aria-valuenow", Math.round(q.s));
     gmKnob.setAttribute("aria-valuetext", Math.round(q.s) + "% of waste recycled, " + gmMult(q.mult) + " times 2022's");
     GM_FIG.querySelectorAll(".mkey").forEach(function (b) {
