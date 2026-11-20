@@ -342,7 +342,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game-intro, .game-end { margin: 0; padding: 8px 16px 0; font-size: 18px; }
 .game-end { padding-top: 16px; }
 .game-intro p { margin: 0 0 10px; }
-.game-intro p:last-child { margin-bottom: 0; }
+.game-intro p:last-of-type { margin-bottom: 0; }
 .game.is-fresh .game-nums, .game.is-fresh .game-caveats, .game.is-fresh .game-reset { display: none; }
 .game:not(.is-fresh) .game-intro, .game:not(.is-fresh) #game-chart .hints { display: none; }
 #game-chart .hints path { fill: none; stroke: var(--ink-2); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
@@ -357,9 +357,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .mkey .sw { width: 12px; height: 12px; }
 .mkey .mname { font-weight: 700; white-space: nowrap; }
 .mkey .mcut { grid-column: 2; color: var(--ink-2); font-size: 15px; font-variant-numeric: tabular-nums; }
-.mkey:hover:not(:disabled), .game-reset:hover { background: var(--control-hover); }
-.mkey:active:not(:disabled), .game-reset:active { background: var(--control-press); }
-.mkey:focus-visible, .game-reset:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
+.mkey:hover:not(:disabled), .game-reset:hover, .game-start:hover { background: var(--control-hover); }
+.mkey:active:not(:disabled), .game-reset:active, .game-start:active { background: var(--control-press); }
+.mkey:focus-visible, .game-reset:focus-visible, .game-start:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 .mkey:disabled { cursor: default; color: var(--ink-2); background: var(--control-off); }
 .mkey:disabled .sw { opacity: .35; }
 .sw.minerals { background: var(--mat-minerals); }
@@ -378,11 +378,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 #game-chart .knob-hit { fill: transparent; pointer-events: all; cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; }
 #game-chart.is-dragging .knob-hit { cursor: grabbing; }
 #game-chart .knob-hit:focus-visible { stroke: var(--used); stroke-width: 2; stroke-dasharray: 3 3; }
-.game-reset {
+.game-reset, .game-start {
   align-self: flex-start; margin: 14px 16px 0; min-height: 44px; padding: 8px 16px;
   font: inherit; font-size: 16px; color: var(--ink); background: var(--control); border: 0; border-radius: 0; cursor: pointer;
   touch-action: manipulation;
 }
+.game-start { display: block; margin: 14px 0 0; }
 @media (min-width: 800px) {
   .game-box {
     width: max-content; max-width: 100%; padding: 16px 16px 16px 0;
@@ -670,6 +671,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <p><strong>Recycle more:</strong> drag the gold knob around the ring. It starts at the 41% of its waste the EU recycled in 2022 and goes up to 100%; the EEA's scenarios reach 70% by 2030 and 90% by 2050. Picture every extra recycled tonne replacing a new one, recycling at its best.</p>
           <p><strong>Use less:</strong> tap a material under the ring to use less of it, 5.5% of all the EU's new material at a time.</p>
           <p>Once you start, the numbers keep count of what the EU gives up: by weight, by climate impact and in imports. You can keep going past 24%.</p>
+          <button type="button" class="game-start">Start</button>
         </div>
         <div class="game-end" aria-live="polite" hidden></div>
         <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
@@ -2855,6 +2857,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     gmSet("move");
   });
   GM_FIG.querySelectorAll(".mkey").forEach(function (b) { b.addEventListener("click", function () { gmTap(+b.dataset.m); }); });
+  GM_FIG.querySelector(".game-start").addEventListener("click", function (ev) {
+    gmStart();
+    if (ev.detail === 0) gmKnob.focus({ preventScroll: true });   // from the keyboard: on to the knob
+  });
   GM_FIG.querySelector(".game-reset").addEventListener("click", function () {
     gm = { s: GM_S0, g: [0, 0, 0, 0] };
     gmSet("move");
