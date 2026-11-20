@@ -651,6 +651,71 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </div>
   </section>
 
+  <section class="explorer game" id="game">
+    <div class="game-box">
+      <div class="game-l">
+        <figure class="chart" id="game-chart">
+          <svg viewBox="0 0 400 400" role="img">
+            <defs>
+              <clipPath id="gm-clip1"><path></path></clipPath>
+              <clipPath id="gm-clip2"><path></path></clipPath>
+            </defs>
+            <g class="ring" transform="translate(200,176)">
+              <circle class="target" r="0"></circle>
+              <g class="turn">
+                <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
+                <path class="rope"></path>
+                <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
+                <circle class="dot rate"></circle>
+              </g>
+              <g class="disc"><g class="mats"></g></g>
+            </g>
+            <g class="labels"></g>
+          </svg>
+        </figure>
+        <div class="lever">
+          <div class="lever-head">
+            <label for="game-recycled">Waste recycled <span class="lever-val">41%</span></label>
+            <span class="lever-read">1.0× the waste recycled in 2022</span>
+          </div>
+          <div class="lever-track">
+            <input type="range" id="game-recycled" min="41" max="100" step="1" value="41">
+            <span class="lever-tick" data-at="70"></span>
+            <span class="lever-tick" data-at="90"></span>
+          </div>
+          <div class="lever-scale" aria-hidden="true">
+            <span class="lever-end">41%</span>
+            <span data-at="70">70%</span>
+            <span data-at="90">90%</span>
+            <span class="lever-end lever-max">100%</span>
+          </div>
+          <p class="lever-note">70%: the EEA's scenario for 2030. 90%: its scenario for 2050.</p>
+        </div>
+        <div class="game-keys" role="group" aria-label="Use less of a material">
+          <button type="button" class="mkey" data-m="0"><span class="sw minerals"></span><span class="mname">Minerals</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="1"><span class="sw biomass"></span><span class="mname">Biomass</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="2"><span class="sw fossil"></span><span class="mname">Fossil fuels</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="3"><span class="sw metals"></span><span class="mname">Metal ores</span><span class="mcut">0%</span></button>
+        </div>
+      </div>
+      <div class="game-r">
+        <h2 class="sec-title explore-title" id="sec-game">Your turn: close the EU's&nbsp;ring</h2>
+        <p class="game-intro">Now it's your turn. Close the EU's ring with either lever, or both. Slide recycling up from the 41% of its waste the EU recycled in 2022, and picture every extra recycled tonne replacing a new one, recycling at its best. Or tap a material to use less of it. The numbers keep count of what the EU would give up: by weight, by climate impact and in imports.</p>
+        <div class="game-end" aria-live="polite" hidden></div>
+        <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
+        <dl class="game-nums">
+          <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
+          <div><dt>Climate impact removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO2e</dd></div>
+          <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
+          <div><dt>Recycling</dt><dd class="v" data-n="mult">1.0× 2022</dd></div>
+        </dl>
+        <p class="game-caveats"><span>Recycling at its best: each recycled tonne replacing a new one</span><span>Climate impact of making materials, up to the factory gate</span></p>
+        <button type="button" class="game-reset">Start again</button>
+        <p class="note-link"><a href="#notes-game">Sources and notes &#8595;</a></p>
+      </div>
+    </div>
+  </section>
+
   <section class="closer" id="sec-closer">
     <div class="steps">
       <article class="card" data-state="closer">
