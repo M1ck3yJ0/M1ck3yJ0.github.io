@@ -375,6 +375,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game-nums .t { grid-column: 1 / 3; font-size: 14px; color: var(--ink-2); }
 .game-caveats { margin: 8px 16px 0; font-size: 14px; line-height: 1.35; color: var(--ink-2); }
 .game-caveats span { display: block; }
+#game-chart .swell { fill: none; stroke: var(--back); }
+#game-chart .ripple { fill: none; stroke: var(--target); }
 #game-chart .knob-hit { fill: transparent; pointer-events: all; cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; }
 #game-chart.is-dragging .knob-hit { cursor: grabbing; }
 #game-chart .knob-hit:focus-visible { stroke: var(--used); stroke-width: 2; stroke-dasharray: 3 3; }
@@ -648,6 +650,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
                 <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
+                <circle class="swell" display="none"></circle>
+                <circle class="ripple" display="none"></circle>
                 <circle class="dot rate"></circle>
                 <circle class="knob-hit" r="22" tabindex="0" role="slider" aria-label="Waste recycled" aria-valuemin="41" aria-valuemax="100" aria-valuenow="41"></circle>
               </g>
@@ -2358,9 +2362,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      Web Worker where one starts. A tap, or the knob let go, flies the leaving shards off as in
      panel 5; the new layout then blends in and the ring tightens around it. The arc follows the
      rate at once while the knob moves, and eases to it otherwise. Past 24%, it runs on into a
-     second lap, as in 20a. When the ends meet, the closed ring turns once, and the ending replaces
-     the intro (on a phone, it follows the numbers). Reduced motion runs it three times as fast,
-     without the turn. */
+     second lap, as in 20a. When the ends meet, the arc swells and a ripple spreads out from it, and the ending shows
+     above the numbers (on a phone, after them). Reduced motion runs it three times as fast,
+     without the ripple. */
   const GM = DATA.game;
   const GM_FIG = document.querySelector("#game");
   const GM_G = d3.select(GM_FIG).select("g.ring");
@@ -2385,7 +2389,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   ];
   const GM_FAST = STILL ? 3 : 1;
   const T_GFLY = 300 / GM_FAST, T_GGAP = 28 / GM_FAST, T_GSET = 650 / GM_FAST, T_GARC = 500 / GM_FAST;
-  const T_GFADE = 360 / GM_FAST, T_GTURN = 1500;
+  const T_GFADE = 360 / GM_FAST, T_GRIP = 1100, T_GSWELL = 500;
   const gmLerp = function (a, b, w) { return a + (b - a) * w; };
   const gmScatter = function (a, b) { return (a * 0.6180339887) % 1 - (b * 0.6180339887) % 1; };
   let gm = { s: GM_S0, g: [0, 0, 0, 0] }, gmQ = null, gmClosed = false;
@@ -2551,7 +2555,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   // A new state's disc: the shards that go fly off now; the rest move once the layout is solved
   function gmDiscTo(q, t) {
-    if (!gmFull) return gmSizeTo(Math.sqrt(Math.max(0, 1 - q.weight / 100)), t, t);
+    if (!gmFull) {
+      gmSizeTo(Math.sqrt(Math.max(0, 1 - q.weight / 100)), t, t);
+      if (gmRipWait) { gmRipWait = false; gmRip0 = t + T_GSET; }
+      return;
+    }
     const keep = gmKeep(q.left), out = [];
     gmEls.forEach(function (s, k) {
       if (keep.has(k)) {
@@ -2596,13 +2604,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       }
     });
     gmSizeTo(L.radius, t, start);
+    if (gmRipWait) { gmRipWait = false; gmRip0 = start + T_GSET; }
     gmRun();
   }
 
   /* Drawing. The arc, the disc's size, the turn and each moving shard are drawn from the time alone. */
   const gmArc = { a: [RATE / TARGET, RATE / TARGET], b: [RATE / TARGET, RATE / TARGET], t0: -Infinity };
   const gmSize = { a: 1, b: 1, t0: -Infinity };
-  let gmTurn0 = null, gmTimer = null;
+  let gmRip0 = null, gmRipWait = false, gmTimer = null;
   function gmArcAt(t) {
     const w = d3.easeCubicOut(clamp01((t - gmArc.t0) / T_GARC));
     return [gmLerp(gmArc.a[0], gmArc.b[0], w), gmLerp(gmArc.a[1], gmArc.b[1], w)];
@@ -2648,13 +2657,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const kx = R * Math.sin(tip * TAU), ky = -R * Math.cos(tip * TAU);
     GM_G.select(".dot").attr("class", lap ? "dot lap" : "dot rate").attr("r", lap ? RING_DOT + 1 : RING_DOT).attr("cx", kx).attr("cy", ky);
     GM_G.select(".knob-hit").attr("cx", kx).attr("cy", ky);
-    const turn = gmTurn0 !== null && t > gmTurn0 ? 360 * d3.easeCubicInOut(clamp01((t - gmTurn0) / T_GTURN)) : 0;
-    GM_G.select(".turn").attr("transform", turn > 0 && turn < 360 ? "rotate(" + turn.toFixed(2) + ")" : null);
+    const rip = gmRip0 !== null && t > gmRip0 ? (t - gmRip0) : -1;      // the closing ripple, ms in
+    const sw = rip >= 0 && rip < T_GSWELL ? Math.sin(Math.PI * rip / T_GSWELL) : 0;
+    GM_G.select(".swell").attr("r", R).attr("stroke-width", 9 + 7 * sw).attr("display", sw > 0 ? null : "none");
+    const rv = clamp01((rip - 0.4 * T_GSWELL) / T_GRIP), on = rip >= 0.4 * T_GSWELL && rv < 1;
+    GM_G.select(".ripple").attr("r", R + 6 + 30 * d3.easeCubicOut(rv)).attr("stroke-width", 2.4 * (1 - rv) + 0.4)
+      .attr("opacity", 1 - rv).attr("display", on ? null : "none");
     GM_G.select(".disc").attr("transform", "scale(" + size + ")");
     gmEls.forEach(function (s) { if (s.fly || s.bl || s.fade !== null) gmShardAt(s, t); });
   }
   function gmBusy(t) {
-    if (t < gmArc.t0 + T_GARC || t < gmSize.t0 + T_GSET || (gmTurn0 !== null && t < gmTurn0 + T_GTURN)) return true;
+    if (t < gmArc.t0 + T_GARC || t < gmSize.t0 + T_GSET || (gmRip0 !== null && t < gmRip0 + 0.4 * T_GSWELL + T_GRIP)) return true;
     let busy = false;
     gmEls.forEach(function (s) { if (s.fly || s.bl || s.fade !== null) busy = true; });
     return busy;
@@ -2788,8 +2801,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     gmArc.a = kind === "drag" ? arc : gmArcAt(t);
     gmArc.b = arc;
     gmArc.t0 = kind === "drag" ? -Infinity : t;
-    if (q.closed && !gmClosed && !STILL) gmTurn0 = t + (kind === "drag" ? 0 : T_GARC);
-    if (!q.closed) gmTurn0 = null;
+    if (q.closed && !gmClosed && !STILL) gmRipWait = true;          // rippled once the disc settles
+    if (!q.closed) { gmRip0 = null; gmRipWait = false; }
     gmClosed = q.closed;
     if (kind !== "drag") gmDiscTo(q, t);
     gmRun();
