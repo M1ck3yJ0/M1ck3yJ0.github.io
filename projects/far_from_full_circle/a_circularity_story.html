@@ -2368,6 +2368,457 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   /* Timing. Each beat's transition starts when the card before it is almost clear of the top
      edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
+  /* ---------- The ring game (21): close the EU's ring ----------
+     The hero's ring for the EU, closed by the reader with two levers. A slider sets the share of
+     treated waste recycled, from 2022's 41% to 100%, waste held at 2022's tonnes; each extra
+     recycled tonne replaces a new one of the same material (recycling's best case), split across
+     materials by each one's waste not yet recycled. A key per material takes GM_STEP% of 2022's new
+     material away from it at each tap, until none is left; recycling replaces first, and taps cut
+     only what it hasn't replaced, so a cut gives way as recycling rises, except that a material
+     tapped to nothing stays gone. The tap that would take the ring past 24% stops where it closes.
+     Weight, the rate and the disc count recycling's replaced tonnes as panel 4 does, split on the
+     disc's weight shares (Figure 3-4), so the disc's area is always the new material left. Climate
+     impact and imports count each material's share removed as two_levers_2022.csv does: recycling's
+     extra tonnes over the material's Eurostat consumption, plus what goes without over its weight
+     share; a material with nothing left counts as all removed. Each material's shards leave in a
+     fixed scattered order: the whole shards closest to its share left stay, resized to cover it
+     exactly, and the disc is re-solved in the page (far_from_full_circle_shards.js, reshape), in a
+     Web Worker where one starts. A tap, or the slider let go, flies the leaving shards off as in
+     panel 5; the new layout then blends in and the ring tightens around it. The arc follows the
+     rate at once while the slider moves, and eases to it otherwise. Past 24%, it runs on into a
+     second lap, as in 20a. When the ends meet, the closed ring turns once, and the ending replaces
+     the intro (on a phone, it follows the numbers). Reduced motion runs it three times as fast,
+     without the turn. */
+  const GM = DATA.game;
+  const GM_FIG = document.querySelector("#game");
+  const GM_G = d3.select(GM_FIG).select("g.ring");
+  const GM_M = SH.materials;                       // the disc's order: minerals, biomass, fossil fuels, metal ores
+  const GM_ROW = GM_M.map(function (m) { return MAT.find(function (d) { return d.key === m; }); });
+  const GM_W = GM_ROW.map(function (d) { return d.weight; });     // % of 2022's new material, Figure 3-4
+  const GM_CL = GM_ROW.map(function (d) { return d.climate; });   // % of the climate impact of making materials
+  const GM_IMP = GM_ROW.map(function (d) {                        // kt imported from outside the EU
+    return DATA.imports.materials.find(function (r) { return r.material_group === d.group; }).imports_kt;
+  });
+  const GM_NR = GM_M.map(function (m) { return GM.not_recycled_kt[m]; });   // waste not yet recycled, kt
+  const GM_NRT = d3.sum(GM_NR);
+  const GM_DG = GM_M.map(function (m) { return GM.dmc_by_group_kt[m]; });   // Eurostat's consumption, kt
+  const GM_T = DATA.waste_bases.treated_kt;        // waste treated, kt, held at 2022's
+  const GM_S0 = EU.share_recycled;                 // % of it recycled in 2022
+  const GM_STEP = 5.5;                             // one tap, % of 2022's new material
+  const GM_LINES = [                               // what goes when a material is mostly gone, after "most of"
+    "the sand, gravel and stone that become our homes, roads and bridges",
+    "the crops, feed and wood we grow, our food among them",
+    "the coal, oil and gas we burn and make into plastics",
+    "the metal we mine and import"
+  ];
+  const GM_FAST = STILL ? 3 : 1;
+  const T_GFLY = 300 / GM_FAST, T_GGAP = 28 / GM_FAST, T_GSET = 650 / GM_FAST, T_GARC = 500 / GM_FAST;
+  const T_GFADE = 360 / GM_FAST, T_GTURN = 1500;
+  const gmLerp = function (a, b, w) { return a + (b - a) * w; };
+  const gmScatter = function (a, b) { return (a * 0.6180339887) % 1 - (b * 0.6180339887) % 1; };
+  let gm = { s: GM_S0, g: [0, 0, 0, 0] }, gmQ = null, gmClosed = false;
+
+  // Each material's share of its own use removed, as two_levers_2022.csv counts it
+  function gmShares(e, gone, avail) {
+    return GM_W.map(function (w, i) {
+      return gone[i] >= avail[i] - 1e-9 ? 1 : Math.min(1, e * GM_NR[i] / GM_NRT / GM_DG[i] + gone[i] / w);
+    });
+  }
+  // Everything the game shows, from the share recycled and each material's cut (% of 2022's new material)
+  function gmDerive(st) {
+    const e = Math.max(0, st.s - GM_S0) / 100 * GM_T;              // extra tonnes recycled, kt
+    const q = { s: st.s, e: e, rep: 100 * e / DMC, mult: st.s / GM_S0 };   // rep: new material they replace, %
+    q.repBy = GM_NR.map(function (n) { return q.rep * n / GM_NRT; });
+    q.avail = GM_W.map(function (w, i) { return Math.max(0, w - q.repBy[i]); });   // left to go without
+    q.gone = st.g.map(function (x, i) { return Math.min(x, q.avail[i]); });
+    q.C = d3.sum(q.gone);
+    q.weight = q.rep + q.C;
+    q.cut = GM_W.map(function (w, i) { return Math.min(1, (q.repBy[i] + q.gone[i]) / w); });   // the keys and disc
+    q.left = GM_W.map(function (w, i) { return Math.max(0, w - q.repBy[i] - q.gone[i]) / 100; });
+    q.f = gmShares(e, q.gone, q.avail);
+    q.climate = d3.sum(q.f, function (x, i) { return x * GM_CL[i]; });
+    q.imports = d3.sum(q.f, function (x, i) { return x * GM_IMP[i]; });            // kt
+    const den = DMC + U - q.C / 100 * DMC;                         // new and recycled together
+    q.rate = (U + e) / den;
+    q.solid = U / den;
+    q.closed = q.rate >= TARGET - 1e-9;
+    q.need = Math.max(0, 100 * (DMC + U - (U + e) / TARGET) / DMC - q.C);   // still to go without to close it
+    return q;
+  }
+  // The climate impact the same weight would remove given up heaviest first, at the same recycling
+  function gmHeaviest(q) {
+    let left = q.C;
+    const gone = [0, 0, 0, 0];
+    d3.range(4).sort(function (a, b) { return GM_W[b] - GM_W[a]; }).forEach(function (i) {
+      gone[i] = Math.min(left, q.avail[i]);
+      left -= gone[i];
+    });
+    return d3.sum(gmShares(q.e, gone, q.avail), function (x, i) { return x * GM_CL[i]; });
+  }
+
+  function gmTap(i) {
+    const q = gmDerive(gm), room = q.avail[i] - q.gone[i];
+    if (room <= 1e-9) return;
+    let amt = Math.min(GM_STEP, room);
+    if (!q.closed && q.need > 1e-9 && amt >= q.need - 1e-9) amt = q.need;
+    gm.g[i] = amt >= room - 1e-9 ? Infinity : q.gone[i] + amt;   // a material emptied stays gone as recycling moves
+    gmSet("move");
+  }
+
+  /* The disc. The full disc is solved once; every other one comes from it, by the shards that stay
+     and each material's share left. Solved layouts are kept, so going back costs nothing. */
+  let gmFull = null, gmOrder = null, gmBuilding = false, gmV = 0, gmBusyV = 0, gmWant = null;
+  let gmWorker, gmOwed = null, gmOwedJob = null, gmPageFull = null, gmFlightsEnd = 0;
+  const gmEls = new Map(), gmCache = new Map();
+  const gmPack = function (d, all) {
+    const shards = [];
+    d.shards.forEach(function (V, k) { shards.push([k, d.mats[k], V]); });
+    const o = { shards: shards, radius: d.radius };
+    if (all) { o.sizes = d.sizes; o.mats = d.mats; }
+    return o;
+  };
+  function gmHere(job) {
+    try {
+      const S = window.FAR_FROM_FULL_CIRCLE_SHARDS;
+      if (!gmPageFull) gmPageFull = S.build(GM_W);
+      return job.build ? gmPack(gmPageFull, true) : gmPack(S.reshape(gmPageFull, job.gone, job.left));
+    } catch (e) { return null; }
+  }
+  function gmStartWorker() {
+    if (gmWorker !== undefined) return gmWorker;
+    gmWorker = null;
+    if (!window.Worker || !window.Blob || !window.URL) return null;
+    try {
+      const src = "importScripts(" + JSON.stringify(new URL("far_from_full_circle_shards.js", document.baseURI).href) + ");" +
+        "var pack = " + gmPack.toString() + "; var S = FAR_FROM_FULL_CIRCLE_SHARDS, full = null;" +
+        "onmessage = function (e) { var j = e.data, out = null;" +
+        " try { if (j.build) { full = S.build(j.build); out = pack(full, true); } else out = pack(S.reshape(full, j.gone, j.left)); } catch (err) {}" +
+        " postMessage(out); };";
+      gmWorker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
+      gmWorker.onmessage = function (e) {
+        const done = gmOwed;
+        gmOwed = null;
+        if (done) done(e.data);
+      };
+      gmWorker.onerror = function (e) {            // the worker can't load the solver: solve on the page
+        if (e.preventDefault) e.preventDefault();
+        gmWorker.terminate();
+        gmWorker = null;
+        const done = gmOwed, job = gmOwedJob;
+        gmOwed = null;
+        if (done) setTimeout(function () { done(gmHere(job)); }, 0);
+      };
+    } catch (e) { gmWorker = null; }
+    return gmWorker;
+  }
+  function gmSolve(job, done) {
+    const w = gmStartWorker();
+    if (w) { gmOwed = done; gmOwedJob = job; w.postMessage(job); }
+    else setTimeout(function () { done(gmHere(job)); }, 30);
+  }
+  function gmPump() {                              // one job at a time, the latest waiting
+    if (gmBusyV || !gmWant) return;
+    const job = gmWant;
+    gmWant = null;
+    gmBusyV = job.v;
+    gmSolve(job, function (out) {
+      gmBusyV = 0;
+      if (out) {
+        gmCache.set(job.key, out);
+        if (gmCache.size > 40) gmCache.delete(gmCache.keys().next().value);
+        if (job.v === gmV) gmApply(out);
+      }
+      gmPump();
+    });
+  }
+  function gmEnsure() {                            // the full disc, solved once the game is near
+    if (gmFull || gmBuilding) return;
+    gmBuilding = true;
+    gmBusyV = -1;
+    gmSolve({ build: GM_W }, function (out) {
+      gmBusyV = 0;
+      if (out) gmInit(out);                        // unsolved: the game plays without its disc
+      gmPump();
+    });
+  }
+  function gmInit(out) {
+    gmFull = { layout: { shards: out.shards, radius: out.radius }, sizes: out.sizes };
+    const ids = out.shards.map(function (s) { return s[0]; });
+    gmOrder = GM_M.map(function (m, i) {
+      return ids.filter(function (k) { return out.mats[k] === i; }).sort(gmScatter);
+    });
+    const mats = GM_G.select(".mats");
+    out.shards.forEach(function (s) {
+      gmEls.set(s[0], { k: s[0], el: mats.append("path").attr("class", GM_M[s[1]]).attr("display", "none"),
+                        pts: s[2], bl: null, fly: null, fade: null, on: false, want: false, back: false });
+    });
+    gmDiscTo(gmQ, d3.now());
+  }
+  // The shards that stay: for each material, the end of its order whose sizes come closest to its share left
+  function gmKeep(left) {
+    const keep = new Set();
+    gmOrder.forEach(function (ids, i) {
+      if (!(left[i] > 1e-9)) return;
+      const tot = d3.sum(ids, function (k) { return gmFull.sizes[k]; });
+      let best = 0, bestE = Infinity, acc = 0;
+      for (let n = 0; n < ids.length; n++) {
+        const err = Math.abs(tot - acc - left[i]);
+        if (err < bestE - 1e-12) { bestE = err; best = n; }
+        acc += gmFull.sizes[ids[n]];
+      }
+      ids.slice(best).forEach(function (k) { keep.add(k); });
+    });
+    return keep;
+  }
+  const gmPath = function (pts) { return "M" + pts.join("L") + "Z"; };
+  function gmPtsAt(s, t) {                         // a shard's outline as drawn at t
+    if (!s.bl) return s.pts;
+    const w = d3.easeCubicInOut(clamp01((t - s.bl.t0) / T_GSET));
+    if (w >= 1) return s.bl.to;
+    return s.bl.a.map(function (p, i) { const b = s.bl.b[i]; return [gmLerp(p[0], b[0], w), gmLerp(p[1], b[1], w)]; });
+  }
+  // A new state's disc: the shards that go fly off now; the rest move once the layout is solved
+  function gmDiscTo(q, t) {
+    if (!gmFull) return gmSizeTo(Math.sqrt(Math.max(0, 1 - q.weight / 100)), t, t);
+    const keep = gmKeep(q.left), out = [];
+    gmEls.forEach(function (s, k) {
+      if (keep.has(k)) {
+        if (!s.want) { s.want = true; if (!s.on) { s.fly = null; s.back = true; s.el.attr("display", "none"); } }
+      } else if (s.want) {
+        s.want = false;
+        s.back = false;
+        if (s.on) out.push(s);
+        s.on = false;
+      }
+    });
+    out.sort(function (a, b) { return gmScatter(a.k, b.k); }).forEach(function (s, i) {
+      s.fly = { d: gmPath(gmPtsAt(s, t)), t0: t + i * T_GGAP };
+      s.bl = null;
+      s.fade = null;
+    });
+    if (out.length) gmFlightsEnd = Math.max(gmFlightsEnd, t + (out.length - 1) * T_GGAP + T_GFLY);
+    const gone = [];
+    gmEls.forEach(function (s, k) { if (!keep.has(k)) gone.push(k); });
+    const key = gone.join(",") + "|" + q.left.map(function (x) { return x.toFixed(6); }).join(",");
+    const v = ++gmV;
+    if (!gone.length) return gmApply(gmFull.layout);
+    if (gmCache.has(key)) return gmApply(gmCache.get(key));
+    gmWant = { v: v, key: key, gone: gone, left: q.left };
+    gmPump();
+  }
+  // A solved layout: the shards that stay blend to it as the last ones leave, those coming back fade in
+  function gmApply(L) {
+    const t = d3.now(), start = Math.max(t, gmFlightsEnd - 0.4 * T_GFLY);
+    const to = new Map(L.shards.map(function (s) { return [s[0], s[2]]; }));
+    gmEls.forEach(function (s, k) {
+      if (!s.want || !to.has(k)) return;
+      if (s.back) {
+        s.back = false;
+        s.on = true;
+        s.bl = null;
+        s.pts = to.get(k);
+        s.fade = start + 0.35 * T_GSET;
+      } else if (s.on) {
+        const a = resample(gmPtsAt(s, t), 40);
+        s.bl = { a: a, b: matched(a, resample(to.get(k), 40)), t0: start, to: to.get(k) };
+      }
+    });
+    gmSizeTo(L.radius, t, start);
+    gmRun();
+  }
+
+  /* Drawing. The arc, the disc's size, the turn and each moving shard are drawn from the time alone. */
+  const gmArc = { a: [RATE / TARGET, RATE / TARGET], b: [RATE / TARGET, RATE / TARGET], t0: -Infinity };
+  const gmSize = { a: 1, b: 1, t0: -Infinity };
+  let gmTurn0 = null, gmTimer = null;
+  function gmArcAt(t) {
+    const w = d3.easeCubicOut(clamp01((t - gmArc.t0) / T_GARC));
+    return [gmLerp(gmArc.a[0], gmArc.b[0], w), gmLerp(gmArc.a[1], gmArc.b[1], w)];
+  }
+  function gmSizeAt(t) { return gmLerp(gmSize.a, gmSize.b, d3.easeCubicInOut(clamp01((t - gmSize.t0) / T_GSET))); }
+  function gmSizeTo(r, t, start) { gmSize.a = gmSizeAt(t); gmSize.b = r; gmSize.t0 = start; }
+  function gmShardAt(s, t) {
+    if (s.fly) {
+      const v = clamp01((t - s.fly.t0) / T_GFLY);
+      if (v >= 1) { s.fly = null; s.el.attr("display", "none"); return; }
+      s.el.attr("display", null).attr("d", s.fly.d)
+        .attr("transform", v > 0 ? "translate(" + ((wideMQ.matches ? FLY_WIDE : FLY) * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+        .attr("opacity", v > 0 ? 1 - v * v : null);
+      return;
+    }
+    if (!s.on) return;
+    let d;
+    if (s.bl && t >= s.bl.t0 + T_GSET) { s.pts = s.bl.to; s.bl = null; }
+    if (s.bl) {
+      const w = d3.easeCubicInOut(clamp01((t - s.bl.t0) / T_GSET));
+      d = xrBlend([s.bl.a, s.bl.b], w);
+    } else d = gmPath(s.pts);
+    let op = null;
+    if (s.fade !== null) {
+      const v = clamp01((t - s.fade) / T_GFADE);
+      if (v >= 1) s.fade = null; else op = v;
+    }
+    s.el.attr("display", null).attr("transform", null).attr("d", d).attr("opacity", op);
+  }
+  function gmFrame(t) {
+    const size = RC0 * gmSizeAt(t), R = size + RING_GAP + 4.5;
+    const arc = gmArcAt(t), s0 = arc[0];
+    let total = arc[1];
+    if (Math.abs(total - 1) < 1e-4) total = 1;     // closed: a full ring, with no ends
+    const s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
+    GM_G.select(".target").attr("r", R);
+    GM_G.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
+    xrStripes(GM_G.select(".stripes.rate"), "#gm-clip1", R, Math.min(1, s1), t1, 4.5, true);
+    const s2 = Math.min(1, Math.max(0, s0 - 1)), t2 = Math.min(1, Math.max(0, total - 1));   // the second lap
+    GM_G.select(".lap .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
+    xrStripes(GM_G.select(".lap .stripes"), "#gm-clip2", R, s2, t2, XR_HW2, s2 > 0);
+    const lap = total > 1, tip = lap ? t2 : t1;
+    GM_G.select(".dot").attr("class", lap ? "dot lap" : "dot rate").attr("r", lap ? RING_DOT + 1 : RING_DOT)
+      .attr("cx", R * Math.sin(tip * TAU)).attr("cy", -R * Math.cos(tip * TAU));
+    const turn = gmTurn0 !== null && t > gmTurn0 ? 360 * d3.easeCubicInOut(clamp01((t - gmTurn0) / T_GTURN)) : 0;
+    GM_G.select(".turn").attr("transform", turn > 0 && turn < 360 ? "rotate(" + turn.toFixed(2) + ")" : null);
+    GM_G.select(".disc").attr("transform", "scale(" + size + ")");
+    gmEls.forEach(function (s) { if (s.fly || s.bl || s.fade !== null) gmShardAt(s, t); });
+  }
+  function gmBusy(t) {
+    if (t < gmArc.t0 + T_GARC || t < gmSize.t0 + T_GSET || (gmTurn0 !== null && t < gmTurn0 + T_GTURN)) return true;
+    let busy = false;
+    gmEls.forEach(function (s) { if (s.fly || s.bl || s.fade !== null) busy = true; });
+    return busy;
+  }
+  function gmRun() {
+    gmFrame(d3.now());
+    if (gmTimer) return;
+    gmTimer = d3.timer(function () {
+      const t = d3.now();
+      gmFrame(t);
+      if (!gmBusy(t)) { gmTimer.stop(); gmTimer = null; }
+    });
+  }
+
+  /* Words. The highlight above the ring and the key under it, the numbers, the keys and the ending. */
+  const gmFmtC = d3.format(",.0f");
+  const gmMult = function (x) { return x > 1.0005 && x < 1.0995 ? d3.format(".2f")(x) : fmt1(x); };
+  function gmLabels(q) {
+    const L = d3.select(GM_FIG).select("svg g.labels");
+    L.selectAll("*").remove();
+    const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10, r = 100 * q.rate;
+    if (w > 0) {
+      const sub = q.s <= GM_S0 ? "recycling held at its 2022 level"
+                : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling, at best; " + fmt1(w - rep) + "% gone without"
+                : "all replaced by recycling, at best";
+      label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+    }
+    const now = q.weight <= 0 ? fmt1(r) + "% circularity in 2022"
+              : q.closed ? (Math.abs(r - 24) < 0.05 ? "24%" : fmt1(r) + "%") + " circularity reached"
+              : fmt1(r) + "% circularity";
+    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [KEY.rate, now]]];
+    const extra = [];
+    if (q.s > GM_S0) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
+    if (q.rate > TARGET + 1e-6) extra.push([KEY.lap, "Past the target"]);
+    if (extra.length) rows.push(extra);
+    rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
+    label(L, 6, 394, [["Sources: Eurostat; ETC CE Report 2025/3; EEA. EU, 2022. Our calculation", "lab-src"]]);
+    d3.select(GM_FIG).select("svg").attr("aria-label", "The EU's circularity drawn as a ring, around a disc of the new material it uses, in shards of four blues for minerals, biomass, fossil fuels and metal ores. With " +
+      Math.round(q.s) + "% of its waste recycled and " + fmt1(w) + "% less new material than in 2022, its rate is " + fmt1(r) + "%, " +
+      (q.closed ? (q.rate > TARGET + 1e-6 ? "past" : "at") : "short of") + " the 24% target.");
+  }
+  function gmNumbers(q) {
+    const set = function (n, v) { GM_FIG.querySelector('[data-n="' + n + '"]').textContent = v; };
+    set("weight", fmt1(q.weight) + "%");
+    set("weight-t", fmt1(q.weight / 100 * DMC / 1e6) + " billion tonnes");
+    set("climate", fmt1(q.climate) + "%");
+    set("climate-t", gmFmtC(q.climate / 100 * DATA.climate_total_mt) + " million tonnes of CO2e");
+    set("imports", fmt1(100 * q.imports / DATA.imports.imports_kt) + "%");
+    set("imports-t", gmFmtC(q.imports / 1000) + " million tonnes");
+    set("mult", gmMult(q.mult) + "× 2022");
+    GM_FIG.querySelector(".lever-val").textContent = Math.round(q.s) + "%";
+    GM_FIG.querySelector(".lever-read").textContent = gmMult(q.mult) + "× the waste recycled in 2022";
+    gmRange.setAttribute("aria-valuetext", Math.round(q.s) + "% of waste recycled, " + gmMult(q.mult) + " times 2022's");
+    GM_FIG.querySelectorAll(".mkey").forEach(function (b) {
+      const i = +b.dataset.m, x = 100 * q.cut[i], n = Math.round(x);
+      const txt = x < 1e-6 ? "0%" : n === 0 ? "−<1%" : "−" + n + "%";
+      b.querySelector(".mcut").textContent = txt;
+      b.disabled = q.avail[i] - q.gone[i] <= 1e-9;
+      b.setAttribute("aria-label", "Use less: " + GM_ROW[i].name + ", " + (x < 1e-6 ? "none" : n === 0 ? "under 1%" : n + "%") + " removed");
+    });
+  }
+  function gmEnding(q) {
+    const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10;
+    const imp = 100 * q.imports / DATA.imports.imports_kt;
+    let t = "The ring is closed. You took " + fmt1(w) + "% of the EU's new material away, " + fmt1(q.weight / 100 * DMC / 1e6) +
+            " billion tonnes, and with it " + fmt1(q.climate) + "% of the climate impact of making materials and " + fmt1(imp) +
+            "% of the tonnes the EU imports.";
+    const best = ", mostly sand, gravel and stone, but only at its best, recycling " + gmMult(q.mult) +
+                 " times the waste of 2022 and every recycled tonne replacing a new one.";
+    if (q.s > GM_S0 && q.C > 1e-9) t += " Recycling stood in for " + fmt1(rep) + "% of it" + best + " The EU would go without the other " + fmt1(w - rep) + "%.";
+    else if (q.s > GM_S0) t += " Recycling stood in for all of it" + best;
+    else t += " With no more recycling to stand in for it, the EU would go without all of it.";
+    const lines = [];
+    q.cut.forEach(function (x, i) { if (x >= 0.75) lines.push((x >= 0.995 ? "all of " : "most of ") + GM_LINES[i]); });
+    if (lines.length) t += " That means doing without " + (lines.length === 1 ? lines[0] : lines.length === 2 ? lines[0] + ", and " + lines[1]
+                         : lines.slice(0, -1).join("; ") + "; and " + lines[lines.length - 1]) + ".";
+    if (q.C > 1e-9) {
+      const h = gmHeaviest(q), d = Math.round(q.climate * 10) - Math.round(h * 10);
+      t += " Giving up the same weight with the heaviest materials first, at the same recycling, would have removed " + fmt1(h) +
+           "% of the climate impact; your route removed " + (d > 0 ? "more" : d < 0 ? "less" : "the same") + ".";
+    }
+    return t;
+  }
+  function gmText(q) {
+    const end = GM_FIG.querySelector(".game-end");
+    GM_FIG.classList.toggle("is-closed", q.closed);
+    end.hidden = !q.closed;
+    if (!q.closed) { end.textContent = ""; return; }
+    const p = end.querySelector("p") || end.appendChild(document.createElement("p"));
+    p.textContent = gmEnding(q);
+  }
+
+  // A new state: words at once, the arc eased (at once while dragging), the disc once the slider is let go
+  function gmSet(kind) {
+    const t = d3.now(), q = gmQ = gmDerive(gm);
+    gmLabels(q);
+    gmNumbers(q);
+    gmText(q);
+    const arc = [q.solid / TARGET, q.rate / TARGET];
+    gmArc.a = kind === "drag" ? arc : gmArcAt(t);
+    gmArc.b = arc;
+    gmArc.t0 = kind === "drag" ? -Infinity : t;
+    if (q.closed && !gmClosed && !STILL) gmTurn0 = t + (kind === "drag" ? 0 : T_GARC);
+    if (!q.closed) gmTurn0 = null;
+    gmClosed = q.closed;
+    if (kind !== "drag") gmDiscTo(q, t);
+    gmRun();
+  }
+
+  const gmRange = GM_FIG.querySelector("#game-recycled");
+  const gmAt = function (v) { return "calc(12px + (100% - 24px) * " + ((v - 41) / 59).toFixed(4) + ")"; };
+  GM_FIG.querySelectorAll("[data-at]").forEach(function (el) { el.style.left = gmAt(+el.dataset.at); });
+  const gmFill = function () { gmRange.style.setProperty("--fill", gmAt(+gmRange.value)); };
+  const gmShare = function () { return +gmRange.value <= 41 ? GM_S0 : +gmRange.value; };
+  gmRange.addEventListener("input", function () { gm.s = gmShare(); gmFill(); gmSet("drag"); });
+  gmRange.addEventListener("change", function () { gm.s = gmShare(); gmFill(); gmSet("move"); });
+  GM_FIG.querySelectorAll(".mkey").forEach(function (b) { b.addEventListener("click", function () { gmTap(+b.dataset.m); }); });
+  GM_FIG.querySelector(".game-reset").addEventListener("click", function () {
+    gm = { s: GM_S0, g: [0, 0, 0, 0] };
+    gmRange.value = 41;
+    gmFill();
+    gmSet("move");
+  });
+  gmRange.value = 41;
+  gmFill();
+  gmSet("init");
+  if (window.IntersectionObserver) {
+    new IntersectionObserver(function (es, ob) {   // solved before it's reached
+      if (es[es.length - 1].isIntersecting) { gmEnsure(); ob.disconnect(); }
+    }, { rootMargin: "200% 0px" }).observe(GM_FIG);
+  } else gmEnsure();
+  const GAME = {                                   // for checking: play by script, read the state
+    tap: gmTap, state: function () { return gmQ; }, ending: function () { return gmQ.closed ? gmEnding(gmQ) : null; },
+    recycle: function (v) { gmRange.value = v; gm.s = gmShare(); gmFill(); gmSet("move"); },
+    reset: function () { GM_FIG.querySelector(".game-reset").click(); }, heaviest: function () { return gmHeaviest(gmQ); }
+  };
+
      that chart is 90% visible. Each runs for its own fixed duration, set so it ends about when
      the card reaches its place: right below the chart on a phone, centered on wide screens,
      STRETCH px of scrolling after the start. Cards are spaced to match: in CSS on a phone,
@@ -2482,7 +2933,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     document.querySelector(".terrazzo").style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
   }
 
-  window.FFC = { show: show, draw: CHARTS };
+  window.FFC = { show: show, draw: CHARTS, game: GAME };
   terrazzo();
   setupSteps();
   if (document.fonts) document.fonts.ready.then(function () {   // the ring's key is laid out from measured text
@@ -2492,3 +2943,4 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 </script>
 </body>
 </html>
+    gmLabels(gmQ);
