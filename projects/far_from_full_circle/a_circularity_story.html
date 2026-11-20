@@ -638,15 +638,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      The disc's area is material consumed. The ring is drawn around it at a set gap, and the
      arc shades the rate as a share of the 24% target, so it closes the ring at 24%. Using less,
      with recycling held at its 2022 level, shrinks the disc, and the ring with it, and lifts
-     the rate. Recycling every tonne adds to the arc in striped gold. */
+     the rate. Recycling more adds to the arc in striped gold; at recycling's best case, each
+     extra recycled tonne replaces a new one, so the disc shrinks by what it replaces. */
   const U = EU.circular_use_kt;
   const DMC = EU.consumption_kt;
-  const U_ALL = U + EU.not_recycled_kt;            // every tonne of treated waste recycled
   const DMC_CLOSED = U / TARGET - U;               // consumption at which the ring closes
   const LESS = 1 - DMC_CLOSED / DMC;
   const WASTE = EU.waste_treated_per_consumption / 100;
   const RATE = U / (DMC + U);
-  const CEILING = U_ALL / (DMC + U_ALL);
+  const X4 = (TARGET * (DMC + U) - U) / DMC;       // panel 4: new material replaced by the recycling that closes the ring
+  const REC4 = EU.recycled_share_to_close;         // % of treated waste recycled then
 
   const R0 = 118;                                  // the target circle, in viewBox units
   const RING_GAP = 10.7;                           // from the disc's edge to the arc
@@ -658,10 +659,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     hero:   { at: 0, dmc: DMC,        disc: true,  key: [] },
     levers: { at: 1, dmc: DMC,        disc: true,  key: ["mats"],                  call: "tonnes" },
     back:   { at: 2, dmc: DMC,        disc: true,  key: ["mats", "waste"],         call: "waste" },
-    every:  { at: 3, dmc: DMC,        disc: true,  key: ["mats", "waste", "rate"], call: "every", to: CEILING },
+    every:  { at: 3, dmc: DMC * (1 - X4), disc: true, key: ["mats", "rate"], call: "recycle", pre: "recycling" },
     gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less" },
-    less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less" }
+    less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less", pre: "gone" }
   };
+  RING.recycling = Object.assign({}, RING.every, { dmc: DMC, pre: null });   // panel 4's labels while its ring closes
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
      covering exactly its share of material use by weight (_tools/make_shards.py). They sit
@@ -706,8 +708,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }
     return b.slice(best).concat(b.slice(0, best));
   }
+  /* Panel 4's disc: the shards left once recycling closes the ring, each recycled tonne
+     replacing a new one of the same material (_tools/make_shards.py, "recycle"); blended as
+     panel 5's. */
+  const REC = new Map(SH.recycle.shards.map(function (s) { return [s.k, toPts(s.p)]; }));
   SHARDS.forEach(function (s) {
     s.d0 = "M" + s.pts.join("L") + "Z";
+    if (REC.has(s.k)) {
+      const a = resample(s.pts, 40);
+      s.morph4 = [a, matched(a, resample(REC.get(s.k), 40))];
+    } else s.gone4 = true;
     if (LEFT.has(s.k)) {
       s.d1 = "M" + LEFT.get(s.k).join("L") + "Z";
       const a = resample(s.pts, 40);
@@ -729,8 +739,19 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const T_ALL = T_FADE + T_OUT + T_SETTLE;
   const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL;
   const FLIGHT = T_FLY / T_OUT;                    // one shard's flight, as a share of the whole
-  const RDUR = [0, 600, 800, 800, T_FADE + T_OUT, T_SETTLE];
   OUT.forEach(function (s, i) { s.leaves = i * T_GAP / T_OUT; });
+  /* Panel 4's beat: the arc grows, striped, to a full ring; the gold of the waste fades as it
+     starts; the shards replaced fly off one after another from K4F of the way through, as
+     panel 5's; then, from K4A, the shards left close up, the ring tightening around them. */
+  const T4_OUT = 1100, T4_SETTLE = 800, T4 = T4_OUT + T4_SETTLE;
+  const K4A = T4_OUT / T4, K4F = 0.25;
+  const OUT4 = SHARDS.filter(function (s) { return s.gone4; }).sort(function (a, b) {
+    return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
+  });
+  const T4_GAP = ((1 - K4F) * T4_OUT - T_FLY) / Math.max(1, OUT4.length - 1);
+  const FLIGHT4 = T_FLY / ((1 - K4F) * T4_OUT);
+  OUT4.forEach(function (s, i) { s.leaves4 = i * T4_GAP / ((1 - K4F) * T4_OUT); });
+  const RDUR = [0, 600, 800, T4, T_FADE + T_OUT, T_SETTLE];
 
   // Area of the shards' parts at or below a level
   function areaBelow(level) {
@@ -837,10 +858,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   /* The ring, drawn from r, RING's position, which runs on between the cards' whole numbers
      so each beat can play either way and turn mid-way. To 1, nothing moves but the labels; to
-     2, the gold of the waste that comes back rises through the disc; to 3, the stripes of
-     recycling every tonne run on from the arc's end, the dot with them. Panel 5's beats run
-     on p, from 0 at 3 to PG at 4 and 1 at 5. From 0 to P0, the stripes and gold fade and the
-     dot goes back to the rate; to PG, the shards taken out fly off one after another, fading,
+     2, the gold of the waste that comes back rises through the disc; to 3, panel 4's beat:
+     the stripes of recycling run on from the arc's end, the dot with them, until the ring
+     closes, while the shards that recycling replaces fly off; then the disc closes up. Panel
+     5's beats run on p, from 0 at 3 to PG at 4 and 1 at 5. From 0 to P0, the stripes fade, the
+     dot goes back to the rate, and panel 4's disc comes back to full size, the shards replaced
+     fading back in; to PG, the shards taken out fly off one after another, fading,
      and leave their places blank, off to the right (on wide screens, over the cards); to 1,
      the shards left close up as the disc shrinks, the
      ring tightens around it and the arc closes, with recycling held at its 2022 level. */
@@ -859,13 +882,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const g = d3.select("#ring svg g.ring");
     const p = r <= 3 ? 0 : r <= 4 ? (r - 3) * PG : PG + (r - 4) * (1 - PG);
     const w = p > PG ? d3.easeCubicInOut((p - PG) / (1 - PG)) : 0;  // the second beat
+    const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far the extras have gone
+    const k4 = clamp01(r - 2);                     // panel 4's beat
+    const grow = d3.easeCubicInOut(clamp01(k4 / K4A));                // recycling raised, to closing the ring
+    const w4 = r <= 3 ? d3.easeCubicInOut(clamp01((k4 - K4A) / (1 - K4A))) : 1 - z;   // panel 4's disc closing up
     const dmc = DMC + (DMC_CLOSED - DMC) * w;
-    const size = RC0 * Math.sqrt(dmc / DMC);       // the disc's radius
+    const size = RC0 * Math.sqrt(dmc / DMC - w4 * X4);   // the disc's radius
     const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
     const f = turns(dmc);
     const rise = d3.easeCubicInOut(clamp01(r - 1)); // the waste's gold, risen
-    const fe = f + (CEILING / TARGET - f) * d3.easeCubicInOut(clamp01(r - 2));   // where the stripes end
-    const z = p < P0 ? d3.easeCubicInOut(p / P0) : 1;               // how far the extras have gone
+    const gold = (1 - z) * (1 - clamp01(k4 / K4A / K4F));   // fading as panel 4's beat starts
+    const fe = f + (1 - f) * grow;                 // where the stripes end: the rate with recycling raised, each tonne replacing a new one
     g.select(".target").attr("r", R);
     const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
     const lit = q > 0 ? 1 - (1 - DIM) * q : null;
@@ -891,21 +918,40 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
     g.select(".disc").attr("transform", "scale(" + size + ")");
-    g.select(".disc .waste").attr("display", rise > 0 && z < 1 ? null : "none").attr("opacity", 1 - z);
+    g.select(".disc .waste").attr("display", rise > 0 && gold > 0 ? null : "none").attr("opacity", gold);
     d3.select("#ring-waste-clip rect").attr("y", 1.1 + (WASTE_Y - 1.1) * rise);
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
     const fly = wideMQ.matches ? FLY_WIDE : FLY;
+    const u4 = clamp01((k4 / K4A - K4F) / (1 - K4F));               // panel 4's flight
+    const four = r <= 3 ? k4 > 0 : p < P0;         // panel 4's disc, or on its way back
     ringShards.each(function (s) {
       const el = d3.select(this);
+      if (four) {
+        if (s.morph4) {                            // a shard left: blended toward its place in panel 4's disc
+          el.attr("display", null).attr("transform", null).attr("opacity", null)
+            .attr("d", w4 <= 0 ? s.d0 : "M" + s.morph4[0].map(function (a, i) {
+              const b = s.morph4[1][i];
+              return (a[0] + (b[0] - a[0]) * w4).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w4).toFixed(4);
+            }).join("L") + "Z");
+        } else if (r <= 3) {                       // a shard replaced: flying off, fading
+          const v = clamp01((u4 - s.leaves4) / FLIGHT4);
+          el.attr("d", s.d0).attr("display", v > 0.9999 ? "none" : null)
+            .attr("transform", v > 0 ? "translate(" + (fly * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+            .attr("opacity", v > 0 ? 1 - v * v : null);
+        } else {                                   // back at 2022's recycling: fading back in, in place
+          el.attr("d", s.d0).attr("display", z > 0 ? null : "none").attr("transform", null).attr("opacity", z < 1 ? z : null);
+        }
+        return;
+      }
       if (s.morph) {                               // a shard left: blended toward its place in the smaller disc
-        el.attr("d", w <= 0 ? s.d0 : w >= 1 ? s.d1 : "M" + s.morph[0].map(function (a, i) {
+        el.attr("display", null).attr("transform", null).attr("opacity", null).attr("d", w <= 0 ? s.d0 : w >= 1 ? s.d1 : "M" + s.morph[0].map(function (a, i) {
           const b = s.morph[1][i];
           return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
         }).join("L") + "Z");
       } else {                                     // a shard taken out: flying off, fading
         const v = Math.max(0, Math.min(1, (u - s.leaves) / FLIGHT));
-        el.attr("display", v > 0.9999 ? "none" : null)
+        el.attr("d", s.d0).attr("display", v > 0.9999 ? "none" : null)
           .attr("transform", v > 0 ? "translate(" + (fly * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
           .attr("opacity", v > 0 ? 1 - v * v : null);
       }
@@ -919,7 +965,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius
     const rc = s.disc ? size : 0;
     const R = size + RING_GAP + 4.5;
-    const fe = s.to ? s.to / TARGET : turns(s.dmc);
+    const fe = turns(s.dmc);
     const has = function (k) { return s.key.indexOf(k) > -1; };
     const at = function (turn, r) { return [CX + r * Math.sin(turn * TAU), CY - r * Math.cos(turn * TAU)]; };
     const top = function (strong, rest, x, y) {   // one line above the ring, a leader down to (x, y)
@@ -938,9 +984,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const t = label(L, 8, 280, [[Math.round(WASTE * 100) + "% comes back", "lab-strong"], ["as waste", "lab"]]);
       leader(L, [12 + t.select("tspan").node().getComputedTextLength(), 275], [CX - 0.5 * rc, CY + 0.72 * rc]);
     }
-    if (s.call === "every") {
-      const d = at(fe, R);
-      top(fmt1(CEILING * 100) + "%", " circularity with every tonne recycled", d[0], d[1] - RING_DOT - 2);
+    if (s.call === "recycle") {             // above the ring, as panel 5's
+      label(L, CX, 24, [[fmt1(REC4) + "% of waste recycled", "lab-strong"], ["each recycled tonne replacing a new one", "lab"]], "middle");
     }
     if (s.call === "less") {                // above the ring, for both of panel 5's beats
       label(L, CX, 24, [[fmt1(LESS * 100) + "% less material", "lab-strong"], ["recycling held at its 2022 level", "lab"]], "middle");
@@ -953,7 +998,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }));
     const extra = [];
     if (has("waste")) extra.push([KEY.box("waste"), "Comes back as waste"]);
-    if (has("rate")) extra.push([KEY.band("hatch-rate"), "Added by recycling all of it"]);
+    if (has("rate")) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
     label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022" : "Source: Eurostat, 2022", "lab-src"]]);
@@ -974,13 +1019,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     let dur = 0;
     for (let k = Math.floor(Math.min(from, to)) + 1; k <= Math.ceil(Math.max(from, to)); k++) dur = Math.max(dur, RDUR[k]);
     dur = beatDur(dur * Math.min(1, Math.abs(to - from)), dir);
-    ringLabels(to === RING.less.at ? RING.gone : s, dur);
+    ringLabels(s.pre ? RING[s.pre] : s, dur);
     ringTimer = d3.timer(function (t) {
       ringR = t >= dur ? to : from + (to - from) * t / dur;
       ringFrame(ringR);
       if (t >= dur) {
         ringTimer.stop(); ringTimer = null;
-        if (to === RING.less.at) ringLabels(s, beatDur(400, 1));
+        if (s.pre) ringLabels(s, beatDur(400, 1));
       }
     });
   }
