@@ -13,6 +13,9 @@
      S.remove(disc, [id1, id2]);                     // whole shards out; the disc is re-solved in place
      const less = S.useLess(disc, 0.282);            // a new disc: 28.2% less of every material, as panel 5
      const rec = S.useLess(disc, [0.24, 0.06, 0.02, 0.02]);   // or a share for each material, as panel 4
+     const game = S.reshape(disc, [id1, id2], [0.40, 0.20, 0.19, 0]);   // a new disc without those shards,
+                                                     // each material's shards left resized to cover that
+                                                     // share of the starting material, as the ring game
      disc.shards      // Map: shard id -> polygon [[x, y], ...] on a disc of radius 1, SVG's y down
      disc.mats[id]    // the shard's material index; disc.sizes[id], its share of the starting material
      disc.remaining   // share of the starting material left
@@ -43,6 +46,13 @@
    share, so draw it at its radius. It returns a new disc, with gone, the shards taken out, and
    leaves the one passed in as it was. Passed a list with one share per material, it takes each
    material's own share out the same way, and judges evenness against each region's own mix.
+
+   reshape() is useLess() with the shards named rather than picked: it takes out the shards passed,
+   and every shard of a material whose share left is zero or less, resizes the shards left so each
+   material covers exactly its share of the starting material, and re-solves once from the passed
+   disc's layout, at a gap of the same width on screen. It returns a new disc, with gone, and leaves
+   the one passed in as it was. The sites don't move, so a disc with the same shards and shares
+   comes out the same from any starting layout.
 
    fromState() rebuilds a full disc from its solver state: sites P, weights W, groups (the shards in
    each cell), sizes, mats, crack angles and gap, as make_shards.py's make() holds them.
@@ -473,6 +483,32 @@
     throw err || new Error('no pick to take out');
   }
 
+  function reshape(d, gone, left, opts = {}) {
+    const o = Object.assign({}, DEFAULTS, opts);
+    CTOL = o.crackTol;
+    const out = new Set(gone), have = new Map();
+    for (const k of d.shards.keys()) if (!(left[d.mats[k]] > 0)) out.add(k);
+    for (const k of d.shards.keys()) if (!out.has(k)) have.set(d.mats[k], (have.get(d.mats[k]) || 0) + d.sizes[k]);
+    const sizes = d.sizes.slice();
+    let remaining = 0;
+    for (const k of d.shards.keys()) if (!out.has(k)) { sizes[k] *= left[d.mats[k]] / have.get(d.mats[k]); remaining += sizes[k]; }
+    const base = { seed: d.seed, sizes, mats: d.mats, gap0: d.gap0, shardShare0: d.shardShare0, gone: [...out] };
+    if (!(remaining > 0)) return finish(base, { P: [], W: [], groups: [], angles: [], remaining: 0, gap: d.gap0, shards: new Map() });
+    const gap = d.gap0 / Math.sqrt(remaining);
+    const keep = d.groups.map((g, u) => [u, g.filter(k => !out.has(k))]).filter(c => c[1].length);
+    const P = keep.map(c => d.P[c[0]].slice()), W = keep.map(c => d.W[c[0]]);
+    const groups = keep.map(c => c[1]), angles = keep.map(c => d.angles[c[0]].slice());
+    const usize = groups.map(g => sum(g.map(k => sizes[k]))), U = sum(usize), t = usize.map(x => x / U);
+    let res;
+    try {
+      res = solve(P, W, t, gap, groups, sizes, angles, o.tol);
+    } catch (e) {                                  // as make() does: the cells first, then the cracks
+      const r0 = solve(P, W, t, gap, null, null, null, o.tol);
+      res = solve(P, r0.W, t, gap, groups, sizes, angles, o.tol);
+    }
+    return finish(base, { P, W: Array.from(res.W), groups, angles, remaining, gap, shards: res.shards });
+  }
+
   function fromState(st, opts = {}) {
     const o = Object.assign({}, DEFAULTS, opts);
     CTOL = o.crackTol;
@@ -490,5 +526,5 @@
     return { shares: Array.from(by, a => all > 0 ? 100 * (a || 0) / all : 0), slivers: 100 * (1 - all / Math.PI) };
   }
 
-  return { build, remove, useLess, fromState, measure, area };
+  return { build, remove, useLess, reshape, fromState, measure, area };
 });
