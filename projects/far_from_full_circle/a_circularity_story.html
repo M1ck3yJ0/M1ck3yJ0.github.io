@@ -1717,12 +1717,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   /* ---------- Explorer 20a: a country's ring, closed by both levers ----------
      Panels 1 to 5's ring for one EU country at a time, picked in its own dropdown. Every disc
-     starts at the same size, its area 100% of that country's material use, in shards of its own
-     mix of the four materials by weight (Eurostat). One beat: recycling rises to 70% of treated
-     waste, the EEA's 2030 scenario, or holds at a higher share, lengthening the arc in stripes
-     as in panel 4; then the material that still has to go to close the ring at 24% is taken out
-     of every material alike, as whole shards that fly off to the right as in panel 5, and the
-     disc shrinks until the arc's ends meet. Past 24%, the arc runs on as a second lap over the
+     starts at the same size, its area 100% of that country's new material use, in shards of its
+     own mix of the four materials by weight (Eurostat). One beat: recycling rises to 70% of
+     treated waste, the EEA's 2030 scenario, or holds at a higher share, lengthening the arc in
+     stripes as in panel 4, each extra recycled tonne replacing a new one (recycling's best case),
+     so the shards it replaces fly off, split by the country's waste not yet recycled, and the
+     disc closes up; then the material that still has to go to close the ring at 24% is taken
+     out of every material alike, as whole shards that fly off to the right as in panel 5, and
+     the disc shrinks until the arc's ends meet. Past 24%, the arc runs on as a second lap over the
      first, thicker and translucent. The discs are solved in the page (far_from_full_circle_shards.js),
      in a Web Worker where one starts, and the smaller disc is drawn at the solver's radius, which
      keeps the shards' area in proportion to the material left. Not pinned: the beat plays when
@@ -1732,7 +1734,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XR_FIG = document.querySelector("#explore-ring");
   const XR_RECYCLED = 70;                          // % of treated waste recycled, the EEA's 2030 scenario
   const XR_HW2 = 7;                                // the second lap's half-width; the first lap's is 4.5
-  const T_XREC = 900, T_XPAUSE = 200, T_XOUT = 1400;   // recycling's rise; a pause; the flight, at most
+  const T_XREC = 1100, T_XSET = 700, T_XPAUSE = 200, T_XOUT = 1400;   // recycling's rise; the disc closing up; a pause; the flight, at most
   const T_XGAP = 28, T_XFLY = 300;                 // one shard after another, each taking T_XFLY to go
   const XR_EU_WASTE = Math.round(EU.waste_treated_per_consumption);
   const XR_LINES = {                               // hand-written lines: the default, and data warnings
@@ -1753,32 +1755,48 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     return d3.arc().cornerRadius(hw)({ innerRadius: R - hw, outerRadius: R + hw, startAngle: a * TAU, endAngle: b * TAU });
   };
 
-  // The country's numbers: the rate's tonnes now and at 70% recycled, and the material use that closes the ring
+  /* The country's numbers. Recycling rises to 70% of treated waste (or holds at a higher
+     share); each extra recycled tonne replaces a new one of the same material, recycling's best
+     case, so x tonnes of new material go and the rate's total, new and recycled together, holds.
+     Then, if the ring is still open, the material that still has to go to close it: gone. */
   function xrState(code) {
-    const c = DATA.countries[code], r70 = c.rate_70pct_recycled / 100;
+    const c = DATA.countries[code];
     const q = { code: code, c: c, name: XNAME[code] || c.name, dmc: c.consumption_kt, u: c.circular_use_kt,
-                cut: Math.max(0, c.less_for_target_70pct_recycled.eu), held: c.share_recycled >= XR_RECYCLED };
-    q.u70 = q.dmc * r70 / (1 - r70);
-    q.closed = q.cut > 0 ? q.u70 / TARGET - q.u70 : q.dmc;
+                held: c.share_recycled >= XR_RECYCLED };
+    q.x = Math.max(0, c.replaced_70pct_recycled.eu) / 100 * q.dmc;           // new material replaced
+    q.u70 = q.u + q.x;                             // the tonnes recycled at 70%, as Eurostat counts them
+    q.gone = Math.max(0, c.gone_without_70pct_recycled.eu) / 100 * q.dmc;    // gone without
+    q.rep = 100 * q.x / q.dmc;
+    q.cut = 100 * (q.x + q.gone) / q.dmc;
+    q.goneP = 100 * q.gone / q.dmc;
+    q.r70 = 100 * q.u70 / (q.dmc + q.u);           // the rate at 70%, each recycled tonne replacing a new one
     q.disc = null;
-    xrTimeline(q, Math.round(q.cut / 100 * 116));  // until the disc is solved, its shard count estimated
+    xrTimeline(q, Math.round(q.rep / 100 * 116), Math.round(q.goneP / 100 * 116));   // until solved, shard counts estimated
     return q;
   }
 
-  // The beat's timing, in ms, and where each part ends as a share of it
-  function xrTimeline(q, n) {
-    const tRec = q.held ? 0 : T_XREC;
-    q.gapT = n > 1 ? Math.min(T_XGAP, (T_XOUT - T_XFLY) / (n - 1)) : 0;
-    q.tOut = n ? (n - 1) * q.gapT + T_XFLY : 0;
-    q.T = tRec + (q.cut > 0 ? T_XPAUSE + q.tOut + T_SETTLE : 0);
+  /* The beat's timing, in ms, and where each part ends as a share of it: recycling rises to pA,
+     the shards it replaces flying off from K4F of the way, as in panel 4; the disc closes up to
+     pS; a pause; the shards still to go fly off from pB0 to pB1; then the disc closes up. */
+  function xrTimeline(q, n1, n2) {
+    const tRec = q.x > 0 ? T_XREC : 0, tSet = q.x > 0 ? T_XSET : 0;
+    const win = (1 - K4F) * tRec;
+    q.gap1 = n1 > 1 ? Math.min(T_XGAP, (win - T_XFLY) / (n1 - 1)) : 0;
+    q.fly1 = n1 && win ? Math.min(1, T_XFLY / win) : 1;
+    q.gapT = n2 > 1 ? Math.min(T_XGAP, (T_XOUT - T_XFLY) / (n2 - 1)) : 0;
+    q.tOut = n2 ? (n2 - 1) * q.gapT + T_XFLY : 0;
+    q.T = tRec + tSet + (q.gone > 0 ? T_XPAUSE + q.tOut + T_SETTLE : 0);
     q.pA = q.T ? tRec / q.T : 0;
-    q.pB0 = q.T ? (tRec + (q.cut > 0 ? T_XPAUSE : 0)) / q.T : 0;
+    q.pS = q.T ? (tRec + tSet) / q.T : 0;
+    q.pB0 = q.T ? (tRec + tSet + (q.gone > 0 ? T_XPAUSE : 0)) / q.T : 0;
     q.pB1 = q.T ? q.pB0 + q.tOut / q.T : 0;
     q.flight = q.tOut ? T_XFLY / q.tOut : 1;
   }
 
   /* Solving the discs: in a Web Worker that loads the solver, or on the page if none starts (as
-     from a file). Each country is solved once and kept. */
+     from a file). Each country is solved once and kept: its full disc; the disc once recycling
+     has replaced its share of each material, split by the country's waste not yet recycled; and
+     the disc once the rest has gone, the same share of every material. */
   const xrSolved = new Map(), xrOwed = new Map();
   let xrWorker;
   const xrPack = function (d) {
@@ -1786,11 +1804,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     d.shards.forEach(function (V, k) { shards.push([k, d.mats[k], V]); });
     return { shards: shards, radius: d.radius, gone: d.gone || [] };
   };
+  const xrRun3 = function (S, j, pack) {           // the three discs, packed; shared with the worker
+    const full = S.build(j.mix), rec = j.rec ? S.useLess(full, j.rec) : null, from = rec || full;
+    return { full: pack(full), rec: rec ? pack(rec) : null, less: j.less > 0 ? pack(S.useLess(from, j.less / from.remaining)) : null };
+  };
   function xrHere(job) {
-    try {
-      const S = window.FAR_FROM_FULL_CIRCLE_SHARDS, full = S.build(job.mix);
-      return { full: xrPack(full), less: job.less > 0 ? xrPack(S.useLess(full, job.less)) : null };
-    } catch (e) { return null; }
+    try { return xrRun3(window.FAR_FROM_FULL_CIRCLE_SHARDS, job, xrPack); } catch (e) { return null; }
   }
   function xrStartWorker() {
     if (xrWorker !== undefined) return xrWorker;
@@ -1798,9 +1817,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (!window.Worker || !window.Blob || !window.URL) return null;
     try {
       const src = "importScripts(" + JSON.stringify(new URL("far_from_full_circle_shards.js", document.baseURI).href) + ");" +
-        "var pack = " + xrPack.toString() + ";" +
-        "onmessage = function (e) { var j = e.data, S = FAR_FROM_FULL_CIRCLE_SHARDS, out = null;" +
-        " try { var full = S.build(j.mix); out = { full: pack(full), less: j.less > 0 ? pack(S.useLess(full, j.less)) : null }; } catch (err) {}" +
+        "var pack = " + xrPack.toString() + "; var run3 = " + xrRun3.toString() + ";" +
+        "onmessage = function (e) { var j = e.data, out = null;" +
+        " try { out = run3(FAR_FROM_FULL_CIRCLE_SHARDS, j, pack); } catch (err) {}" +
         " postMessage({ code: j.code, out: out }); };";
       xrWorker = new Worker(URL.createObjectURL(new Blob([src], { type: "text/javascript" })));
       xrWorker.onmessage = function (e) {
@@ -1818,10 +1837,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     } catch (e) { xrWorker = null; }
     return xrWorker;
   }
-  function xrJob(code) {
-    const c = DATA.countries[code];
-    return { code: code, mix: SH.materials.map(function (m) { return c.mix[m]; }),
-             less: Math.max(0, c.less_for_target_70pct_recycled.eu) / 100 };
+  function xrJob(code) {                           // shares of the country's own material use, in the disc's order
+    const c = DATA.countries[code], q = xrState(code);
+    const rec = q.x > 0 ? SH.materials.map(function (m) {
+      return Math.min(0.99, q.rep * c.not_recycled_mix[m] / c.mix[m] / 100);
+    }) : null;
+    return { code: code, mix: SH.materials.map(function (m) { return c.mix[m]; }), rec: rec, less: q.goneP / 100 };
   }
   function xrSolve(code) {
     if (!xrSolved.has(code)) xrSolved.set(code, new Promise(function (done) {
@@ -1836,28 +1857,37 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     xrSolve(code).then(function (r) { if (XR.code === code && !XR.disc) xrDisc(r); });
   }
 
-  // The solved discs: each shard left blends toward its place in the smaller disc; the rest fly off
+  /* The solved discs: a shard recycling replaces flies off first; a shard left blends toward its
+     place in the disc after recycling, then, if it stays, toward its place in the last disc; the
+     rest fly off from the disc after recycling. */
+  const xrMorph = function (a, b) {
+    const ra = resample(a, 40);
+    return [ra, matched(ra, resample(b, 40))];
+  };
   function xrDisc(r) {
     const q = XR, g = d3.select(XR_FIG).select("g.ring");
     if (!r) { if (xrPending) { xrPending = false; xrRun(); } return; }   // unsolved: the ring plays without its disc
-    const left = r.less ? new Map(r.less.shards.map(function (s) { return [s[0], s[2]]; })) : null;
-    const gone = new Set(r.less ? r.less.gone : []);
+    const toMap = function (d) { return d ? new Map(d.shards.map(function (s) { return [s[0], s[2]]; })) : null; };
+    const rec = toMap(r.rec), last = toMap(r.less);
     const shards = r.full.shards.map(function (s) {
       const o = { k: s[0], m: SH.materials[s[1]], pts: s[2] };
       o.d0 = "M" + o.pts.join("L") + "Z";
-      if (left && left.has(o.k)) {
-        o.d1 = "M" + left.get(o.k).join("L") + "Z";
-        const a = resample(o.pts, 40);
-        o.morph = [a, matched(a, resample(left.get(o.k), 40))];
-      } else if (gone.has(o.k)) o.gone = true;
+      if (rec && !rec.has(o.k)) { o.out1 = true; return o; }
+      const p1 = rec ? rec.get(o.k) : o.pts;
+      if (rec) o.m01 = xrMorph(o.pts, p1);
+      o.d1 = "M" + p1.join("L") + "Z";
+      if (last && last.has(o.k)) { o.m12 = xrMorph(p1, last.get(o.k)); o.d2 = "M" + last.get(o.k).join("L") + "Z"; }
+      else if (last) o.out2 = true;
       return o;
     });
-    const out = shards.filter(function (s) { return s.gone; }).sort(function (a, b) {
-      return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
-    });
-    xrTimeline(q, out.length);
-    out.forEach(function (s, i) { s.leaves = q.tOut ? i * q.gapT / q.tOut : 0; });
-    q.disc = { shards: shards, r2: r.less ? r.less.radius * r.less.radius : 1 };
+    const order = function (a, b) { return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1; };
+    const out1 = shards.filter(function (s) { return s.out1; }).sort(order);
+    const out2 = shards.filter(function (s) { return s.out2; }).sort(order);
+    xrTimeline(q, out1.length, out2.length);
+    const win = (1 - K4F) * T_XREC;
+    out1.forEach(function (s, i) { s.leaves = win ? i * q.gap1 / win : 0; });
+    out2.forEach(function (s, i) { s.leaves = q.tOut ? i * q.gapT / q.tOut : 0; });
+    q.disc = { shards: shards, r1: r.rec ? r.rec.radius * r.rec.radius : 1, r2: r.less ? r.less.radius * r.less.radius : null };
     g.select(".mats").selectAll("path").remove();
     g.select(".mats").selectAll("path").data(shards).join("path")
       .attr("class", function (s) { return s.m; }).attr("d", function (s) { return s.d0; });
@@ -1882,26 +1912,41 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }
   }
 
-  // The ring, drawn from p alone: to pA recycling rises; from pB0 to pB1 the shards fly; then the disc shrinks
+  const xrBlend = function (m, w) {
+    return "M" + m[0].map(function (a, i) {
+      const b = m[1][i];
+      return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
+    }).join("L") + "Z";
+  };
+  const xrFlyAt = function (el, d, v) {            // a shard flying off, fading, v from 0 to 1
+    el.attr("d", d).attr("display", v > 0.9999 ? "none" : null)
+      .attr("transform", v > 0 ? "translate(" + ((wideMQ.matches ? FLY_WIDE : FLY) * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+      .attr("opacity", v > 0 ? 1 - v * v : null);
+  };
+
+  // The ring, drawn from p alone
   function xrFrame(p) {
     const q = XR, g = d3.select(XR_FIG).select("g.ring");
-    const rho = q.pA > 0 ? d3.easeCubicInOut(clamp01(p / q.pA)) : 1;
-    const u = q.pB1 > q.pB0 ? clamp01((p - q.pB0) / (q.pB1 - q.pB0)) : +(p >= q.pB1);
-    const w = q.cut > 0 ? d3.easeCubicInOut(clamp01((p - q.pB1) / (1 - q.pB1))) : 0;
-    const dmc = q.dmc + (q.closed - q.dmc) * w;
-    const r2 = q.disc ? q.disc.r2 : 1 - q.cut / 100;
-    const size = RC0 * Math.sqrt(1 - w * (1 - r2));
+    const rho = q.pA > 0 ? d3.easeCubicInOut(clamp01(p / q.pA)) : 1;   // recycling raised
+    const u1 = q.pA > 0 ? clamp01((p / q.pA - K4F) / (1 - K4F)) : 1;   // its shards' flight
+    const w1 = q.pS > q.pA ? d3.easeCubicInOut(clamp01((p - q.pA) / (q.pS - q.pA))) : +(p >= q.pS);
+    const u2 = q.pB1 > q.pB0 ? clamp01((p - q.pB0) / (q.pB1 - q.pB0)) : +(p >= q.pB1);
+    const w2 = q.gone > 0 ? d3.easeCubicInOut(clamp01((p - q.pB1) / (1 - q.pB1))) : 0;
+    const r1 = q.disc ? q.disc.r1 : 1 - q.rep / 100;
+    const r2 = q.disc && q.disc.r2 !== null ? q.disc.r2 : r1 - q.goneP / 100;
+    const size = RC0 * Math.sqrt(1 - w1 * (1 - r1) - w2 * (r1 - r2));
     const R = size + RING_GAP + 4.5;
-    const ur = q.u + (q.u70 - q.u) * rho;
-    const solid = q.u / (dmc + q.u) / TARGET;      // the rate with 2022's recycling, in turns
-    let total = ur / (dmc + ur) / TARGET;           // with recycling raised
-    if (q.cut > 0 && w >= 1 || Math.abs(total - 1) < 1e-4) total = 1;   // closed: a full ring
-    const s1 = solid > 0.9999 ? 1 : solid, t1 = Math.min(1, total);
+    const ur = q.u + q.x * rho;                     // recycled tonnes
+    const den = q.dmc + q.u - q.gone * w2;          // the rate's total: new and recycled together
+    const solid = q.u / den;
+    let total = ur / den / TARGET;
+    if (q.gone > 0 && w2 >= 1 || Math.abs(total - 1) < 1e-4) total = 1;   // closed: a full ring
+    const s0 = solid / TARGET, s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
 
     g.select(".target").attr("r", R);
     g.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(g.select(".stripes.rate"), "#xr-clip1", R, Math.min(1, s1), t1, 4.5, true);
-    const s2 = Math.max(0, solid - 1), t2 = Math.max(0, total - 1);   // the second lap
+    const s2 = Math.max(0, s0 - 1), t2 = Math.max(0, total - 1);   // the second lap
     g.select(".lap .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
     xrStripes(g.select(".lap .stripes"), "#xr-clip2", R, s2, t2, XR_HW2, s2 > 0);
     const lap = total > 1, tip = lap ? total - 1 : total;
@@ -1911,17 +1956,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (!q.disc) return;
     g.select(".mats").selectAll("path").each(function (s) {
       const el = d3.select(this);
-      if (s.morph) {
-        el.attr("d", w <= 0 ? s.d0 : w >= 1 ? s.d1 : "M" + s.morph[0].map(function (a, i) {
-          const b = s.morph[1][i];
-          return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
-        }).join("L") + "Z");
-      } else if (s.gone) {
-        const v = clamp01((u - s.leaves) / q.flight);
-        el.attr("display", v > 0.9999 ? "none" : null)
-          .attr("transform", v > 0 ? "translate(" + ((wideMQ.matches ? FLY_WIDE : FLY) * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
-          .attr("opacity", v > 0 ? 1 - v * v : null);
-      }
+      if (s.out1) return xrFlyAt(el, s.d0, clamp01((u1 - s.leaves) / q.fly1));
+      const d1 = !s.m01 || w1 >= 1 ? s.d1 : w1 <= 0 ? s.d0 : xrBlend(s.m01, w1);
+      if (s.out2) return xrFlyAt(el, d1, clamp01((u2 - s.leaves) / q.flight));
+      el.attr("display", null).attr("transform", null).attr("opacity", null)
+        .attr("d", s.m12 && w2 > 0 ? (w2 >= 1 ? s.d2 : xrBlend(s.m12, w2)) : d1);
     });
   }
 
@@ -1929,15 +1968,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function xrLabels(stage) {
     const q = XR, c = q.c, L = d3.select(XR_FIG).select("svg g.labels");
     L.selectAll("*").remove();
-    label(L, CX, 24, [[q.cut > 0 ? fmt1(q.cut) + "% less material" : "No less material needed", "lab-strong"],
-      [q.held ? "with recycling held at its " + fmt1(c.share_recycled) + "% of waste" : "with recycling raised to 70% of waste", "lab"]], "middle");
-    const reached = q.cut > 0 ? TARGET * 100 + "%" : fmt1(c.rate_70pct_recycled) + "%";
+    const cut = Math.round(q.cut * 10) / 10, rep = Math.round(q.rep * 10) / 10;
+    const sub = q.held ? "recycling held at its " + fmt1(c.share_recycled) + "% of waste"
+              : q.gone > 0 ? rep + "% replaced by recycling 70%, at best; " + fmt1(cut - rep) + "% gone without"
+              : "all replaced by recycling 70%, at best";
+    label(L, CX, 24, [[fmt1(cut) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+    const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
     const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
                    [KEY.rate, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in 2022"]]];
     rows.push(SH.materials.map(function (m) { return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name]; }));
     const extra = [];
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
-    if (stage === "start" ? c.rate > TARGET * 100 : q.cut === 0 && c.rate_70pct_recycled > TARGET * 100) extra.push([KEY.lap, "Past the target"]);
+    if (stage === "start" ? c.rate > TARGET * 100 : q.gone === 0 && q.r70 > TARGET * 100) extra.push([KEY.lap, "Past the target"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
     label(L, 6, 394, [["Source: Eurostat, 2022; 70% recycled, EEA scenario. Cut: our calculation", "lab-src"]]);
@@ -1948,33 +1990,38 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const q = XR, c = q.c, n = q.name;
     const tpp = c.materials_total * 365 / 1000, w = Math.round(c.waste_treated_per_consumption);
     const times = XR_RECYCLED / c.share_recycled;
+    const cut = Math.round(q.cut * 10) / 10, rep = Math.round(q.rep * 10) / 10;
     const cmp = Math.abs(w - XR_EU_WASTE) <= 3 ? "about the same as" : w < XR_EU_WASTE ? (w < XR_EU_WASTE / 2 ? "far less than" : "less than")
               : (w > XR_EU_WASTE * 1.5 ? "far more than" : "more than");
-    let a = "In 2022, " + fmt1(c.rate) + "% of the material " + n + " used came back into use from waste" +
-            (c.rate > TARGET * 100 ? ", already past the target." : ".");
+    const past = c.rate > TARGET * 100;
+    let a = "In 2022, " + fmt1(c.rate) + "% of the material " + n + " used came back into use from waste" + (past ? ", already past the target." : ".");
     if (q.held) a += " It already recycles " + fmt1(c.share_recycled) + "% of its waste, more than 70%, so recycling stays where it is.";
-    else a += " Recycling 70% of its waste, up from " + fmt1(c.share_recycled) + "%" +
-              (times >= 2.5 ? ", about " + Math.round(times) + " times as much," : ",") + " would lift that to " +
-              fmt1(c.rate_70pct_recycled) + "%" + (q.cut > 0 || c.rate > TARGET * 100 ? "." :
-              (c.rate_70pct_recycled < 25 ? ", just" : ",") + " past the target without using less.");
+    else a += " If it recycled 70% of its waste, up from " + fmt1(c.share_recycled) + "%" +
+              (times >= 2.5 ? ", about " + Math.round(times) + " times as much," : ",") +
+              " and every recycled tonne replaced a new one, recycling's best case, its rate would reach " + fmt1(q.r70) + "%" +
+              (q.gone > 0 || past ? "." : (q.r70 < 25 ? ", just" : ",") + " past the target.");
     let b;
-    if (q.cut > 0) {
-      a += " To close the ring, " + n + " would still need to use " + fmt1(q.cut) + "% less material, about " +
-           fmt1(tpp * q.cut / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
-      if (q.cut > 14) a += " For scale, the EU's biggest two-year fall in material use since 2004 was 14%.";
+    if (q.gone > 0) {
+      a += " To close the ring, " + n + " would need to use " + fmt1(cut) + "% less new material, about " +
+           fmt1(tpp * cut / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
+      a += q.held ? " With no more recycling to stand in for it, all of that is material " + n + " would go without."
+                  : " At best, recycling would replace " + fmt1(rep) + "% of its new material, and " + n + " would go without another " + fmt1(cut - rep) + "%.";
+      if (cut > 14) a += " For scale, the EU's biggest two-year fall in material use since 2004 was 14%.";
       b = "The size of the cut isn't a ranking of who uses the most. It depends on how much waste there is to recycle for each tonne a country uses. In " +
           n + ", the waste it treats each year equals " + w + "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%.";
     } else {
+      a += " Recycling alone would take " + fmt1(rep) + "% of its new material away, about " + fmt1(tpp * rep / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
       b = "It gets there because there is so much waste to recycle for each tonne it uses: the waste it treats each year equals " + w +
-          "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%.";
+          "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%. Even so, it gets there only if both of recycling's hopes come true: that it recycles that much of its waste, and that every recycled tonne replaces a new one.";
     }
     const box = d3.select(XR_FIG).select(".explore-text");
     box.selectAll("p").remove();
     [a, b, XR_LINES[q.code]].forEach(function (t) { if (t) box.append("p").text(t); });
-    d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the material it used in 2022, in shards of four blues for minerals, biomass, fossil fuels and metal ores. In 2022, its rate was " +
-      fmt1(c.rate) + "%. With 70% of its waste recycled" + (q.held ? "" : ", up from " + fmt1(c.share_recycled) + "%") + ", it would be " + fmt1(c.rate_70pct_recycled) +
-      "%" + (q.cut > 0 ? ". To close the ring at the 24% target, it would also need to use " + fmt1(q.cut) + "% less material, so the disc shrinks until the ring closes." :
-      ", past the 24% target, so the arc runs on into a second lap and the disc keeps its size."));
+    d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the new material it used in 2022, in shards of four blues for minerals, biomass, fossil fuels and metal ores. In 2022, its rate was " +
+      fmt1(c.rate) + "%. With 70% of its waste recycled" + (q.held ? "" : ", up from " + fmt1(c.share_recycled) + "%, and every recycled tonne replacing a new one") + ", it would be " + fmt1(q.r70) +
+      "%" + (q.held ? "" : ", and the disc shrinks by the " + fmt1(rep) + "% of new material that recycling replaces") +
+      (q.gone > 0 ? ". To close the ring at the 24% target, it would also go without " + fmt1(cut - rep) + "% of its new material, so the disc shrinks until the ring closes." :
+      ", past the 24% target, so the arc runs on into a second lap."));
   }
 
   function xrSet(code) {                           // the country's ring at its start, its discs drawn once solved
