@@ -61,7 +61,7 @@
   --skin-1: #46642E; --skin-2: #344D22;
   --pit-1: #AC7E53; --pit-2: #926540; --pit-3: #7A5031; --pit-4: #613E25;
   --egg-1: #F4DFC0; --egg-2: #EBCFA8; --egg-3: #E0BD91; --egg-4: #D1A87B; --egg-5: #BD9367;
-  /* Controls: the game's keys and buttons, and the slider's thumb */
+  /* Controls: the game's keys and buttons, and the knob on its ring */
   --control: #EEF1F7; --control-hover: #E4E9F2; --control-press: #D9E0EE; --control-off: #F6F7FA;
   --thumb: var(--target);
   /* Layout */
@@ -333,7 +333,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game .skip { order: 3; align-self: flex-end; margin: 10px 16px 0 0; }
 #game-chart { order: 4; width: auto; height: auto; }
 #game-chart svg { height: auto; pointer-events: none; }
-.lever { order: 5; }
 .game-keys { order: 6; }
 .game-nums { order: 7; }
 .game-caveats { order: 8; }
@@ -342,32 +341,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game-box .note-link { order: 11; margin: 12px 16px 0; }
 .game-intro, .game-end { margin: 0; padding: 8px 16px 0; font-size: 18px; }
 .game-end { padding-top: 16px; }
-.lever { padding: 14px 16px 0; }
-.lever-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; column-gap: 12px; font-size: 15px; }
-.lever-head label { font-weight: 700; }
-.lever-read { color: var(--ink-2); }
-.lever-track { position: relative; height: 40px; }
-.lever input {
-  -webkit-appearance: none; appearance: none; position: relative; z-index: 1;
-  display: block; width: 100%; height: 40px; margin: 0; background: transparent; cursor: pointer;
-  touch-action: pan-y;
-}
-.lever input:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
-.lever input::-webkit-slider-runnable-track {
-  height: 8px;
-  background: linear-gradient(to right, transparent var(--fill, 12px), var(--hairline) var(--fill, 12px)),
-              repeating-linear-gradient(-45deg, var(--back) 0 2.2px, color-mix(in srgb, var(--back) 22%, #fff) 2.2px 5.6px);
-}
-.lever input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -8px; border: 0; border-radius: 50%; background: var(--thumb); }
-.lever input::-moz-range-track { height: 8px; border: 0; background: var(--hairline); }
-.lever input::-moz-range-progress { height: 8px; background: repeating-linear-gradient(-45deg, var(--back) 0 2.2px, color-mix(in srgb, var(--back) 22%, #fff) 2.2px 5.6px); }
-.lever input::-moz-range-thumb { width: 24px; height: 24px; border: 0; border-radius: 50%; background: var(--thumb); }
-.lever-tick { position: absolute; top: 26px; width: 1px; height: 7px; margin-left: -.5px; background: var(--ink-2); }
-.lever-scale { position: relative; height: 18px; font-size: 13px; line-height: 18px; color: var(--ink-2); }
-.lever-scale span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
-.lever-scale .lever-end { left: 0; transform: none; }
-.lever-scale .lever-max { left: auto; right: 0; }
-.lever-note { margin: 2px 0 0; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
 .game-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 16px 0; }
 .mkey {
   display: grid; grid-template-columns: 12px 1fr; column-gap: 8px; align-items: center; align-content: center;
@@ -396,6 +369,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game-nums .t { grid-column: 1 / 3; font-size: 14px; color: var(--ink-2); }
 .game-caveats { margin: 8px 16px 0; font-size: 14px; line-height: 1.35; color: var(--ink-2); }
 .game-caveats span { display: block; }
+#game-chart .knob { fill: var(--thumb); stroke: #fff; stroke-width: 2; }
+#game-chart .knob-hit { fill: transparent; pointer-events: all; cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; }
+#game-chart.is-dragging .knob-hit { cursor: grabbing; }
+#game-chart .knob-hit:focus-visible { stroke: var(--used); stroke-width: 2; stroke-dasharray: 3 3; }
 .game-reset {
   align-self: flex-start; margin: 14px 16px 0; min-height: 44px; padding: 8px 16px;
   font: inherit; font-size: 16px; color: var(--ink); background: var(--control); border: 0; border-radius: 0; cursor: pointer;
@@ -666,31 +643,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
                 <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
-                <circle class="dot rate"></circle>
+                <circle class="dot knob"></circle>
+                <circle class="knob-hit" r="22" tabindex="0" role="slider" aria-label="Waste recycled" aria-valuemin="41" aria-valuemax="100" aria-valuenow="41"></circle>
               </g>
               <g class="disc"><g class="mats"></g></g>
             </g>
             <g class="labels"></g>
           </svg>
         </figure>
-        <div class="lever">
-          <div class="lever-head">
-            <label for="game-recycled">Waste recycled <span class="lever-val">41%</span></label>
-            <span class="lever-read">1.0× the waste recycled in 2022</span>
-          </div>
-          <div class="lever-track">
-            <input type="range" id="game-recycled" min="41" max="100" step="1" value="41">
-            <span class="lever-tick" data-at="70"></span>
-            <span class="lever-tick" data-at="90"></span>
-          </div>
-          <div class="lever-scale" aria-hidden="true">
-            <span class="lever-end">41%</span>
-            <span data-at="70">70%</span>
-            <span data-at="90">90%</span>
-            <span class="lever-end lever-max">100%</span>
-          </div>
-          <p class="lever-note">70%: the EEA's scenario for 2030. 90%: its scenario for 2050.</p>
-        </div>
         <div class="game-keys" role="group" aria-label="Use less of a material">
           <button type="button" class="mkey" data-m="0"><span class="sw minerals"></span><span class="mname">Minerals</span><span class="mcut">0%</span></button>
           <button type="button" class="mkey" data-m="1"><span class="sw biomass"></span><span class="mname">Biomass</span><span class="mcut">0%</span></button>
@@ -2369,8 +2329,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
 
   /* ---------- The ring game (21): close the EU's ring ----------
-     The hero's ring for the EU, closed by the reader with two levers. A slider sets the share of
-     treated waste recycled, from 2022's 41% to 100%, waste held at 2022's tonnes; each extra
+     The hero's ring for the EU, closed by the reader with two levers. A gold knob at the arc's tip,
+     dragged around the ring, sets the share of treated waste recycled, from 2022's 41% to 100%, waste held at 2022's tonnes; each extra
      recycled tonne replaces a new one of the same material (recycling's best case), split across
      materials by each one's waste not yet recycled. A key per material takes GM_STEP% of 2022's new
      material away from it at each tap, until none is left; recycling replaces first, and taps cut
@@ -2383,9 +2343,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      share; a material with nothing left counts as all removed. Each material's shards leave in a
      fixed scattered order: the whole shards closest to its share left stay, resized to cover it
      exactly, and the disc is re-solved in the page (far_from_full_circle_shards.js, reshape), in a
-     Web Worker where one starts. A tap, or the slider let go, flies the leaving shards off as in
+     Web Worker where one starts. A tap, or the knob let go, flies the leaving shards off as in
      panel 5; the new layout then blends in and the ring tightens around it. The arc follows the
-     rate at once while the slider moves, and eases to it otherwise. Past 24%, it runs on into a
+     rate at once while the knob moves, and eases to it otherwise. Past 24%, it runs on into a
      second lap, as in 20a. When the ends meet, the closed ring turns once, and the ending replaces
      the intro (on a phone, it follows the numbers). Reduced motion runs it three times as fast,
      without the turn. */
@@ -2673,8 +2633,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     GM_G.select(".lap .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
     xrStripes(GM_G.select(".lap .stripes"), "#gm-clip2", R, s2, t2, XR_HW2, s2 > 0);
     const lap = total > 1, tip = lap ? t2 : t1;
-    GM_G.select(".dot").attr("class", lap ? "dot lap" : "dot rate").attr("r", lap ? RING_DOT + 1 : RING_DOT)
-      .attr("cx", R * Math.sin(tip * TAU)).attr("cy", -R * Math.cos(tip * TAU));
+    const kx = R * Math.sin(tip * TAU), ky = -R * Math.cos(tip * TAU);
+    GM_G.select(".knob").attr("r", 10).attr("cx", kx).attr("cy", ky);
+    GM_G.select(".knob-hit").attr("cx", kx).attr("cy", ky);
     const turn = gmTurn0 !== null && t > gmTurn0 ? 360 * d3.easeCubicInOut(clamp01((t - gmTurn0) / T_GTURN)) : 0;
     GM_G.select(".turn").attr("transform", turn > 0 && turn < 360 ? "rotate(" + turn.toFixed(2) + ")" : null);
     GM_G.select(".disc").attr("transform", "scale(" + size + ")");
@@ -2732,9 +2693,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     set("imports", fmt1(100 * q.imports / DATA.imports.imports_kt) + "%");
     set("imports-t", gmFmtC(q.imports / 1000) + " million tonnes");
     set("mult", gmMult(q.mult) + "× 2022");
-    GM_FIG.querySelector(".lever-val").textContent = Math.round(q.s) + "%";
-    GM_FIG.querySelector(".lever-read").textContent = gmMult(q.mult) + "× the waste recycled in 2022";
-    gmRange.setAttribute("aria-valuetext", Math.round(q.s) + "% of waste recycled, " + gmMult(q.mult) + " times 2022's");
+    gmKnob.setAttribute("aria-valuenow", Math.round(q.s));
+    gmKnob.setAttribute("aria-valuetext", Math.round(q.s) + "% of waste recycled, " + gmMult(q.mult) + " times 2022's");
     GM_FIG.querySelectorAll(".mkey").forEach(function (b) {
       const i = +b.dataset.m, x = 100 * q.cut[i], n = Math.round(x);
       const txt = x < 1e-6 ? "0%" : n === 0 ? "−<1%" : "−" + n + "%";
@@ -2774,7 +2734,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     p.textContent = gmEnding(q);
   }
 
-  // A new state: words at once, the arc eased (at once while dragging), the disc once the slider is let go
+  // A new state: words at once, the arc eased (at once while dragging), the disc once the knob is let go
   function gmSet(kind) {
     const t = d3.now(), q = gmQ = gmDerive(gm);
     gmLabels(q);
@@ -2791,22 +2751,72 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     gmRun();
   }
 
-  const gmRange = GM_FIG.querySelector("#game-recycled");
-  const gmAt = function (v) { return "calc(12px + (100% - 24px) * " + ((v - 41) / 59).toFixed(4) + ")"; };
-  GM_FIG.querySelectorAll("[data-at]").forEach(function (el) { el.style.left = gmAt(+el.dataset.at); });
-  const gmFill = function () { gmRange.style.setProperty("--fill", gmAt(+gmRange.value)); };
-  const gmShare = function () { return +gmRange.value <= 41 ? GM_S0 : +gmRange.value; };
-  gmRange.addEventListener("input", function () { gm.s = gmShare(); gmFill(); gmSet("drag"); });
-  gmRange.addEventListener("change", function () { gm.s = gmShare(); gmFill(); gmSet("move"); });
+  /* The knob. Dragged around the ring, it sets the share recycled, in whole percents from 41 to 100,
+     whose rate puts the arc's tip nearest the pointer; the angle is followed through each turn, so
+     the knob runs on into the second lap. Arrow keys move it a percent at a time. */
+  const gmKnob = GM_FIG.querySelector(".knob-hit");
+  const GM_CHART = GM_FIG.querySelector("#game-chart");
+  const gmPct = function () { return gm.s <= GM_S0 ? 41 : Math.round(gm.s); };
+  const gmToPct = function (v) { v = Math.max(41, Math.min(100, Math.round(v))); return v <= 41 ? GM_S0 : v; };
+  function gmPctFor(total) {                       // the share whose arc ends nearest this point, in laps of the ring
+    let best = 41, bestE = Infinity;
+    for (let v = 41; v <= 100; v++) {
+      const e = Math.abs(gmDerive({ s: gmToPct(v), g: gm.g }).rate / TARGET - total);
+      if (e < bestE) { bestE = e; best = v; }
+    }
+    return best;
+  }
+  function gmAngle(ev) {                           // the pointer's angle around the ring, in turns from the top
+    const m = GM_G.node().getScreenCTM().inverse();
+    const x = m.a * ev.clientX + m.c * ev.clientY + m.e, y = m.b * ev.clientX + m.d * ev.clientY + m.f;
+    return ((Math.atan2(x, -y) / TAU) % 1 + 1) % 1;
+  }
+  let gmDrag = null;
+  gmKnob.addEventListener("pointerdown", function (ev) {
+    if (ev.button > 0) return;
+    ev.preventDefault();
+    gmKnob.setPointerCapture(ev.pointerId);
+    const q = gmDerive(gm);
+    gmDrag = { id: ev.pointerId, a: gmAngle(ev), total: q.rate / TARGET, lo: gmDerive({ s: GM_S0, g: gm.g }).rate / TARGET,
+               hi: gmDerive({ s: 100, g: gm.g }).rate / TARGET, v: gmPct() };
+    GM_CHART.classList.add("is-dragging");
+  });
+  gmKnob.addEventListener("pointermove", function (ev) {
+    if (!gmDrag || ev.pointerId !== gmDrag.id) return;
+    const a = gmAngle(ev);
+    let d = a - gmDrag.a;
+    d -= Math.round(d);                            // the shorter way round
+    gmDrag.a = a;
+    gmDrag.total = Math.max(gmDrag.lo, Math.min(gmDrag.hi, gmDrag.total + d));
+    const v = gmPctFor(gmDrag.total);
+    if (v === gmDrag.v) return;
+    gmDrag.v = v;
+    gm.s = gmToPct(v);
+    gmSet("drag");
+  });
+  function gmDrop(ev) {
+    if (!gmDrag || ev.pointerId !== gmDrag.id) return;
+    gmDrag = null;
+    GM_CHART.classList.remove("is-dragging");
+    gmSet("move");
+  }
+  gmKnob.addEventListener("pointerup", gmDrop);
+  gmKnob.addEventListener("pointercancel", gmDrop);
+  gmKnob.addEventListener("touchstart", function (ev) { ev.preventDefault(); }, { passive: false });
+  gmKnob.addEventListener("keydown", function (ev) {
+    const steps = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10, Home: -100, End: 100 };
+    if (!(ev.key in steps)) return;
+    ev.preventDefault();
+    const v = Math.max(41, Math.min(100, gmPct() + steps[ev.key]));
+    if (v === gmPct()) return;
+    gm.s = gmToPct(v);
+    gmSet("move");
+  });
   GM_FIG.querySelectorAll(".mkey").forEach(function (b) { b.addEventListener("click", function () { gmTap(+b.dataset.m); }); });
   GM_FIG.querySelector(".game-reset").addEventListener("click", function () {
     gm = { s: GM_S0, g: [0, 0, 0, 0] };
-    gmRange.value = 41;
-    gmFill();
     gmSet("move");
   });
-  gmRange.value = 41;
-  gmFill();
   gmSet("init");
   if (window.IntersectionObserver) {
     new IntersectionObserver(function (es, ob) {   // solved before it's reached
@@ -2815,7 +2825,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   } else gmEnsure();
   const GAME = {                                   // for checking: play by script, read the state
     tap: gmTap, state: function () { return gmQ; }, ending: function () { return gmQ.closed ? gmEnding(gmQ) : null; },
-    recycle: function (v) { gmRange.value = v; gm.s = gmShare(); gmFill(); gmSet("move"); },
+    recycle: function (v) { gm.s = gmToPct(v); gmSet("move"); },
     reset: function () { GM_FIG.querySelector(".game-reset").click(); }, heaviest: function () { return gmHeaviest(gmQ); }
   };
 
