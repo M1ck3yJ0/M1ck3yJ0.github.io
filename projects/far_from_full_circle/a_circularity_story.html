@@ -782,6 +782,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p>Notes to come.</p>
       <p class="note-back"><a href="#sec-explore">Back to the chart &#8593;</a></p>
     </section>
+    <section class="note" id="notes-game">
+      <h3>Your turn: close the EU's ring</h3>
+      <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA. EU, 2022. Removals: our calculation.</p>
+      <p>Notes to come.</p>
+      <p class="note-back"><a href="#sec-game">Back to the game &#8593;</a></p>
+    </section>
     <section class="note" id="notes-closer">
       <h3>A better target would count what materials cost, not what they weigh</h3>
       <p>Notes to come.</p>
@@ -2362,12 +2368,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }, { threshold: [0, at] }).observe(XFIG.querySelector(".chart"));
   }
 
-  /* ---------- Cards drive the charts ---------- */
-  const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea,
-                   compare: drawCompare };
-
-  /* Timing. Each beat's transition starts when the card before it is almost clear of the top
-     edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
   /* ---------- The ring game (21): close the EU's ring ----------
      The hero's ring for the EU, closed by the reader with two levers. A slider sets the share of
      treated waste recycled, from 2022's 41% to 100%, waste held at 2022's tonnes; each extra
@@ -2819,6 +2819,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     reset: function () { GM_FIG.querySelector(".game-reset").click(); }, heaviest: function () { return gmHeaviest(gmQ); }
   };
 
+  /* ---------- Cards drive the charts ---------- */
+  const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea,
+                   compare: drawCompare };
+
+  /* Timing. Each beat's transition starts when the card before it is almost clear of the top
+     edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
      that chart is 90% visible. Each runs for its own fixed duration, set so it ends about when
      the card reaches its place: right below the chart on a phone, centered on wide screens,
      STRETCH px of scrolling after the start. Cards are spaced to match: in CSS on a phone,
@@ -2938,9 +2944,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   setupSteps();
   if (document.fonts) document.fonts.ready.then(function () {   // the ring's key is laid out from measured text
     if (!ringTimer) ringLabels(RING[ringName], 0);
+    gmLabels(gmQ);
   });
 })();
 </script>
 </body>
 </html>
-    gmLabels(gmQ);
