@@ -10,8 +10,9 @@ into the data file under "center_shards". With --check, writes nothing and re-me
 shards already in the data file.
 
 It also writes panel 4's disc under "center_shards" -> "recycle": recycling raised until the
-ring closes, each extra recycled tonne replacing a new one of the same material (recycling's
-best case), the tonnes replaced split across materials by each one's share of the waste not
+ring closes, each extra recycled tonne replacing part of a new one of the same material (the
+data file's "replacement"; the share replaced is build_data.py's "less_new_material_to_close"),
+the tonnes replaced split across materials by each one's share of the waste not
 yet recycled (the data file's "not_recycled_mix"), taken out as whole shards as below, with
 a share for each material.
 
@@ -408,8 +409,8 @@ def main():
     report([(int(state["mats"][k]), V) for k, V in left.items()], shares,
            f"Panel 5, {100 * less:.1f}% less, rounded as stored")
     # Panel 4's disc: recycling raised until the ring closes, each extra recycled tonne replacing
-    # a new one of the same material, split across materials by their waste not yet recycled
-    x = (TARGET * (dmc + u) - u) / dmc                 # new material replaced, as a share of all of it
+    # part of a new one of the same material, split across materials by their waste not yet recycled
+    x = eu["less_new_material_to_close"] / 100        # new material replaced, as a share of all of it (build_data.py)
     nrm = eu["not_recycled_mix"]
     rec = [x * nrm[name] / s for (name, _), s in zip(MATERIALS, shares)]
     rgap, rleft = use_less(rounded, state, rec, **LESS_SETTINGS)
