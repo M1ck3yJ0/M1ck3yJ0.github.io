@@ -765,13 +765,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <section class="note" id="notes-waterfall">
       <h3>The rate's biggest jumps came from using less, not recycling more</h3>
       <p class="note-src">Source: Eurostat. Split by lever: our calculation.</p>
-      <!--
-To write (step 5):
-- Split by lever: our calculation from trend_steps.csv.
-- Rounding: circular use is back-calculated from a rate published to one decimal, so a step's recycling effect can be off by up to 0.1 either way (keep the back-calculation and say so, unless a matching vintage is downloaded).
-- 2022 to 2024 rests on Eurostat's estimate; 2025 from Eurostat's imputed material use.
-      -->
-      <p>Notes to come.</p>
+      <p>Each two-year change in the rate is split into what recycling did and what using less or more did (our calculation). The rate is circular use over circular use plus material consumption, so circular use is worked back from the published rate (env_ac_cur) and consumption (env_ac_mfa). Recycling's part of a step is the change that circular use alone would have made, averaged over holding consumption at its starting and at its ending level; using less or more is the rest, so the two add up to the change. Over the whole span, as the rate rose from 8.2% in 2004 to 12.2% in 2024, recycling accounts for about 60% of the rise and using less for about 40%. In the steps when the EU used less, that lifted the rate more than twice as much as the steps of using more pulled it down.</p>
+      <p>The rate is published to one decimal, and circular use worked back from it carries that rounding. So a step's recycling part can be off by as much as 0.1% of material used either way, which weighs most on the smallest bars and in the country explorer. We keep the published rate rather than a rebuild from tonnes, which gives a slightly lower 2022 rate (Method).</p>
+      <p>The last step, 2022 to 2024, rests on Eurostat's estimates of the 2024 rate and material use, and is marked as an estimate. For 2025 there is no rate yet, only Eurostat's imputed material use. By it, the EU used 3.4% more material in 2025, about half (51.9%) of what it had cut from 2022 to 2024. Minerals made up 64.2% of the rise and recovered 77.6% of their fall, while fossil fuels fell a further 1.8%.</p>
       <p class="note-back"><a href="#sec-waterfall">Back to the chart &#8593;</a></p>
     </section>
     <section class="note" id="notes-zin">
