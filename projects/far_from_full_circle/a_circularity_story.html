@@ -754,17 +754,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </section>
     <section class="note" id="notes-ring">
       <h3>The EU's goal to double circularity is, in effect, a goal to use less</h3>
-      <p class="note-src">Source: Eurostat. EU, 2022.</p>
-      <!--
-To write (step 5):
-- Since 2010, recycling every tonne would have left the rate at about a quarter at most, in every year.
-- 59.3% using less alone is our arithmetic.
-- Panel 4's and 6's replaced tonnes are split by the waste not yet recycled (not_recycled_*_share rows; by env_wastrt's categories, major mineral wastes are 75.8%, about 82% with ash and treatment residues), over the disc's Eurostat weight shares (center_shards in the data file).
-- The climate credit for replaced tonnes uses each group's average impact per tonne, which flatters recycling (recycled aggregate replaces gravel, not cement).
-- Imports by material (data file's imports block) and the routes' cut in imports, assuming each group's imports fall in proportion to its use.
-- Waste shipped abroad for recycling counts as circular, waste brought in is deducted (waste_*_for_recycling_kt and metals_* rows); approximate.
-      -->
-      <p>Notes to come.</p>
+      <p class="note-src">Sources: Eurostat; climate shares, ETC CE Report 2025/3. EU, 2022.</p>
+      <p>Recycling every tonne has never been enough to go far past a quarter. In every reporting year from 2010 to 2022, recycling all of the EU's treated waste would have lifted the rate to between 25.5% and 28.1%, with each extra recycled tonne replacing half a new one. If recycled tonnes replaced none, it would have been 23.7% to 25.8%; if each replaced a whole new tonne, 27.5% to 30.9% (our calculation from Eurostat). The 59.3% less new material that closes the ring by using less alone is also our arithmetic, not a published figure; the Method note sets out what it assumes.</p>
+      <p>When recycling rises, as in panels 4 and 6, the new tonnes it replaces are split across materials by the waste not yet recycled: 86.5% minerals, 9.5% biomass, 3.2% fossil fuels and 0.9% metal ores (env_wassd). Sorted by Eurostat's waste categories instead, 75.8% of it is major mineral waste, about 82% with ash and mineral residues (env_wastrt). Those tonnes leave a disc whose shards cover each group's share of the EU's material consumption: 52.0% minerals, 23.3% biomass, 19.3% fossil fuels and 5.5% metal ores (env_ac_mfa).</p>
+      <p>The climate impact removed is each group's share of its own consumption removed, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4). For the tonnes recycling replaces, that uses each group's average impact per tonne, which flatters recycling: recycled aggregate mostly stands in for gravel and crushed stone, not for cement (our judgment). So the 3.6% of climate impact removed when recycling alone closes the ring is generous.</p>
+      <p>Imports are each group's imports from outside the EU in 2022 (env_ac_mfa). They were 70.9% of the fossil fuels and 50.3% of the metal ores entering the EU's economy, against 12.2% of its biomass and 3.2% of its minerals. Any route's cut in imports assumes each group's imports fall in proportion to its use.</p>
+      <p>Following Eurostat's method, waste the EU exports for recycling counts as circular and waste it imports for recycling is deducted. In 2022, across the four groups, it exported 36.4 million tonnes and imported 40.7 million (env_ac_sd), so trade lowered its circular use slightly. Metals ran the other way: 19.5 million tonnes went out against 5.6 million in, and exports were 19.5% of metals' circular use. Because env_wassd's tonnes are scaled to the rate's totals (Method), these splits by material are approximate.</p>
       <p class="note-back"><a href="#sec-ring">Back to the chart &#8593;</a></p>
     </section>
     <section class="note" id="notes-waterfall">
