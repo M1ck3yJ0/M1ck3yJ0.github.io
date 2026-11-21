@@ -4,8 +4,8 @@ material's shards covering exactly its share of the EU's material use by weight.
 Usage:
     python3 -I _tools/make_shards.py [--check]
 
-Takes the weight shares from the data file's "weight_vs_climate" block (ETC CE Report
-2025/3, Figure 3-4, EU 2022), the same shares the ribbon chart draws, and writes the shards
+Takes the weight shares from the data file's "game" block: each material group's share of
+the EU's 2022 consumption (Eurostat env_ac_mfa, DMC), as 20a's discs do, and writes the shards
 into the data file under "center_shards". With --check, writes nothing and re-measures the
 shards already in the data file.
 
@@ -25,6 +25,11 @@ leaves the disc most evenly covered is kept. The shards left are resized so ever
 material keeps its exact share, and the disc is re-solved from its current layout, with
 the gap set so the slivers keep their share of the disc. The page draws it at the square
 root of the material left.
+
+And panel 6's two discs under "center_shards" -> "both": recycling raised to 70% of treated
+waste, the tonnes it replaces taken out as for panel 4 ("rec"); then what the EU still goes
+without to close the ring, the same share of every material left, taken out of the shards
+left after recycling ("shards"), so the second disc's shards are some of the first's.
 
 How the shards are made: shard sizes for each material are drawn across a 14-fold range
 (so every material gets small and large shards) and scaled to its exact share. Shards are
@@ -332,9 +337,35 @@ def use_less(shards, state, less, seed, tries):
     set so the slivers keep their share of the disc. Returns the gap and the shards left.
     `less` may be a list with one share per material, as for panel 4's disc."""
     rng = np.random.default_rng(seed)
-    sizes0, mats = state["sizes"], state["mats"]
-    gone = min((pick(rng, sizes0, mats, less) for _ in range(tries)),
+    gone = min((pick(rng, state["sizes"], state["mats"], less) for _ in range(tries)),
                key=lambda g: unevenness(shards, g, less))
+    return settle(shards, state, gone, less)
+
+
+def use_less_after(shards, state, gone1, less1, more, seed, tries):
+    """Panel 6's second disc: after the shards gone1 have gone (less1 of each material),
+    `more` of every material left taken out of the shards left, the most even of `tries`
+    picks, judged on the full disc against each material's share gone in all. Returns the gap,
+    the shards left and the share of each material gone in all."""
+    rng = np.random.default_rng(seed)
+    sizes0, mats = state["sizes"], state["mats"]
+    out = np.isin(np.arange(len(sizes0)), list(gone1))
+    sizes1, mats1 = sizes0.copy(), mats.copy()
+    for m in range(len(MATERIALS)):
+        mine, left = mats == m, (mats == m) & ~out
+        sizes1[left] *= (1 - less1[m]) * sizes0[mine].sum() / sizes0[left].sum()
+    mats1[out] = -1                                  # gone already: not picked again
+    total = [1 - (1 - l) * (1 - more) for l in less1]
+    gone = min((set(gone1) | pick(rng, sizes1, mats1, more) for _ in range(tries)),
+               key=lambda g: unevenness(shards, g, total))
+    gap, left = settle(shards, state, gone, total)
+    return gap, left, total
+
+
+def settle(shards, state, gone, less):
+    """The disc with the shards `gone` taken out and the rest resized so every material keeps
+    its exact share (less of it gone), the gap set so the slivers keep their share of the disc."""
+    sizes0, mats = state["sizes"], state["mats"]
     sizes = sizes0.copy()
     out = np.isin(np.arange(len(sizes)), list(gone))
     for m in range(len(MATERIALS)):
@@ -373,8 +404,9 @@ def report(shards, shares, label):
 
 
 def shares_from(data):
-    rows = {r["material_group"]: r["share_of_weight_pct"] for r in data["weight_vs_climate"]}
-    return [rows[group] for _, group in MATERIALS]
+    by = data["game"]["dmc_by_group_kt"]
+    total = sum(by[name] for name, _ in MATERIALS)
+    return [100 * by[name] / total for name, _ in MATERIALS]
 
 
 def main():
@@ -395,6 +427,14 @@ def main():
             left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in rc["shards"]]
             due = [sh * (100 - rc["less_pct"][name]) / (100 - rc["replaced_pct"]) for (name, _), sh in zip(MATERIALS, shares)]
             report(left, due, f"Panel 4, {rc['replaced_pct']}% replaced, in the data file")
+        if "both" in cs:
+            b = cs["both"]
+            for key, gone, label in [("rec", b["rec_less_pct"], f"{b['replaced_pct']}% replaced"),
+                                     ("shards", b["less_pct"], f"{b['replaced_pct'] + b['gone_pct']:.1f}% less")]:
+                left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in b[key]]
+                kept = sum(sh * (100 - gone[name]) / 100 for (name, _), sh in zip(MATERIALS, shares))
+                due = [sh * (100 - gone[name]) / kept for (name, _), sh in zip(MATERIALS, shares)]
+                report(left, due, f"Panel 6, {label}, in the data file")
         return
     shares = shares_from(data)
     shards, err, state = make(np.array(shares) / 100, **SETTINGS)
@@ -418,8 +458,25 @@ def main():
     rem = 1 - x
     report([(int(state["mats"][k]), V) for k, V in rleft.items()],
            [s * (1 - r) / rem for s, r in zip(shares, rec)], f"Panel 4, {100 * x:.1f}% replaced, rounded as stored")
+    # Panel 6's discs: recycling raised to 70%, its replaced tonnes taken out as for panel 4; then
+    # what the EU still goes without, the same share of every material left
+    x6 = eu["replaced_70pct_recycled"]["eu"] / 100
+    g6 = eu["gone_without_70pct_recycled"]["eu"] / 100
+    rec6 = [x6 * nrm[name] / s for (name, _), s in zip(MATERIALS, shares)]
+    rng6 = np.random.default_rng(LESS_SETTINGS["seed"])
+    gone6 = min((pick(rng6, state["sizes"], state["mats"], rec6) for _ in range(LESS_SETTINGS["tries"])),
+                key=lambda g: unevenness(rounded, g, rec6))
+    bgap1, bleft1 = settle(rounded, state, gone6, rec6)
+    bleft1 = {k: np.round(V, 5) for k, V in sorted(bleft1.items())}
+    report([(int(state["mats"][k]), V) for k, V in bleft1.items()],
+           [s * (1 - r) / (1 - x6) for s, r in zip(shares, rec6)], f"Panel 6, {100 * x6:.1f}% replaced, rounded as stored")
+    bgap2, bleft2, tot6 = use_less_after(rounded, state, gone6, rec6, g6 / (1 - x6), **LESS_SETTINGS)
+    bleft2 = {k: np.round(V, 5) for k, V in sorted(bleft2.items())}
+    report([(int(state["mats"][k]), V) for k, V in bleft2.items()],
+           [s * (1 - t) / (1 - x6 - g6) for s, t in zip(shares, tot6)], f"Panel 6, {100 * (x6 + g6):.1f}% less, rounded as stored")
+    assert set(bleft2) <= set(bleft1)
     data["center_shards"] = {
-        "source": "weight_vs_climate: ETC CE Report 2025/3, Figure 3-4, EU 2022",
+        "source": "game: Eurostat env_ac_mfa, DMC by material group, EU 2022",
         "materials": [name for name, _ in MATERIALS],
         "shares_pct": {name: round(s, 4) for (name, _), s in zip(MATERIALS, shares)},
         "gap": SETTINGS["gap"],
@@ -430,11 +487,18 @@ def main():
                     "less_pct": {name: round(100 * r, 4) for (name, _), r in zip(MATERIALS, rec)},
                     "gap": round(rgap, 6),
                     "shards": [{"k": int(k), "p": [float(v) for v in V.ravel()]} for k, V in rleft.items()]},
+        "both": {"replaced_pct": round(100 * x6, 4), "gone_pct": round(100 * g6, 4),
+                 "rec_less_pct": {name: round(100 * r, 4) for (name, _), r in zip(MATERIALS, rec6)},
+                 "less_pct": {name: round(100 * t, 4) for (name, _), t in zip(MATERIALS, tot6)},
+                 "rec_gap": round(bgap1, 6), "gap": round(bgap2, 6),
+                 "rec": [{"k": int(k), "p": [float(v) for v in V.ravel()]} for k, V in bleft1.items()],
+                 "shards": [{"k": int(k), "p": [float(v) for v in V.ravel()]} for k, V in bleft2.items()]},
     }
     out = PREFIX + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + tail
     with open(DATA, "w", encoding="utf-8") as f:
         f.write(out)
-    print("Wrote", len(rounded), "shards, panel 4's", len(rleft), "and panel 5's", len(left), "to", os.path.relpath(DATA, ROOT))
+    print(f"Wrote {len(rounded)} shards, panel 4's {len(rleft)}, panel 5's {len(left)} and panel 6's "
+          f"{len(bleft1)} and {len(bleft2)} to {os.path.relpath(DATA, ROOT)}")
 
 
 if __name__ == "__main__":
