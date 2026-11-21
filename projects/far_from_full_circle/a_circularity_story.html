@@ -2286,62 +2286,135 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const T_WSTEP = 160;
   const T_XBUILD = XNS * T_WSTEP;
   const XFIG = document.querySelector("#explore-waterfall");
-  let xCode = "NL", xP = 0, xTimer = null, xSteps = [], xBars = [], xy = wy;
+  let xCode = "NL", xP = 0, xTimer = null, xSteps = [], xBars = [], xy = wy, xHl = [], xHlG = null;
 
-  // The country's steps, and an axis fitted to their range
-  function xSetup(code) {
+  /* Highlights: each country's chosen steps (the data file's highlights, set in build_data.py),
+     at most two. Each gets a label block in a band above the bars: the rate's two ends, then the
+     arrow that carries the step's story, with a leader to that arrow; and a net arrow at the
+     step's right edge. The band takes a row per block, a second row only when two blocks would
+     overlap, and the bars' axis starts below it. Once the bars are built, the other steps dim,
+     then the net arrows draw and the labels fade in. */
+  const T_XHL = 600;
+  const XROW = 42, XBAND = 64;                     // a label row's height, and the band's top
+  function xwArrow(h) {                            // the arrow's label
+    if (h.arrow === "imports") return "Brought in less waste to recycle";
+    const use = h.arrow === "use", v = use ? h.use_change_pct : h.circular_use_change_pct;
+    const verb = use ? "Used " : "Recycled ", k = 1 + v / 100, a = Math.abs(v);
+    if (k >= 2.1) return verb + fmt1(k).replace(/\.0$/, "") + " times as much";
+    if (k >= 1.95) return verb + "twice as much";
+    if (k >= 1.85) return verb + "nearly twice as much";
+    return verb + (a < 10 ? fmt1(a) : Math.round(a)) + "% " + (v < 0 ? "less" : "more");
+  }
+  function xwEnds(h) {                             // the rate's two ends
+    return h.rate_from === h.rate_to ? "No change, " + fmt1(h.rate_to) + "%" : fmt1(h.rate_from) + "% to " + fmt1(h.rate_to) + "%";
+  }
+
+  // The country's steps, its highlights' label rows, and an axis fitted below them
+  function xSetup(code, L) {
     const ct = DATA.countries[code], st = ct.steps;
     const start = ct.trend.rate[DATA.trend_years.indexOf(XYRS[0])];   // the recorded 2010 rate
     let level = start;
     xSteps = d3.range(XNS).map(function (i) {
       const k = XK + i, x0 = WX0 + i * XSW, s = level, c = st.consumption[k], r = st.recycling[k];
       level = s + st.change[k];
-      return { i: i, bx: x0 + XPAD, gx: x0 + XPAD + BW + 1.5, start: s, mid: s + c, end: s + c + r,
+      return { i: i, bx: x0 + XPAD, gx: x0 + XPAD + BW + 1.5, ax: x0 + XSW, start: s, mid: s + c, end: s + c + r,
                c: c, r: r, est: XYRS[i + 1] >= DATA.trend_estimated_from };
     });
+    xHl = (ct.highlights || []).map(function (h) {
+      const d = xSteps[XYRS.indexOf(h.from)], use = h.arrow === "use";
+      const lines = [xwEnds(h), xwArrow(h)];
+      const w = d3.max(lines, function (t, j) {        // measured in the chart's own type
+        const n = label(L, 0, -50, [[t, j ? "lab" : "lab-strong"]]);
+        const len = n.node().getComputedTextLength ? n.node().getComputedTextLength() : t.length * 8;
+        n.remove();
+        return len || t.length * 8;
+      });
+      return { h: h, d: d, lines: lines, w: w, lx: (use ? d.bx : d.gx) + BW / 2,
+               top: use ? Math.max(d.start, d.mid) : Math.max(d.mid, d.end) };
+    });
+    xHl.forEach(function (b, n) {                  // a row each, the first that's free
+      b.x = Math.max(6 + b.w / 2, Math.min(394 - b.w / 2, b.lx));
+      for (b.row = 0; xHl.slice(0, n).some(function (o) { return o.row === b.row && Math.abs(o.x - b.x) < (o.w + b.w) / 2 + 10; }); b.row++);
+      xHl.slice(0, n).forEach(function (o) {         // a lower block clears the leaders above it
+        if (o.row >= b.row || Math.abs(b.x - o.lx) >= b.w / 2 + 6) return;
+        const right = o.lx + 6 + b.w / 2;
+        b.x = right <= 394 - b.w / 2 ? right : o.lx - 6 - b.w / 2;
+      });
+    });
+    const rows = xHl.length ? d3.max(xHl, function (b) { return b.row; }) + 1 : 0;
     let lo = Math.min(start, d3.min(xSteps, function (d) { return Math.min(d.mid, d.end); }));
     let hi = Math.max(start, d3.max(xSteps, function (d) { return Math.max(d.mid, d.end); }));
     const pad = Math.max(0.4, (hi - lo) * 0.08);
     lo -= pad; hi += pad;
     if (hi - lo < XSPAN) { const m = (XSPAN - hi + lo) / 2; lo -= m; hi += m; }
     if (lo < 0) { hi -= lo; lo = 0; }               // no rate below 0%
-    xy = d3.scaleLinear().domain([lo, hi]).range([336, 64]);
+    xy = d3.scaleLinear().domain([lo, hi]).range([336, XBAND + (rows ? rows * XROW + 6 : 0)]);
   }
 
-  // The frame, and the bars for xFrame to shape
+  // The frame, and the bars, net arrows and labels for xFrame to shape
   function xDraw() {
-    xSetup(xCode);
     const c = DATA.countries[xCode], rate = c.trend.rate;
     const svg = d3.select(XFIG).select("svg"), g = svg.select("g.wf"), L = svg.select("g.labels");
     g.selectAll("*").remove();
     L.selectAll("*").remove();
-    svg.attr("aria-label", "A waterfall of how the circularity rate of " + (XNAME[xCode] || c.name) +
+    xSetup(xCode, L);
+    const name = XNAME[xCode] || c.name, est = xSteps.filter(function (d) { return d.est; });
+    svg.attr("aria-label", "A waterfall of how the circularity rate of " + name +
       " moved from " + XYRS[0] + " to " + XYRS[XNS] + ", in two-year steps. For each step, a blue bar" +
       " shows what the change in material use did to the rate and a gold bar what the change in" +
       " recycling did, each pointing up or down the way it moved the rate. The rate went from " +
-      fmt1(rate[0]) + "% in " + XYRS[0] + " to an estimated " + fmt1(rate[rate.length - 1]) + "% in " +
-      XYRS[XNS] + ".");
+      fmt1(rate[0]) + "% in " + XYRS[0] + " to " + (est.length ? "an estimated " : "") + fmt1(rate[rate.length - 1]) + "% in " +
+      XYRS[XNS] + "." + xHl.map(function (b) {
+        return " Highlighted, " + b.h.from + " to " + b.h.to + ": " + b.lines[0] + ", " + b.lines[1].toLowerCase() + ".";
+      }).join(""));
 
     wticks(g, L, xy);
     label(L, WX0 - 4, 48, [["Change in circularity rate since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
+    if (est.length) label(L, 6, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]]);
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
 
     xBars = xSteps.map(function (d) {
-      return { used: wbar(g, "used", d, d.bx, d.start, d.mid, d.c, 0, xy),
-               back: wbar(g, "back", d, d.gx, d.mid, d.end, d.r, 0, xy) };
+      const sg = g.append("g");
+      return { g: sg, used: wbar(sg, "used", d, d.bx, d.start, d.mid, d.c, 0, xy),
+               back: wbar(sg, "back", d, d.gx, d.mid, d.end, d.r, 0, xy) };
+    });
+    xHlG = L.append("g").attr("opacity", 0);
+    xHl.forEach(function (b) {
+      b.arrow = { line: g.append("line").attr("class", "net"), head: g.append("path").attr("class", "net-head") };
+      const y = XBAND + b.row * XROW + 8 + 15, x = b.x;
+      label(xHlG, x, y, [[b.lines[0], "lab-strong"], [b.lines[1], "lab", "1.25em"]], "middle");
+      const y1 = y + 22, y2 = xy(b.top) - 4;
+      if (y2 > y1 + 4) xHlG.append("line").attr("class", "leader").attr("x1", b.lx).attr("x2", b.lx).attr("y1", y1).attr("y2", y2);
     });
   }
 
-  // Panel 7's build, drawn from p alone, from 0 (the frame) to 1 (every bar)
+  // The net arrow from a to b on 20b's axis, drawn to k of its length
+  function xArrow(arrow, x, a, b, k) {
+    const shown = k > 0 && Math.abs(xy(b) - xy(a)) > 2;
+    arrow.line.attr("display", shown ? null : "none");
+    arrow.head.attr("display", shown ? null : "none");
+    if (!shown) return;
+    const y1 = xy(a), y2 = y1 + (xy(b) - y1) * Math.min(1, k), up = y2 < y1;
+    const h = Math.min(5, Math.abs(y2 - y1)), w = 3.2, yb = up ? y2 + h : y2 - h;
+    arrow.line.attr("x1", x).attr("x2", x).attr("y1", y1).attr("y2", yb);
+    arrow.head.attr("d", "M" + (x - w) + "," + yb + "L" + (x + w) + "," + yb + "L" + x + "," + y2 + "Z");
+  }
+
+  // Panel 7's build, then the highlights, drawn from p alone, from 0 (the frame) to 1 (all of it)
   function xFrame(p) {
-    const t = p * T_XBUILD;
+    const t = p * (T_XBUILD + (xHl.length ? T_XHL : 0));
+    const k = xHl.length ? d3.easeCubicInOut(Math.max(0, Math.min(1, (t - T_XBUILD) / T_XHL))) : 0;
+    const on = xHl.map(function (b) { return b.d.i; });
     xSteps.forEach(function (d, i) {
       const u = d3.easeCubicInOut(Math.max(0, Math.min(1, (t - i * T_WSTEP) / T_WSTEP)));
       const lc = Math.abs(d.c), lr = Math.abs(d.r), run = u * (lc + lr);
       wshape(xBars[i].used, d.bx, d.start, d.mid, d.c, lc ? run / lc : u, xy);
       wshape(xBars[i].back, d.gx, d.mid, d.end, d.r, lr ? (run - lc) / lr : +(u >= 1), xy);
+      xBars[i].g.attr("opacity", on.length && on.indexOf(i) < 0 && k > 0 ? 1 - 0.8 * k : null);
     });
+    xHl.forEach(function (b) { xArrow(b.arrow, b.d.ax, b.d.start, b.d.end, k); });
+    if (xHlG) xHlG.attr("opacity", k);
   }
 
   function xShow(p) {                              // a still: 0 waits at the start, 1 is whole
@@ -2353,22 +2426,74 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function xPlay() {                               // builds from the start
     if (STILL) return xShow(1);
     xShow(0);
+    const T = T_XBUILD + (xHl.length ? T_XHL : 0);
     xTimer = d3.timer(function (t) {
-      xFrame(xP = Math.min(1, t / T_XBUILD));
+      xFrame(xP = Math.min(1, t / T));
       if (xP === 1) { xTimer.stop(); xTimer = null; }
     });
+  }
+
+  // The card under the chart: hand-written for each country (words doc, 20b); lines that rest on
+  // Eurostat's estimate show only while the last step is estimated
+  const XW_EST = DATA.trend_estimated_from <= XYRS[XNS];
+  const XW_TEXT = {
+    AT: ["Austria's rate climbed from 6.8% in 2010 to 11.9% in 2016, almost all of it from recycling more: 28% more from 2012 to 2014 alone. Since then its recycling has held, and its rate with it."],
+    BE: ["Belgium shows both levers at work, in both directions. From 2020 to 2022 it used 10% more material and recycled a fifth less, and its rate fell from 22.9% to 17.8%. By Eurostat's estimate for 2024, it had won nearly all of it back, using 16% less and recycling 14% more."],
+    BG: ["Bulgaria's rate rose from 2.1% in 2010 to 3.0% in 2022, but in leaps and falls, almost all of them from recycling alone. From 2018 to 2020 it recycled two and a half times as much and its rate more than doubled; two years later, most of that was gone. Bulgaria recycles only 7% of the waste it treats, so a few million tonnes either way move the whole rate."],
+    HR: ["Croatia's rate more than quadrupled, from 1.6% in 2010 to 6.8% in 2022, and all of it came from recycling more, starting with twice as much in 2012 as in 2010. From 2014 on it used more material at every step, which held the rate back, but recycling stayed ahead."],
+    CY: ["Cyprus used about half as much material in 2014 as in 2010, yet its rate barely moved, from 2.0% to 2.2%, because what it recycled fell almost as fast. Its leap came later: from 2020 to 2022 it recycled two and a half times as much, even while using 9% more, and its rate more than doubled, to 8.3%."],
+    CZ: ["Czechia's rate more than doubled from 2010 to 2022, from 5.3% to 11.3%, almost all of it from recycling more. Its biggest step came from 2016 to 2018, when it recycled half as much again while using a little more material."],
+    DK: ["From 2010 to 2022, Denmark's rate zigzagged between 6.4% and 9.1%, and you can watch its two levers pull against each other. When it used more, as from 2014 to 2016, the rate fell. When it recycled more, as from 2020 to 2022, the rate rose, though most of that extra recycling was soil and rock."],
+    EE: ["Estonia has the EU's second-highest rate, 21.8% in 2022, and its biggest swings: the rate more than doubled from 2010 to 2012, then lost most of that two years later. Nearly all of those swings were soil and rock. Its one big step from using less came from 2018 to 2020, when it used 42% less oil shale."],
+    FI: ["Finland's rate more than halved from 2012 to 2014, from 11.9% to 5.6%, even though it used less material: what it recycled fell faster, by 59%, most of it soil and rock. Nine tenths of the waste Finland treats is soil and rock, so its rate rises and falls with what becomes of those tonnes." +
+         (XW_EST ? " Its estimated fall to 2.0% in 2024 isn't borne out by the waste figures published since." : "")],
+    FR: ["France's rate ended 2022 close to where it began in 2010, at about 17%. Using less lifted it from 2014 to 2016. Then, from 2018 to 2020, the years that took in the pandemic, it used 7% less again but recycled 31% less, two thirds of it soil and rock, and the rate fell from 19.8% to 15.4%."],
+    DE: ["Germany's rate crept up from 11.2% in 2010 to 12.6% in 2022, more from using less than from recycling, which barely moved. Its biggest cut came last: from 2022 to 2024 it used 14% less material, about half of it minerals and half fossil fuels, with lignite a quarter of the whole, and that, more than recycling, is what lifted its rate."],
+    EL: ["From 2010 to 2012, Greece used 16% less material, but its rate fell, to 1.8%, because what it recycled fell 40%. Since its low of 1.3% in 2014, recycling has grown at every step, 59% from 2020 to 2022 alone, taking the rate to 6.3%, nearly five times as high."],
+    HU: ["From 2010 to 2022, Hungary's rate stayed between 4.9% and 6.9%, because its two levers kept pulling against each other. From 2012 to 2014 it recycled 29% more, but used 47% more material, mostly minerals, and the rate fell."],
+    IE: ["Ireland's rate has stayed at about 2% since 2010, among the lowest in the EU. From 2010 to 2012 it used 14% less material and the rate didn't move: what came back fell about as fast. With so little coming back, even a deep cut barely shows: using 14% less with recycling held would have lifted 1.9% only to about 2.2%."],
+    IT: ["Italy's rate nearly doubled, from 11.3% in 2010 to 20.2% in 2022, and both levers did their part. Until 2014 it was mostly using less: from 2012 to 2014 it used 16% less material, with recycling unchanged. After that it was mostly recycling, until 2020 to 2022, when it recycled 11% more but used 11% more too, and the rate stood still."],
+    LV: ["Latvia's rate quadrupled from 2012 to 2014, to 5.3%, but mostly not from recycling more. The rate subtracts waste brought in from abroad to be recycled, and Latvia brought in much less; its own recycling rose by about a third. From 2022 to 2024 it used 28% less material, nearly all of it biomass and minerals, and that lifted its rate."],
+    LT: ["Lithuania recycled about half as much again in 2022 as in 2010, yet its rate stayed near 4%, because it also used about half as much material again. Whenever it used more, as from 2012 to 2014, the rate slipped, and recycling only just kept pace."],
+    LU: ["Luxembourg's rate fell further than any other EU country's, from 23.4% in 2010 to 7.1% in 2016, mostly because the waste it recycled fell. Its rate also starts low for another reason: waste brought in from abroad equals more than half of what is recycled there each year, and the rate subtracts it, since it counts for the country that sent it."],
+    MT: ["Malta's rate rose more than any other EU country's, from 5.3% in 2010 to 20.4% in 2022, all of it from recycling, even as it came to use nearly twice as much material. Using more pulled it down, as from 2010 to 2012, when it used half as much again. Its leap came from 2018 to 2020, when it recycled more than twice as much and the rate nearly doubled."],
+    NL: ["The Netherlands has the EU's highest rate, and the clearest sign of using less at work. Its two biggest jumps, from 2014 to 2016 and from 2022 to 2024, came mostly from using less material, 12% and 13% less, and in the latest, three quarters of what it stopped using was fossil fuels. Over the whole period, using less did about four fifths of the work.",
+         "It wasn't alone: 22 of the 27 used less material from 2022 to 2024."],
+    PL: ["Poland's rate has nearly halved since 2014, from 13.0% to 6.7% in 2022, mostly because the waste it recycled fell. The steepest drop came from 2018 to 2020, when it recycled 36% less while using 6% less material. In those same years, the waste it used to fill in excavations, which the rate doesn't count, rose by about half as much as its recycling fell."],
+    PT: ["Portugal's rate nearly doubled from 2010 to 2022, but only from 1.8% to 3.4%, still among the EU's lowest. At that level, using less barely shows: when it used 15% less, from 2010 to 2012, the rate rose only to 2.0%. Its biggest step came from recycling 40% more, from 2020 to 2022."],
+    RO: ["Romania has the EU's lowest rate, 1.5% in 2022, down from 3.5% in 2010. Most of the fall shows up as using more, but Eurostat had to estimate Romania's material use for 2010 to 2019, and the reported figures that followed jump sharply, so read its arrows as rough at best."],
+    SK: ["Slovakia's rate more than doubled in a single step, from 4.7% in 2018 to 10.3% in 2020, as it recycled twice as much while using 12% less material. About two thirds of the extra recycling was soil and rock. It has kept that gain since."],
+    SI: ["Slovenia's biggest jump came first: from 2010 to 2012 its rate rose from 5.9% to 9.4%, half of it from using 22% less material and half from recycling more. Using more has pulled it back since, most of all from 2020 to 2022, when it used 13% more and the rate fell to 8.2%."],
+    ES: ["From 2010 to 2012, Spain used 30% less material, the deepest two-year cut of any EU country since 2010, most of it sand, gravel and stone. Had its recycling held, its rate would have risen from 10.4% to about 14%. Instead the soil and rock it recycled fell by more than nine tenths, and the rate fell to 9.8%. Using less lifts the rate only while what comes back holds."],
+    SE: ["Sweden's rate jumped from 6.9% in 2020 to 12.1% in 2022, as the waste it recycled nearly doubled. Almost all of the extra was mineral waste whose detailed categories Sweden didn't publish for 2022, while the rest of its recycling held at 7 to 8 million tonnes. By Eurostat's estimate, it had given part of that back by 2024."]
+  };
+  function xText() {                               // the card, and a link to the country picked in 20a
+    const box = d3.select(XFIG).select(".explore-text");
+    box.selectAll("p").remove();
+    (XW_TEXT[xCode] || []).forEach(function (t) { box.append("p").text(t); });
+    const other = XR && XR.code;
+    if (other && other !== xCode) {
+      box.append("p").attr("class", "show-xr").append("button").attr("type", "button")
+        .text("Show " + (XNAME[other] || DATA.countries[other].name) + ", as in the ring above")
+        .on("click", function () { xPick.property("value", other); xChange(other); });
+    }
+  }
+
+  function xChange(code) {
+    xCode = code;
+    xDraw();
+    xText();
+    if (xP === 0 && !xTimer) xShow(0); else xPlay();   // not reached yet, it keeps waiting
   }
 
   const xPick = d3.select(XFIG).select("select");
   Object.keys(DATA.countries).filter(function (k) { return k !== "EU27_2020"; })
     .sort(function (a, b) { return DATA.countries[a].name.localeCompare(DATA.countries[b].name); })
     .forEach(function (k) { xPick.append("option").attr("value", k).text(DATA.countries[k].name); });
-  xPick.property("value", xCode).on("change", function () {
-    xCode = this.value;
-    xDraw();
-    if (xP === 0 && !xTimer) xShow(0); else xPlay();   // not reached yet, it keeps waiting
-  });
+  xPick.property("value", xCode).on("change", function () { xChange(this.value); });
+  xrPick.on("change.xw", xText);                   // 20a's pick changes the link
   xDraw();
+  xText();
   xShow(STILL || !window.IntersectionObserver ? 1 : 0);
 
   if (!STILL && window.IntersectionObserver) {     // the year labels' tops reaching the screen's bottom
