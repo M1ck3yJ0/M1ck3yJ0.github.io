@@ -426,7 +426,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   <section class="burst" data-chart="ring" id="sec-ring">
     <div class="pin">
       <figure class="chart" id="ring">
-        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.3%, biomass 22.7%, fossil fuels 19.5% and metal ores 5.5%.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.0%, biomass 23.3%, fossil fuels 19.3% and metal ores 5.5%.">
           <defs>
             <clipPath id="ring-waste-clip"><rect x="-1.1" width="2.2" y="1.1" height="2.2"></rect></clipPath>
             <clipPath id="ring-stripe-clip"><path></path></clipPath>
@@ -748,7 +748,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </section>
     <section class="note" id="notes-ring">
       <h3>The EU's goal to double circularity is, in effect, a goal to use less</h3>
-      <p class="note-src">Sources: Eurostat; materials, ETC CE Report 2025/3. EU, 2022.</p>
+      <p class="note-src">Source: Eurostat. EU, 2022.</p>
       <p>Notes to come.</p>
       <p class="note-back"><a href="#sec-ring">Back to the chart &#8593;</a></p>
     </section>
@@ -1281,7 +1281,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (has("rate70")) extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
-    label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, " + YR : "Source: Eurostat, " + YR, "lab-src"]]);
+    label(L, 6, 394, [[s.disc ? "Source: Eurostat. EU, " + YR : "Source: Eurostat, " + YR, "lab-src"]]);
   }
 
   /* Each card's ring plays from where the ring stands, through the beats between, in the
@@ -2611,7 +2611,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      only what it hasn't replaced, so a cut gives way as recycling rises, except that a material
      tapped to nothing stays gone. The tap that would take the ring past 24% stops where it closes.
      Weight, the rate and the disc count recycling's replaced tonnes as panel 4 does, split on the
-     disc's weight shares (Figure 3-4), so the disc's area is always the new material left. Climate
+     disc's weight shares (Eurostat), so the disc's area is always the new material left. Climate
      impact and imports count each material's share removed as two_levers_2022.csv does: recycling's
      extra tonnes over the material's Eurostat consumption, plus what goes without over its weight
      share; a material with nothing left counts as all removed. Each material's shards leave in a
@@ -2628,7 +2628,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const GM_G = d3.select(GM_FIG).select("g.ring");
   const GM_M = SH.materials;                       // the disc's order: minerals, biomass, fossil fuels, metal ores
   const GM_ROW = GM_M.map(function (m) { return MAT.find(function (d) { return d.key === m; }); });
-  const GM_W = GM_ROW.map(function (d) { return d.weight; });     // % of 2022's new material, Figure 3-4
+  const GM_W = GM_M.map(function (m) { return SH.shares_pct[m]; });   // % of 2022's new material, the disc's shares (Eurostat)
   const GM_CL = GM_ROW.map(function (d) { return d.climate; });   // % of the climate impact of making materials
   const GM_IMP = GM_ROW.map(function (d) {                        // kt imported from outside the EU
     return DATA.imports.materials.find(function (r) { return r.material_group === d.group; }).imports_kt;
