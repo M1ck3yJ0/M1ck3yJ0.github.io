@@ -470,10 +470,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <article class="card" data-state="less">
         <p>As the material in the middle shrinks, the ring tightens around it, and the same recycling covers more of the ring, until the arc's two ends finally meet. Using less is the one lever that closes the ring without hoping for anything else.</p>
       </article>
-      <article class="card" data-state="less">
+      <article class="card" data-state="both">
         <p>So the EU's target, which reads like a goal for recycling, is in effect a goal for using less new material. It isn't a choice between the two; we need both. But every route to 24% runs through using much less new material. If the EU recycled 70% of its waste instead of 41%, it would still need about 31% less. Recycling would stand in for about 4.5% of the EU's new material, and the EU would go without the other 26.5%. Even recycling about 93% of its waste, the EU would use at least 8% less.</p>
       </article>
-      <article class="card" data-state="less">
+      <article class="card" data-state="both">
         <p>The European Environment Agency came to the same conclusion. It modeled the EU recycling 70% of its waste, using 15% less material and a third less fossil fuel, all at once. Even then, the rate reached only about 22% by 2030.</p>
         <p class="note-link"><a href="#notes-ring">Sources and notes &#8595;</a></p>
       </article>
@@ -831,6 +831,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const RATE = U / (DMC + U);
   const X4 = EU.less_new_material_to_close / 100;  // panel 4: new material replaced by the recycling that closes the ring
   const REC4 = EU.recycled_share_to_close;         // % of treated waste recycled then
+  const E6 = EU.extra_recycled_70pct_kt;           // panel 6: extra tonnes recycled at 70% of treated waste
+  const X6 = EU.replaced_70pct_recycled.eu / 100;  // new material they replace
+  const G6 = EU.gone_without_70pct_recycled.eu / 100;   // new material the EU still goes without
 
   const R0 = 118;                                  // the target circle, in viewBox units
   const RING_GAP = 10.7;                           // from the disc's edge to the arc
@@ -844,8 +847,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     back:   { at: 2, dmc: DMC,        disc: true,  key: ["mats", "waste"],         call: "waste" },
     every:  { at: 3, dmc: DMC * (1 - X4), disc: true, key: ["mats", "rate"], call: "recycle", pre: "recycling" },
     gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less" },
-    less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less", pre: "gone" }
+    less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less", pre: "gone" },
+    both:   { at: 6, dmc: DMC * (1 - X6 - G6), disc: true, key: ["mats", "rate70"], call: "both", pre: "both_rec" }
   };
+  RING.both_rec = { at: 6, dmc: DMC, disc: true, key: ["mats", "rate70"], call: "recycle70" };   // panel 6's labels during its beat
   RING.recycling = Object.assign({}, RING.every, { dmc: DMC, pre: null });   // panel 4's labels while its ring closes
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
@@ -908,6 +913,28 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }
   });
 
+  /* Panel 6's discs: recycling raised to 70%, the shards it replaces taken out as in panel 4
+     ("rec"); then what the EU still goes without, the same share of every material left, taken
+     out of the shards left ("shards"; _tools/make_shards.py, "both"). */
+  const B6R = new Map(SH.both.rec.map(function (s) { return [s.k, toPts(s.p)]; }));
+  const B6L = new Map(SH.both.shards.map(function (s) { return [s.k, toPts(s.p)]; }));
+  SHARDS.forEach(function (s) {
+    if (!B6R.has(s.k)) { s.out61 = true; return; }
+    const a = resample(s.pts, 40), p1 = B6R.get(s.k);
+    s.m61 = [a, matched(a, resample(p1, 40))];
+    s.d61 = "M" + p1.join("L") + "Z";
+    if (B6L.has(s.k)) {
+      const b = resample(p1, 40);
+      s.m62 = [b, matched(b, resample(B6L.get(s.k), 40))];
+    } else s.out62 = true;
+  });
+  const morphD = function (m, w) {                 // a shard's outline, blended w of the way from m[0] to m[1]
+    return "M" + m[0].map(function (a, i) {
+      const b = m[1][i];
+      return (a[0] + (b[0] - a[0]) * w).toFixed(4) + "," + (a[1] + (b[1] - a[1]) * w).toFixed(4);
+    }).join("L") + "Z";
+  };
+
   /* The ring's beats, in ms: RDUR[k] is the beat into RING's position k. Panel 5's first beat:
      the full disc's stripes and gold fade; the shards taken out fly off one after another, in
      a scattered order, each leaving T_GAP after the one before and taking T_FLY to go; its
@@ -934,7 +961,21 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const T4_GAP = ((1 - K4F) * T4_OUT - T_FLY) / Math.max(1, OUT4.length - 1);
   const FLIGHT4 = T_FLY / ((1 - K4F) * T4_OUT);
   OUT4.forEach(function (s, i) { s.leaves4 = i * T4_GAP / ((1 - K4F) * T4_OUT); });
-  const RDUR = [0, 600, 800, T4, T_FADE + T_OUT, T_SETTLE];
+  /* Panel 6's beat: panel 5's disc comes back to full, with recycling back at 2022's; recycling
+     rises to 70%, striped, the shards it replaces flying off as in panel 4; the disc closes up; a
+     pause; the shards the EU still goes without fly off as in panel 5; the disc closes up until
+     the arc's ends meet. P6 marks where each part ends, as a share of the beat. */
+  const T6 = [500, 1000, 600, 150, 800, 800];
+  const T6_ALL = d3.sum(T6);
+  const P6 = T6.slice(0, 5).map(function (t, i) { return d3.sum(T6.slice(0, i + 1)) / T6_ALL; });
+  const order6 = function (a, b) { return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1; };
+  const OUT61 = SHARDS.filter(function (s) { return s.out61; }).sort(order6);
+  const OUT62 = SHARDS.filter(function (s) { return s.out62; }).sort(order6);
+  const WIN61 = (1 - K4F) * T6[1];
+  const FLIGHT61 = T_FLY / WIN61, FLIGHT62 = T_FLY / T6[4];
+  OUT61.forEach(function (s, i) { s.leaves61 = i * (WIN61 - T_FLY) / Math.max(1, OUT61.length - 1) / WIN61; });
+  OUT62.forEach(function (s, i) { s.leaves62 = i * (T6[4] - T_FLY) / Math.max(1, OUT62.length - 1) / T6[4]; });
+  const RDUR = [0, 600, 800, T4, T_FADE + T_OUT, T_SETTLE, T6_ALL];
 
   // Area of the shards' parts at or below a level
   function areaBelow(level) {
@@ -1062,6 +1103,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   let stripesAt = "";
 
   function ringFrame(r) {
+    if (r > 5) return ringFrame6(r - 5);
     const g = d3.select("#ring svg g.ring");
     const p = r <= 3 ? 0 : r <= 4 ? (r - 3) * PG : PG + (r - 4) * (1 - PG);
     const w = p > PG ? d3.easeCubicInOut((p - PG) / (1 - PG)) : 0;  // the second beat
@@ -1141,6 +1183,51 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     });
   }
 
+  /* Panel 6, from j = 0 (panel 5's end) to 1: drawn as 20a draws a country's ring. */
+  function ringFrame6(j) {
+    const g = d3.select("#ring svg g.ring");
+    const fly = wideMQ.matches ? FLY_WIDE : FLY;
+    const back = d3.easeCubicInOut(clamp01(j / P6[0]));                          // panel 5's disc back to full
+    const k1 = clamp01((j - P6[0]) / (P6[1] - P6[0]));
+    const rho = d3.easeCubicInOut(k1);                                           // recycling raised to 70%
+    const u1 = clamp01((k1 - K4F) / (1 - K4F));                                  // the flight of its shards
+    const w1 = d3.easeCubicInOut(clamp01((j - P6[1]) / (P6[2] - P6[1])));       // the disc closing up
+    const u2 = clamp01((j - P6[3]) / (P6[4] - P6[3]));                           // the flight of what goes without
+    const w2 = d3.easeCubicInOut(clamp01((j - P6[4]) / (1 - P6[4])));           // the disc closing up again
+    const first = j < P6[0];
+    const area = first ? (DMC_CLOSED + (DMC - DMC_CLOSED) * back) / DMC : 1 - w1 * X6 - w2 * G6;
+    const size = RC0 * Math.sqrt(area);
+    const R = size + RING_GAP + 4.5;
+    const den = first ? area * DMC + U : DMC + U + (1 - K_REP) * E6 * rho - G6 * DMC * w2;   // new and recycled together
+    let total = (U + E6 * rho) / den / TARGET;
+    if (w2 >= 1 || Math.abs(total - 1) < 1e-4) total = 1;                         // closed: a full ring
+    const s0 = Math.min(1, U / den / TARGET), s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
+    g.select(".target").attr("r", R);
+    g.select(".rope").attr("d", sector(R, 0, s1)).attr("opacity", null);
+    stripesAt = "";                                                              // ringFrame redraws its own stripes
+    xrStripes(g.select(".stripes").attr("opacity", null), "#ring-stripe-clip", R, s1, t1, 4.5, true);
+    g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(t1 * TAU)).attr("cy", -R * Math.cos(t1 * TAU)).attr("opacity", null);
+    g.select(".disc").attr("transform", "scale(" + size + ")");
+    g.select(".disc .waste").attr("display", "none");
+    const flyAt = function (el, d, v) {
+      el.attr("d", d).attr("display", v > 0.9999 ? "none" : null)
+        .attr("transform", v > 0 ? "translate(" + (fly * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
+        .attr("opacity", v > 0 ? 1 - v * v : null);
+    };
+    ringShards.each(function (s) {
+      const el = d3.select(this);
+      if (first) {                                 // panel 5's shards closing back out, those it took out fading back in
+        if (s.morph) el.attr("display", null).attr("transform", null).attr("opacity", null).attr("d", morphD(s.morph, 1 - back));
+        else el.attr("d", s.d0).attr("transform", null).attr("display", back > 0 ? null : "none").attr("opacity", back < 1 ? back : null);
+        return;
+      }
+      if (s.out61) return flyAt(el, s.d0, clamp01((u1 - s.leaves61) / FLIGHT61));
+      const d1 = w1 <= 0 ? s.d0 : w1 >= 1 ? s.d61 : morphD(s.m61, w1);
+      if (s.out62) return flyAt(el, d1, clamp01((u2 - s.leaves62) / FLIGHT62));
+      el.attr("display", null).attr("transform", null).attr("opacity", null).attr("d", w2 > 0 ? morphD(s.m62, w2) : d1);
+    });
+  }
+
   function ringLabels(s, dur) {
     relabel(d3.select("#ring svg"), dur, function (L) { ringLabelsIn(L, s); });
   }
@@ -1170,6 +1257,15 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (s.call === "recycle") {             // above the ring, as panel 5's
       label(L, CX, 24, [[fmt1(REC4) + "% of waste recycled", "lab-strong"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
     }
+    if (s.call === "recycle70") {           // above the ring, through panel 6's beat
+      label(L, CX, 24, [["70% of waste recycled", "lab-strong"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
+    }
+    if (s.call === "both") {                // above the smaller ring, once it has closed
+      const cut = Math.round((X6 + G6) * 1000) / 10, rep = Math.round(X6 * 1000) / 10;
+      label(L, CX, 24, [[fmt1(cut) + "% less new material", "lab-strong"],
+                        [fmt1(rep) + "% replaced by recycling 70%; " + fmt1(cut - rep) + "% gone without", "lab"],
+                        ["each recycled tonne assumed to replace half a new one", "lab"]], "middle");
+    }
     if (s.call === "less") {                // above the ring, for both of panel 5's beats
       label(L, CX, 24, [[fmt1(LESS * 100) + "% less material", "lab-strong"], ["recycling held at its " + YR + " level", "lab"]], "middle");
     }
@@ -1182,6 +1278,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const extra = [];
     if (has("waste")) extra.push([KEY.box("waste"), "Comes back as waste"]);
     if (has("rate")) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
+    if (has("rate70")) extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
     label(L, 6, 394, [[s.disc ? "Sources: Eurostat; materials, ETC CE Report 2025/3. EU, " + YR : "Source: Eurostat, " + YR, "lab-src"]]);
