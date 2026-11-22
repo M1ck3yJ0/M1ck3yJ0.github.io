@@ -2449,12 +2449,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
   /* Highlights: each country's chosen steps (the data file's highlights, set in build_data.py),
      at most two. Each gets a label block in a band above the bars: the rate's two ends, then the
-     arrow that carries the step's story, with a leader to that arrow; and a net arrow at the
-     step's right edge. The band takes a row per block, a second row only when two blocks would
-     overlap, and the bars' axis starts below it. Once the bars are built, the other steps dim,
-     then the net arrows draw and the labels fade in. */
+     arrow that carries the step's story, set beside a leader that runs down to that arrow; and a
+     net arrow at the step's right edge. The band has two rows for every country, highlights or
+     not, so the bars' axis is the same length for all. A block sits to the right or left of its
+     leader, in the lower row unless two blocks need both; no block overlaps another or crosses a
+     leader. Once the bars are built, the other steps dim, then the net arrows draw and the labels
+     fade in. */
   const T_XHL = 600;
-  const XROW = 42, XBAND = 64;                     // a label row's height, and the band's top
+  const XTITLE = 22, XBAND = 30, XROW = 40;        // the axis title's baseline; the band's top; a label row's height
+  const XTOP = XBAND + 2 * XROW + 2;               // the bars' axis starts here, below the band
+  const XGAP = 5;                                  // a block's gap from its leader
   function xwArrow(h) {                            // the arrow's label
     if (h.arrow === "imports") return "Brought in less waste to recycle";
     const use = h.arrow === "use", v = use ? h.use_change_pct : h.circular_use_change_pct;
@@ -2491,23 +2495,48 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       return { h: h, d: d, lines: lines, w: w, lx: (use ? d.bx : d.gx) + BW / 2,
                top: use ? Math.max(d.start, d.mid) : Math.max(d.mid, d.end) };
     });
-    xHl.forEach(function (b, n) {                  // a row each, the first that's free
-      b.x = Math.max(6 + b.w / 2, Math.min(394 - b.w / 2, b.lx));
-      for (b.row = 0; xHl.slice(0, n).some(function (o) { return o.row === b.row && Math.abs(o.x - b.x) < (o.w + b.w) / 2 + 10; }); b.row++);
-      xHl.slice(0, n).forEach(function (o) {         // a lower block clears the leaders above it
-        if (o.row >= b.row || Math.abs(b.x - o.lx) >= b.w / 2 + 6) return;
-        const right = o.lx + 6 + b.w / 2;
-        b.x = right <= 394 - b.w / 2 ? right : o.lx - 6 - b.w / 2;
-      });
-    });
-    const rows = xHl.length ? d3.max(xHl, function (b) { return b.row; }) + 1 : 0;
+    xPlace(xHl);
     let lo = Math.min(start, d3.min(xSteps, function (d) { return Math.min(d.mid, d.end); }));
     let hi = Math.max(start, d3.max(xSteps, function (d) { return Math.max(d.mid, d.end); }));
     const pad = Math.max(0.4, (hi - lo) * 0.08);
     lo -= pad; hi += pad;
     if (hi - lo < XSPAN) { const m = (XSPAN - hi + lo) / 2; lo -= m; hi += m; }
     if (lo < 0) { hi -= lo; lo = 0; }               // no rate below 0%
-    xy = d3.scaleLinear().domain([lo, hi]).range([336, XBAND + (rows ? rows * XROW + 6 : 0)]);
+    xy = d3.scaleLinear().domain([lo, hi]).range([336, XTOP]);
+  }
+
+  /* Each block's side of its leader (1 right, 0 left) and row (0 upper, 1 lower): of every
+     arrangement that keeps blocks inside the chart, apart in a row, and off every leader that
+     reaches their row, the one using fewest rows, then with blocks splayed outward (a lone
+     block toward the chart's middle). */
+  function xPlace(hl) {
+    const span = function (b, side) { return side ? [b.lx + XGAP, b.lx + XGAP + b.w] : [b.lx - XGAP - b.w, b.lx - XGAP]; };
+    const covers = function (s, x) { return s[0] - 4 < x && x < s[1] + 4; };
+    const want = hl.map(function (b, i) {
+      return hl.length === 2 ? +(b.lx > hl[1 - i].lx) : +(b.lx < 200);
+    });
+    let best = null;
+    for (let m = 0; m < Math.pow(4, hl.length); m++) {
+      const pl = hl.map(function (b, i) { const v = (m >> (2 * i)) & 3; return { side: v & 1, row: v >> 1 }; });
+      const sp = hl.map(function (b, i) { return span(b, pl[i].side); });
+      const ok = sp.every(function (s) { return s[0] >= 6 && s[1] <= 394; }) && hl.every(function (b, i) {
+        return hl.every(function (o, j) {
+          if (i === j) return true;
+          if (pl[i].row === pl[j].row && !(sp[i][1] + 10 <= sp[j][0] || sp[j][1] + 10 <= sp[i][0])) return false;
+          return !(pl[j].row <= pl[i].row && covers(sp[i], o.lx));   // o's leader runs down past b's row
+        });
+      });
+      if (!ok) continue;
+      const used = d3.max(pl, function (p) { return p.row; }) - d3.min(pl, function (p) { return p.row; });
+      const score = 10 * used + d3.sum(pl, function (p, i) { return +(p.side !== want[i]); });
+      if (!best || score < best.score) best = { score: score, pl: pl, used: used };
+    }
+    hl.forEach(function (b, i) {
+      const p = best ? best.pl[i] : { side: +(b.lx < 200), row: i };
+      b.side = p.side;
+      b.row = best && !best.used ? 1 : p.row;         // one row: the lower, nearer the bars
+      b.x = b.side ? b.lx + XGAP : b.lx - XGAP;
+    });
   }
 
   // The frame, and the bars, net arrows and labels for xFrame to shape
@@ -2528,7 +2557,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       }).join(""));
 
     wticks(g, L, xy);
-    label(L, WX0 - 4, 48, [["Change in circularity rate since " + XYRS[0], "lab"]]);
+    label(L, WX0 - 4, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
     if (est.length) label(L, 6, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]]);
     label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
@@ -2541,9 +2570,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     xHlG = L.append("g").attr("opacity", 0);
     xHl.forEach(function (b) {
       b.arrow = { line: g.append("line").attr("class", "net"), head: g.append("path").attr("class", "net-head") };
-      const y = XBAND + b.row * XROW + 8 + 15, x = b.x;
-      label(xHlG, x, y, [[b.lines[0], "lab-strong"], [b.lines[1], "lab", "1.25em"]], "middle");
-      const y1 = y + 22, y2 = xy(b.top) - 4;
+      const top = XBAND + b.row * XROW;
+      label(xHlG, b.x, top + 12, [[b.lines[0], "lab-strong"], [b.lines[1], "lab", "1.25em"]], b.side ? "start" : "end");
+      const y1 = top + 1, y2 = xy(b.top) - 4;
       if (y2 > y1 + 4) xHlG.append("line").attr("class", "leader").attr("x1", b.lx).attr("x2", b.lx).attr("y1", y1).attr("y2", y2);
     });
   }
