@@ -2064,6 +2064,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      at its start again only once it's off screen below. With reduced motion, the end is drawn. */
   const XNAME = { NL: "the Netherlands" };         // names as they read inside a sentence, for both explorers
   const XR_FIG = document.querySelector("#explore-ring");
+  const XR_KEY = 0.82;                             // its key, smaller than the pinned rings'
   const XR_RECYCLED = 70;                          // % of treated waste recycled, the EEA's 2030 scenario
   const XR_HW2 = 7;                                // the second lap's half-width; the first lap's is 4.5
   const XR_CY = CY + 12;                           // the ring's center, lower than panel 1's to fit a three-line highlight
@@ -2321,7 +2322,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (stage === "start" ? c.rate > TARGET * 100 : q.gone === 0 && q.r70 > TARGET * 100) extra.push([KEY.lap, "Past the target"]);
     if (extra.length) rows.push(extra);
-    rows.forEach(function (items, i) { keyRow(L, 336 + 19 * i, items); });
+    const K = L.append("g").attr("transform", "translate(" + CX + ",336) scale(" + XR_KEY + ") translate(" + -CX + ",-336)");
+    rows.forEach(function (items, i) { keyRow(K, 336 + 19 * i, items); });
     label(L, 6, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: our calculation", "lab-src"]]);
   }
 
