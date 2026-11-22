@@ -22,7 +22,7 @@ heaps fill the frame and keep their ratio and their look.
 
 Writes the heaps into the data file under "food_heaps": the pan's size, the share kept,
 and for each heap one path per tone, in the pan's coordinates (x right, y down, the
-middle of the pan's top at 0, 0), rounded to 0.1. With --check, writes nothing and
+middle of the pan's top at 0, 0), in steps of UNIT, which the page scales back by. With --check, writes nothing and
 re-measures the heaps already in the data file. With --preview, also saves both heaps
 side by side as an SVG.
 """
@@ -33,6 +33,7 @@ import sys
 
 import numpy as np
 import shapely
+from shapely.geometry.polygon import orient
 import shapely.ops
 from scipy.optimize import brentq
 from shapely import affinity
@@ -50,6 +51,7 @@ LINE = 0.4                           # the fine line between shards
 LIGHT = np.array([-0.55, -0.83])     # from the page's upper left, however a food is turned
 DOWN = np.array([0.0, 1.0])
 GROW = 1.28                          # both heaps and their pans, drawn this many times the size built
+UNIT = 0.2                           # stored coordinates, in steps of this, after GROW
 SEED = 20171122
 
 # Tones, light to dark. Names match the page's CSS variables.
@@ -410,27 +412,44 @@ def shards(stacked, rng):
 
 
 def path(geoms):
-    """Polygons as one SVG path, grown by GROW, in tenths of a unit, each ring's points relative to the last."""
-    out = []
+    """Polygons as one SVG path, grown by GROW, in steps of UNIT: each ring starts relative to
+    the last ring's start (nearest first), its points relative to the last, no separator
+    before a minus sign."""
+    rings = []
     for g in geoms:
         for poly in getattr(g, "geoms", [g]):
             if poly.geom_type != "Polygon" or poly.is_empty:
                 continue
+            poly = orient(poly, 1)
             for ring in [poly.exterior, *poly.interiors]:
-                xy = np.round(np.asarray(ring.coords)[:-1] * 10 * GROW).astype(int)
-                d = np.diff(xy, axis=0)
-                out.append(f"M{xy[0][0]},{xy[0][1]}l" + " ".join(f"{x},{y}" for x, y in d) + "z")
+                xy = np.round(np.asarray(ring.coords)[:-1] * GROW / UNIT).astype(int)
+                xy = xy[[0] + [i for i in range(1, len(xy)) if (xy[i] != xy[i - 1]).any()]]
+                if len(xy) > 1 and (xy[-1] == xy[0]).all():
+                    xy = xy[:-1]
+                if len(xy) >= 3:
+                    rings.append(xy)
+    out, at = [], np.array([0, 0])
+    while rings:
+        i = min(range(len(rings)), key=lambda j: int(np.abs(rings[j][0] - at).sum()))
+        xy = rings.pop(i)
+        d = "m"
+        for k, v in enumerate([*(xy[0] - at), *np.diff(xy, axis=0).ravel()]):
+            t = str(int(v))
+            d += t if k == 0 or t[0] == "-" else " " + t
+        out.append(d + "z")
+        at = xy[0]
     return "".join(out)
 
 
-def measure(heap):
+def measure(heap, unit):
     """The area of a heap's shards, from its stored paths."""
     total = 0.0
     for d in heap["shards"].values():
-        for sub in d.split("M")[1:]:
-            start, rel = sub.rstrip("z").split("l")
-            xy = np.cumsum([list(map(int, start.split(",")))] +
-                           [list(map(int, q.split(","))) for q in rel.split(" ")], axis=0) / 10
+        at = np.array([0, 0])
+        for sub in d.split("m")[1:]:
+            v = np.array(list(map(int, re.findall(r"-?\d+", sub)))).reshape(-1, 2)
+            at = at + v[0]
+            xy = (at + np.vstack([[0, 0], np.cumsum(v[1:], axis=0)])) * unit
             x, y = xy[:, 0], xy[:, 1]
             total += 0.5 * (x @ np.roll(y, -1) - np.roll(x, -1) @ y)
     return abs(total)
@@ -447,7 +466,7 @@ def main():
 
     if "--check" in sys.argv:
         h = data["food_heaps"]["heaps"]
-        a, s = [x["area"] for x in h], [measure(x) for x in h]
+        a, s = [x["area"] for x in h], [measure(x, data["food_heaps"]["unit"]) for x in h]
         print(f"2022's heap covers {100 * a[1] / a[0]:.3f}% of 2017's area (target {100 * keep_total:.3f}%); "
               f"its shards, {100 * s[1] / s[0]:.3f}% of 2017's shards")
         return
@@ -462,10 +481,10 @@ def main():
         by_tone, worst = shards(stacked, rng)
         print(f"Largest gap left by the shards: {worst:.2f} square units")
         heaps.append({"area": round(covered.area * GROW ** 2, 3), "shards": {k: path(v) for k, v in sorted(by_tone.items())}})
-    a, sh = [x["area"] for x in heaps], [measure(x) for x in heaps]
+    a, sh = [x["area"] for x in heaps], [measure(x, UNIT) for x in heaps]
     print(f"Cut share {100 * keep:.2f}%; 2022's heap covers {100 * a[1] / a[0]:.3f}% of 2017's area "
           f"(target {100 * keep_total:.3f}%), shards {100 * sh[1] / sh[0]:.3f}%, "
-          f"count {[sum(d.count('M') for d in h['shards'].values()) for h in heaps]}")
+          f"count {[sum(d.count('m') for d in h['shards'].values()) for h in heaps]}")
 
     if "--preview" in sys.argv:
         out = sys.argv[sys.argv.index("--preview") + 1]
@@ -474,8 +493,8 @@ def main():
         parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -150 400 170" width="1600" height="680">'
                  f'<style>{css}</style><rect x="-100" y="-150" width="400" height="170" fill="#fff"/>']
         for i, h in enumerate(heaps):
-            parts.append(f'<g transform="translate({i * 200},0) scale(0.1)">')
-            parts.append(f'<ellipse rx="{PAN["rx"] * GROW * 10}" ry="{PAN["ry"] * GROW * 10}" fill="#C9D0D6"/>')
+            parts.append(f'<g transform="translate({i * 200},0) scale({UNIT})">')
+            parts.append(f'<ellipse rx="{PAN["rx"] * GROW / UNIT}" ry="{PAN["ry"] * GROW / UNIT}" fill="#C9D0D6"/>')
             for k, d in h["shards"].items():
                 parts.append(f'<path d="{d}" style="fill:var(--{k})"/>')
             parts.append("</g>")
@@ -484,7 +503,7 @@ def main():
             f.write("".join(parts))
 
     data["food_heaps"] = {
-        "pan": {k: round(v * GROW, 2) for k, v in PAN.items()}, "keep_pct": round(100 * keep, 3),
+        "pan": {k: round(v * GROW, 2) for k, v in PAN.items()}, "unit": UNIT, "keep_pct": round(100 * keep, 3),
         "heaps": heaps,
     }
     with open(DATA, "w", encoding="utf-8") as f:

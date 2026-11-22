@@ -1889,7 +1889,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       " 0 0 0 " + IPAN.rx + "," + top + "V" + (top + IPAN.lip) + "A" + IPAN.rx + "," + IPAN.ry + " 0 0 1 " + -IPAN.rx + "," +
       (top + IPAN.lip) + "Z");
     g.append("ellipse").attr("class", "steel-1").attr("cy", top).attr("rx", IPAN.rx).attr("ry", IPAN.ry);
-    const h = g.append("g").attr("transform", "translate(0," + top + ") scale(0.1)");
+    const h = g.append("g").attr("transform", "translate(0," + top + ") scale(" + HEAPS.unit + ")");
     Object.keys(heap.shards).forEach(function (tone) {
       h.append("path").attr("d", heap.shards[tone]).style("fill", "var(--" + tone + ")");
     });
