@@ -29,6 +29,7 @@
   --ink: #0B1840;
   --ink-2: #4A5577;
   --hairline: #D3D9E6;
+  --highlight: #F7E19D;   /* the closer's highlighted phrases: the lighter gold at 40% on white */
   /* Series */
   --used: #003399;        /* material used: the center, "used less" bars */
   --used-could: #7893C9;  /* material that could have been used, and the part never used */
@@ -149,6 +150,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .closer-text p { margin: 0; }
 .closer-text p + p { margin-top: .8em; }
 .closer-text .note-link { margin-top: 1.2em; }
+.closer-text mark {
+  color: inherit;
+  background: linear-gradient(transparent 55%, var(--highlight) 55%);
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
 @media (min-width: 800px) {
   main { max-width: none; padding-top: var(--nav); }
   .burst {

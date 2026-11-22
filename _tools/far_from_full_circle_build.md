@@ -58,6 +58,7 @@ Colors live only in the page's CSS, as variables named by role.
 - Page: light, white base, a fixed static terrazzo print that fades to almost nothing where the pinned chart sits. Nothing in the background darker than relative luminance 0.82.
 - Roles: blues for material used, one per material (minerals EU blue, metal ores sky, fossil fuels azure, biomass cobalt); lighter gold for what comes back; deep gold for the 24% target; light gold for waste that could come back; a darker deep gold for the second lap. Building and object tones (ZIN, the balance, the food) are not series colors. Controls have their own variables; the knob keeps the arc's colors.
 - Text: ink and secondary, never in a series color, never on the shards. White on EU blue and cobalt, ink on gold.
+- Highlights in the closer: `mark`, a band of `--highlight` (the lighter gold at 40% on white) under the lower part of the line, ink text (13.3:1). Not a series color.
 - Flat fills, no outlines or shadows, square white cards with no outline. Rounded ends only on the ring's arc, pointed ends only on the waterfall's bars; hatching only for estimates and recycling added in a scenario. Page text never names the hatching.
 - Labels that pair up line up, such as a name level with the midpoint of its two shares.
 - Type: Newsreader with its optical sizes; no sans serifs.
