@@ -1854,9 +1854,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const HEAPS = DATA.food_heaps;
   const TILT = 0.28;                               // degrees per 1% of difference between the pans
   const IPIV = [200, 224];                         // the beam's pivot
-  const IARM = 104;                                // pivot to each pan's stem
-  const IBEAM = 116;                               // pivot to each end of the beam
-  const ISTEM = 13;                                // stem, from the beam up to the pan
+  const IARM = 99;                                 // pivot to each pan's stem: level, the pans clear each other and the frame
+  const IBEAM = 111;                               // pivot to each end of the beam
+  const ISTEM = 24;                                // stem, from the beam up to the pan: tipped, 2017's food clears the pivot
   const IPAN = { rx: HEAPS.pan.rx + 2, ry: HEAPS.pan.ry + 0.8, lip: 3.5 };
   const IBASE = 302;                               // the top of the base
   const T_ITIP = 750, T_ILAB = 300, T_ILAB_AT = 0.6 * T_ITIP;

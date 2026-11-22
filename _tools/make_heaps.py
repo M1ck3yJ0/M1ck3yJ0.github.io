@@ -17,6 +17,9 @@ half of them cracked along random lines. Foods in front hide the parts of foods 
 them, so only visible parts get shards. A heap's area is the area its foods cover, lines
 included; the check also reports the shards' area alone.
 
+Everything is built at one size, then drawn GROW times as large, pans included, so the
+heaps fill the frame and keep their ratio and their look.
+
 Writes the heaps into the data file under "food_heaps": the pan's size, the share kept,
 and for each heap one path per tone, in the pan's coordinates (x right, y down, the
 middle of the pan's top at 0, 0), rounded to 0.1. With --check, writes nothing and
@@ -41,10 +44,11 @@ DATA = os.path.join(ROOT, "projects", "far_from_full_circle", "far_from_full_cir
 PAGE = os.path.join(ROOT, "projects", "far_from_full_circle", "a_circularity_story.html")
 PREFIX = "window.FAR_FROM_FULL_CIRCLE_DATA = "
 
-PAN = {"rx": 76.0, "ry": 6.5}        # the pan's top, an ellipse; food sits inside it
+PAN = {"rx": 72.0, "ry": 6.5}        # the pan's top, an ellipse; food sits inside it
 SIZES = (1.2, 4.8)                   # half-sizes of shards, smallest to largest
 LINE = 0.4                           # the fine line between shards
 LIGHT = np.array([-0.55, -0.83])     # from the upper left
+GROW = 1.28                          # both heaps and their pans, drawn this many times the size built
 SEED = 20171122
 
 # Tones, light to dark. Names match the page's CSS variables.
@@ -377,14 +381,14 @@ def shards(stacked, rng):
 
 
 def path(geoms):
-    """Polygons as one SVG path, in tenths of a unit, each ring's points relative to the last."""
+    """Polygons as one SVG path, grown by GROW, in tenths of a unit, each ring's points relative to the last."""
     out = []
     for g in geoms:
         for poly in getattr(g, "geoms", [g]):
             if poly.geom_type != "Polygon" or poly.is_empty:
                 continue
             for ring in [poly.exterior, *poly.interiors]:
-                xy = np.round(np.asarray(ring.coords)[:-1] * 10).astype(int)
+                xy = np.round(np.asarray(ring.coords)[:-1] * 10 * GROW).astype(int)
                 d = np.diff(xy, axis=0)
                 out.append(f"M{xy[0][0]},{xy[0][1]}l" + " ".join(f"{x},{y}" for x, y in d) + "z")
     return "".join(out)
@@ -428,7 +432,7 @@ def main():
         stacked, covered = stack(items)
         by_tone, worst = shards(stacked, rng)
         print(f"Largest gap left by the shards: {worst:.2f} square units")
-        heaps.append({"area": round(covered.area, 3), "shards": {k: path(v) for k, v in sorted(by_tone.items())}})
+        heaps.append({"area": round(covered.area * GROW ** 2, 3), "shards": {k: path(v) for k, v in sorted(by_tone.items())}})
     a, sh = [x["area"] for x in heaps], [measure(x) for x in heaps]
     print(f"Cut share {100 * keep:.2f}%; 2022's heap covers {100 * a[1] / a[0]:.3f}% of 2017's area "
           f"(target {100 * keep_total:.3f}%), shards {100 * sh[1] / sh[0]:.3f}%, "
@@ -438,11 +442,11 @@ def main():
         out = sys.argv[sys.argv.index("--preview") + 1]
         with open(PAGE, encoding="utf-8") as f:   # the page's own colors
             css = ":root{" + "".join(f"--{k}:{v};" for k, v in re.findall(r"--([a-z0-9-]+): (#[0-9A-Fa-f]{6})", f.read())) + "}"
-        parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-80 -130 330 150" width="1320" height="600">'
-                 f'<style>{css}</style><rect x="-80" y="-130" width="330" height="150" fill="#fff"/>']
+        parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-100 -150 400 170" width="1600" height="680">'
+                 f'<style>{css}</style><rect x="-100" y="-150" width="400" height="170" fill="#fff"/>']
         for i, h in enumerate(heaps):
-            parts.append(f'<g transform="translate({i * 165},0) scale(0.1)">')
-            parts.append(f'<ellipse rx="{PAN["rx"] * 10}" ry="{PAN["ry"] * 10}" fill="#C9D0D6"/>')
+            parts.append(f'<g transform="translate({i * 200},0) scale(0.1)">')
+            parts.append(f'<ellipse rx="{PAN["rx"] * GROW * 10}" ry="{PAN["ry"] * GROW * 10}" fill="#C9D0D6"/>')
             for k, d in h["shards"].items():
                 parts.append(f'<path d="{d}" style="fill:var(--{k})"/>')
             parts.append("</g>")
@@ -451,7 +455,7 @@ def main():
             f.write("".join(parts))
 
     data["food_heaps"] = {
-        "pan": PAN, "keep_pct": round(100 * keep, 3),
+        "pan": {k: round(v * GROW, 2) for k, v in PAN.items()}, "keep_pct": round(100 * keep, 3),
         "heaps": heaps,
     }
     with open(DATA, "w", encoding="utf-8") as f:
