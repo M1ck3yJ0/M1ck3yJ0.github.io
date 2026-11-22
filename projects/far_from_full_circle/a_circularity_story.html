@@ -624,7 +624,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <clipPath id="xr-clip1"><path></path></clipPath>
             <clipPath id="xr-clip2"><path></path></clipPath>
           </defs>
-          <g class="ring" transform="translate(200,176)">
+          <g class="ring" transform="translate(200,188)">
             <circle class="target" r="0"></circle>
             <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
             <path class="rope"></path>
@@ -2069,6 +2069,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XR_FIG = document.querySelector("#explore-ring");
   const XR_RECYCLED = 70;                          // % of treated waste recycled, the EEA's 2030 scenario
   const XR_HW2 = 7;                                // the second lap's half-width; the first lap's is 4.5
+  const XR_CY = CY + 12;                           // the ring's center, lower than panel 1's to fit a three-line highlight
+  const XR_WRAP = 260;                             // the widest the highlight's split runs before it wraps
   const T_XREC = 1100, T_XSET = 700, T_XPAUSE = 200, T_XOUT = 1400;   // recycling's rise; the disc closing up; a pause; the flight, at most
   const T_XGAP = 28, T_XFLY = 300;                 // one shard after another, each taking T_XFLY to go
   const XR_EU_WASTE = Math.round(EU.waste_treated_per_consumption);
@@ -2308,7 +2310,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const sub = q.held ? "recycling held at its " + fmt1(c.share_recycled) + "% of waste"
               : q.gone > 0 ? rep + "% replaced by recycling 70%; " + fmt1(cut - rep) + "% gone without"
               : "all replaced by recycling 70%";
-    label(L, CX, 24, [[fmt1(cut) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+    const hl = label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+    const part = sub.indexOf("; ");                // too wide: the split wraps after its semicolon
+    if (part > 0 && hl.select("tspan.lab").node().getComputedTextLength() > XR_WRAP) {
+      hl.remove();
+      label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-strong"], [sub.slice(0, part + 1), "lab"], [sub.slice(part + 2), "lab"]], "middle");
+    }
     const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
     const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
                    [KEY.rate, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + YR]]];
@@ -2317,7 +2324,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (stage === "start" ? c.rate > TARGET * 100 : q.gone === 0 && q.r70 > TARGET * 100) extra.push([KEY.lap, "Past the target"]);
     if (extra.length) rows.push(extra);
-    rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
+    rows.forEach(function (items, i) { keyRow(L, 336 + 19 * i, items); });
     label(L, 6, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: our calculation", "lab-src"]]);
   }
 
@@ -2414,7 +2421,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }, { rootMargin: "200% 0px" }).observe(XR_FIG);
   } else xrEnsure();
   if (!STILL && window.IntersectionObserver) {     // the ring's foot reaching the screen's bottom
-    const at = (CY + R0 + 12) / 400;
+    const at = (XR_CY + R0 + 12) / 400;
     new IntersectionObserver(function (es) {
       const e = es[es.length - 1], below = e.boundingClientRect.top > 0;
       if (!e.isIntersecting && below) xrShow(0);
