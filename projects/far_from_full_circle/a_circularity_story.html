@@ -3252,11 +3252,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      STRETCH px of scrolling after the start. Cards are spaced to match: in CSS on a phone,
      here on wide screens. Scrolling back plays at BACK times the speed, and reduced motion at
      REDUCED times. Every chart is drawn from the card shown: a chart below it waits at its
-     state before its first card ("pre"), one above it holds its last card's state. */
+     state before its first card ("pre"), one above it holds its last card's state.
+     Wide screens: cards sit beside the chart, so a beat starts once its card is STRETCH_WIDE px
+     of scrolling from its place (a chart's first card also waits for the chart to be CHART_WIDE
+     visible), and plays STRETCH_WIDE / STRETCH times as long. */
   const STRETCH = 170, ALMOST = 32, BACK = 2.5, REDUCED = 3;
+  const STRETCH_WIDE = 260, CHART_WIDE = 0.75;
   // A beat's duration in ms, in the direction it plays (1 forward, -1 back, 0 at once)
   const beatDur = function (ms, dir) {
-    return dir ? ms / ((dir < 0 ? BACK : 1) * (STILL ? REDUCED : 1)) : 0;
+    if (!dir) return 0;
+    const wide = dir > 0 && wideMQ.matches ? STRETCH_WIDE / STRETCH : 1;
+    return ms * wide / ((dir < 0 ? BACK : 1) * (STILL ? REDUCED : 1));
   };
 
   let cardShown = -1;
@@ -3302,6 +3308,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
     const reached = function (i, top, bottom) {
       const b = BURSTS.find(function (b) { return b.first === i; });
+      if (wideMQ.matches) {
+        const r = CARDS[i].getBoundingClientRect(), place = top + (bottom - top) / 2 - r.height / 2;
+        if (r.top > Math.min(bottom - 40, place + STRETCH_WIDE)) return false;
+        if (!b) return true;
+        const f = b.fig.getBoundingClientRect();
+        return f.top + CHART_WIDE * f.height <= bottom;
+      }
       if (b) { const r = b.fig.getBoundingClientRect(); return r.top + 0.9 * r.height <= bottom; }
       return !i || CARDS[i - 1].getBoundingClientRect().bottom <= top + ALMOST;
     };
