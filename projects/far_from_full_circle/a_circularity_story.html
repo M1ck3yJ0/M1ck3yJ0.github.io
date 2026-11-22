@@ -1837,10 +1837,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      avocado, two eggs and a head of broccoli, then the same food cut down, with one egg taken
      away, so 2022's heap covers exactly what's left of 2017's area. The balance is plain
      steel, its pans on top. The beam tips by the difference between its pans, TILT degrees
-     per percentage point. */
+     per 1% of the difference. */
   const IKEA = DATA.examples.ikea;
   const HEAPS = DATA.food_heaps;
-  const TILT = 0.28;                               // degrees per percentage point between the pans
+  const TILT = 0.28;                               // degrees per 1% of difference between the pans
   const IPIV = [200, 224];                         // the beam's pivot
   const IARM = 104;                                // pivot to each pan's stem
   const IBEAM = 116;                               // pivot to each end of the beam
@@ -2417,7 +2417,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const XYRS = DATA.step_years.slice(XK);
   const XNS = XYRS.length - 1;
   const XSW = (WX1 - WX0) / XNS, XPAD = (XSW - 2 * BW - 1.5) / 2;
-  const XSPAN = 4.8;                               // panel 7's span, in points
+  const XSPAN = 4.8;                               // panel 7's span, as a change in the rate
   const T_WSTEP = 160;
   const T_XBUILD = XNS * T_WSTEP;
   const XFIG = document.querySelector("#explore-waterfall");
