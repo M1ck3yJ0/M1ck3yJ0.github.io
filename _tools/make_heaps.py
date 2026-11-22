@@ -47,7 +47,8 @@ PREFIX = "window.FAR_FROM_FULL_CIRCLE_DATA = "
 PAN = {"rx": 72.0, "ry": 6.5}        # the pan's top, an ellipse; food sits inside it
 SIZES = (1.2, 4.8)                   # half-sizes of shards, smallest to largest
 LINE = 0.4                           # the fine line between shards
-LIGHT = np.array([-0.55, -0.83])     # from the upper left
+LIGHT = np.array([-0.55, -0.83])     # from the page's upper left, however a food is turned
+DOWN = np.array([0.0, 1.0])
 GROW = 1.28                          # both heaps and their pans, drawn this many times the size built
 SEED = 20171122
 
@@ -89,13 +90,22 @@ def shade(rng, v, spread=0.2):
     return float(np.clip(v + rng.normal(0, spread), 0, 0.999))
 
 
-def dome(c, r, p):
-    """How dark a point is on a dome of radius r at c, lit from LIGHT."""
+def rotv(v, deg):
+    """A direction turned by deg, the way shapely turns shapes."""
+    a = np.radians(deg)
+    return np.array([v[0] * np.cos(a) - v[1] * np.sin(a), v[0] * np.sin(a) + v[1] * np.cos(a)])
+
+
+def dome(c, r, p, light):
+    """How dark a point is on a dome of radius r at c, lit from light."""
     d = (np.asarray(p) - np.asarray(c)) / r
-    return 0.5 - 0.5 * float(d @ LIGHT) + 0.18 * float(np.hypot(*d))
+    return 0.5 - 0.5 * float(d @ light) + 0.18 * float(np.hypot(*d))
 
 
 # ---------- The foods: each a list of zones (shape, ramp, how a tile there is shaded) ----------
+# A zone's shading is lit(p, rng, ramp, fr): p in the food's own frame, and fr the page's light
+# and its downward direction as seen from that frame, so a food turned on the pan stays lit
+# from the page's upper left.
 
 def salmon(L=120.0):
     def back(x):
@@ -121,7 +131,7 @@ def salmon(L=120.0):
     flesh = top.difference(fat)
     span = L
 
-    def lit(p, rng, ramp):
+    def lit(p, rng, ramp, fr):
         x, y = p
         v = 0.12 + 0.5 * (x / span) + 0.3 * (y + 14) / 15
         if ramp == "salmon-side":
@@ -131,7 +141,9 @@ def salmon(L=120.0):
     return [(flesh, "salmon", lit), (fat, "fat", lit), (side, "salmon-side", lit)], [top.boundary]
 
 
-def broccoli(s=0.95):
+def broccoli(s=0.95, upto=None):
+    """A head of broccoli; with upto, the rows of light are set by the florets left of x = upto,
+    the ones a cut there keeps."""
     florets = [  # top rows first: lower florets sit in front
         (2, -58, 11), (-27, -42, 12), (-8, -47, 13), (12, -46, 12), (28, -39, 10),
         (-38, -24, 11), (-20, -26, 13), (0, -28, 14), (20, -26, 13), (36, -24, 10),
@@ -146,19 +158,27 @@ def broccoli(s=0.95):
         for a in np.linspace(np.radians(150), np.radians(390), 8):
             parts.append(circle(cx + 0.62 * r * np.cos(a), cy + 0.62 * r * np.sin(a), 0.38 * r))
         shapes.append((affinity.scale(unary_union(parts), s, s, origin=(0, 0)), (cx * s, cy * s), r * s, k))
+    centers = np.array([c for _, c, _, _ in shapes if upto is None or c[0] <= upto])
+
+    def row(c, down):
+        """Florets lower on the page sit darker, in three rows."""
+        h = centers @ down
+        u = (float(np.asarray(c) @ down) - h.min()) / (h.max() - h.min())
+        return 0.0 if u < 0.34 else 0.12 if u < 0.72 else 0.24
+
     covered = Polygon()
     for shape, c, r, k in reversed(shapes):     # front florets claim their area first
         part = shape.difference(covered)
         covered = covered.union(shape)
-        row = 0.0 if c[1] < -40 * s else 0.12 if c[1] < -20 * s else 0.24
 
-        def lit(p, rng, ramp, c=c, r=r, row=row):
-            return shade(rng, 0.55 * dome(c, r, p) + row + 0.05, 0.13)
+        def lit(p, rng, ramp, fr, c=c, r=r):
+            return shade(rng, 0.55 * dome(c, r, p, fr[0]) + row(c, fr[1]) + 0.05, 0.13)
 
         zones.append((part, "floret", lit))
         outlines.append(shape.boundary)
-    zones.insert(0, (stalk.difference(covered), "stalk",
-                     lambda p, rng, ramp: shade(rng, 0.25 + 0.5 * (p[0] + 12 * s) / (24 * s), 0.12)))
+    mid = np.array(stalk.centroid.coords[0])
+    zones.insert(0, (stalk.difference(covered), "stalk",       # lit side to dark side, across the light
+                     lambda p, rng, ramp, fr: shade(rng, 0.5 - 0.5 * float((np.asarray(p) - mid) @ fr[0]) / (12 * s), 0.12)))
     return zones, outlines
 
 
@@ -171,15 +191,15 @@ def avocado():
     skin = out.difference(inner)
     flesh = inner.difference(pit)
 
-    def lit_flesh(p, rng, ramp):
+    def lit_flesh(p, rng, ramp, fr):
         q = Point(p)
         a, b = q.distance(pit.boundary), q.distance(inner.boundary)
-        return shade(rng, 0.85 * a / (a + b + 1e-9) + 0.12 * (0.5 - 0.5 * float(np.asarray(p) / 30 @ LIGHT)), 0.1)
+        return shade(rng, 0.85 * a / (a + b + 1e-9) + 0.12 * (0.5 - 0.5 * float(np.asarray(p) / 30 @ fr[0])), 0.1)
 
     zones = [
-        (skin, "skin", lambda p, rng, ramp: shade(rng, 0.5 - 0.4 * float(np.asarray(p) / 30 @ LIGHT), 0.15)),
+        (skin, "skin", lambda p, rng, ramp, fr: shade(rng, 0.5 - 0.4 * float(np.asarray(p) / 30 @ fr[0]), 0.15)),
         (flesh, "flesh", lit_flesh),
-        (pit, "pit", lambda p, rng, ramp: shade(rng, dome((0, 2), 14, p), 0.12)),
+        (pit, "pit", lambda p, rng, ramp, fr: shade(rng, dome((0, 2), 14, p, fr[0]), 0.12)),
     ]
     return zones, [out.boundary, pit.boundary]
 
@@ -198,15 +218,15 @@ def quarter():
     pit = turn(zones[2][0])
     pc = np.array(pit.centroid.coords[0])
 
-    def lit_flesh(p, rng, ramp):                   # pale by the pit, greener toward the skin
+    def lit_flesh(p, rng, ramp, fr):               # pale by the pit, greener toward the skin
         q = Point(p)
         a, b = q.distance(pit.boundary), q.distance(skin)
-        return shade(rng, 0.85 * a / (a + b + 1e-9) + 0.12 * (0.5 - 0.5 * float(np.asarray(p) / 30 @ LIGHT)), 0.1)
+        return shade(rng, 0.85 * a / (a + b + 1e-9) + 0.12 * (0.5 - 0.5 * float(np.asarray(p) / 30 @ fr[0])), 0.1)
 
     out = [
-        (skin, "skin", lambda p, rng, ramp: shade(rng, 0.5 - 0.4 * float(np.asarray(p) / 30 @ LIGHT), 0.15)),
+        (skin, "skin", lambda p, rng, ramp, fr: shade(rng, 0.5 - 0.4 * float(np.asarray(p) / 30 @ fr[0]), 0.15)),
         (flesh, "flesh", lit_flesh),
-        (pit, "pit", lambda p, rng, ramp: shade(rng, dome(pc, 14, p), 0.12)),
+        (pit, "pit", lambda p, rng, ramp, fr: shade(rng, dome(pc, 14, p, fr[0]), 0.12)),
     ]
     return out, [unary_union([skin, flesh, pit]).boundary]
 
@@ -214,7 +234,7 @@ def quarter():
 def egg():
     t = np.linspace(0, 2 * np.pi, 64, endpoint=False)
     shape = Polygon(np.c_[12.5 * np.cos(t) * (1 + 0.09 * np.sin(t)), 15.5 * np.sin(t)])
-    return [(shape, "egg", lambda p, rng, ramp: shade(rng, 0.85 * dome((0, 0), 15, p) - 0.05, 0.08))], [shape.boundary]
+    return [(shape, "egg", lambda p, rng, ramp, fr: shade(rng, 0.85 * dome((0, 0), 15, p, fr[0]) - 0.05, 0.08))], [shape.boundary]
 
 
 # ---------- Placing, cutting and stacking ----------
@@ -227,9 +247,9 @@ def place(food, dx, dy, rot=0.0, origin=(0, 0)):
 
     out = []
     for g, ramp, lit in zones:
-        def moved_lit(p, rng, ramp, lit=lit):
+        def moved_lit(p, rng, ramp, fr, lit=lit):
             q = affinity.translate(affinity.rotate(Point(p), -rot, origin=(origin[0] + dx, origin[1] + dy)), -dx, -dy)
-            return lit((q.x, q.y), rng, ramp)
+            return lit((q.x, q.y), rng, ramp, (rotv(fr[0], -rot), rotv(fr[1], -rot)))
         out.append((clean(move(g)), ramp, moved_lit))
     return out, [move(o) for o in outlines]
 
@@ -238,13 +258,17 @@ def area(zones):
     return unary_union([g for g, _, _ in zones]).area
 
 
+def cut_at(food, keep):
+    """Where a straight cut down a food keeps keep of its area, on the left."""
+    whole = unary_union([g for g, _, _ in food[0]])
+    x0, _, x1, _ = whole.bounds
+    return brentq(lambda x: whole.intersection(box(x0 - 1, -999, x, 999)).area - keep * whole.area, x0, x1)
+
+
 def cut(food, keep):
     """The left part of a food in its own frame, cut straight down to keep of its area."""
     zones, outlines = food
-    whole = unary_union([g for g, _, _ in zones])
-    x0, _, x1, _ = whole.bounds
-    xc = brentq(lambda x: whole.intersection(box(x0 - 1, -999, x, 999)).area - keep * whole.area, x0, x1)
-    left = box(x0 - 1, -999, xc, 999)
+    left = box(-999, -999, cut_at(food, keep), 999)
     return [(clean(g.intersection(left)), ramp, lit) for g, ramp, lit in zones], [o.intersection(left) for o in outlines]
 
 
@@ -289,12 +313,12 @@ QUARTER = unary_union([g for g, _, _ in quarter()[0]]).area
 def heap_2022(keep):
     """The same food cut down: the broccoli half lies on its cut face and the avocado
     quarter on its skin, its pit kept, sized to keep the same share of the half's area."""
-    broc = cut(broccoli(), keep)
+    broc = cut(broccoli(upto=cut_at(broccoli(), keep)), keep)
     x0, y0, x1, y1 = bounds(broc)
     broc = place(broc, 0, 0, 90, origin=(x1, y1))           # the cut face down
     k = np.sqrt(keep * HALF_AVOCADO / QUARTER)
     avo = ([(affinity.scale(g, k, k, origin=(0, 0)), r,
-             (lambda p, rng, ramp, lit=lit: lit((p[0] / k, p[1] / k), rng, ramp))) for g, r, lit in quarter()[0]], [])
+             (lambda p, rng, ramp, fr, lit=lit: lit((p[0] / k, p[1] / k), rng, ramp, fr))) for g, r, lit in quarter()[0]], [])
     fish = place(cut(salmon(), keep), 0, -4, -2)
     b, a, f = bounds(broc), bounds(avo), bounds(fish)
     items = [
@@ -377,7 +401,7 @@ def shards(stacked, rng):
                             if bit.geom_type != "Polygon" or bit.area < 0.1:
                                 continue
                             m = bit.centroid
-                            tone = f"{ramp}-{1 + int(lit((m.x, m.y), rng, ramp) * RAMPS[ramp])}"
+                            tone = f"{ramp}-{1 + int(lit((m.x, m.y), rng, ramp, (LIGHT, DOWN)) * RAMPS[ramp])}"
                             by_tone.setdefault(tone, []).append(bit)
     drawn = unary_union([g.buffer(LINE / 2 + 0.05, join_style="mitre") for v in by_tone.values() for g in v])
     gaps = unary_union(covered).difference(drawn)
