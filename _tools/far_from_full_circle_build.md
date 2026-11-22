@@ -23,7 +23,7 @@ The data file's blocks are `build_data.py`'s (`game` and `imports` included), me
 - Notes: no collapsibles. Each section ends with a "Sources and notes" link (in its last card; in the explorers and the game, under the text or chart) to its subsection of the one Sources and notes section at the end, which opens with Method, then a subsection per section headed by its title, each with a back link.
 - Annotations sit inside the chart's own box, never as floating tooltips.
 - Each card declares the chart's whole state, so scrolling back, resizing and reduced motion all work.
-- One card per item in the sequence (panels 4, 5 and 6 have two), plus the closer's cards and beats. An idea is never split across several small cards.
+- One card per item in the sequence (panel 4 has three, panels 5 and 6 two), plus the closer's cards and beats. An idea is never split across several small cards.
 - Caveats appear on the charts as well as in the notes: the 2024 estimate, the factory gate, recycling held fixed when material is cut, the assumed replacement, and panel 20's not like for like.
 - Mobile toolbars: anything sized or triggered by viewport height uses `svh` or a pixel value that changes only with the width, never a value read on every resize. Anything that pins or scrolls to a position subtracts `--nav`.
 
