@@ -26,7 +26,7 @@ The data file's blocks are `build_data.py`'s (`game` and `imports` included), me
 - Annotations sit inside the chart's own box, never as floating tooltips.
 - Each card declares the chart's whole state, so scrolling back, resizing and reduced motion all work.
 - One card per item in the sequence (panel 4 has three, panels 5 and 6 two). An idea is never split across several small cards.
-- Caveats appear on the charts as well as in the notes: the 2024 estimate, the factory gate, recycling held fixed when material is cut, the assumed replacement, and panel 20's not like for like.
+- Caveats appear on the charts as well as in the notes: the 2024 estimate, the factory gate, recycling held fixed when material is cut, the assumed replacement. Panel 20's not like for like is in its card and notes only.
 - Mobile toolbars: anything sized or triggered by viewport height uses `svh` or a pixel value that changes only with the width, never a value read on every resize. Anything that pins or scrolls to a position subtracts `--nav`.
 
 ## Chart mechanics
@@ -35,7 +35,7 @@ The data file's blocks are `build_data.py`'s (`game` and `imports` included), me
 - Waterfall: net arrows only on highlighted steps (8, 9, 11 and 20b's), which dim the rest, drawn after the step's bars.
 - ZIN: both towers start brown, then ZIN's top floors clear to daylight from the roof down to 377.
 - Ribbon: panels 16 and 17 fade the other materials.
-- Panel 20: IKEA's estimated tonnes hatched; per-tonne and caveat lines under the chart.
+- Panel 20: IKEA's estimated tonnes hatched; only the per-tonne lines under the chart, the caveats in the card.
 
 ## Explorers (20a, 20b)
 

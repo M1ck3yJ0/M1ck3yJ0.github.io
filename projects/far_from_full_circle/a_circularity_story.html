@@ -1957,9 +1957,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
      color and IKEA's food the biomass color, with a wider gap between the two bands. ZIN's
      figure is CO2 for the construction stage only, saved once; IKEA's is CO2e from about 400
      restaurants over the four years to 2022, and its tonnes of food are estimated from meals
-     (examples.csv), so that band is hatched. */
+     (examples.csv), so that band is hatched. The card carries those caveats; the chart carries
+     only the per-tonne lines. */
   const QX0 = 124, QX1 = 150, QX2 = 272, QX3 = 298;   // the two columns
-  const QY0 = 78, QY1 = 236, QPAD = 8;                // top and bottom of the columns, gap between bands
+  const QY0 = 78, QY1 = 290, QPAD = 8;                // top and bottom of the columns, gap between bands
   // at: where along its ribbon each name sits, from the tonnes column (0) to the carbon column (1)
   const EXS = [
     { key: "minerals", name: "ZIN", at: 0.3, stuff: "concrete", gas: "CO2", est: false,
@@ -2039,13 +2040,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       t.attr("y", Math.max(lo, Math.min(hi, y)));
     });
 
-    label(L, 200, 262, EXS.map(function (e) {
+    label(L, 200, 320, EXS.map(function (e) {
       return [e.name + ": " + fmt2(e.carbon / e.tonnes) + " t of " + e.gas + " per tonne of " + e.stuff, "lab-strong"];
     }), "middle");
-    label(L, 200, 304, [["Not like for like: compares materials, not projects", "lab"],
-                        ["ZIN: CO2 for the construction stage only, saved once", "lab"],
-                        ["IKEA: CO2e from about 400 restaurants, four years to 2022", "lab"],
-                        ["IKEA's food tonnes are estimated from meals", "lab"]], "middle");
     label(L, 6, 380, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"],
                       ["Shares, food tonnes and per tonne: our calculation", "lab-src"]]);
   }
