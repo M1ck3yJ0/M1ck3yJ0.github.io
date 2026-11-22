@@ -1859,6 +1859,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const ISTEM = 24;                                // stem, from the beam up to the pan: tipped, 2017's food clears the pivot
   const IPAN = { rx: HEAPS.pan.rx + 2, ry: HEAPS.pan.ry + 0.8, lip: 3.5 };
   const IBASE = 302;                               // the top of the base
+  const ILAB = 26;                                 // each pan's labels, below its stem's foot
   const T_ITIP = 750, T_ILAB = 300, T_ILAB_AT = 0.6 * T_ITIP;
   const T_IKEA = Math.max(T_ITIP, T_ILAB_AT + T_ILAB);
   const itipEase = d3.easeBackOut.overshoot(1.4);
@@ -1913,12 +1914,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     g.append("circle").attr("class", "steel-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 8);
     g.append("circle").attr("class", "steel-4").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 2.8);
     label(L, 44, 40, [["Food waste in IKEA's kitchens", "lab"]]);
-    label(L, IPIV[0] - IARM, IPIV[1] + 53, [["2017", "lab-strong"]], "middle");
-    label(L, IPIV[0] + IARM, IPIV[1] + 53, [["2022", "lab-strong"]], "middle");
-    const less = label(L, IPIV[0] + IARM, IPIV[1] + 78, [[IKEA.food_waste_cut + "% less", "lab-num"],
+    const labs = [L.append("g"), L.append("g")];   // each follows its pan
+    label(labs[0], 0, ILAB, [["2017", "lab-strong"]], "middle");
+    label(labs[1], 0, ILAB, [["2022", "lab-strong"]], "middle");
+    const less = label(labs[1], 0, ILAB + 25, [[IKEA.food_waste_cut + "% less", "lab-num"],
       ["per meal served", "lab", "1.35em"]], "middle");
     label(L, 6, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]]);
-    IK = { pans: pans, beam: beam, less: less };
+    IK = { pans: pans, labs: labs, beam: beam, less: less };
   }
 
   // p from 0, level, to 1: the beam tips toward 2017, then 2022's cut fades in
@@ -1927,8 +1929,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const deg = TILT * IKEA.food_waste_cut * itipEase(Math.min(1, t / T_ITIP));
     const a = deg * Math.PI / 180, c = Math.cos(a), s = Math.sin(a);
     IK.beam.attr("transform", "translate(" + IPIV + ") rotate(" + -deg + ")");
-    IK.pans[0].attr("transform", "translate(" + [IPIV[0] - IARM * c, IPIV[1] + IARM * s] + ")");
-    IK.pans[1].attr("transform", "translate(" + [IPIV[0] + IARM * c, IPIV[1] - IARM * s] + ")");
+    const feet = [[IPIV[0] - IARM * c, IPIV[1] + IARM * s], [IPIV[0] + IARM * c, IPIV[1] - IARM * s]];
+    feet.forEach(function (f, i) {
+      IK.pans[i].attr("transform", "translate(" + f + ")");
+      IK.labs[i].attr("transform", "translate(" + f + ")");
+    });
     IK.less.attr("opacity", Math.max(0, Math.min(1, (t - T_ILAB_AT) / T_ILAB)));
   }
 
