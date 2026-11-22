@@ -4,8 +4,8 @@ Usage:
     python3 -I _tools/make_heaps.py [--check] [--preview <file.svg>]
 
 The 2017 pan holds a salmon fillet, half an avocado, two eggs and a head of broccoli. The
-2022 pan holds the same food cut down: the salmon, avocado and broccoli each cut straight
-through, keeping the same share of their area, and one egg taken away. That share is
+2022 pan holds the same food cut down: the salmon and broccoli each cut straight through and
+the avocado half quartered, each keeping the same share of its area, and one egg taken away. That share is
 solved so the 2022 heap's visible area is exactly what's left of 2017's by the data file's
 "examples" -> "ikea" -> "food_waste_cut".
 
@@ -185,25 +185,30 @@ def avocado():
 
 
 def quarter():
-    """A quarter of an avocado lying on its skin, the pit's hollow scooped from its cut edge."""
-    a = 25.0
-    xs = np.linspace(-a, a, 81)
+    """A quarter of an avocado: the half cut down its length, lying on its skin with the cut
+    edge up and the neck to the right, the pit kept in its hollow, as it stays in one quarter."""
+    zones, _ = avocado()
+    half = box(0, -999, 999, 999)                  # the half's right side, before turning
 
-    def low(x):
-        return 16 * np.sqrt(max(0.0, 1 - (x / a) ** 2))
+    def turn(g):
+        return clean(affinity.rotate(g, 90, origin=(0, 0)))   # left edge up, neck to the right
 
-    def top(x):
-        return -9 * np.sqrt(max(0.0, 1 - (x / a) ** 2)) + 9 * np.sqrt(max(0.0, 1 - (x / 11) ** 2))
+    skin = turn(zones[0][0].intersection(half))
+    flesh = turn(zones[1][0].intersection(half))
+    pit = turn(zones[2][0])
+    pc = np.array(pit.centroid.coords[0])
 
-    shape = Polygon([(x, top(x)) for x in xs] + [(x, low(x)) for x in xs[::-1]]).buffer(0)
-    skin = clean(shape.difference(affinity.translate(shape, 0, -2.8)))
-    flesh = clean(shape.difference(skin))
+    def lit_flesh(p, rng, ramp):                   # pale by the pit, greener toward the skin
+        q = Point(p)
+        a, b = q.distance(pit.boundary), q.distance(skin)
+        return shade(rng, 0.85 * a / (a + b + 1e-9) + 0.12 * (0.5 - 0.5 * float(np.asarray(p) / 30 @ LIGHT)), 0.1)
 
-    def lit(p, rng, ramp):
-        x, y = p
-        return shade(rng, 0.9 * (y - top(x)) / max(1e-6, low(x) - top(x)) + 0.03, 0.1)
-
-    return [(skin, "skin", lambda p, rng, ramp: shade(rng, 0.45, 0.25)), (flesh, "flesh", lit)], [shape.boundary]
+    out = [
+        (skin, "skin", lambda p, rng, ramp: shade(rng, 0.5 - 0.4 * float(np.asarray(p) / 30 @ LIGHT), 0.15)),
+        (flesh, "flesh", lit_flesh),
+        (pit, "pit", lambda p, rng, ramp: shade(rng, dome(pc, 14, p), 0.12)),
+    ]
+    return out, [unary_union([skin, flesh, pit]).boundary]
 
 
 def egg():
@@ -283,7 +288,7 @@ QUARTER = unary_union([g for g, _, _ in quarter()[0]]).area
 
 def heap_2022(keep):
     """The same food cut down: the broccoli half lies on its cut face and the avocado
-    quarter on its skin, sized to keep the same share of the half's area, pit and all."""
+    quarter on its skin, its pit kept, sized to keep the same share of the half's area."""
     broc = cut(broccoli(), keep)
     x0, y0, x1, y1 = bounds(broc)
     broc = place(broc, 0, 0, 90, origin=(x1, y1))           # the cut face down
