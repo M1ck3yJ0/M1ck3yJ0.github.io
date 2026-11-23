@@ -466,7 +466,7 @@ def load_rows():
 FIG = re.compile(r"(?<![\w.\-/])(?<!\w\()(?<!\d,)(\d{1,3}(?:,\d{3})+|\d+)(\.\d+)?(s?)(?![\w/]|\(\d|-\d|\.\d)")
 UNIT = re.compile(
     r"\s?(?P<u>%|percent\b|×|x\b|\s?times\b|(?:\s?(?P<mul>thousand|million|billion))?\s?(?P<w>tonnes?|t\b|Mt\b|Gt\b|kt\b|"
-    r"kilograms?|kilos?|kg\b|square meters|m²|m2\b|km\b)|\s?(?P<mul2>million|billion)\b)")
+    r"kilograms?|kilometers?|kilos?|kg\b|square meters|m²|m2\b|km\b)|\s?(?P<mul2>million|billion)\b)")
 MULT = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
 WEIGHT = {"tonne": 1, "tonnes": 1, "t": 1, "mt": 1e6, "gt": 1e9, "kt": 1e3, "kilogram": 1e-3, "kilograms": 1e-3,
           "kilo": 1e-3, "kilos": 1e-3, "kg": 1e-3}
@@ -521,7 +521,7 @@ def figures(text):
                 w = u.group("w").lower()
                 if w in ("square meters", "m²", "m2"):
                     f.cls = "area"
-                elif w == "km":
+                elif w in ("km", "kilometer", "kilometers"):
                     f.cls = "km"
                 else:
                     f.cls, f.factor = "mass", WEIGHT[w] * MULT.get((u.group("mul") or "").lower(), 1)
