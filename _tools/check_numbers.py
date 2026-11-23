@@ -84,7 +84,7 @@ EXAMPLES = ("examples.",)
 SCOPES = {
     "head": (EU_ROWS + EXAMPLES, COUNTRY_ROWS),
     "sec-ring": (EU_ROWS, COUNTRY_ROWS), "sec-waterfall": (EU_ROWS, COUNTRY_ROWS), "sec-ribbon": (EU_ROWS, COUNTRY_ROWS),
-    "sec-zin": (EXAMPLES, ()), "sec-ikea": (EXAMPLES, ()),
+    "sec-zin": (EU_ROWS + EXAMPLES, ()), "sec-ikea": (EXAMPLES, ()),
     "explore-ring": (("headline.step_", "headline.target", "headline.eea_", "headline.countries_", "headline.eu_countries",
                       "ceilings.EU.waste_treated_per_consumption"),
                      ("headline.", "ceilings.", "materials.", "weight_mix.", "trend")),
@@ -93,7 +93,7 @@ SCOPES = {
     "game": (EU_ROWS, ()), "sec-closer": (EU_ROWS + EXAMPLES, COUNTRY_ROWS),
     "notes-method": (EU_ROWS, COUNTRY_ROWS), "notes-ring": (EU_ROWS, COUNTRY_ROWS),
     "notes-waterfall": (EU_ROWS, COUNTRY_ROWS), "notes-ribbon": (EU_ROWS, COUNTRY_ROWS),
-    "notes-zin": (EXAMPLES, ()), "notes-ikea": (EXAMPLES, ()),
+    "notes-zin": (EU_ROWS + EXAMPLES, ()), "notes-ikea": (EXAMPLES, ()),
     "notes-explore": (EU_ROWS, COUNTRY_ROWS), "notes-game": (EU_ROWS, ()),
     "notes-closer": (EU_ROWS + EXAMPLES, COUNTRY_ROWS), "notes-drawings": ((), ()), "notes": (EU_ROWS, COUNTRY_ROWS),
 }
