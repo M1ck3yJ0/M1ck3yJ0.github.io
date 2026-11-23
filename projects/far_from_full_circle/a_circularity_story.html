@@ -297,8 +297,23 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .rib .biomass, .ring .biomass, .ring-key .biomass { fill: var(--mat-biomass); }
 .rib .dim { opacity: .2; }
 
-/* Explorers: standalone figures, not pinned, each with its own country picker */
+/* The game and the explorers: standalone figures, not pinned. The explorers sit after the floor,
+   each a <details> closed on load, its summary a label, a teaser and an open or close toggle. */
 .explorer { position: relative; z-index: 1; padding: 0 8px; margin: 0 0 40vh; }
+.explorer > details { margin: 0 auto; }
+.explorer > details > summary {
+  display: block; list-style: none; cursor: pointer;
+  max-width: 640px; margin: 0 auto; padding: 20px; background: #fff; font-size: 16px;
+}
+.explorer > details > summary::-webkit-details-marker { display: none; }
+.explorer > details > summary:focus-visible { outline: 2px solid var(--used); outline-offset: 4px; }
+.explore-label { display: block; margin-bottom: 6px; color: var(--ink-2); }
+.explore-teaser { margin: 0; font-size: 22px; line-height: 1.15; font-weight: 800; scroll-margin-top: 16px; }
+.explore-toggle { display: block; margin-top: 8px; font-size: 15px; color: var(--ink-2); text-decoration: underline; }
+.explore-toggle::after { content: "Open it \2193"; }
+details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
+#explore-ring, #explore-waterfall { margin: 0 0 48px; }
+#explore-ring > details[open], #explore-waterfall > details[open] { margin-bottom: 20vh; }
 .explore { width: var(--chart); margin: 0 auto; background: #fff; }
 .explore .chart { width: auto; height: auto; }
 .explore .chart svg { height: auto; }
@@ -310,7 +325,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   min-height: 44px; padding: 8px 40px 8px 12px; cursor: pointer;
 }
 .pick select:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
-.explore-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .skip { margin: 12px 12px 0 0; font-size: 15px; color: var(--ink-2); }
 .skip:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 .explore-text .show-xr { font-size: 15px; }
@@ -332,8 +346,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   .explore .chart { grid-column: 1; grid-row: 1 / span 2; width: var(--chart); position: relative; z-index: 1; }
   #explore-ring-chart svg { overflow: visible; }   /* its shards fly over the text */
-  .explore-top, .explore > .pick { grid-column: 2; grid-row: 1; }
-  .explore-top .pick, .explore > .pick { margin-left: 0; }
+  .explore > .pick { grid-column: 2; grid-row: 1; justify-self: start; margin-left: 0; }
   .explore-text { grid-column: 2; grid-row: 2; padding: 16px 0 0; }
 }
 .pick::after {                                     /* the chevron */
@@ -354,10 +367,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   .explore-title { grid-column: 2; grid-row: 1; padding: 0 0 4px; }
   .explore { grid-template-rows: auto auto auto 1fr; }
   .explore .chart { grid-row: 1 / span 4; }
-  .explore-top, .explore > .pick { grid-row: 2; }
-  .explore-text { grid-row: 3; }
-  #explore-ring .explore > .note-link { grid-row: 4; }
-  #explore-waterfall .explore > .note-link { grid-row: 4; }
+  .explore-text { grid-row: 2; }
+  .explore > .note-link { grid-row: 3; }
 }
 /* Sources and notes: one section at the end, a subsection per section of the story */
 .notes { position: relative; z-index: 1; max-width: 640px; margin: 0 auto 20vh; padding: 20px; background: #fff; font-size: 16px; }
@@ -487,11 +498,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   .card .eyebrow { margin-bottom: calc(8 * var(--t)); font-size: calc(15 * var(--t)); }
   .closer-text { max-width: calc(720 * var(--t)); }
   .credit { font-size: calc(15 * var(--t)); }
-  .notes, .floor-card { max-width: calc(640 * var(--t)); font-size: calc(16 * var(--t)); }
+  .notes, .floor-card, .explorer > details > summary { max-width: calc(640 * var(--t)); font-size: calc(16 * var(--t)); }
+  .explore-teaser { font-size: calc(25 * var(--t)); }
   .notes h2 { font-size: calc(25 * var(--t)); }
   .note h3 { font-size: calc(18 * var(--t)); }
   .note table { font-size: calc(14 * var(--t)); }
-  .note-link, .note-back, .notes-toggle, .skip, .explore-text .show-xr { font-size: calc(15 * var(--t)); }
+  .note-link, .note-back, .notes-toggle, .explore-toggle, .skip, .explore-text .show-xr { font-size: calc(15 * var(--t)); }
   .pick select { font-size: calc(17 * var(--t)); min-height: calc(44 * var(--t)); }
   .mkey { min-height: calc(52 * var(--t)); font-size: calc(16 * var(--t)); }
   .mkey .mcut { font-size: calc(15 * var(--t)); }
@@ -740,56 +752,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </div>
   </section>
 
-  <section class="explorer" id="explore-ring">
-    <div class="explore">
-      <h2 class="sec-title explore-title" id="sec-explore">19 of 27 EU countries would still have to go without, even recycling 70% of their&nbsp;waste</h2>
-      <div class="explore-top">
-        <div class="pick"><select aria-label="Country"></select></div>
-        <a class="skip" href="#explore-waterfall">Skip ahead &#8595;</a>
-      </div>
-      <figure class="chart" id="explore-ring-chart">
-        <svg viewBox="0 0 400 400" role="img">
-          <defs>
-            <clipPath id="xr-clip1"><path></path></clipPath>
-            <clipPath id="xr-clip2"><path></path></clipPath>
-          </defs>
-          <g class="ring" transform="translate(200,188)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
-            <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
-            <path class="rope"></path>
-            <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
-            <circle class="dot rate"></circle>
-            <g class="disc"><g class="mats"></g></g>
-          </g>
-          <g class="labels"></g>
-        </svg>
-      </figure>
-      <div class="explore-text" aria-live="polite"></div>
-      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
-    </div>
-  </section>
-
-  <section class="explorer" id="explore-waterfall">
-    <div class="explore">
-      <div class="explore-top">
-        <div class="pick"><select aria-label="Country"></select></div>
-        <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
-      </div>
-      <figure class="chart" id="explore-waterfall-chart">
-        <svg viewBox="0 0 400 400" role="img">
-          <defs>
-            <pattern id="xwf-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
-            <pattern id="xwf-hatch-back" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
-          </defs>
-          <g class="wf"></g>
-          <g class="labels"></g>
-        </svg>
-      </figure>
-      <div class="explore-text" aria-live="polite"></div>
-      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
-    </div>
-  </section>
-
   <section class="closer" id="sec-closer">
     <div class="closer-text">
       <h2 class="sec-title">A better target would count what materials cost, not what they&nbsp;weigh</h2>
@@ -818,6 +780,55 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </section>
     </div>
   </section>
+  <section class="explorer" id="explore-ring">
+    <details>
+      <summary><span class="explore-label">Every EU country's ring</span><h2 class="explore-teaser" id="sec-explore">19 of 27 EU countries would still have to use less, even recycling 70% of their waste. Explore any of&nbsp;them.</h2><span class="explore-toggle"></span></summary>
+    <div class="explore">
+      <div class="pick"><select aria-label="Country"></select></div>
+      <figure class="chart" id="explore-ring-chart">
+        <svg viewBox="0 0 400 400" role="img">
+          <defs>
+            <clipPath id="xr-clip1"><path></path></clipPath>
+            <clipPath id="xr-clip2"><path></path></clipPath>
+          </defs>
+          <g class="ring" transform="translate(200,188)">
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+            <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
+            <path class="rope"></path>
+            <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
+            <circle class="dot rate"></circle>
+            <g class="disc"><g class="mats"></g></g>
+          </g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
+      <div class="explore-text" aria-live="polite"></div>
+      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
+    </div>
+    </details>
+  </section>
+
+  <section class="explorer" id="explore-waterfall">
+    <details>
+      <summary><span class="explore-label">Every EU country's rate since 2010</span><h2 class="explore-teaser">22 of 27 EU countries used less material from 2022 to 2024. See which lever moved each one's rate.</h2><span class="explore-toggle"></span></summary>
+    <div class="explore">
+      <div class="pick"><select aria-label="Country"></select></div>
+      <figure class="chart" id="explore-waterfall-chart">
+        <svg viewBox="0 0 400 400" role="img">
+          <defs>
+            <pattern id="xwf-hatch-used" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+            <pattern id="xwf-hatch-back" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+          </defs>
+          <g class="wf"></g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
+      <div class="explore-text" aria-live="polite"></div>
+      <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
+    </div>
+    </details>
+  </section>
+
   <details class="notes" id="notes">
     <summary><h2>Sources and notes</h2><span class="notes-teaser">How I worked out every figure, what I had to assume, and where each one comes from.</span><span class="notes-toggle"></span></summary>
     <section class="note" id="notes-method">
@@ -901,7 +912,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p class="note-back"><a href="#sec-ikea">Back to the chart &#8593;</a></p>
     </section>
     <section class="note" id="notes-explore">
-      <h3>19 of 27 EU countries would still have to go without, even recycling 70% of their waste</h3>
+      <h3>19 of 27 EU countries would still have to use less, even recycling 70% of their waste</h3>
       <p class="note-src">Source: Eurostat, 2022; 70% recycled, EEA scenario. Cut: my calculation.</p>
       <p>Each country's ring runs on the story's model (Method), with its own figures for 2022. Recycling rises to 70% of the waste the country treats, the European Environment Agency's scenario for the EU in 2030 (EEA 2023); Italy, which already recycles 85.6%, stays where it is. Each extra recycled tonne replaces half a new one, an assumed midpoint, and the tonnes it replaces leave the disc by the country's waste not yet recycled, as in the ring's note. The cut still needed then takes the same share of every material. For a country still short of 24% after recycling, how much new material has to go is the same whatever recycling replaces; only the split between what recycling stands in for and what the country goes without changes. Tonnes per person are material consumption per person (env_ac_mfa). Each figure is rounded on its own, so what recycling replaces and what a country goes without can add up to 0.1% more or less than its total cut.</p>
       <p>At the midpoint, 19 of the 27 stay short of 24% with 70% of their waste recycled, as they do if each recycled tonne replaced a whole new one; if recycled tonnes replaced none, 23 would. The eight that pass are Austria, Bulgaria, Estonia, Finland, Luxembourg, Malta, the Netherlands and Sweden, Malta only just, at 24.1%. Bulgaria, Estonia, the Netherlands and Sweden would pass even if recycled tonnes replaced none (my calculation from Eurostat).</p>
@@ -2504,7 +2515,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   if (!STILL && window.IntersectionObserver) {     // the ring's foot reaching the screen's bottom
     const at = (XR_CY + R0 + 12) / 400;
     new IntersectionObserver(function (es) {
-      const e = es[es.length - 1], below = e.boundingClientRect.top > 0;
+      const e = es[es.length - 1], below = e.boundingClientRect.top > 0 || !e.boundingClientRect.height;   // closed counts as below
       if (!e.isIntersecting && below) xrShow(0);
       else if (xrP === 0 && !xrTimer && !xrPending && (!below || e.intersectionRatio >= at - 0.01)) xrPlay();
     }, { threshold: [0, at] }).observe(XR_FIG.querySelector(".chart"));
@@ -2768,7 +2779,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   if (!STILL && window.IntersectionObserver) {     // the year labels' tops reaching the screen's bottom
     const at = WYEAR_TOP / 400;
     new IntersectionObserver(function (es) {
-      const e = es[es.length - 1], below = e.boundingClientRect.top > 0;
+      const e = es[es.length - 1], below = e.boundingClientRect.top > 0 || !e.boundingClientRect.height;   // closed counts as below
       if (!e.isIntersecting && below) xShow(0);
       else if (xP === 0 && !xTimer && (!below || e.intersectionRatio >= at - 0.01)) xPlay();
     }, { threshold: [0, at] }).observe(XFIG.querySelector(".chart"));

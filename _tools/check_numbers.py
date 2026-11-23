@@ -254,7 +254,8 @@ async def read_page():
 
         # The explorers, country by country
         for sec, fig in [("explore-ring", "#explore-ring-chart"), ("explore-waterfall", "#explore-waterfall-chart")]:
-            await page.evaluate("(s) => document.getElementById(s).scrollIntoView()", sec)
+            await page.evaluate("(s) => { const b = document.getElementById(s), d = b.querySelector('details');"
+                                " if (d) d.open = true; b.scrollIntoView(); }", sec)
             await page.wait_for_timeout(400)
             for code in await page.evaluate(EXPLORER_JS, [sec, None]):
                 for k, t in enumerate(await page.evaluate(EXPLORER_JS, [sec, code])):

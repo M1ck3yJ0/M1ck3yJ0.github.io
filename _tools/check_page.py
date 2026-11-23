@@ -6,7 +6,8 @@ Usage:
 Prints a report for each width: sideways overflow in px (should be 0), elements
 wider than the screen, script errors, and each figure's count of drawn chart
 marks (0 means a chart didn't draw). Saves phone_sheet.png and desktop_sheet.png
-in <outdir>: the top of the page plus every figure, to look over.
+in <outdir>: the top of the page, each closed section as loaded, then every figure (opening any
+closed section it sits in), to look over.
 
 Outside requests are blocked, so text falls back to system fonts and the home
 icon shows as a broken image; both load normally on the live site. For a page
@@ -69,9 +70,15 @@ async def check(p, width, height, tag):
     await page.wait_for_timeout(800)
     info = await page.evaluate(INFO_JS)
     shots = []
+    for i, d in enumerate(await page.query_selector_all('section > details:not([open])')):   # closed, as loaded
+        await d.scroll_into_view_if_needed()
+        path = os.path.join(OUT, f'{tag}_closed{i}.png')
+        await d.screenshot(path=path)
+        shots.append(path)
     for i, f in enumerate(await page.query_selector_all('figure')):
+        opened = await f.evaluate("f => { const d = f.closest('details'); if (!d || d.open) return false; d.open = true; return true; }")
         await f.scroll_into_view_if_needed()
-        await page.wait_for_timeout(150)
+        await page.wait_for_timeout(5000 if opened else 150)   # a closed explorer plays once opened
         path = os.path.join(OUT, f'{tag}_fig{i}.png')
         await f.screenshot(path=path)
         shots.append(path)
