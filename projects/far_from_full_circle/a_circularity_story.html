@@ -500,7 +500,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
           </defs>
           <g class="ring" transform="translate(200,176)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
             <path class="rope"></path>
             <circle class="dot rate"></circle>
@@ -684,7 +684,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <clipPath id="xr-clip2"><path></path></clipPath>
           </defs>
           <g class="ring" transform="translate(200,188)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
             <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
             <path class="rope"></path>
             <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
@@ -730,7 +730,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
               <clipPath id="gm-clip2"><path></path></clipPath>
             </defs>
             <g class="ring" transform="translate(200,176)">
-              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
+              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
               <g class="turn">
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
@@ -1142,7 +1142,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   function placeTarget(g, R) {
     g.select(".target").attr("r", R);
     const a = -0.155 * 2 * Math.PI;
-    g.select(".target-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4);
+    g.select(".target-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0);
   }
 
   /* A chart's labels for a new state, built by build(L) into a fresh group in its g.labels.
