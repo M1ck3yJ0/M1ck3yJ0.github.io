@@ -1,0 +1,71 @@
+section,figure,near,row,f,reason
+head,24%,,headline.target,,The EU's target
+sec-ring,24%,,headline.target,,The EU's target
+sec-ring,a fifth of 1%,,headline.pace_2004_2022_per_year,,The rate's yearly rise from 2004 to 2022
+sec-ring,1.6%,,headline.pace_needed_per_year,,The pace needed each year to reach 24% by 2030
+sec-ring,8%,,headline.less_new_material_to_close_k05,,The least new material any route to 24% takes away
+sec-ring,31%,not,headline.waste_back_per_material_consumed,,The waste that comes back as a share of material consumed
+sec-ring,90%,,,F46,The EEA's 90% recycled by 2050
+sec-ring,15%,modeled,,F11,The EEA's scenario: 15% less material
+sec-ring,22%,reached,,F11,The EEA's scenario reaches about 22% by 2030
+sec-compare,5%,,examples.comparison.food_share_of_tonnes_saved,,The kitchens' share of the tonnes the two saved
+sec-zin,600 kilograms,,,,"The chart's axis, from 0 to 600, not a figure"
+sec-closer,2026,,,F85,CBAM certificates owed since January 2026
+sec-closer,2028,,,F26,Whole-life carbon of large new buildings disclosed from 2028
+sec-closer,70%,G7,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
+sec-closer,14%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
+sec-closer,18%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
+sec-closer,8%,G7,,F28,"IRP: 8 to 10% from designs that use less material"
+sec-closer,10%,G7,,F28,"IRP: 8 to 10% from designs that use less material"
+game,5.5%,,,,"A tap's size, set in the page (GM_STEP); metal ores' share of new material, so they go in one tap"
+game,90%,,,F46,The EEA's 90% recycled by 2050
+explore-ring,14%,biggest,headline.step_2008_2010_use_change,,"The EU's biggest two-year fall, 2008 to 2010, in every country's card"
+explore-ring,31%,EU's,ceilings.EU.waste_treated_per_consumption_pct,,"The EU's waste treated per tonne consumed, in every country's card"
+explore-ring MT,70%,,headline.eea_recycled_share_2030,,The EEA's 70% on Malta's ring
+explore-ring DE,2045,,,F52,Germany's strategy: significantly less primary raw material by 2045
+explore-waterfall CY,2.0%,,trend.CY.2010.rate_pct,,Cyprus's rate in 2010
+explore-waterfall DE,14%,,trend_steps.DE.2022.2024.consumption_change_pct,,"Germany used 14% less material, 2022 to 2024"
+explore-waterfall LV,6.8%,,trend_steps.LV.2022.2024.rate_to_pct,,Latvia's rate in 2024 (estimated)
+notes-method,11.7%,,,F12,The EEA's 2020 rate in its 2023 briefing
+notes-method,23.4%,,,F12,The EEA's doubling in its 2023 briefing
+notes-method,22.4%,,,F49,The EEA indicator page's doubling
+notes-method,11.8%,,,F38,The Clean Industrial Deal's rate today
+notes-method,12%,,,F68,The Commission's rate of about 12%
+notes-ring,12.2%,biomass,data.imports.Biomass.imports_over_dmi_pct,,Biomass's share imported from outside the EU
+notes-ribbon,99.5%,,,F18,Biomass's share of land-use biodiversity loss
+notes-waterfall,0.1%,,,,"The published rate's rounding: one decimal, so up to 0.1% of material used either way"
+notes-zin,116000 square meters,,examples.zin.implied_area,,"The area the 21,400 t over 184 kg imply"
+notes-explore,24.1%,,ceilings.MT.rate_70pct_recycled_k05_pct,,Malta's rate at 70% recycled
+notes-explore,2045,,,F52,Germany's strategy: significantly less primary raw material by 2045
+notes-game,40.8%,,,F57,Eurostat's waste statistics' recycled share
+notes-game,94%,,,,"The game's knob moves in whole percents, so 93.4% (headline recycled_share_to_close_k05) closes between 93% and 94%"
+notes-game,5.5%,,,,"A tap's size, set in the page (GM_STEP)"
+notes-closer,2026,Circular Economy Act,,F33,The Act planned for the fourth quarter of 2026
+notes-closer,2027,one report,,F42,One report expects the Act in 2027
+notes-closer,16,,,F79,The consumption footprint's 16 impact categories
+notes-closer,18%,Austria,,F29,Austria's 18% rate target for 2030
+notes-closer,14 tonnes,Austria,,F29,Austria's 14 tonnes per person by 2030
+notes-closer,2026,January,,F85,CBAM from January 1 and construction products from January 8
+notes-closer,2040,,,F86,The old construction standards may stay in use until 2040
+notes-closer,2028,,,F26,Whole-life carbon disclosure from January 1
+notes-closer,1000 square meters,,,F26,New buildings over 1000 m2 first
+notes-closer,17,,,F40,The CRMA's 17 strategic raw materials
+notes-closer,25%,,,F40,The CRMA's benchmark to recycle at least 25% of yearly use
+notes-closer,2027,January,,F40,The CRMA's recycling benchmarks due by January 1
+notes-closer,26,,,F41,The ECA's 26 critical raw materials for the energy transition
+notes-closer,10,,,F41,Ten not recycled at all
+notes-closer,7,,,F41,Seven recycled at 1 to 5%
+notes-closer,1%,,,F41,Seven recycled at 1 to 5%
+notes-closer,5%,,,F41,Seven recycled at 1 to 5%
+notes-closer,70%,construction,,F84,The Waste Framework Directive's 70% by weight for construction and demolition waste
+notes-closer,70%,homes,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
+notes-closer,14%,homes,,F28,"IRP: 14 to 18% from better recycling of construction materials"
+notes-closer,18%,homes,,F28,"IRP: 14 to 18% from better recycling of construction materials"
+notes-closer,8%,homes,,F28,"IRP: 8 to 10% from designs that use less material"
+notes-closer,10%,homes,,F28,"IRP: 8 to 10% from designs that use less material"
+notes-drawings,1870s,,,F94,"Italian mosaic workers in the US from around 1875"
+notes-drawings,1920s,,,F95,Divider strips and grinders made terrazzo common by the early 1920s
+sec-closer,24%,,headline.target,,The EU's target
+notes-method,24%,,headline.target,,The EU's target
+explore-waterfall FI,5.6%,,trend_steps.FI.2012.2014.rate_to_pct,,Finland's rate in 2014
+explore-waterfall ES,10.4%,,trend_steps.ES.2010.2012.rate_from_pct,,Spain's rate in 2010
