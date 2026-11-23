@@ -35,7 +35,7 @@ The data file's blocks are `build_data.py`'s (`game`, `imports` and `examples` i
 - Ring: past 24% (20a, the game), the arc runs into a thicker translucent second lap. Panel 3 marks the share that comes back as waste; panel 4 fades the gold and adds a striped stretch until the ring closes while shards of the replaced materials fly off, then the disc closes up; panel 5 restores the full disc, removes shards (the same share of every material) and shrinks the disc; panel 6 restores the full disc and plays 20a's route for the EU, its highlight shown from the beat's start. Shards taken out fly off to the right, over the cards on wide screens (20a's and the game's over their text). A key under the ring builds by panel.
 - Waterfall: net arrows only on highlighted steps (8, 9, 11 and 20b's), which dim the rest, drawn after the step's bars.
 - ZIN: both towers start brown, then ZIN's top floors clear to daylight from the roof down to 377.
-- Ribbon: panels 16 and 17 fade the other materials.
+- Ribbon: its first card unfolds the ribbons from the weight column; the minerals and biomass cards fade the other materials. Its last card fades the columns and ribbons out and grows a bar per material, lowest first: the climate cost of producing a tonne against a tonne of minerals, from the data file's `weight_vs_climate`, with a tag under minerals (ZIN) and under biomass (IKEA's kitchens).
 
 ## Explorers (20a, 20b)
 
