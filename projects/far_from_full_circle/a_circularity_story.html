@@ -497,7 +497,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
           </defs>
           <g class="ring" transform="translate(200,176)">
-            <circle class="target" r="0"></circle>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
             <path class="rope"></path>
             <circle class="dot rate"></circle>
@@ -681,7 +681,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             <clipPath id="xr-clip2"><path></path></clipPath>
           </defs>
           <g class="ring" transform="translate(200,188)">
-            <circle class="target" r="0"></circle>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
             <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
             <path class="rope"></path>
             <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
@@ -727,7 +727,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
               <clipPath id="gm-clip2"><path></path></clipPath>
             </defs>
             <g class="ring" transform="translate(200,176)">
-              <circle class="target" r="0"></circle>
+              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end">24% target</text>
               <g class="turn">
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
@@ -1130,6 +1130,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     });
     return t;
   }
+  // The target's circle at radius R, with "24% target" beside it at about ten o'clock, outside
+  function placeTarget(g, R) {
+    g.select(".target").attr("r", R);
+    const a = -0.155 * 2 * Math.PI;
+    g.select(".target-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4);
+  }
 
   /* A chart's labels for a new state, built by build(L) into a fresh group in its g.labels.
      Over dur ms, labels the old state had too stay put, the old state's others fade out, and
@@ -1230,7 +1236,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const rise = d3.easeCubicInOut(clamp01(r - 1)); // the waste's gold, risen
     const gold = (1 - z) * (1 - clamp01(k4 / K4A / K4F));   // fading as panel 4's beat starts
     const fe = f + (1 - f) * grow;                 // where the stripes end: the rate with recycling raised
-    g.select(".target").attr("r", R);
+    placeTarget(g, R);
     const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
     const lit = q > 0 ? 1 - (1 - DIM) * q : null;
     g.select(".rope").attr("d", sector(R, 0, f)).attr("opacity", lit);
@@ -1312,7 +1318,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     let total = (U + E6 * rho) / den / TARGET;
     if (w2 >= 1 || Math.abs(total - 1) < 1e-4) total = 1;                         // closed: a full ring
     const s0 = Math.min(1, U / den / TARGET), s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
-    g.select(".target").attr("r", R);
+    placeTarget(g, R);
     g.select(".rope").attr("d", sector(R, 0, s1)).attr("opacity", null);
     stripesAt = "";                                                              // ringFrame redraws its own stripes
     xrStripes(g.select(".stripes").attr("opacity", null), "#ring-stripe-clip", R, s1, t1, 4.5, true);
@@ -1346,6 +1352,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const fe = turns(s.dmc);
     const has = function (k) { return s.key.indexOf(k) > -1; };
     const at = function (turn, r) { return [CX + r * Math.sin(turn * TAU), CY - r * Math.cos(turn * TAU)]; };
+    if (s.at === 0) label(L, CX, 352, [["Drawn as terrazzo: a floor made from leftover stone", "lab-src"]], "middle");
     const top = function (strong, rest, x, y) {   // one line above the ring, a leader down to (x, y)
       const t = L.append("text").attr("x", CX).attr("y", 30).attr("text-anchor", "middle");
       t.append("tspan").attr("class", "lab-strong").text(strong);
@@ -2322,7 +2329,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (q.gone > 0 && w2 >= 1 || Math.abs(total - 1) < 1e-4) total = 1;   // closed: a full ring
     const s0 = solid / TARGET, s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
 
-    g.select(".target").attr("r", R);
+    placeTarget(g, R);
     g.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(g.select(".stripes.rate"), "#xr-clip1", R, Math.min(1, s1), t1, 4.5, true);
     const s2 = Math.max(0, s0 - 1), t2 = Math.max(0, total - 1);   // the second lap
@@ -3037,7 +3044,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     let total = arc[1];
     if (Math.abs(total - 1) < 1e-4) total = 1;     // closed: a full ring, with no ends
     const s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
-    GM_G.select(".target").attr("r", R);
+    placeTarget(GM_G, R);
     GM_G.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(GM_G.select(".stripes.rate"), "#gm-clip1", R, Math.min(1, s1), t1, 4.5, true);
     const s2 = Math.min(1, Math.max(0, s0 - 1)), t2 = Math.min(1, Math.max(0, total - 1));   // the second lap
