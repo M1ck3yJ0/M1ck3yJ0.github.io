@@ -178,6 +178,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   font-weight: 800;
   color: var(--ink-2);
 }
+@media (min-width: 800px) {
+  .card, .explore-text, .closer-text { font-size: 20px; }
+}
 .card h1 {
   margin: 0 0 12px;
   font-size: 29px; line-height: 1.08;
@@ -193,13 +196,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .stripes.rate line { stroke: var(--back); stroke-width: 2.2; }
 .ring .waste path, .ring-key .waste { fill: var(--back-could); }
 .ring-key .hatch-rate { fill: url(#ring-hatch-rate); }
-.key { fill: var(--ink-2); font-size: 13px; }
-.lab { fill: var(--ink-2); font-size: 13.5px; }
-.lab-num { fill: var(--ink); font-size: 21px; font-weight: 700; }
-.lab-strong { fill: var(--ink); font-size: 15px; font-weight: 700; }
+.key { fill: var(--ink-2); font-size: calc(13px * var(--cf, 1)); }
+.lab { fill: var(--ink-2); font-size: calc(13.5px * var(--cf, 1)); }
+.lab-num { fill: var(--ink); font-size: calc(21px * var(--cf, 1)); font-weight: 700; }
+.lab-strong { fill: var(--ink); font-size: calc(15px * var(--cf, 1)); font-weight: 700; }
 .lab-white { fill: #fff; }
-.lab-on { fill: #fff; font-size: 14px; font-weight: 700; }
-.lab-src { fill: var(--ink-2); font-size: 11px; }
+.lab-on { fill: #fff; font-size: calc(14px * var(--cf, 1)); font-weight: 700; }
+.lab-src { fill: var(--ink-2); font-size: calc(11px * var(--cf, 1)); }
 .leader { stroke: var(--ink-2); stroke-width: 1; }
 .wf .grid { stroke: var(--hairline); stroke-width: 1; }
 .wf .base, .wf .tick { stroke: var(--ink-2); stroke-width: 1; }
@@ -240,7 +243,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ikea .steel-1 { fill: var(--steel-1); } .ikea .steel-2 { fill: var(--steel-2); }
 .ikea .steel-3 { fill: var(--steel-3); } .ikea .steel-4 { fill: var(--steel-4); }
 .cmp .biomass.est { fill: url(#cmp-hatch-biomass); }
-.ex-row { font-size: 14px; }
+.ex-row { font-size: calc(14px * var(--cf, 1)); }
 .ex-state { fill: var(--ink); font-weight: 700; }
 .ex-rest { fill: var(--ink-2); }
 .rib .minerals, .ring .minerals, .ring-key .minerals, .cmp .minerals { fill: var(--mat-minerals); }
@@ -365,7 +368,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game.is-fresh .game-nums, .game.is-fresh .game-caveats, .game.is-fresh .game-reset { display: none; }
 .game:not(.is-fresh) .game-intro, .game:not(.is-fresh) #game-chart .hints { display: none; }
 #game-chart .hints path { fill: none; stroke: var(--ink-2); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
-#game-chart .hints text { fill: var(--ink-2); font-size: 13px; font-style: italic; }
+#game-chart .hints text { fill: var(--ink-2); font-size: calc(13px * var(--cf, 1)); font-style: italic; }
 .game-keys { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px 16px 0; }
 .mkey {
   display: grid; grid-template-columns: 12px 1fr; column-gap: 8px; align-items: center; align-content: center;
@@ -415,7 +418,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   #game-chart { width: var(--chart); }
   #game-chart svg { overflow: visible; }            /* its shards fly over the text */
   .game-end { order: 2; }
-  .game-intro, .game-end { padding: 12px 0 0; }
+  .game-intro, .game-end { padding: 12px 0 0; font-size: 20px; }
   .game .skip { margin: 10px 0 0; }
   .game-nums, .game-caveats { margin-left: 0; margin-right: 0; }
   .game-reset { margin-left: 0; }
@@ -866,6 +869,11 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   const fmt1 = d3.format(".1f");
   const clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
   const wideMQ = window.matchMedia("(min-width: 800px)");
+  // Chart type on wide screens: at most 1.075 px per unit, so labels stay under the cards' type
+  if (wideMQ.matches) {
+    const px = document.getElementById("ring").getBoundingClientRect().width / 400;
+    document.documentElement.style.setProperty("--cf", Math.min(1, 1.075 / px).toFixed(3));
+  }
 
   /* ---------- Ring: the target as a ring, EU 2022 ----------
      The disc's area is material consumed. The ring is drawn around it at a set gap, and the
