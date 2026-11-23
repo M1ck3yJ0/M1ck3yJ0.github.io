@@ -953,6 +953,9 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const fmt1 = d3.format(".1f");
   const clamp01 = function (x) { return Math.max(0, Math.min(1, x)); };
   const wideMQ = window.matchMedia("(min-width: 800px)");
+  // How much of a chart is on screen before its first beat plays, as Timing below; the explorers use it too
+  const CHART_IN = 0.9, CHART_WIDE = 0.75, CHART_IN_STEPS = [0, CHART_WIDE, CHART_IN];
+  const chartIn = function () { return wideMQ.matches ? CHART_WIDE : CHART_IN; };
   // Chart type on wide screens: at most 1.075 px per unit, times the type's scale (half the
   // chart's growth past its 560 px base, as --t), so labels stay under the cards' type
   if (wideMQ.matches) {
@@ -2167,9 +2170,9 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      the arc's ends meet. Past 24%, the arc runs on as a second lap over the
      first, thicker and translucent. The discs are solved in the page (far_from_full_circle_shards.js),
      in a Web Worker where one starts, and the smaller disc is drawn at the solver's radius, which
-     keeps the shards' area in proportion to the material left. Not pinned: the beat plays when
-     the ring comes onto the screen from below, and again whenever the country changes; it waits
-     at its start again only once it's off screen below. With reduced motion, the end is drawn. */
+     keeps the shards' area in proportion to the material left. Not pinned: the beat plays by Timing's
+     rule, once the chart is chartIn() visible, for beatDur(T), and again whenever the country
+     changes; it waits at its start again only once it's off screen below or closed. */
   const XNAME = { NL: "the Netherlands" };         // names as they read inside a sentence, for both explorers
   const XR_FIG = document.querySelector("#explore-ring");
   const XR_KEY = 0.82;                             // its key, smaller than the pinned rings'
@@ -2482,14 +2485,14 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   function xrRun() {
     if (!XR.T) return xrShow(1);
     xrLabels("moving");
+    const T = beatDur(XR.T, 1);
     xrTimer = d3.timer(function (t) {
-      xrFrame(xrP = Math.min(1, t / XR.T));
+      xrFrame(xrP = Math.min(1, t / T));
       if (xrP === 1) { xrTimer.stop(); xrTimer = null; xrLabels("end"); }
     });
   }
 
   function xrPlay() {                              // plays from the start, once the discs are solved
-    if (STILL) return xrShow(1);
     xrShow(0);
     if (XR.disc) xrRun();
     else { xrPending = true; xrEnsure(); }
@@ -2503,23 +2506,22 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const waiting = xrP === 0 && !xrTimer && !xrPending;   // not reached yet, it keeps waiting
     xrSet(this.value);
     xrEnsure();
-    if (STILL || !window.IntersectionObserver) xrShow(1); else if (waiting) xrShow(0); else xrPlay();
+    if (!window.IntersectionObserver) xrShow(1); else if (waiting) xrShow(0); else xrPlay();
   });
   xrSet("DE");
-  xrShow(STILL || !window.IntersectionObserver ? 1 : 0);
+  xrShow(window.IntersectionObserver ? 0 : 1);
 
   if (window.IntersectionObserver) {
     new IntersectionObserver(function (es, ob) {   // solved before it's reached
       if (es[es.length - 1].isIntersecting) { xrEnsure(); ob.disconnect(); }
     }, { rootMargin: "200% 0px" }).observe(XR_FIG);
   } else xrEnsure();
-  if (!STILL && window.IntersectionObserver) {     // the ring's foot reaching the screen's bottom
-    const at = (XR_CY + R0 + 12) / 400;
+  if (window.IntersectionObserver) {              // the chart CHART_IN visible, as a beat's first card
     new IntersectionObserver(function (es) {
       const e = es[es.length - 1], below = e.boundingClientRect.top > 0 || !e.boundingClientRect.height;   // closed counts as below
       if (!e.isIntersecting && below) xrShow(0);
-      else if (xrP === 0 && !xrTimer && !xrPending && (!below || e.intersectionRatio >= at - 0.01)) xrPlay();
-    }, { threshold: [0, at] }).observe(XR_FIG.querySelector(".chart"));
+      else if (xrP === 0 && !xrTimer && !xrPending && (!below || e.intersectionRatio >= chartIn() - 0.01)) xrPlay();
+    }, { threshold: CHART_IN_STEPS }).observe(XR_FIG.querySelector(".chart"));
   }
 
   /* ---------- Explorer 20b: a country's waterfall, 2010 to 2024 ----------
@@ -2527,9 +2529,9 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      when country rates start, on the rate's own axis from the country's 2010 rate. The axis
      fits the country's own range, but never spans less than panel 7's 4.8, so small moves are
      drawn at the EU chart's scale, and never goes below 0%. Not
-     pinned: it builds as panel 7 does when its year labels come onto the screen from below,
+     pinned: it builds by Timing's rule, once the chart is chartIn() visible, for beatDur(T),
      and again whenever the country changes. It waits at its start again only once it's off
-     screen below. With reduced motion, it's drawn whole. */
+     screen below or closed. */
   const XK = DATA.step_years.indexOf(2010);
   const XYRS = DATA.step_years.slice(XK);
   const XNS = XYRS.length - 1;
@@ -2705,9 +2707,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   }
 
   function xPlay() {                               // builds from the start
-    if (STILL) return xShow(1);
     xShow(0);
-    const T = T_XBUILD + (xHl.length ? T_XHL : 0);
+    const T = beatDur(T_XBUILD + (xHl.length ? T_XHL : 0), 1);
     xTimer = d3.timer(function (t) {
       xFrame(xP = Math.min(1, t / T));
       if (xP === 1) { xTimer.stop(); xTimer = null; }
@@ -2774,15 +2775,14 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   xrPick.on("change.xw", xText);                   // 20a's pick changes the link
   xDraw();
   xText();
-  xShow(STILL || !window.IntersectionObserver ? 1 : 0);
+  xShow(window.IntersectionObserver ? 0 : 1);
 
-  if (!STILL && window.IntersectionObserver) {     // the year labels' tops reaching the screen's bottom
-    const at = WYEAR_TOP / 400;
+  if (window.IntersectionObserver) {              // the chart CHART_IN visible, as a beat's first card
     new IntersectionObserver(function (es) {
       const e = es[es.length - 1], below = e.boundingClientRect.top > 0 || !e.boundingClientRect.height;   // closed counts as below
       if (!e.isIntersecting && below) xShow(0);
-      else if (xP === 0 && !xTimer && (!below || e.intersectionRatio >= at - 0.01)) xPlay();
-    }, { threshold: [0, at] }).observe(XFIG.querySelector(".chart"));
+      else if (xP === 0 && !xTimer && (!below || e.intersectionRatio >= chartIn() - 0.01)) xPlay();
+    }, { threshold: CHART_IN_STEPS }).observe(XFIG.querySelector(".chart"));
   }
 
   /* ---------- The ring game (21): close the EU's ring ----------
@@ -3342,7 +3342,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 
   /* Timing. Each beat's transition starts when the card before it is almost clear of the top
      edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
-     that chart is 90% visible. Each runs for its own fixed duration, set so it ends about when
+     that chart is CHART_IN visible. Each runs for its own fixed duration, set so it ends about when
      the card reaches its place: right below the chart on a phone, centered on wide screens,
      STRETCH px of scrolling after the start. Cards are spaced to match: in CSS on a phone,
      here on wide screens. Scrolling back plays at BACK times the speed, and reduced motion at
@@ -3352,7 +3352,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      of scrolling from its place (a chart's first card also waits for the chart to be CHART_WIDE
      visible), and plays STRETCH_WIDE / STRETCH times as long. */
   const STRETCH = 170, ALMOST = 32, BACK = 2.5, REDUCED = 3;
-  const STRETCH_WIDE = 260, CHART_WIDE = 0.75;
+  const STRETCH_WIDE = 260;
   // A beat's duration in ms, in the direction it plays (1 forward, -1 back, 0 at once)
   const beatDur = function (ms, dir) {
     if (!dir) return 0;
@@ -3425,7 +3425,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         const f = b.fig.getBoundingClientRect();
         return f.top + CHART_WIDE * f.height <= bottom;
       }
-      if (b) { const r = b.fig.getBoundingClientRect(); return r.top + 0.9 * r.height <= bottom; }
+      if (b) { const r = b.fig.getBoundingClientRect(); return r.top + CHART_IN * r.height <= bottom; }
       return !i || CARDS[i - 1].getBoundingClientRect().bottom <= top + ALMOST;
     };
     let queued = false;
