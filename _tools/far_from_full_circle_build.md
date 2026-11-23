@@ -10,7 +10,7 @@ Plain HTML and SVG, D3 7.9.0 from jsDelivr, `position: sticky` for pinning, News
 
 In `projects/far_from_full_circle/`: the page `a_circularity_story.html`; the data file `far_from_full_circle_data.js`; the font; `far_from_full_circle_shards.js`, the ring's solver for the game and explorers (usage at the top of the file; `useLess` takes one share for every material or one per material; `reshape` takes out named shards and resizes the rest to exact shares).
 
-The data file's blocks are `build_data.py`'s (`game` and `imports` included), merged in with the file's own blocks kept: `examples`, `center_shards` (the full disc, panel 4's `recycle`, panel 5's `less`, panel 6's `both` with its `rec` disc after recycling 70% and its final disc) and `food_heaps`. It carries `replacement`, and each country's figures at that replacement: `extra_recycled_70pct_kt`, `rate_70pct_recycled`, `rate_70pct_recycled_if_adding`, `replaced_70pct_recycled`, `gone_without_70pct_recycled`, `recycled_share_to_close`, `less_new_material_to_close`, `not_recycled_mix` and `waste_check`, plus 20b's `highlights` and `climate_total_mt`.
+The data file's blocks are `build_data.py`'s (`game`, `imports` and `examples` included), merged in with the file's own blocks kept: `center_shards` (the full disc, panel 4's `recycle`, panel 5's `less`, panel 6's `both` with its `rec` disc after recycling 70% and its final disc) and `food_heaps`. It carries `replacement`, and each country's figures at that replacement: `extra_recycled_70pct_kt`, `rate_70pct_recycled`, `rate_70pct_recycled_if_adding`, `replaced_70pct_recycled`, `gone_without_70pct_recycled`, `recycled_share_to_close`, `less_new_material_to_close`, `not_recycled_mix` and `waste_check`, plus 20b's `highlights` and `climate_total_mt`.
 
 ## Layout
 
@@ -27,7 +27,7 @@ The data file's blocks are `build_data.py`'s (`game` and `imports` included), me
 - Annotations sit inside the chart's own box, never as floating tooltips.
 - Each card declares the chart's whole state, so scrolling back, resizing and reduced motion all work.
 - One card per item in the sequence (panel 4 has three, panels 5 and 6 two). An idea is never split across several small cards.
-- Caveats appear on the charts as well as in the notes: the 2024 estimate, the factory gate, recycling held fixed when material is cut, the assumed replacement. Panel 20's not like for like is in its card and notes only.
+- Caveats appear on the charts as well as in the notes: the 2024 estimate, the factory gate, recycling held fixed when material is cut, the assumed replacement.
 - Mobile toolbars: anything sized or triggered by viewport height uses `svh` or a pixel value that changes only with the width, never a value read on every resize.
 
 ## Chart mechanics
@@ -36,7 +36,6 @@ The data file's blocks are `build_data.py`'s (`game` and `imports` included), me
 - Waterfall: net arrows only on highlighted steps (8, 9, 11 and 20b's), which dim the rest, drawn after the step's bars.
 - ZIN: both towers start brown, then ZIN's top floors clear to daylight from the roof down to 377.
 - Ribbon: panels 16 and 17 fade the other materials.
-- Panel 20: IKEA's estimated tonnes hatched; only the per-tonne lines under the chart, the caveats in the card.
 
 ## Explorers (20a, 20b)
 
