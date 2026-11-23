@@ -389,7 +389,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game .skip { order: 3; align-self: flex-end; margin: 10px 16px 0 0; }
 #game-chart { order: 4; width: auto; height: auto; }
 #game-chart svg { height: auto; pointer-events: none; }
-.game-keys { order: 6; }
+.game-keys, .game-tapnote { order: 6; }
 .game-nums { order: 7; }
 .game-caveats { order: 8; }
 .game-end { order: 9; }
@@ -431,6 +431,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .game-nums .t { grid-column: 1 / 3; font-size: 14px; color: var(--ink-2); }
 .game-caveats { margin: 8px 16px 0; font-size: 14px; line-height: 1.35; color: var(--ink-2); }
 .game-caveats span { display: block; }
+.game-tapnote { margin: 8px 16px 0; font-size: 14px; line-height: 1.35; color: var(--ink-2); }
 #game-chart .swell { fill: none; stroke: var(--back); }
 #game-chart .ripple { fill: none; stroke: var(--target); }
 #game-chart .knob-hit { fill: transparent; pointer-events: all; cursor: grab; touch-action: none; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -477,7 +478,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   .mkey .mcut { font-size: calc(15 * var(--t)); }
   .game-nums dt, .game-reset, .game-start { font-size: calc(16 * var(--t)); }
   .game-nums .v { font-size: calc(20 * var(--t)); }
-  .game-nums .t, .game-caveats { font-size: calc(14 * var(--t)); }
+  .game-nums .t, .game-caveats, .game-tapnote { font-size: calc(14 * var(--t)); }
 }
 </style>
 </head>
@@ -528,7 +529,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         <p>That rests on two hopes at once. The first is that the EU recycles nearly all of its waste, when even the European Environment Agency pictures recycling 90% only by 2050. The second is that each recycled tonne truly takes the place of a new one, and that happens only as far as markets let it. If it replaced none at all, the ring would never close this way: recycling every tonne would stop at 23.7%.</p>
       </article>
       <article class="card" data-state="every">
-        <p>And recycling is never free. Sorting and reprocessing lose part of what is collected, and paper needs fresh fiber to keep going round. Steel scrap carries copper that can't be refined out, so the sheet for car bodies still comes almost entirely from new steel. Concrete may take only part of its stone from rubble, and in practice takes almost none: rubble goes instead under roads and into fill. And what recycling would replace is mostly sand, gravel and stone, because that is most of the waste not yet recycled. So closing the ring this way removes 8.1% of the EU's new material by weight, but only about 3.6% of the climate impact of making it, and even that is a generous estimate.</p>
+        <p>And recycling is never free. Sorting and reprocessing lose part of what is collected, and paper needs fresh fiber to keep going round. Steel scrap carries copper that can't be refined out, so the sheet for car bodies still comes almost entirely from new steel. Concrete may take only part of its stone from rubble, and in practice takes almost none: rubble goes instead under roads and into fill. And what recycling would replace is mostly sand, gravel and stone, because that is most of the waste not yet recycled. So closing the ring this way removes 8.1% of the EU's new material by weight, but only about 3.6% of the climate cost of producing it, burning fuels not counted, and even that is a generous estimate.</p>
       </article>
       <article class="card" data-state="gone">
         <p>Now the other lever. Keep recycling where it was in 2022, and use less instead. To close the ring this way, the EU would need to use 59.3% less new material than it did in 2022: about 8.5 of those 14 tonnes per person. It's a great deal to ask.</p>
@@ -601,7 +602,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <h2 class="sec-title sec-title-m">The rate is mostly sand and stone, the materials that cost the climate&nbsp;least</h2>
     <div class="pin">
       <figure class="chart" id="ribbon">
-        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's material use in 2022 in four kinds of material, as shares of its weight and of the climate impact of making the materials, joined by ribbons. Minerals are 52.3% of the weight and 11.4% of the climate impact; metal ores 5.5% and 16.3%; fossil fuels 19.5% and 26.6%; biomass 22.7% and 45.7%.">
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's material use in 2022 in four kinds of material, as shares of its weight and of the climate cost of producing the materials, burning fuels not counted, joined by ribbons. Minerals are 52.3% of the weight and 11.4% of the climate cost; metal ores 5.5% and 16.3%; fossil fuels 19.5% and 26.6%; biomass 22.7% and 45.7%.">
           <g class="rib"></g>
           <g class="labels"></g>
         </svg>
@@ -613,13 +614,13 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         <p>There's something the rate can't see. It counts materials by weight, and only by weight, so a tonne of gravel counts the same as a tonne of metal or a tonne of food. But weight isn't impact. Here is everything the EU used in 2022, by weight, in four kinds of material.</p>
       </article>
       <article class="card" data-state="ribbons">
-        <p>Now follow each material across, from its share of the weight to its share of the climate impact of making it.</p>
+        <p>Now follow each material across, from its share of the weight to its share of the climate cost of producing it, burning fuels not counted.</p>
       </article>
       <article class="card" data-state="minerals">
-        <p>Sand, gravel, stone and other minerals are more than half of the EU's material use by weight, 52.3%, yet only 11.4% of the climate impact of making materials. The tonnes that dominate the rate do the least harm to the climate, tonne for tonne. They are also the tonnes Europe relies on no one for: about 3% come from outside the EU.</p>
+        <p>Sand, gravel, stone and other minerals are more than half of the EU's material use by weight, 52.3%, yet only 11.4% of the climate cost of producing materials. The tonnes that dominate the rate do the least harm to the climate, tonne for tonne. They are also the tonnes Europe relies on no one for: about 3% come from outside the EU.</p>
       </article>
       <article class="card" data-state="biomass">
-        <p>Biomass, the crops, feed and wood we grow and harvest, runs the other way. It's 22.7% of the weight, but 45.7% of the climate impact, the largest share of any of the four.</p>
+        <p>Biomass, the crops, feed and wood we grow and harvest, runs the other way. It's 22.7% of the weight, but 45.7% of the climate cost, the largest share of any of the four.</p>
         <p class="note-link"><a href="#notes-ribbon">Sources and notes &#8595;</a></p>
       </article>
     </div>
@@ -748,6 +749,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <button type="button" class="mkey" data-m="2"><span class="sw fossil"></span><span class="mname">Fossil fuels</span><span class="mcut">0%</span></button>
           <button type="button" class="mkey" data-m="3"><span class="sw metals"></span><span class="mname">Metal ores</span><span class="mcut">0%</span></button>
         </div>
+        <p class="game-tapnote" hidden>Not counted here: burning fossil fuels, where most of their emissions happen.</p>
       </div>
       <div class="game-r">
         <h2 class="sec-title explore-title" id="sec-game">Your turn: close the EU's&nbsp;ring</h2>
@@ -755,18 +757,18 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <p>Now it's your turn. Close the EU's ring, from its 11.4% circularity in 2022 to the 24% target, with either lever or both.</p>
           <p><strong>Recycle more:</strong> drag the gold knob around the ring. It starts at the 41% of its waste the EU recycled in 2022 and goes up to 100%; the EEA's scenarios reach 70% by 2030 and 90% by 2050. As in the story above, each extra recycled tonne replaces half a new one.</p>
           <p><strong>Use less:</strong> tap a material under the ring to use less of it, 5.5% of all the EU's new material at a time.</p>
-          <p>Once you start, the numbers keep count of what the EU gives up: by weight, by climate impact and in imports. You can keep going past 24%.</p>
+          <p>Once you start, the numbers keep count of what the EU gives up: by weight, by the climate cost of producing materials and in imports. You can keep going past 24%.</p>
           <button type="button" class="game-start">Start</button>
         </div>
         <div class="game-end" aria-live="polite" hidden></div>
         <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
         <dl class="game-nums">
           <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
-          <div><dt>Climate impact removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO2e</dd></div>
+          <div><dt>Climate cost removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO2e</dd><dd class="t">Producing materials only, not burning fuels</dd></div>
           <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
           <div><dt>Waste recycled</dt><dd class="v" data-n="share">41%</dd><dd class="t" data-n="mult">1.0× 2022's recycling</dd><dd class="t">The EEA's scenarios: 70% by 2030, 90% by 2050</dd></div>
         </dl>
-        <p class="game-caveats"><span>Assumed: each recycled tonne replacing half a new one</span><span>Climate impact of making materials, up to the factory gate</span></p>
+        <p class="game-caveats"><span>Assumed: each recycled tonne replacing half a new one</span></p>
         <button type="button" class="game-reset">Start again</button>
         <p class="note-link"><a href="#notes-game">Sources and notes &#8595;</a></p>
       </div>
@@ -777,7 +779,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="closer-text">
       <h2 class="sec-title">A better target would count what materials cost, not what they&nbsp;weigh</h2>
       <p>So what would help? First, saying plainly what the target asks. When the EU first set this goal, in 2020, it came in the same sentence as another: to reduce its consumption footprint, the harm our consumption does to the climate and to nature. Two years later, the EU's environment program for 2030 named, among the conditions for reaching its goals, significantly cutting both its material footprint, the tonnes it uses, and that consumption footprint, including through 2030 reduction targets where appropriate. The European Parliament has asked for those targets, and the Council has asked the Commission to assess them. In 2025, the rate got its number, 24%. The footprints are still waiting for theirs, and the coming Circular Economy Act is a chance to give it, as Austria has already done for the material it uses.</p>
-      <p>Second, counting what materials cost, not just what they weigh. Much of EU law already does. Since January 2026, importers of steel, cement and aluminum must pay for the carbon in what they bring in. Construction products will have to declare their climate impact as each product's standards are renewed, and from 2028 large new buildings must disclose theirs over their whole life. Yet the targets for circularity count tonnes, as do the EU's recycling targets for waste. Met by recycling 70% of waste and giving up the heaviest materials first, 24% would take 31% of the EU's new material away, yet cut only about 8% of the climate impact of making materials, and about 5% of what the EU imports. A number for the consumption footprint, set beside the rate, would show what those tonnes cost.</p>
+      <p>Second, counting what materials cost, not just what they weigh. Much of EU law already does. Since January 2026, importers of steel, cement and aluminum must pay for the carbon in what they bring in. Construction products will have to declare their climate impact as each product's standards are renewed, and from 2028 large new buildings must disclose theirs over their whole life. Yet the targets for circularity count tonnes, as do the EU's recycling targets for waste. Met by recycling 70% of waste and giving up the heaviest materials first, 24% would take 31% of the EU's new material away, yet cut only about 8% of the climate cost of producing materials, burning fuels not counted, and about 5% of what the EU imports. A number for the consumption footprint, set beside the rate, would show what those tonnes cost.</p>
       <p>ZIN shows why this matters. Its owner kept 171,000 tonnes of concrete standing, and those tonnes never count as recycled: they never became waste, so they never came back. Only the floors that did come down, crushed into new aggregate, counted. Had the towers come down whole and been recycled, every tonne would have counted. As I read the rate, the choice that kept 21,400 tonnes of CO2 out of the air scores worse than tearing the towers down and building again. Choices like ZIN's, and like IKEA's kitchens wasting less food, are already being made, and a better measure would see them.</p>
       <p>And most of all, making what we already have last, and designing what we make next to need less: keeping our buildings standing, using what we make for longer, wasting less of what we grow, and designing products and buildings to last, to be repaired and to use less material from the start. For homes, the International Resource Panel found that using them more intensively could cut the emissions of their materials by up to 70% by 2050 in the G7, against 14 to 18% from better recycling and 8 to 10% from designs that use less material.</p>
       <p>Recycling could close the ring alone only by reaching almost all our waste, and using less of everything would take a cut far deeper than any the EU has made. We will need both, and a target that rewards the cuts that matter most.</p>
@@ -811,7 +813,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
           <tr><th scope="row">Rate with every tonne of waste recycled</th><td>23.7%</td><td class="used">25.5%</td><td>27.5%</td></tr>
           <tr><th scope="row">Waste recycled for recycling alone to close the ring</th><td>never closes</td><td class="used">93.4%</td><td>87.1%</td></tr>
           <tr><th scope="row">Less new material when it closes</th><td>none</td><td class="used">8.1%</td><td>14.2%</td></tr>
-          <tr><th scope="row">Climate impact of making materials removed then</th><td>none</td><td class="used">3.6%</td><td>6.4%</td></tr>
+          <tr><th scope="row">Climate cost of producing materials removed then (burning fuels not counted)</th><td>none</td><td class="used">3.6%</td><td>6.4%</td></tr>
           <tr><th scope="row">Rate with 70% of waste recycled</th><td>17.9%</td><td class="used">18.6%</td><td>19.3%</td></tr>
           <tr><th scope="row">At 70% recycled, of the 31.0% less new material: replaced by recycling</th><td>none</td><td class="used">4.5%</td><td>8.9%</td></tr>
           <tr><th scope="row">Gone without</th><td>31.0%</td><td class="used">26.5%</td><td>22.0%</td></tr>
@@ -831,7 +833,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p class="note-src">Sources: Eurostat; climate shares, ETC CE Report 2025/3; recycled aggregate, JRC 2023. EU, 2022.</p>
       <p>Recycling every tonne has never been enough to go far past a quarter. In every reporting year from 2010 to 2022, recycling all of the EU's treated waste would have lifted the rate to between 25.5% and 28.1%, with each extra recycled tonne replacing half a new one. If recycled tonnes replaced none, it would have been 23.7% to 25.8%; if each replaced a whole new tonne, 27.5% to 30.9% (my calculation from Eurostat). The 59.3% less new material that closes the ring by using less alone is also my arithmetic, not a published figure; the Method note sets out what it assumes.</p>
       <p>When recycling rises, as in panels 4 and 6, the new tonnes it replaces are split across materials by the waste not yet recycled: 86.5% minerals, 9.5% biomass, 3.2% fossil fuels and 0.9% metal ores (env_wassd). Sorted by Eurostat's waste categories instead, 75.8% of it is major mineral waste, about 82% with ash and mineral residues (env_wastrt). Those tonnes leave a disc whose shards cover each group's share of the EU's material consumption: 52.0% minerals, 23.3% biomass, 19.3% fossil fuels and 5.5% metal ores (env_ac_mfa).</p>
-      <p>The climate impact removed is each group's share of its own consumption removed, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4). For the tonnes recycling replaces, that uses each group's average impact per tonne, which flatters recycling: recycled aggregate stands in for natural sand, gravel and crushed stone, not for cement, and concrete made with it often needs more cement (JRC 2023). Nor does it count the energy recycling itself uses. So the 3.6% of climate impact removed when recycling alone closes the ring is generous.</p>
+      <p>The climate cost removed is each group's share of its own consumption removed, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4). For the tonnes recycling replaces, that uses each group's average impact per tonne, which flatters recycling: recycled aggregate stands in for natural sand, gravel and crushed stone, not for cement, and concrete made with it often needs more cement (JRC 2023). Nor does it count the energy recycling itself uses. So the 3.6% of climate cost removed when recycling alone closes the ring is generous.</p>
       <p>Imports are each group's imports from outside the EU in 2022 (env_ac_mfa). They were 70.9% of the fossil fuels and 50.3% of the metal ores entering the EU's economy, against 12.2% of its biomass and 3.2% of its minerals. Any route's cut in imports assumes each group's imports fall in proportion to its use.</p>
       <p>Following Eurostat's method, waste the EU exports for recycling counts as circular and waste it imports for recycling is deducted. In 2022, across the four groups, it exported 36.4 million tonnes and imported 40.7 million (env_ac_sd), so trade lowered its circular use slightly. Metals ran the other way: 19.5 million tonnes went out against 5.6 million in, and exports were 19.5% of metals' circular use. Because env_wassd's tonnes are scaled to the rate's totals (Method), these splits by material are approximate.</p>
       <p class="note-back"><a href="#sec-ring">Back to the chart &#8593;</a></p>
@@ -891,9 +893,9 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </section>
     <section class="note" id="notes-game">
       <h3>Your turn: close the EU's ring</h3>
-      <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA. EU, 2022. Removals: my calculation.</p>
+      <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA; burning fuels, IEA. EU, 2022. Removals: my calculation.</p>
       <p>The game runs on the same model as the story. Waste is held at 2022's 1,971 million tonnes treated. The knob starts at the 41.1% of it recycled in 2022 by the rate's own count (Eurostat's waste statistics give 40.8%), and each extra recycled tonne replaces half a new one, an assumed midpoint (Method), split across materials by the waste not yet recycled, as in the ring's note. A tap takes 5.5% of 2022's new material from one material. Recycling replaces first, and taps cut only what it hasn't, so a cut gives way as recycling rises. Its endings match the story: 59.3% less new material at 2022's recycling, 31.0% at 70%, and recycling alone closing the ring between 93% and 94% of waste recycled.</p>
-      <p>Climate impact removed is each material's share removed of its own consumption, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4), applied to Eurostat's tonnes. As in the ring's note, the credit for recycling's replaced tonnes uses average impact per tonne, which flatters recycling. The tonnes of CO2e are that share of 2.89 billion tonnes, the climate impact of the raw materials used in the EU in 2022 (ETC CE Report 2025/3, Table 3-1). That is a footprint of the EU's final demand, measured to the factory gate, so it can't be set beside the EU's own emissions. The report doesn't say Figure 3-4's shares come from the same calculation as the total, though both rest on the same models (FIGARO, 2024 edition, and EXIOBASE 3.8.2).</p>
+      <p>Climate cost removed is each material's share removed of its own consumption, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4), applied to Eurostat's tonnes. As in the ring's note, the credit for recycling's replaced tonnes uses average impact per tonne, which flatters recycling. The tonnes of CO2e are that share of 2.89 billion tonnes, the climate impact of the raw materials used in the EU in 2022 (ETC CE Report 2025/3, Table 3-1). That is a footprint of the EU's final demand, measured to the factory gate, so it can't be set beside the EU's own emissions. Burning fuels isn't counted, and for oil and gas that is most of their climate cost: worldwide, producing, moving and refining them caused just under 15% of energy-related greenhouse gas emissions, and using them another 40% (IEA, Emissions from Oil and Gas Operations in Net Zero Transitions, 2023). The report doesn't say Figure 3-4's shares come from the same calculation as the total, though both rest on the same models (FIGARO, 2024 edition, and EXIOBASE 3.8.2).</p>
       <p>Imports removed are measured against the 1.66 billion tonnes the EU imported from outside it in 2022 (env_ac_mfa), and assume each material's imports fall in proportion to its use. A material with nothing left counts as all removed.</p>
       <p class="note-back"><a href="#sec-game">Back to the game &#8593;</a></p>
     </section>
@@ -902,7 +904,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p class="note-src">Sources: European Commission; Decision (EU) 2022/591; European Parliament; Council of the EU; European Environment Agency; Austria's Circular Economy Strategy; Regulation (EU) 2023/956; Regulation (EU) 2024/3110; Directive (EU) 2024/1275; Regulation (EU) 2024/1252; European Court of Auditors; Directive 2008/98/EC; Haupt and Hellweg 2019; EPA Research Report 458; Eurostat; ETC CE Reports 2023/6 and 2025/3; International Resource Panel; Krausmann et al. 2017; Haas et al. 2015. Climate impact and imports removed, and the rate past 2030: my calculation.</p>
       <p>The 2020 Circular Economy Action Plan set the doubling in the same sentence as a pledge to reduce the EU's consumption footprint (COM(2020) 98, Introduction). The Clean Industrial Deal of 2025 made 24% by 2030 one of its targets, citing that plan, and gave as its reasons making the most of limited resources, depending less on others, resilience, lower production costs and less CO2 (COM(2025) 85, sections 1 and 3). It never mentions using less material: "footprint" appears once, for labels showing consumers a product's carbon footprint, and "consumption" only for energy (searched in the EUR-Lex text). The Commission plans to adopt the Circular Economy Act in the fourth quarter of 2026; trade press expects it on December 2, and one report says 2027.</p>
       <p>The 8th Environment Action Programme lists, among the conditions its objectives "shall require" of the Commission, member states and others "as appropriate," "significantly decreasing the Union's material and consumption footprints to bring them into planetary boundaries as soon as possible, including through the introduction of Union 2030 reduction targets, as appropriate" (Decision (EU) 2022/591, Article 3(s)). The material footprint is the raw material, in tonnes, needed to make what the EU consumes; the consumption footprint is the environmental impact of that consumption, scored by the Joint Research Centre in 16 impact categories, climate change among them. The Commission's monitoring targets for both are only to "significantly decrease" them, while most of the targets beside them carry a number, the rate's doubling among them (COM(2022) 357). The European Parliament asked for binding 2030 targets for both footprints (resolution of February 10, 2021), and the Council invited the Commission to assess "ambitious and economically feasible science-based targets" for them (conclusions of June 17, 2024, paragraph 28(c)). The European Environment Agency says circular policies should extend beyond waste "to possibly include targets on resource use or material footprint" (EEA 2024, executive summary). Austria's strategy pairs an 18% rate target for 2030 with bringing material use down to 14 tonnes per person by 2030.</p>
-      <p>At 70% of waste recycled, the EU still needs 31.0% less new material: recycling replaces 4.5%, mostly minerals, and it goes without the other 26.5% (Method). If what it goes without is taken whole material by whole material, heaviest first, that is minerals alone, and the cut removes 7.8% of the climate impact of making the EU's materials and 4.6% of what it imports from outside the EU. Taken by climate impact per tonne instead, metal ores first and then biomass, the same tonnes remove 59.5% of the climate impact and 26.4% of imports. Both are counted as in the game's note, with the same credit to recycling.</p>
+      <p>At 70% of waste recycled, the EU still needs 31.0% less new material: recycling replaces 4.5%, mostly minerals, and it goes without the other 26.5% (Method). If what it goes without is taken whole material by whole material, heaviest first, that is minerals alone, and the cut removes 7.8% of the climate impact of making the EU's materials and 4.6% of what it imports from outside the EU. Taken by the climate cost of producing each tonne instead, burning fuels not counted, metal ores first and then biomass, the same tonnes remove 59.5% of that climate cost and 26.4% of imports. Counting burning would put fossil fuels higher in that order. Both are counted as in the game's note, with the same credit to recycling.</p>
       <p>Much of EU law already counts the carbon in materials. Since January 1, 2026, importers of cement, iron and steel, aluminum, fertilizers, electricity and hydrogen owe certificates for the greenhouse gases embedded in what they import, priced on the EU Emissions Trading System (Regulation (EU) 2023/956). Construction products' declarations of performance must cover their climate change effects over their life cycle from January 8, 2026, but only once a product family's harmonized standard has been renewed under the new regulation, and the old standards may stay in use until 2040 (Regulation (EU) 2024/3110, Article 15(3) and Annex II). From January 1, 2028, new buildings over 1,000 square meters must have their carbon over their whole life calculated and disclosed in their energy performance certificate, and all new buildings from 2030 (Directive (EU) 2024/1275). The Critical Raw Materials Act asks the Commission and member states to "moderate the expected increase" in the EU's use of critical raw materials, through technology and resource efficiency. For 17 strategic raw materials, it sets 2030 benchmarks for the EU's own capacity, among them recycling at least 25% of its yearly use, and by January 1, 2027, the Commission must set recycling benchmarks for each, as a share of what is in the relevant waste (Regulation (EU) 2024/1252, Article 5 and Annex I). The distance is long: of the 26 critical raw materials the EU needs for the energy transition, 10 aren't recycled at all and 7 only at 1 to 5% (European Court of Auditors, Special Report 04/2026).The EU's waste targets, by contrast, are set by weight, such as at least 70% by weight of non-hazardous construction and demolition waste reused, recycled or otherwise recovered, backfilling included (Directive 2008/98/EC, Article 11(2)). That a measure by weight misses what materials cost is published: mass-based indicators such as recycling rates "fail to cover the environmental perspective" (Haupt and Hellweg 2019), the rate "does not directly consider other environmental pressures such as greenhouse gas emissions" (EPA Research Report 458), and a higher rate "does not necessarily lead to lower environmental impacts" (ETC CE Report 2025/3).</p>
       <p>That ZIN scores worse than demolition is my reading of Eurostat's method, not a published finding. Published work says only that the rate leaves out strategies like making things last, and reads longer lifetimes as lifting it by cutting new material, which holds against building new but not against tearing down and rebuilding. Rubble crushed into aggregate counts as recycling (operation R5) and so as circular use, while rubble used to fill in excavations doesn't (env_ac_cur metadata). Demolishing and rebuilding adds both recycled rubble and new material to what is used. It lifts the rate whenever the rubble recycled is a larger share of that extra material than the rate already is, 11.4% for the EU, which holds for a building that is mostly concrete. Keeping it standing adds neither. The 30,000 tonnes of rubble from ZIN's demolished floors, crushed into certified aggregate, count as recycling under the same rule. One building barely moves the EU's rate: the point is the direction it moves, not how far. ZIN's tonnes and carbon are set out in its note.</p>
       <p>The remedy of getting more from what is already built, by using it more intensively, making it last longer and designing it better, is Krausmann et al. 2017's. The figures for homes are the International Resource Panel's, for the G7 in 2050, and count the emissions of the materials homes need: up to 70% less from using homes more intensively, 14 to 18% from better recycling of construction materials and 8 to 10% from designs that use less material (IRP 2020, factsheet). The EEA likewise calls for more intensity of use per product and much longer product lifetimes, and for putting the reduction of resource use first (EEA 2024, executive summary). Recycling closing the ring alone only by reaching almost all our waste is the 93.4% of waste recycled in the Method table, and the cut far deeper than any the EU has made is the 59.3% needed with recycling held at 2022, against the largest two-year fall on record, 14.0% (Method).</p>
@@ -1883,12 +1885,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         label(L, RX0 - 8, ly[i] - (m.note ? 8.6 : 1.7), lines, "end");
       });
       if (s.climate) {
-        label(L, (RX2 + RX3) / 2, 44, [["By climate impact", "lab-strong"]], "middle");
+        label(L, (RX2 + RX3) / 2, 44, [["By climate cost", "lab-strong"]], "middle");
         MAT.forEach(function (m, i) {
           if (shown(m)) label(L, RX3 + 8, mid(CSTK[i]) + 7, [[fmt1(m.climate) + "%", "lab-num"]]);
         });
-        label(L, 200, 354, [["Climate impact of making materials, up to the", "lab"],
-                            ["factory gate. Burning fuel isn't counted.", "lab"]], "middle");
+        label(L, 200, 354, [["Climate cost of producing materials,", "lab"],
+                            ["burning fuels not counted", "lab"]], "middle");
       }
       label(L, 6, 394, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"]]);
     });
@@ -3114,6 +3116,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       const txt = x < 1e-6 ? "0%" : n === 0 ? "−<1%" : "−" + n + "%";
       b.querySelector(".mcut").textContent = txt;
       b.disabled = q.avail[i] - q.gone[i] <= 1e-9;
+      if (i === 2) GM_FIG.querySelector(".game-tapnote").hidden = !(q.gone[i] > 1e-9);
       b.setAttribute("aria-label", "Use less: " + GM_ROW[i].name + ", " + (x < 1e-6 ? "none" : n === 0 ? "under 1%" : n + "%") + " removed");
     });
   }
@@ -3121,7 +3124,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10;
     const imp = 100 * q.imports / DATA.imports.imports_kt;
     let t = "The ring is closed. You took " + fmt1(w) + "% of the EU's new material away, " + fmt1(q.weight / 100 * DMC / 1e6) +
-            " billion tonnes, and with it " + fmt1(q.climate) + "% of the climate impact of making materials and " + fmt1(imp) +
+            " billion tonnes, and with it " + fmt1(q.climate) + "% of the climate cost of producing materials (burning fuels not counted) and " + fmt1(imp) +
             "% of the tonnes the EU imports.";
     const best = ", mostly sand, gravel and stone, but only if the EU recycles " + gmMult(q.mult) +
                  " times as much as it did in " + YR + " and each recycled tonne replaces half a new one.";
@@ -3135,7 +3138,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (q.C > 1e-9) {
       const h = gmHeaviest(q), d = Math.round(q.climate * 10) - Math.round(h * 10);
       t += " Giving up the same weight with the heaviest materials first, at the same recycling, would have removed " + fmt1(h) +
-           "% of the climate impact; your route removed " + (d > 0 ? "more" : d < 0 ? "less" : "the same") + ".";
+           "% of the climate cost; your route removed " + (d > 0 ? "more" : d < 0 ? "less" : "the same") + ".";
     }
     return t;
   }
