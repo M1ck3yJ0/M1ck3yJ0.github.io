@@ -3096,13 +3096,16 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     }
     return t;
   }
+  // The ending's second paragraph, handing off to the ribbon
+  const GM_HANDOFF = "The rate counts only weight. To it, a tonne of gravel is worth the same as a tonne of metal or a tonne of food, " +
+                     "though what each costs the climate to produce is far from the same.";
   function gmText(q) {
     const end = GM_FIG.querySelector(".game-end");
     GM_FIG.classList.toggle("is-closed", q.closed);
     end.hidden = !q.closed;
     if (!q.closed) { end.textContent = ""; return; }
-    const p = end.querySelector("p") || end.appendChild(document.createElement("p"));
-    p.textContent = gmEnding(q);
+    if (!end.querySelector("p")) { end.appendChild(document.createElement("p")); end.appendChild(document.createElement("p")).textContent = GM_HANDOFF; }
+    end.querySelector("p").textContent = gmEnding(q);
   }
 
   /* The first beat: curly arrows on the chart to the knob and the keys, beside the intro. The first
