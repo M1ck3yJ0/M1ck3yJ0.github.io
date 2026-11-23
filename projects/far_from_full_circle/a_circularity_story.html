@@ -636,6 +636,64 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     </div>
   </section>
 
+  <section class="explorer game is-fresh" id="game">
+    <div class="game-box">
+      <div class="game-l">
+        <figure class="chart" id="game-chart">
+          <svg viewBox="0 0 400 400" role="img">
+            <defs>
+              <clipPath id="gm-clip1"><path></path></clipPath>
+              <clipPath id="gm-clip2"><path></path></clipPath>
+            </defs>
+            <g class="ring" transform="translate(200,176)">
+              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+              <g class="turn">
+                <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
+                <path class="rope"></path>
+                <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
+                <circle class="swell" display="none"></circle>
+                <circle class="ripple" display="none"></circle>
+                <circle class="dot rate"></circle>
+                <circle class="knob-hit" r="22" tabindex="0" role="slider" aria-label="Waste recycled" aria-valuemin="41" aria-valuemax="100" aria-valuenow="41"></circle>
+              </g>
+              <g class="disc"><g class="mats"></g></g>
+            </g>
+            <g class="labels"></g>
+            <g class="hints" aria-hidden="true"></g>
+          </svg>
+        </figure>
+        <div class="game-keys" role="group" aria-label="Use less of a material">
+          <button type="button" class="mkey" data-m="0"><span class="sw minerals"></span><span class="mname">Minerals</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="1"><span class="sw biomass"></span><span class="mname">Biomass</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="2"><span class="sw fossil"></span><span class="mname">Fossil fuels</span><span class="mcut">0%</span></button>
+          <button type="button" class="mkey" data-m="3"><span class="sw metals"></span><span class="mname">Metal ores</span><span class="mcut">0%</span></button>
+        </div>
+        <p class="game-tapnote" hidden>Not counted here: burning fossil fuels, where most of their emissions happen.</p>
+      </div>
+      <div class="game-r">
+        <h2 class="sec-title explore-title" id="sec-game">Your turn: close the EU's&nbsp;ring</h2>
+        <div class="game-intro">
+          <p>Now it's your turn. Close the EU's ring, from its 11.4% circularity in 2022 to the 24% target, with either lever or both.</p>
+          <p><strong>Recycle more:</strong> drag the gold knob around the ring. It starts at the 41% of its waste the EU recycled in 2022 and goes up to 100%; the EEA's scenarios reach 70% by 2030 and 90% by 2050. As in the story above, each extra recycled tonne replaces half a new one.</p>
+          <p><strong>Use less:</strong> tap a material under the ring to use less of it, 5.5% of all the EU's new material at a time.</p>
+          <p>Once you start, the numbers keep count of what the EU gives up: by weight, by the climate cost of producing materials and in imports. You can keep going past 24%.</p>
+          <button type="button" class="game-start">Start</button>
+        </div>
+        <div class="game-end" aria-live="polite" hidden></div>
+        <a class="skip" href="#sec-ribbon">Skip ahead &#8595;</a>
+        <dl class="game-nums">
+          <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
+          <div><dt>Climate cost removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO<sub>2</sub>e</dd><dd class="t">Producing materials only, not burning fuels</dd></div>
+          <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
+          <div><dt>Waste recycled</dt><dd class="v" data-n="share">41%</dd><dd class="t" data-n="mult">1.0× 2022's recycling</dd><dd class="t">The EEA's scenarios: 70% by 2030, 90% by 2050</dd></div>
+        </dl>
+        <p class="game-caveats"><span>Assumed: each recycled tonne replacing half a new one</span></p>
+        <button type="button" class="game-reset">Start again</button>
+        <p class="note-link"><a href="#notes-game">Sources and notes &#8595;</a></p>
+      </div>
+    </div>
+  </section>
+
   <section class="burst" data-chart="ribbon" id="sec-ribbon">
     <h2 class="sec-title sec-title-m">The rate is mostly sand and stone, the materials that cost the climate&nbsp;least</h2>
     <div class="pin">
@@ -716,7 +774,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <div class="explore">
       <div class="explore-top">
         <div class="pick"><select aria-label="Country"></select></div>
-        <a class="skip" href="#game">Skip ahead &#8595;</a>
+        <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
       </div>
       <figure class="chart" id="explore-waterfall-chart">
         <svg viewBox="0 0 400 400" role="img">
@@ -730,64 +788,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </figure>
       <div class="explore-text" aria-live="polite"></div>
       <p class="note-link"><a href="#notes-explore">Sources and notes &#8595;</a></p>
-    </div>
-  </section>
-
-  <section class="explorer game is-fresh" id="game">
-    <div class="game-box">
-      <div class="game-l">
-        <figure class="chart" id="game-chart">
-          <svg viewBox="0 0 400 400" role="img">
-            <defs>
-              <clipPath id="gm-clip1"><path></path></clipPath>
-              <clipPath id="gm-clip2"><path></path></clipPath>
-            </defs>
-            <g class="ring" transform="translate(200,176)">
-              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
-              <g class="turn">
-                <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
-                <path class="rope"></path>
-                <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
-                <circle class="swell" display="none"></circle>
-                <circle class="ripple" display="none"></circle>
-                <circle class="dot rate"></circle>
-                <circle class="knob-hit" r="22" tabindex="0" role="slider" aria-label="Waste recycled" aria-valuemin="41" aria-valuemax="100" aria-valuenow="41"></circle>
-              </g>
-              <g class="disc"><g class="mats"></g></g>
-            </g>
-            <g class="labels"></g>
-            <g class="hints" aria-hidden="true"></g>
-          </svg>
-        </figure>
-        <div class="game-keys" role="group" aria-label="Use less of a material">
-          <button type="button" class="mkey" data-m="0"><span class="sw minerals"></span><span class="mname">Minerals</span><span class="mcut">0%</span></button>
-          <button type="button" class="mkey" data-m="1"><span class="sw biomass"></span><span class="mname">Biomass</span><span class="mcut">0%</span></button>
-          <button type="button" class="mkey" data-m="2"><span class="sw fossil"></span><span class="mname">Fossil fuels</span><span class="mcut">0%</span></button>
-          <button type="button" class="mkey" data-m="3"><span class="sw metals"></span><span class="mname">Metal ores</span><span class="mcut">0%</span></button>
-        </div>
-        <p class="game-tapnote" hidden>Not counted here: burning fossil fuels, where most of their emissions happen.</p>
-      </div>
-      <div class="game-r">
-        <h2 class="sec-title explore-title" id="sec-game">Your turn: close the EU's&nbsp;ring</h2>
-        <div class="game-intro">
-          <p>Now it's your turn. Close the EU's ring, from its 11.4% circularity in 2022 to the 24% target, with either lever or both.</p>
-          <p><strong>Recycle more:</strong> drag the gold knob around the ring. It starts at the 41% of its waste the EU recycled in 2022 and goes up to 100%; the EEA's scenarios reach 70% by 2030 and 90% by 2050. As in the story above, each extra recycled tonne replaces half a new one.</p>
-          <p><strong>Use less:</strong> tap a material under the ring to use less of it, 5.5% of all the EU's new material at a time.</p>
-          <p>Once you start, the numbers keep count of what the EU gives up: by weight, by the climate cost of producing materials and in imports. You can keep going past 24%.</p>
-          <button type="button" class="game-start">Start</button>
-        </div>
-        <div class="game-end" aria-live="polite" hidden></div>
-        <a class="skip" href="#sec-closer">Skip ahead &#8595;</a>
-        <dl class="game-nums">
-          <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
-          <div><dt>Climate cost removed</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t" data-n="climate-t">0 million tonnes of CO<sub>2</sub>e</dd><dd class="t">Producing materials only, not burning fuels</dd></div>
-          <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
-          <div><dt>Waste recycled</dt><dd class="v" data-n="share">41%</dd><dd class="t" data-n="mult">1.0× 2022's recycling</dd><dd class="t">The EEA's scenarios: 70% by 2030, 90% by 2050</dd></div>
-        </dl>
-        <p class="game-caveats"><span>Assumed: each recycled tonne replacing half a new one</span></p>
-        <button type="button" class="game-reset">Start again</button>
-        <p class="note-link"><a href="#notes-game">Sources and notes &#8595;</a></p>
-      </div>
     </div>
   </section>
 
@@ -876,6 +876,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p>That this makes ZIN score worse than tearing its towers down and building again is my reading of Eurostat's method. The principle is in print, though not for buildings under Eurostat's rate. In its 2023 report on Denmark, Circle Economy wrote that demolishing all of Denmark's buildings and recycling them would sharply raise its own circularity measure, which divides recycled material by a footprint rather than by the material a country uses, and called it "an undesirable means for increasing circularity" (pp. 30 to 31). A study of Iceland's rate by Steingrimsson and others found that Eurostat's rate can fall when environmental performance improves, as when food waste is prevented, since preventing waste also removes what would have been recycled. Other published work says only that the rate leaves out strategies like making things last (Christis and Vercalsteren 2021), and reads longer lifetimes as lifting it by cutting new material (ETC CE Report 2023/6), which holds against building new but not against tearing down and building again. I found no one who has worked out when demolition lifts the rate, or tested it on a real building.</p>
       <p class="note-back"><a href="#sec-zin">Back to the chart &#8593;</a></p>
     </section>
+    <section class="note" id="notes-game">
+      <h3>Your turn: close the EU's ring</h3>
+      <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA; burning fuels, IEA. EU, 2022. Removals: my calculation.</p>
+      <p>The game runs on the same model as the story. Waste is held at 2022's 1,971 Mt treated. The knob starts at the 41.1% of it recycled in 2022 by the rate's own count (Eurostat's waste statistics give 40.8%), and each extra recycled tonne replaces half a new one, an assumed midpoint (Method), split across materials by the waste not yet recycled, as in the ring's note. A tap takes 5.5% of 2022's new material from one material. Recycling replaces first, and taps cut only what it hasn't, so a cut gives way as recycling rises. Its endings match the story: 59.3% less new material at 2022's recycling, 31.0% at 70%, and recycling alone closing the ring between 93% and 94% of waste recycled.</p>
+      <p>Climate cost removed is each material's share removed of its own consumption, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4), applied to Eurostat's tonnes. As in the ring's note, the credit for recycling's replaced tonnes uses average impact per tonne, which flatters recycling. The tonnes of CO<sub>2</sub>e are that share of 2,890 Mt, the climate impact of the raw materials used in the EU in 2022 (ETC CE Report 2025/3, Table 3-1). That is a footprint of the EU's final demand, measured to the factory gate, so it can't be set beside the EU's own emissions. Burning fuels isn't counted, and for oil and gas that is most of their climate cost: worldwide, producing, moving and refining them caused just under 15% of energy-related greenhouse gas emissions, and using them another 40% (IEA, Emissions from Oil and Gas Operations in Net Zero Transitions, 2023). The report doesn't say Figure 3-4's shares come from the same calculation as the total, though both rest on the same models (FIGARO, 2024 edition, and EXIOBASE 3.8.2).</p>
+      <p>Imports removed are measured against the 1,660 Mt the EU imported from outside it in 2022 (env_ac_mfa), and assume each material's imports fall in proportion to its use. A material with nothing left counts as all removed.</p>
+      <p class="note-back"><a href="#sec-game">Back to the game &#8593;</a></p>
+    </section>
     <section class="note" id="notes-ribbon">
       <h3>The rate is mostly sand and stone, the materials that cost the climate least</h3>
       <p class="note-src">Source: ETC CE Report 2025/3. EU, 2022. Per tonne: my calculation.</p>
@@ -903,14 +911,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       <p>Germany's line rests on its National Circular Economy Strategy, adopted in December 2024, which pairs doubling its rate by 2030 with significantly reducing the primary raw material it uses by 2045 (BMUV, English summary). That aim is measured as raw material consumption, a footprint, not the material consumed in the ring, and the strategy gives no number for Germany.</p>
       <p>The country waterfall splits each two-year step as the EU's does (the waterfall's note), from 2010, the first year Eurostat gives countries' rates, to 2024. Eurostat imputed the 2024 rate for 26 of the 27, all but Luxembourg, before 2024's waste figures were published, so the last step is marked as an estimate for every country. The rate is published to one decimal, and that rounding weighs most on a small country's bars. Latvia's recycling arrow from 2012 to 2014 is labeled as waste brought in: the rate subtracts waste brought in from abroad to be recycled, since it counts for the country that sent it, and Latvia brought in much less.</p>
       <p class="note-back"><a href="#sec-explore">Back to the chart &#8593;</a></p>
-    </section>
-    <section class="note" id="notes-game">
-      <h3>Your turn: close the EU's ring</h3>
-      <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA; burning fuels, IEA. EU, 2022. Removals: my calculation.</p>
-      <p>The game runs on the same model as the story. Waste is held at 2022's 1,971 Mt treated. The knob starts at the 41.1% of it recycled in 2022 by the rate's own count (Eurostat's waste statistics give 40.8%), and each extra recycled tonne replaces half a new one, an assumed midpoint (Method), split across materials by the waste not yet recycled, as in the ring's note. A tap takes 5.5% of 2022's new material from one material. Recycling replaces first, and taps cut only what it hasn't, so a cut gives way as recycling rises. Its endings match the story: 59.3% less new material at 2022's recycling, 31.0% at 70%, and recycling alone closing the ring between 93% and 94% of waste recycled.</p>
-      <p>Climate cost removed is each material's share removed of its own consumption, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4), applied to Eurostat's tonnes. As in the ring's note, the credit for recycling's replaced tonnes uses average impact per tonne, which flatters recycling. The tonnes of CO<sub>2</sub>e are that share of 2,890 Mt, the climate impact of the raw materials used in the EU in 2022 (ETC CE Report 2025/3, Table 3-1). That is a footprint of the EU's final demand, measured to the factory gate, so it can't be set beside the EU's own emissions. Burning fuels isn't counted, and for oil and gas that is most of their climate cost: worldwide, producing, moving and refining them caused just under 15% of energy-related greenhouse gas emissions, and using them another 40% (IEA, Emissions from Oil and Gas Operations in Net Zero Transitions, 2023). The report doesn't say Figure 3-4's shares come from the same calculation as the total, though both rest on the same models (FIGARO, 2024 edition, and EXIOBASE 3.8.2).</p>
-      <p>Imports removed are measured against the 1,660 Mt the EU imported from outside it in 2022 (env_ac_mfa), and assume each material's imports fall in proportion to its use. A material with nothing left counts as all removed.</p>
-      <p class="note-back"><a href="#sec-game">Back to the game &#8593;</a></p>
     </section>
     <section class="note" id="notes-closer">
       <h3>A better target would count what materials cost, not what they weigh</h3>
