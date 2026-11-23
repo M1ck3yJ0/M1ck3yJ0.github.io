@@ -1559,10 +1559,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const to = wfTarget(name), from = WFS || to;
     const labelsFor = function (n) { return n === "pre" ? "steps" : n; };
     if (wfTimer) { wfTimer.stop(); wfTimer = null; }
-    const relabelled = labelsFor(name) !== labelsFor(wfName);
+    const relabeled = labelsFor(name) !== labelsFor(wfName);
     const building = to.build !== from.build;
     const dur = beatDur(building ? Math.abs(to.build - from.build) * T_WBUILD : T_WFOCUS, dir);
-    if (relabelled || !dir) wfLabels(labelsFor(name), dur);
+    if (relabeled || !dir) wfLabels(labelsFor(name), dur);
     wfName = name;
     if (!dur) { WFS = to; wfFrame(WFS); return; }
     const mix = function (a, b, k) { return a + (b - a) * clamp01(k); };
