@@ -103,13 +103,27 @@ body {
 .home:hover, .home:focus-visible { opacity: 1; }
 .home img { display: block; border-radius: 4px; }
 
-/* Terrazzo: one static print for the whole piece, faded where the pinned chart sits */
+/* Terrazzo: one seamless tile, scrolling with the page behind a mask fixed to the screen.
+   Phone: faded behind the pinned chart, clear below it. Wide: clear in the side margins,
+   faded across the chart and cards. The floor band before the notes shows it unfaded. */
+:root { --tile: 900px; }
 .terrazzo {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle at 50% calc(var(--nav) + 8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
-          mask-image: radial-gradient(circle at 50% calc(var(--nav) + 8px + var(--chart) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.05) calc(var(--nav) + 8px + var(--chart) * .85), #000 calc(var(--nav) + 8px + var(--chart) + 18vh));
+          mask-image: linear-gradient(to bottom, rgba(0,0,0,.05) calc(var(--nav) + 8px + var(--chart) * .85), #000 calc(var(--nav) + 8px + var(--chart) + 18vh));
 }
-.terrazzo { background: no-repeat center / cover; }
+.terrazzo-tiles, .floor-tiles { background-repeat: repeat; background-size: var(--tile) var(--tile); }
+.terrazzo-tiles { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--tile)); will-change: transform; }
+.floor { position: relative; z-index: 1; padding: 30vh 8px; }
+.floor-tiles {
+  position: absolute; inset: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22vh, #000 calc(100% - 22vh), transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 22vh, #000 calc(100% - 22vh), transparent);
+}
+.floor-card { position: relative; max-width: 640px; margin: 0 auto; padding: 20px; background: #fff; font-size: 16px; }
+.floor-card .note { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hairline); }
+.floor-card a { color: var(--ink-2); }
+.floor-card a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 
 main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 
@@ -161,9 +175,10 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   .pin { grid-column: 1; grid-row: 1; align-items: center; padding-top: 0; }
   .steps { grid-column: 2; grid-row: 1; margin-top: 0; padding: 0; }
+  :root { --tile: 1280px; --margin: max(0px, calc((100vw - var(--chart) - var(--col-gap) - var(--cards)) / 2)); }
   .terrazzo {
-    -webkit-mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
-            mask-image: radial-gradient(circle at calc(50% - (var(--col-gap) + var(--cards)) / 2) calc(var(--nav) + (100vh - var(--nav)) / 2), rgba(0,0,0,.05) calc(var(--chart) * .66), #000 calc(var(--chart) * .66 + 22vmin));
+    -webkit-mask-image: linear-gradient(to right, #000, rgba(0,0,0,.05) var(--margin), rgba(0,0,0,.05) calc(100% - var(--margin)), #000);
+            mask-image: linear-gradient(to right, #000, rgba(0,0,0,.05) var(--margin), rgba(0,0,0,.05) calc(100% - var(--margin)), #000);
   }
   .closer { padding: 40px 40px 48px; }
   .burst[data-chart="ring"] .pin { z-index: 2; }  /* panel 5's shards fly over the cards */
@@ -318,7 +333,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 /* Sources and notes: one section at the end, a subsection per section of the story */
 .notes { position: relative; z-index: 1; max-width: 640px; margin: 0 auto 20vh; padding: 20px; background: #fff; font-size: 16px; }
 .notes h2 { margin: 0 0 8px; font-size: 25px; line-height: 1.12; font-weight: 800; }
-.notes-intro { margin: 0; }
+.floor-intro { margin: 0; }
 .note { scroll-margin-top: calc(var(--nav) + 16px); padding-top: 16px; }
 .note + .note { border-top: 1px solid var(--hairline); margin-top: 16px; }
 .note h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.2; font-weight: 700; }
@@ -431,7 +446,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 </head>
 <body>
 <nav class="nav"><a class="home" href="https://milcahjoseph.com"><img src="../../assets/favicon.png" width="28" height="28" alt="Home"></a></nav>
-<div class="terrazzo" aria-hidden="true"></div>
+<div class="terrazzo" aria-hidden="true"><div class="terrazzo-tiles"></div></div>
 
 <main>
   <section class="burst" data-chart="ring" id="sec-ring">
@@ -736,14 +751,19 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       </footer>
     </div>
   </section>
+  <section class="floor" aria-label="About the drawings">
+    <div class="floor-tiles" aria-hidden="true"></div>
+    <div class="floor-card">
+      <p class="floor-intro">The data, code and research register behind every figure are on <a href="https://github.com/M1ck3yJ0/far-from-full-circle" target="_blank" rel="noopener">GitHub</a>.</p>
+      <section class="note" id="notes-drawings">
+        <h3>About the drawings</h3>
+        <p class="note-src">Sources: Pliny the Elder, Natural History, Book 35; National Terrazzo and Mosaic Association.</p>
+        <p>The disc in the ring, the heaps of food and the flecks behind every chart are drawn as terrazzo: chips of stone set in a binder, then ground flat and polished. Builders have long made floors this way from what was left over. Romans beat broken pottery, tile and brick into lime for floors and cisterns. In Venice, as the trade tells it, masons set the marble chips left from their paying work into the terraces of their own homes, which gave terrazzo, Italian for terrace, its name. Craftsmen from Friuli carried it to the United States from the 1870s, and divider strips and electric grinders made it common by the 1920s. Here the disc is new material, drawn as the floor it could one day become: what we already have, set to last.</p>
+      </section>
+    </div>
+  </section>
   <section class="notes" id="notes">
     <h2>Sources and notes</h2>
-    <p class="notes-intro">The data, code and research register behind every figure are on <a href="https://github.com/M1ck3yJ0/far-from-full-circle" target="_blank" rel="noopener">GitHub</a>.</p>
-    <section class="note" id="notes-drawings">
-      <h3>About the drawings</h3>
-      <p class="note-src">Sources: Pliny the Elder, Natural History, Book 35; National Terrazzo and Mosaic Association.</p>
-      <p>The disc in the ring, the heaps of food and the flecks behind every chart are drawn as terrazzo: chips of stone set in a binder, then ground flat and polished. Builders have long made floors this way from what was left over. Romans beat broken pottery, tile and brick into lime for floors and cisterns. In Venice, as the trade tells it, masons set the marble chips left from their paying work into the terraces of their own homes, which gave terrazzo, Italian for terrace, its name. Craftsmen from Friuli carried it to the United States from the 1870s, and divider strips and electric grinders made it common by the 1920s. Here the disc is new material, drawn as the floor it could one day become: what we already have, set to last.</p>
-    </section>
     <section class="note" id="notes-method">
       <h3>Method</h3>
       <p>When recycling rises, we assume each extra recycled tonne replaces half a new tonne of the same material. This is an assumed midpoint, not an estimate. How much new material a recycled tonne displaces is set by markets, and it can be close to none (Zink, Geyer and Startz 2018). The two ends are recycled tonnes simply adding to new ones, as in the European Environment Agency's 2030 scenarios (ETC CE Report 2023/6), and each replacing a whole new tonne, which ETC CE Report 2025/3 calls an upper limit. How much new material has to go to reach 24% at a given level of recycling is the same under all three, so the 59.3% and 31.0% hold either way. What changes is how far recycling alone gets, and how much of a cut recycling stands in for.</p>
@@ -3346,12 +3366,39 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
         const r = size / 2 * (0.55 + 0.45 * rnd());
         return [cx + r * Math.cos(a), cy + r * Math.sin(a)].map(function (v) { return v.toFixed(1); }).join(",");
       });
-      parts.push('<polygon points="' + pts.join(" ") + '" fill="' + fill + '"/>');
+      const poly = '<polygon points="' + pts.join(" ") + '" fill="' + fill + '"';
+      [-1600, 0, 1600].forEach(function (dx) {
+        [-1600, 0, 1600].forEach(function (dy) {
+          if (cx + dx + size < 0 || cx + dx - size > 1600 || cy + dy + size < 0 || cy + dy - size > 1600) return;
+          parts.push(poly + (dx || dy ? ' transform="translate(' + dx + ',' + dy + ')"' : "") + "/>");
+        });
+      });
     }
     for (let i = 0; i < 560; i++) chip(Math.exp(Math.log(6) + rnd() * Math.log(90 / 6)), tints[Math.floor(rnd() * tints.length)]);
     for (let i = 0; i < 90; i++) chip(2 + rnd() * 3, flecks[Math.floor(rnd() * flecks.length)]);
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600">' + parts.join("") + "</svg>";
-    document.querySelector(".terrazzo").style.backgroundImage = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    const url = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    const tiles = document.querySelector(".terrazzo-tiles"), floor = document.querySelector(".floor-tiles");
+    tiles.style.backgroundImage = floor.style.backgroundImage = url;
+    // The tile is anchored to the page's top left, so the fixed layer and the floor band line up
+    let T = 1, queued = false;
+    function move() {
+      queued = false;
+      tiles.style.transform = "translate3d(0," + (-(scrollY % T)) + "px,0)";
+    }
+    function size() {
+      T = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 900;
+      const r = floor.getBoundingClientRect();
+      floor.style.backgroundPosition = (-r.left) + "px " + (-(r.top + scrollY)) + "px";
+      move();
+    }
+    window.addEventListener("scroll", function () {
+      if (!queued) { queued = true; requestAnimationFrame(move); }
+    }, { passive: true });
+    window.addEventListener("resize", size);
+    if (document.fonts) document.fonts.ready.then(size);
+    window.addEventListener("load", size);
+    size();
   }
 
   window.FFC = { show: show, draw: CHARTS, game: GAME };
