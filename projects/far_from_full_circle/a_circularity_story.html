@@ -1622,7 +1622,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             .attr("y1", wy(d.start) + 3).attr("y2", yl - 15);
         }
       }
-      label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
+      label(L, 6, 394, [["Source: Eurostat. Split by lever: my calculation", "lab-src"]]);
     });
     if (WFS) wfFrame(WFS);
   }
@@ -2115,7 +2115,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
       return [e.name + ": " + fmt2(e.carbon / e.tonnes) + " t of " + e.gas + " per tonne of " + e.stuff, "lab-strong"];
     }), "middle");
     label(L, 6, 380, [["Sources: Leroy, Gomez and Nosiglia, IABSE 2025; Ingka Group; Winnow", "lab-src"],
-                      ["Shares, food tonnes and per tonne: our calculation", "lab-src"]]);
+                      ["Shares, food tonnes and per tonne: my calculation", "lab-src"]]);
   }
 
   /* ---------- Explorer 20a: a country's ring, closed by both levers ----------
@@ -2381,7 +2381,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (extra.length) rows.push(extra);
     const K = L.append("g").attr("transform", "translate(" + CX + ",336) scale(" + XR_KEY + ") translate(" + -CX + ",-336)");
     rows.forEach(function (items, i) { keyRow(K, 336 + 19 * i, items); });
-    label(L, 6, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: our calculation", "lab-src"]]);
+    label(L, 6, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: my calculation", "lab-src"]]);
   }
 
   // The card under the chart: one template, with hand-written lines for the default and data warnings
@@ -2616,7 +2616,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     label(L, WX0 - 4, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab"]]);
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
     if (est.length) label(L, 6, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]]);
-    label(L, 6, 394, [["Source: Eurostat. Split by lever: our calculation", "lab-src"]]);
+    label(L, 6, 394, [["Source: Eurostat. Split by lever: my calculation", "lab-src"]]);
 
     xBars = xSteps.map(function (d) {
       const sg = g.append("g");
@@ -3110,7 +3110,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (q.rate > TARGET + 1e-6) extra.push([KEY.lap, "Past the target"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
-    label(L, 6, 394, [["Sources: Eurostat; ETC CE Report 2025/3; EEA. EU, " + YR + ". Our calculation", "lab-src"]]);
+    label(L, 6, 394, [["Sources: Eurostat; ETC CE Report 2025/3; EEA. EU, " + YR + ". My calculation", "lab-src"]]);
     d3.select(GM_FIG).select("svg").attr("aria-label", "The EU's circularity drawn as a ring, around a disc of the new material it uses, in shards of four blues for minerals, biomass, fossil fuels and metal ores. With " +
       Math.round(q.s) + "% of its waste recycled and " + fmt1(w) + "% less new material than in " + YR + ", its rate is " + fmt1(r) + "%, " +
       (q.closed ? (q.rate > TARGET + 1e-6 ? "past" : "at") : "short of") + " the 24% target.");
