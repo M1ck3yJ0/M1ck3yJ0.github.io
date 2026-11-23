@@ -383,6 +383,8 @@ def load_rows():
         for k in ("share_of_weight_pct", "share_of_climate_impact_pct"):
             add(f"weight_vs_climate.{r['material_group']}.{k}", num(r[k]), "pct", 1, None, "eu")
         add(f"weight_vs_climate.{r['material_group']}.impact_per_weight", num(r["impact_per_weight"]), "times", 1, None, "eu")
+        add(f"weight_vs_climate.{r['material_group']}.impact_per_tonne_vs_minerals",
+            num(r["impact_per_tonne_vs_minerals"]), "times", 1, None, "eu")
     for r in read(f"footprint_{YEAR}.csv"):
         for k, v in r.items():
             if k.endswith("_pct"):
