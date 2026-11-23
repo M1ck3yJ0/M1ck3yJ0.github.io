@@ -129,18 +129,6 @@ body {
 }
 .terrazzo-tiles, .floor-tiles { background-repeat: repeat; background-size: var(--tile) var(--tile); }
 .terrazzo-tiles { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--tile)); will-change: transform; }
-/* On load, a deep twin of the tile shines over the whole screen, kept clear of the chart, then
-   clears in a circle spreading from the title, leaving the masked ground (shine() in the script) */
-.shine {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; opacity: 0;
-  -webkit-mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--cr), #000 calc(var(--cr) + 48px)),
-                      radial-gradient(circle at var(--sx) var(--sy), transparent var(--sr), #000 calc(var(--sr) + var(--sw)));
-          mask-image: radial-gradient(circle at var(--cx) var(--cy), transparent var(--cr), #000 calc(var(--cr) + 48px)),
-                      radial-gradient(circle at var(--sx) var(--sy), transparent var(--sr), #000 calc(var(--sr) + var(--sw)));
-  -webkit-mask-composite: source-in;
-          mask-composite: intersect;
-}
-.shine-tiles { position: absolute; left: 0; right: 0; top: 0; height: calc(100% + var(--tile)); background-repeat: repeat; background-size: var(--tile) var(--tile); }
 .floor { position: relative; z-index: 1; padding: 30vh 8px; }
 .floor-tiles {
   position: absolute; inset: 0; pointer-events: none;
@@ -528,7 +516,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 <body>
 <nav class="nav"><a class="home" href="https://milcahjoseph.com"><img src="../../assets/favicon.png" width="28" height="28" alt="Home"></a></nav>
 <div class="terrazzo" aria-hidden="true"><div class="terrazzo-tiles"></div></div>
-<div class="shine" aria-hidden="true"><div class="shine-tiles"></div></div>
 
 <main>
   <section class="burst" data-chart="ring" id="sec-ring">
@@ -3480,12 +3467,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     };
     const tints = ["#E9EDF5", "#F3ECDC", "#F5EAE2", "#EEF0F5", "#E6EBF4", "#F2EEE6"];
     const flecks = ["#6F84C4", "#A67F22", "#8A4013", "#4A5577"];
-    // The same chips in deep tones, for the shine on load
-    const deep = {
-      "#E9EDF5": "#7E8DAE", "#F3ECDC": "#B39A62", "#F5EAE2": "#B4826A", "#EEF0F5": "#969CAC", "#E6EBF4": "#7489B4", "#F2EEE6": "#A89A82",
-      "#6F84C4": "#3D4F8F", "#A67F22": "#6B4F10", "#8A4013": "#5C2A0A", "#4A5577": "#2C3450"
-    };
-    const parts = [], deepParts = [];
+    const parts = [];
     function chip(size, fill) {
       const n = 4 + Math.floor(rnd() * 4);
       const cx = rnd() * 1600, cy = rnd() * 1600;
@@ -3494,31 +3476,25 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         const r = size / 2 * (0.55 + 0.45 * rnd());
         return [cx + r * Math.cos(a), cy + r * Math.sin(a)].map(function (v) { return v.toFixed(1); }).join(",");
       });
-      const poly = '<polygon points="' + pts.join(" ") + '" fill="';
+      const poly = '<polygon points="' + pts.join(" ") + '" fill="' + fill + '"';
       [-1600, 0, 1600].forEach(function (dx) {
         [-1600, 0, 1600].forEach(function (dy) {
           if (cx + dx + size < 0 || cx + dx - size > 1600 || cy + dy + size < 0 || cy + dy - size > 1600) return;
-          const end = '"' + (dx || dy ? ' transform="translate(' + dx + ',' + dy + ')"' : "") + "/>";
-          parts.push(poly + fill + end);
-          deepParts.push(poly + deep[fill] + end);
+          parts.push(poly + (dx || dy ? ' transform="translate(' + dx + ',' + dy + ')"' : "") + "/>");
         });
       });
     }
     for (let i = 0; i < 560; i++) chip(Math.exp(Math.log(6) + rnd() * Math.log(90 / 6)), tints[Math.floor(rnd() * tints.length)]);
     for (let i = 0; i < 90; i++) chip(2 + rnd() * 3, flecks[Math.floor(rnd() * flecks.length)]);
-    const src = function (list) {
-      return "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600">' + list.join("") + "</svg>");
-    };
-    const url = 'url("' + src(parts) + '")';
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600">' + parts.join("") + "</svg>";
+    const url = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
     const tiles = document.querySelector(".terrazzo-tiles"), floor = document.querySelector(".floor-tiles");
     tiles.style.backgroundImage = floor.style.backgroundImage = url;
-    const shineBox = document.querySelector(".shine"), shineTiles = document.querySelector(".shine-tiles");
-    // The tile is anchored to the page's top left, so the fixed layers and the floor band line up
+    // The tile is anchored to the page's top left, so the fixed layer and the floor band line up
     let T = 1, queued = false;
     function move() {
       queued = false;
       tiles.style.transform = "translate3d(0," + (-(scrollY % T)) + "px,0)";
-      if (shineTiles.isConnected) shineTiles.style.transform = tiles.style.transform;
     }
     function size() {
       T = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 900;
@@ -3533,46 +3509,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     if (document.fonts) document.fonts.ready.then(size);
     window.addEventListener("load", size);
     size();
-    shine(shineBox, shineTiles, src(deepParts));
-  }
-
-  // On load, once per visit: the chips shine deep, never behind the chart, then clear in a circle
-  // spreading from the title.
-  // Not under reduced motion, nor when the page opens at a link inside it.
-  function shine(box, tiles, deepSrc) {
-    let seen = false;
-    try { seen = sessionStorage.getItem("ffc-shine") === "1"; sessionStorage.setItem("ffc-shine", "1"); } catch (e) {}
-    if (seen || STILL || location.hash.length > 1) { box.remove(); return; }
-    const img = new Image();
-    img.src = deepSrc;
-    const go = function () {
-      const c = document.getElementById("ring").getBoundingClientRect();
-      if (c.bottom < 0 || c.top > innerHeight) { box.remove(); return; }
-      tiles.style.backgroundImage = 'url("' + deepSrc + '")';
-      tiles.style.transform = "translate3d(0," + (-(scrollY % (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--tile")) || 900))) + "px,0)";
-      box.style.setProperty("--cx", (c.left + c.width / 2) + "px");
-      box.style.setProperty("--cy", (c.top + c.height / 2) + "px");
-      box.style.setProperty("--cr", (Math.hypot(c.width, c.height) / 2) + "px");   // the chart's labels too
-      const h = document.querySelector(".card h1").getBoundingClientRect();
-      const x = h.left + h.width / 2, y = h.top + h.height / 2;
-      const r0 = 0;
-      const sw = Math.max(innerWidth, innerHeight) * 0.3;
-      const r1 = Math.max(Math.hypot(x, y), Math.hypot(innerWidth - x, y), Math.hypot(x, innerHeight - y), Math.hypot(innerWidth - x, innerHeight - y)) + 2;
-      box.style.setProperty("--sx", x + "px");
-      box.style.setProperty("--sy", y + "px");
-      box.style.setProperty("--sw", sw + "px");
-      box.style.setProperty("--sr", r0 + "px");
-      const IN = 300, HOLD = 250, SWEEP = 1250, t0 = performance.now();
-      const frame = function (now) {
-        const t = now - t0;
-        box.style.opacity = d3.easeQuadOut(Math.min(1, t / IN));
-        const k = d3.easeCubicInOut(Math.max(0, Math.min(1, (t - IN - HOLD) / SWEEP)));
-        box.style.setProperty("--sr", (r0 + (r1 - r0) * k) + "px");
-        if (t < IN + HOLD + SWEEP) requestAnimationFrame(frame); else box.remove();
-      };
-      requestAnimationFrame(frame);
-    };
-    (img.decode ? img.decode() : Promise.resolve()).then(go, go);
   }
 
   // Sources and notes: closed until a reader opens it or follows a link into it. A back link
