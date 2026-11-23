@@ -13,8 +13,6 @@ sec-ring,90%,2050,,F46,The EEA's 90% recycled by 2050
 sec-ring,15%,modeled,,F11,The EEA's scenario: 15% less material
 sec-ring,22%,reached,,F11,The EEA's scenario reaches about 22% by 2030
 sec-zin,600 kilograms,,,,"The chart's axis, from 0 to 600, not a figure"
-sec-closer,2026,,,F85,CBAM certificates owed since January 2026
-sec-closer,2028,,,F26,Whole-life carbon of large new buildings disclosed from 2028
 sec-closer,70%,G7,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
 sec-closer,14%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
 sec-closer,18%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
@@ -47,7 +45,6 @@ notes-game,5.5%,,,,"A tap's size, set in the page (GM_STEP)"
 notes-game,15%,producing,,F96,"IEA 2023: oil and gas operations, just under 15% of energy-related emissions"
 notes-game,40%,using,,F96,"IEA 2023: using oil and gas, another 40% of emissions"
 notes-closer,2026,Circular Economy Act,,F33,The Act planned for the fourth quarter of 2026
-notes-closer,2027,one report,,F42,One report expects the Act in 2027
 notes-closer,16,,,F79,The consumption footprint's 16 impact categories
 notes-closer,18%,Austria,,F29,Austria's 18% rate target for 2030
 notes-closer,14 tonnes,Austria,,F29,Austria's 14 tonnes per person by 2030
@@ -55,14 +52,6 @@ notes-closer,2026,January,,F85,CBAM from January 1 and construction products fro
 notes-closer,2040,,,F86,The old construction standards may stay in use until 2040
 notes-closer,2028,,,F26,Whole-life carbon disclosure from January 1
 notes-closer,1000 square meters,,,F26,New buildings over 1000 m2 first
-notes-closer,17,,,F40,The CRMA's 17 strategic raw materials
-notes-closer,25%,,,F40,The CRMA's benchmark to recycle at least 25% of yearly use
-notes-closer,2027,January,,F40,The CRMA's recycling benchmarks due by January 1
-notes-closer,26,,,F41,The ECA's 26 critical raw materials for the energy transition
-notes-closer,10,,,F41,Ten not recycled at all
-notes-closer,7,,,F41,Seven recycled at 1 to 5%
-notes-closer,1%,,,F41,Seven recycled at 1 to 5%
-notes-closer,5%,,,F41,Seven recycled at 1 to 5%
 notes-closer,70%,construction,,F84,The Waste Framework Directive's 70% by weight for construction and demolition waste
 notes-closer,70%,homes,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
 notes-closer,14%,homes,,F28,"IRP: 14 to 18% from better recycling of construction materials"
