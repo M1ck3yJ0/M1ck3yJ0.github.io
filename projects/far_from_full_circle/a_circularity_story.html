@@ -3467,7 +3467,11 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     };
     const tints = ["#E9EDF5", "#F3ECDC", "#F5EAE2", "#EEF0F5", "#E6EBF4", "#F2EEE6"];
     const flecks = ["#6F84C4", "#A67F22", "#8A4013", "#4A5577"];
-    const parts = [];
+    // The same chips a step darker, for wide screens and the floor band
+    const darker = {
+      "#E9EDF5": "#D9DFEA", "#F3ECDC": "#E9E0CA", "#F5EAE2": "#EBDAD0", "#EEF0F5": "#E1E3EA", "#E6EBF4": "#D5DCEA", "#F2EEE6": "#E7E1D7"
+    };
+    const parts = [], darkParts = [];
     function chip(size, fill) {
       const n = 4 + Math.floor(rnd() * 4);
       const cx = rnd() * 1600, cy = rnd() * 1600;
@@ -3476,20 +3480,28 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         const r = size / 2 * (0.55 + 0.45 * rnd());
         return [cx + r * Math.cos(a), cy + r * Math.sin(a)].map(function (v) { return v.toFixed(1); }).join(",");
       });
-      const poly = '<polygon points="' + pts.join(" ") + '" fill="' + fill + '"';
+      const poly = '<polygon points="' + pts.join(" ") + '" fill="';
       [-1600, 0, 1600].forEach(function (dx) {
         [-1600, 0, 1600].forEach(function (dy) {
           if (cx + dx + size < 0 || cx + dx - size > 1600 || cy + dy + size < 0 || cy + dy - size > 1600) return;
-          parts.push(poly + (dx || dy ? ' transform="translate(' + dx + ',' + dy + ')"' : "") + "/>");
+          const end = '"' + (dx || dy ? ' transform="translate(' + dx + ',' + dy + ')"' : "") + "/>";
+          parts.push(poly + fill + end);
+          darkParts.push(poly + (darker[fill] || fill) + end);
         });
       });
     }
     for (let i = 0; i < 560; i++) chip(Math.exp(Math.log(6) + rnd() * Math.log(90 / 6)), tints[Math.floor(rnd() * tints.length)]);
     for (let i = 0; i < 90; i++) chip(2 + rnd() * 3, flecks[Math.floor(rnd() * flecks.length)]);
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600">' + parts.join("") + "</svg>";
-    const url = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+    const url = function (list) {
+      return 'url("data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600">' + list.join("") + "</svg>") + '")';
+    };
+    const light = url(parts), dark = url(darkParts);
     const tiles = document.querySelector(".terrazzo-tiles"), floor = document.querySelector(".floor-tiles");
-    tiles.style.backgroundImage = floor.style.backgroundImage = url;
+    floor.style.backgroundImage = dark;
+    // Phone: the lighter chips behind the story; wide screens: the darker ones
+    const pick = function () { tiles.style.backgroundImage = wideMQ.matches ? dark : light; };
+    pick();
+    if (wideMQ.addEventListener) wideMQ.addEventListener("change", pick); else wideMQ.addListener(pick);
     // The tile is anchored to the page's top left, so the fixed layer and the floor band line up
     let T = 1, queued = false;
     function move() {
