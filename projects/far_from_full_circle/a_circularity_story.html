@@ -885,7 +885,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     <section class="note" id="notes-explore">
       <h3>19 of 27 EU countries would still have to go without, even recycling 70% of their waste</h3>
       <p class="note-src">Source: Eurostat, 2022; 70% recycled, EEA scenario. Cut: my calculation.</p>
-      <p>Each country's ring runs on the story's model (Method), with its own figures for 2022. Recycling rises to 70% of the waste the country treats, the European Environment Agency's scenario for the EU in 2030 (EEA 2023); Italy, which already recycles 85.6%, stays where it is. Each extra recycled tonne replaces half a new one, an assumed midpoint, and the tonnes it replaces leave the disc by the country's waste not yet recycled, as in the ring's note. The cut still needed then takes the same share of every material. For a country still short of 24% after recycling, how much new material has to go is the same whatever recycling replaces; only the split between what recycling stands in for and what the country goes without changes. Tonnes per person are material consumption per person (env_ac_mfa).</p>
+      <p>Each country's ring runs on the story's model (Method), with its own figures for 2022. Recycling rises to 70% of the waste the country treats, the European Environment Agency's scenario for the EU in 2030 (EEA 2023); Italy, which already recycles 85.6%, stays where it is. Each extra recycled tonne replaces half a new one, an assumed midpoint, and the tonnes it replaces leave the disc by the country's waste not yet recycled, as in the ring's note. The cut still needed then takes the same share of every material. For a country still short of 24% after recycling, how much new material has to go is the same whatever recycling replaces; only the split between what recycling stands in for and what the country goes without changes. Tonnes per person are material consumption per person (env_ac_mfa). Each figure is rounded on its own, so what recycling replaces and what a country goes without can add up to 0.1% more or less than its total cut.</p>
       <p>At the midpoint, 19 of the 27 stay short of 24% with 70% of their waste recycled, as they do if each recycled tonne replaced a whole new one; if recycled tonnes replaced none, 23 would. The eight that pass are Austria, Bulgaria, Estonia, Finland, Luxembourg, Malta, the Netherlands and Sweden, Malta only just, at 24.1%. Bulgaria, Estonia, the Netherlands and Sweden would pass even if recycled tonnes replaced none (my calculation from Eurostat).</p>
       <p>What sets the size of a country's cut is how much waste it treats for each tonne of material it consumes: 30.9% for the EU, from 5.7% in Latvia to 68.5% in the Netherlands. Treated waste is the waste treated in the country, so it can include waste brought in from abroad. Luxembourg treated 10.1 Mt in 2022 (env_wastrt), of which it had brought in 3.1 million to recycle (env_ac_sd), against 15.3 Mt of material consumed.</p>
       <p>To split a country's waste by material, I scale env_wassd's tonnes to the rate's totals, as for the EU. For 15 countries that split needs care. Bulgaria, Estonia, Latvia, Lithuania and Malta don't publish their trade in waste by material, and for the rest env_wassd's tonnes are more than half off the rate's: Austria, Belgium, Croatia, Cyprus, Ireland, Italy, Lithuania, Luxembourg, Latvia, the Netherlands, Spain and Sweden. In Ireland (biomass) and Cyprus (fossil fuels), one material comes out with negative circular use, because more of it was brought in to be recycled than was recycled. The split decides only which shards leave the disc. The card gives the split between recycling and going without in total, which doesn't depend on it.</p>
@@ -1383,7 +1383,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     if (s.call === "both") {                // above the ring, through panel 6's beat and after
       const cut = Math.round((X6 + G6) * 1000) / 10, rep = Math.round(X6 * 1000) / 10;
       label(L, CX, 24, [[fmt1(cut) + "% less new material", "lab-strong"],
-                        [fmt1(rep) + "% replaced by recycling 70%; " + fmt1(cut - rep) + "% gone without", "lab"],
+                        [fmt1(rep) + "% replaced by recycling 70%; " + fmt1(G6 * 100) + "% gone without", "lab"],
                         ["each recycled tonne assumed to replace half a new one", "lab"]], "middle");
     }
     if (s.call === "less") {                // above the ring, for both of panel 5's beats
@@ -2363,7 +2363,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     L.selectAll("*").remove();
     const cut = Math.round(q.cut * 10) / 10, rep = Math.round(q.rep * 10) / 10;
     const sub = q.held ? "recycling held at its " + fmt1(c.share_recycled) + "% of waste"
-              : q.gone > 0 ? rep + "% replaced by recycling 70%; " + fmt1(cut - rep) + "% gone without"
+              : q.gone > 0 ? rep + "% replaced by recycling 70%; " + fmt1(q.goneP) + "% gone without"
               : "all replaced by recycling 70%";
     const hl = label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
     const part = sub.indexOf("; ");                // too wide: the split wraps after its semicolon
@@ -2402,14 +2402,14 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     let b;
     if (q.gone > 0) {
       a += " To close the ring, " + n + " would need to use " + fmt1(cut) + "% less new material, about " +
-           fmt1(tpp * cut / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
+           fmt1(tpp * q.cut / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
       a += q.held ? " With no more recycling to stand in for it, all of that is material " + n + " would go without."
-                  : " Recycling would replace " + fmt1(rep) + "% of its new material, and " + n + " would go without another " + fmt1(cut - rep) + "%.";
+                  : " Recycling would replace " + fmt1(rep) + "% of its new material, and " + n + " would go without another " + fmt1(q.goneP) + "%.";
       if (cut > 14) a += " For scale, the EU's biggest two-year fall in material use since 2004 was 14%.";
       b = "The size of the cut isn't a ranking of who uses the most. It depends on how much waste there is to recycle for each tonne a country uses. In " +
           n + ", the waste it treats each year equals " + w + "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%.";
     } else {
-      a += " Recycling alone would take " + fmt1(rep) + "% of its new material away, about " + fmt1(tpp * rep / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
+      a += " Recycling alone would take " + fmt1(rep) + "% of its new material away, about " + fmt1(tpp * q.rep / 100) + " of its " + fmt1(tpp) + " tonnes per person.";
       b = "It gets there because there is so much waste to recycle for each tonne it uses: the waste it treats each year equals " + w +
           "% of the material it consumes, " + cmp + " the EU's " + XR_EU_WASTE + "%. " +
           (c.rate_70pct_recycled_if_adding >= TARGET * 100
@@ -2422,7 +2422,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the new material it used in " + YR + ", in shards of four blues for minerals, biomass, fossil fuels and metal ores. In " + YR + ", its rate was " +
       fmt1(c.rate) + "%. With 70% of its waste recycled" + (q.held ? "" : ", up from " + fmt1(c.share_recycled) + "%, and each recycled tonne replacing half a new one") + ", it would be " + fmt1(q.r70) +
       "%" + (q.held ? "" : ", and the disc shrinks by the " + fmt1(rep) + "% of new material that recycling replaces") +
-      (q.gone > 0 ? ". To close the ring at the 24% target, it would also go without " + fmt1(cut - rep) + "% of its new material, so the disc shrinks until the ring closes." :
+      (q.gone > 0 ? ". To close the ring at the 24% target, it would also go without " + fmt1(q.goneP) + "% of its new material, so the disc shrinks until the ring closes." :
       ", past the 24% target, so the arc runs on into a second lap."));
   }
 
@@ -3097,7 +3097,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10, r = 100 * q.rate;
     if (w > 0) {
       const sub = q.s <= GM_S0 ? "recycling held at its " + YR + " level"
-                : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling; " + fmt1(w - rep) + "% gone without"
+                : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling; " + fmt1(q.C) + "% gone without"
                 : "all replaced by recycling";
       label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
     }
@@ -3144,7 +3144,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
             "% of the tonnes the EU imports.";
     const best = ", mostly sand, gravel and stone, but only if the EU recycles " + gmMult(q.mult) +
                  " times as much as it did in " + YR + " and each recycled tonne replaces half a new one.";
-    if (q.s > GM_S0 && q.C > 1e-9) t += " Recycling stood in for " + fmt1(rep) + "% of it" + best + " The EU would go without the other " + fmt1(w - rep) + "%.";
+    if (q.s > GM_S0 && q.C > 1e-9) t += " Recycling stood in for " + fmt1(rep) + "% of it" + best + " The EU would go without the other " + fmt1(q.C) + "%.";
     else if (q.s > GM_S0) t += " Recycling stood in for all of it" + best;
     else t += " With no more recycling to stand in for it, the EU would go without all of it.";
     const lines = [];
