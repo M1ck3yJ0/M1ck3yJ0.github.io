@@ -1,11 +1,15 @@
 section,figure,near,row,f,reason
 head,24%,,headline.target,,The EU's target
 sec-ring,24%,,headline.target,,The EU's target
-sec-ring,a fifth of 1%,,headline.pace_2004_2022_per_year,,The rate's yearly rise from 2004 to 2022
-sec-ring,1.6%,,headline.pace_needed_per_year,,The pace needed each year to reach 24% by 2030
+sec-ring,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
+sec-ring,25%,,,,"The guess's options, not figures"
+sec-ring,50%,,,,"The guess's options, not figures"
+sec-ring,75%,,,,"The guess's options, not figures"
+sec-ring,90%,,,,"The guess's options, not figures"
+sec-ring,90%,answer,headline.recycled_share_to_close_k05,,"The guess's answer: over 90%, for 93.4%"
 sec-ring,8%,,headline.less_new_material_to_close_k05,,The least new material any route to 24% takes away
-sec-ring,31%,not,headline.waste_back_per_material_consumed,,The waste that comes back as a share of material consumed
-sec-ring,90%,,,F46,The EEA's 90% recycled by 2050
+sec-ring,31%,back,headline.waste_back_per_material_consumed,,The waste that comes back as a share of material consumed
+sec-ring,90%,2050,,F46,The EEA's 90% recycled by 2050
 sec-ring,15%,modeled,,F11,The EEA's scenario: 15% less material
 sec-ring,22%,reached,,F11,The EEA's scenario reaches about 22% by 2030
 sec-compare,5%,,examples.comparison.food_share_of_tonnes_saved,,The kitchens' share of the tonnes the two saved
@@ -72,3 +76,6 @@ sec-closer,24%,,headline.target,,The EU's target
 notes-method,24%,,headline.target,,The EU's target
 explore-waterfall FI,5.6%,,trend_steps.FI.2012.2014.rate_to_pct,,Finland's rate in 2014
 explore-waterfall ES,10.4%,,trend_steps.ES.2010.2012.rate_from_pct,,Spain's rate in 2010
+notes-ring,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
+notes-ring,24%,,headline.target,,The EU's target
+notes-ring,2026,,,F98,"env_wastrt's 2024 release, October 2026"
