@@ -71,6 +71,11 @@
 @supports (height: 1svh) {
   :root { --chart: min(calc(100vw - 16px), 544px, 58svh); }
 }
+/* Phones: the width inside main, so a classic scrollbar doesn't push the chart past the edge */
+@supports (width: 1cqw) and (height: 1svh) {
+  main { container-type: inline-size; }
+  :root { --chart: min(calc(100cqw - 16px), 544px, 58svh); }
+}
 /* Wide screens: the chart in the left column, the cards in the right */
 @media (min-width: 800px) {
   :root {
@@ -429,7 +434,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
     display: grid; grid-template-columns: var(--chart) var(--cards); column-gap: var(--col-gap); align-items: start;
   }
   .game-l, .game-r { display: flex; flex-direction: column; }
-  .game-l { position: relative; z-index: 1; container-type: inline-size; }
+  .game-l { position: relative; z-index: 1; container: game-l / inline-size; }
   #game-chart { width: var(--chart); }
   #game-chart svg { overflow: visible; }            /* its shards fly over the text */
   .game-end { order: 2; }
@@ -439,7 +444,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   .game-reset { margin-left: 0; }
   .game-box .note-link { margin: 12px 0 0; }
 }
-@container (min-width: 540px) {
+@container game-l (min-width: 540px) {
   .game-keys { grid-template-columns: repeat(4, 1fr); }
 }
 </style>
