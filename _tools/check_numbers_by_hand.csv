@@ -101,3 +101,7 @@ notes-waterfall,15.8 million,,,F107,"EU in construction, 2008 (lfsa_egan2)"
 notes-waterfall,14.1 million,,,F107,"EU in construction, 2010 (lfsa_egan2)"
 notes-closer,"163,433",,,F109,"Ireland's vacant homes, Census 2022"
 notes-closer,8%,stock,,F109,"Ireland's census vacancy rate, 2022"
+sec-closer,2.1%,,ceilings.IE.rate_pct,,Ireland's rate in 2022
+sec-closer,73%,less,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
+sec-closer,73%,smaller,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
+notes-closer,73.1%,,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled

@@ -176,6 +176,23 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .closer-text p { margin: 0; }
 .closer-text p + p { margin-top: .8em; }
 .closer-text .note-link { margin-top: 1.2em; }
+/* Ireland's two small rings in the closer: side by side above its two paragraphs on a phone,
+   beside them on wide screens, the first on the left and the second on the right. No motion. */
+.ie { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "a b" "p1 p1" "p2 p2"; column-gap: 16px; margin-top: .8em; }
+.closer-text .ie + p { margin-top: .8em; }
+.ie-a { grid-area: a; } .ie-b { grid-area: b; } .ie-p1 { grid-area: p1; } .ie-p2 { grid-area: p2; }
+.closer-text .ie-p2 { margin-top: .8em; }
+.ie-ring { margin: 0 0 .8em; }
+.ie-ring svg { display: block; width: 100%; max-width: 180px; height: auto; margin: 0 auto; }
+.ie-ring figcaption { margin-top: 6px; font-size: 14px; line-height: 1.3; color: var(--ink-2); text-align: center; }
+@media (min-width: 800px) {
+  .ie { grid-template-columns: calc(180 * var(--t)) 1fr calc(180 * var(--t)); grid-template-areas: "a p1 p1" "p2 p2 b";
+        column-gap: calc(28 * var(--t)); align-items: center; }
+  .ie-ring { margin: 0; }
+  .ie-ring svg { max-width: none; }
+  .ie-ring figcaption { font-size: calc(14 * var(--t)); }
+  .closer-text .ie-p2 { margin-top: 1.2em; }
+}
 .credit { margin: 2.4em 0 0; padding-top: 16px; border-top: 1px solid var(--hairline); text-align: center; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
 .credit p { margin: 0; }
 .credit .by { font-weight: 800; }
@@ -768,7 +785,24 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       <p>It would also help to count what materials cost as well as what they weigh. Parts of EU law already count the carbon in materials, but the targets for circularity count tonnes, as do the EU's recycling targets for waste. Met by recycling 70% of waste and cutting the heaviest materials first, 24% would take 31% of the EU's new material away, yet cut only about 8% of the climate cost of producing materials, burning fuels not counted, and about 5% of what the EU imports. Setting a number for the consumption footprint beside the rate would show what those tonnes cost.</p>
       <p>Some of us are already keeping what we have: ZIN's owner kept its towers standing, and IKEA's kitchens learned to throw less food away. A measure that counted choices like these would show them as progress.</p>
       <p>Most of all, it would help to make what we have last and to design what we make next to need less material: using things for longer, wasting less of what we grow, and designing products and buildings to last, to be repaired and to use less from the start. For homes, the International Resource Panel found that using them more intensively could cut the emissions of their materials by up to 70% by 2050 in the G7, against 14 to 18% from better recycling and 8 to 10% from designs that use less material.</p>
-      <p>I began with Ireland's number, so I'll end there. In February 2026, Ireland set its own goal, a rate of 12% by 2030, half the EU's. Even if Ireland recycled every tonne of its waste, the same model takes its rate only to about 11%, whatever each recycled tonne replaces, because most of the waste it treats is soil and rock, and most of that goes back into the ground as fill. Recycling 70% of its waste, Ireland would still need more than a third less new material to reach 12%. That is a hard thing to ask of a country short of homes, though some of what it needs is already standing. I rebuilt the EU's rate from Eurostat's own tables to find that out, so that I could move each lever myself, and every figure here comes from that model or from a source I checked; the notes at the end say which.</p>
+      <div class="ie">
+        <figure class="ie-ring ie-a">
+          <svg viewBox="-126 -126 252 252" role="img" aria-label="Ireland's circularity in 2022 drawn as a ring: a thin circle for the EU's 24% target and a gold arc for Ireland's rate, 2.1%, under a tenth of the way round, around a disc of the new material it used, in shards of four blues for minerals, biomass, fossil fuels and metal ores.">
+            <defs><clipPath id="ie-clip-a"><path></path></clipPath></defs>
+            <g class="ring"><circle class="target" r="0"></circle><g class="stripes rate" clip-path="url(#ie-clip-a)"><path class="tint"></path></g><path class="rope"></path><g class="disc"><g class="mats"></g></g></g>
+          </svg>
+          <figcaption>Ireland in 2022: 2.1%, against the EU's 24% target</figcaption>
+        </figure>
+        <p class="ie-p1">I began with Ireland's number, so I'll end there. In February 2026, Ireland set its own goal, a rate of 12% by 2030, half the EU's. Held to the EU's 24%, as every country is in this story, it is much further away. Even if Ireland recycled every tonne of its waste, the same model takes its rate only to about 11%, less than halfway, whatever each recycled tonne replaces, because most of the waste it treats is soil and rock, and most of that goes back into the ground as fill.</p>
+        <figure class="ie-ring ie-b">
+          <svg viewBox="-126 -126 252 252" role="img" aria-label="Ireland's ring closed at the EU's 24% target: with 70% of its waste recycled, the gold arc runs on in stripes for the recycling added, and its disc of new material is 73% smaller, with the same four blues.">
+            <defs><clipPath id="ie-clip-b"><path></path></clipPath></defs>
+            <g class="ring"><circle class="target" r="0"></circle><g class="stripes rate" clip-path="url(#ie-clip-b)"><path class="tint"></path></g><path class="rope"></path><g class="disc"><g class="mats"></g></g></g>
+          </svg>
+          <figcaption>With 70% recycled and 73% less new material: 24%</figcaption>
+        </figure>
+        <p class="ie-p2">Recycling 70% of its waste, Ireland would still need almost three quarters less new material to reach 24%, and more than a third less even for its own 12%. That is a hard thing to ask of a country short of homes, though some of what it needs is already standing. I rebuilt the EU's rate from Eurostat's own tables to find that out, so that I could move each lever myself, and every figure here comes from that model or from a source I checked; the notes at the end say which.</p>
+      </div>
       <p>The drawings in this story are terrazzo, and just below is the floor itself, made from what was left over and set to last, which the rate can't count.</p>
       <p class="note-link"><a href="#notes-closer">Notes &#8595;</a></p>
       <footer class="credit">
@@ -936,7 +970,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       <p>At 70% of waste recycled, the EU still needs 31.0% less new material: recycling replaces 4.5%, mostly minerals, and nothing replaces the other 26.5% (<a href="#notes-method">Method</a>). If that 26.5% is taken whole material by whole material, heaviest first, that is minerals alone, and the cut removes 7.8% of the climate impact of making the EU's materials and 4.6% of what it imports from outside the EU. Taken by the climate cost of producing each tonne instead, burning fuels not counted, metal ores first and then biomass, the same tonnes remove 59.5% of that climate cost and 26.4% of imports. Counting burning would put fossil fuels higher in that order. Both are counted as in the game's note, with the same credit to recycling.</p>
       <p>Parts of EU law already count the carbon in materials. Since January 1, 2026, importers of cement, iron and steel, aluminum, fertilizers, electricity and hydrogen owe certificates for the greenhouse gases embedded in what they import, priced on the EU Emissions Trading System (Regulation (EU) 2023/956). Construction products' declarations of performance must cover their climate change effects over their life cycle from January 8, 2026, but only once a product family's harmonized standard has been renewed under the new regulation, and the old standards may stay in use until 2040 (Regulation (EU) 2024/3110, Article 15(3) and Annex II). From January 1, 2028, new buildings over 1,000 square meters must have their carbon over their whole life calculated and disclosed in their energy performance certificate, and all new buildings from 2030 (Directive (EU) 2024/1275). The EU's waste targets, by contrast, are set by weight, such as at least 70% by weight of non-hazardous construction and demolition waste reused, recycled or otherwise recovered, backfilling included (Directive 2008/98/EC, Article 11(2)). That a measure by weight misses what materials cost is published: mass-based indicators such as recycling rates "fail to cover the environmental perspective" (Haupt and Hellweg 2019), the rate "does not directly consider other environmental pressures such as greenhouse gas emissions" (EPA Research Report 458), and a higher rate "does not necessarily lead to lower environmental impacts" (ETC CE Report 2025/3).</p>
       <p>The remedy of getting more from what is already built, by using it more intensively, making it last longer and designing it better, is Krausmann et al. 2017's. The figures for homes are the International Resource Panel's, for the G7 in 2050, and count the emissions of the materials homes need: up to 70% less from using homes more intensively, 14 to 18% from better recycling of construction materials and 8 to 10% from designs that use less material (IRP 2020, factsheet). The EEA likewise calls for more intensity of use per product and much longer product lifetimes, and for putting the reduction of resource use first (EEA 2024, executive summary).</p>
-      <p>Ireland's goal of 12% by 2030 is in its Whole of Government Circular Economy Strategy 2026 to 2028, published in February 2026 (Department of Climate, Energy and the Environment); its first strategy aimed for a rate above the EU average by 2030. Recycling every tonne of the waste Ireland treated in 2022 would take its rate to 10.5%, 10.9% or 11.5%, as each recycled tonne replaces none, half or a whole new one (<a href="#notes-method">Method</a>). With 70% recycled, it would still need 37.7% less new material under all three. 69.9% of the waste it treats is soil and rock, and 51.9% is backfilled (env_wastrt). My calculation. Some of what Ireland needs is already standing: Census 2022 counted 163,433 vacant homes, holiday homes left out, 8% of its housing stock, though the census counts vacancy on one night, and some of those homes may have been lived in again soon after (CSO, Census 2022 Profile 2, Housing in Ireland).</p>
+      <p>Ireland's goal of 12% by 2030 is in its Whole of Government Circular Economy Strategy 2026 to 2028, published in February 2026 (Department of Climate, Energy and the Environment); its first strategy aimed for a rate above the EU average by 2030. Recycling every tonne of the waste Ireland treated in 2022 would take its rate to 10.5%, 10.9% or 11.5%, as each recycled tonne replaces none, half or a whole new one (<a href="#notes-method">Method</a>). Held to the EU's 24%, that is less than half at every replacement. With 70% recycled, it would still need 73.1% less new material to reach 24%, and 37.7% less for its own 12%, each the same under all three. 69.9% of the waste it treats is soil and rock, and 51.9% is backfilled (env_wastrt). My calculation. Some of what Ireland needs is already standing: Census 2022 counted 163,433 vacant homes, holiday homes left out, 8% of its housing stock, though the census counts vacancy on one night, and some of those homes may have been lived in again soon after (CSO, Census 2022 Profile 2, Housing in Ireland). The two rings beside these paragraphs are drawn as the country explorer draws Ireland's: its ring in 2022, and its ring with 70% of its waste recycled and the cut that closes it at 24%. Ireland's split of its waste by material needs care (the note on every EU country's ring), so which shards leave the disc is less certain than how much of it goes.</p>
       <p>Past 2030, the rate will see even less. Once Europe stops adding to what it has built, a building kept standing is also rubble that never comes back to be recycled, so the rate will rise mostly as we burn less, not as we make things last. This is my arithmetic, not a published finding, and it assumes stocks stop growing. By the 0.13 t rule in <a href="#notes-method">Method</a>, a tonne of fuel not burned takes only about 0.03 t of recycled material with it, while rubble that never comes back takes its whole recycled share. It rests in part on the ETC's finding that fossil fuels and biomass largely become emissions, while metals and minerals go into stock and become available for recycling later (ETC CE Report 2023/6, section 2.3.3; its section 2.3.2 adds that burning less leaves less to recycle, which the 0.03 t counts), and on Haas et al. 2015, which traces low circularity to energy use and to stocks that keep growing.</p>
       <p class="note-back"><a href="#sec-closer">Back to the story &#8593;</a></p>
     </section>
@@ -2558,6 +2592,36 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       if (es[es.length - 1].isIntersecting) { xrEnsure(); ob.disconnect(); }
     }, { rootMargin: "200% 0px" }).observe(XR_FIG);
   } else xrEnsure();
+
+  /* Ireland's two small rings in the closer, still, on the country explorer's model: 2022, then
+     70% of its waste recycled and the cut that closes the ring at 24%, as the explorer ends. */
+  function ieRings() {
+    const box = document.querySelector("#sec-closer .ie");
+    if (!box || !DATA.countries.IE) return;
+    const q = xrState("IE");
+    const draw = function (k, r) {
+      const g = d3.select(box).select(".ie-" + k + " g.ring"), end = k === "b";
+      const d = r ? (end ? r.less || r.rec : r.full) : null;
+      const size = RC0 * (end ? (d ? d.radius : Math.sqrt(1 - q.cut / 100)) : 1);
+      const den = end ? q.dmc + q.u + (1 - K_REP) * q.e - q.gone : q.dmc + q.u;
+      const s0 = Math.min(1, q.u / den / TARGET), R = size + RING_GAP + 4.5;
+      placeTarget(g, R);
+      g.select(".rope").attr("d", sector(R, 0, s0));
+      xrStripes(g.select(".stripes.rate"), "#ie-clip-" + k, R, s0, end ? 1 : s0, 4.5, true);
+      g.select(".disc").attr("transform", "scale(" + size + ")");
+      if (d) g.select(".mats").selectAll("path").data(d.shards).join("path")
+        .attr("class", function (sh) { return SH.materials[sh[1]]; })
+        .attr("d", function (sh) { return "M" + sh[2].join("L") + "Z"; });
+    };
+    draw("a"); draw("b");
+    const solve = function () { xrSolve("IE").then(function (r) { draw("a", r); draw("b", r); }); };
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (es, ob) {
+        if (es[es.length - 1].isIntersecting) { solve(); ob.disconnect(); }
+      }, { rootMargin: "200% 0px" }).observe(box);
+    } else solve();
+  }
+  ieRings();
   if (window.IntersectionObserver) {              // the chart CHART_IN visible, as a beat's first card
     new IntersectionObserver(function (es) {
       const e = es[es.length - 1], below = e.boundingClientRect.top > 0 || !e.boundingClientRect.height;   // closed counts as below
