@@ -425,6 +425,17 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 .note tbody th { font-weight: 400; }
 .note td { text-align: right; }
 .note .used { font-weight: 700; }
+/* Method's one chart: the cut 24% needs at each share of waste recycled. Still. */
+.mchart { margin: .9em 0 .6em; }
+.mchart svg { display: block; width: 100%; max-width: 560px; height: auto; }
+.mchart text { font-family: "Fira Sans", Arial, sans-serif; }
+.mchart .grid { stroke: var(--hairline); stroke-width: 1; }
+.mchart .base { stroke: var(--ink-2); stroke-width: 1; }
+.mchart .cut { fill: none; stroke: var(--used); stroke-width: 2.5; stroke-linejoin: round; }
+.mchart .rep { fill: none; stroke: var(--back); stroke-width: 2.5; stroke-linejoin: round; }
+.mchart .rep.whole { stroke-dasharray: 6 4; }
+.mchart .at70 { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; }
+.mchart .dot { fill: var(--ink); }
 .notes a, .note-link a { color: var(--ink-2); }
 .notes a:focus-visible, .note-link a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 @media (min-width: 800px) { .card h1 { font-size: calc(40 * var(--t)); } }
@@ -886,6 +897,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     <summary><h2>Method</h2><span class="notes-teaser">Each recycled tonne here replaces half a new one. That is an assumption, and this is what changes if it replaces none or a whole one.</span><span class="notes-toggle"></span></summary>
     <section class="note" id="notes-method">
       <p>When recycling rises, I assume each extra recycled tonne replaces half a new tonne of the same material. This is an assumed midpoint, not an estimate. How much new material a recycled tonne displaces is set by markets, and it can be close to none (Zink, Geyer and Startz 2018). The two ends are recycled tonnes simply adding to new ones, as in the European Environment Agency's 2030 scenarios (ETC CE Report 2023/6), and each replacing a whole new tonne, which ETC CE Report 2025/3 calls an upper limit. How much new material has to go to reach 24% at a given level of recycling is the same under all three, so the 59.3% and 31.0% hold either way. What changes is how far recycling alone gets, and how much of a cut recycling stands in for.</p>
+      <figure class="mchart" id="method-curve">
+        <svg viewBox="0 0 400 330" role="img" aria-label="A line chart for the EU in 2022. Across the share of waste recycled, from 2022's 41% to every tonne, a blue line shows the new material that has to go for 24%: 59% at 2022's recycling, 31% at 70%, falling toward nothing only near every tonne. It is the same whatever a recycled tonne replaces. Two gold lines rise from nothing: the part recycling stands in for, at half a tonne each and, dashed, at a whole tonne each. They meet the blue line where recycling alone closes the ring, at about 93% and 87% of waste recycled."><g class="plot"></g><g class="labels"></g></svg>
+      </figure>
+      <p>The chart shows why. The blue line is the new material that has to go for 24% at each share of the EU's waste recycled, with waste held at 2022's tonnes, and it is the same whatever a recycled tonne replaces. The gold lines are the part of it that recycling stands in for, at half a tonne each and at a whole one; replacing none, recycling stands in for nothing, and all of the cut is new material not replaced. Where a gold line meets the blue one, recycling alone closes the ring: at about 93% of waste recycled at half a tonne, and about 87% at a whole one. The cut falls toward nothing only as recycling nears every tonne of waste, the soil, rubble, mine waste and ash included. At 70% recycled, 31.0% has to go either way.</p>
       <table>
         <caption>EU, 2022. Each recycled tonne replaces:</caption>
         <thead><tr><th scope="col"></th><th scope="col">No new tonne</th><th scope="col" class="used">Half, used here</th><th scope="col">A whole new tonne</th></tr></thead>
@@ -3365,6 +3380,60 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     recycle: function (v) { gm.s = gmToPct(v); gmSet("move"); },
     reset: function () { GM_FIG.querySelector(".game-reset").click(); }, heaviest: function () { return gmHeaviest(gmQ); }
   };
+
+  /* ---------- Method: the cut 24% needs at each share of waste recycled, EU 2022 ----------
+     Still. The blue line is the same at every replacement; the gold lines are the part recycling
+     stands in for at half a tonne and a whole tonne each; where one meets the blue line, recycling
+     alone closes the ring. */
+  (function methodCurve() {
+    const C = DATA.cut_curve, svg = d3.select("#method-curve svg");
+    if (!C || svg.empty()) return;
+    const X0 = 40, X1 = 386, Y0 = 272, Y1 = 140;
+    const x = d3.scaleLinear([40, 100], [X0, X1]), y = d3.scaleLinear([0, 60], [Y0, Y1]);
+    const g = svg.select("g.plot"), L = svg.select("g.labels");
+    [0, 20, 40, 60].forEach(function (v) {
+      g.append("line").attr("class", v ? "grid" : "base").attr("x1", X0).attr("x2", X1).attr("y1", y(v)).attr("y2", y(v));
+      label(L, X0 - 6, y(v) + 4, [[v + "%", "lab"]], "end");
+    });
+    [40, 50, 60, 70, 80, 90, 100].forEach(function (v) {
+      label(L, x(v), Y0 + 17, [[v + "%", "lab"]], "middle");
+    });
+    label(L, (X0 + X1) / 2, Y0 + 36, [["Share of the EU's waste recycled", "lab"]], "middle");
+    const pts = function (ys) { return C.recycled_share.map(function (s, i) { return [x(s), y(ys[i])]; }); };
+    const line = d3.line();
+    g.append("path").attr("class", "rep whole").attr("d", line(pts(C.replaced.k1)));
+    g.append("path").attr("class", "rep").attr("d", line(pts(C.replaced.k05)));
+    g.append("path").attr("class", "cut").attr("d", line(pts(C.cut)));
+    // 70% recycled, and where each gold line meets the blue one
+    const at = function (ys, s) { return d3.scaleLinear(C.recycled_share, ys)(s); };
+    const c70 = at(C.cut, 70);
+    g.append("line").attr("class", "at70").attr("x1", x(70)).attr("x2", x(70)).attr("y1", Y0).attr("y2", y(c70));
+    g.append("circle").attr("class", "dot").attr("r", 3.5).attr("cx", x(70)).attr("cy", y(c70));
+    label(L, x(70) + 9, y(c70) - 10, [[d3.format(".0f")(c70) + "% at 70%", "lab-strong"]]);
+    const meet = function (rep) {
+      const i = C.cut.findIndex(function (c, j) { return rep[j] >= c; });
+      const f = (C.cut[i - 1] - rep[i - 1]) / ((C.cut[i - 1] - rep[i - 1]) - (C.cut[i] - rep[i]));
+      return [C.recycled_share[i - 1] + f * (C.recycled_share[i] - C.recycled_share[i - 1]), C.cut[i - 1] + f * (C.cut[i] - C.cut[i - 1])];
+    };
+    const m1 = meet(C.replaced.k1), m05 = meet(C.replaced.k05);
+    [m1, m05].forEach(function (m) { g.append("circle").attr("class", "dot").attr("r", 3.5).attr("cx", x(m[0])).attr("cy", y(m[1])); });
+    label(L, x(91), y(53), [["Recycling alone", "lab"], ["closes the ring", "lab"]], "middle");
+    [m1, m05].forEach(function (m) {
+      L.append("line").attr("class", "leader").attr("x1", x(91) + (m[0] < 91 ? -6 : 6)).attr("y1", y(53) + 22)
+        .attr("x2", x(m[0])).attr("y2", y(m[1]) - 6);
+    });
+    // Title and key
+    label(L, 0, 16, [["The cut 24% needs is the same,", "lab-title"], ["whatever a recycled tonne replaces", "lab-title", "1.25em"]]);
+    label(L, 0, 58, [["Less new material needed for 24%, EU, 2022", "lab"]]);
+    const keyLine = function (yy, cls, text) {
+      L.append("line").attr("class", cls).attr("x1", 0).attr("x2", 22).attr("y1", yy - 4.5).attr("y2", yy - 4.5);
+      label(L, 30, yy, [[text, "key"]]);
+    };
+    keyLine(78, "cut", "New material that has to go, at any replacement");
+    keyLine(95, "rep", "Part recycling replaces, half a tonne each (used here)");
+    keyLine(112, "rep whole", "Part recycling replaces, a whole tonne each");
+    label(L, 0, 326, [["Source: my calculation from Eurostat. Waste held at 2022's tonnes", "lab-src"]]);
+  })();
 
   /* ---------- Cards drive the charts ---------- */
   /* The hero's ring: a still copy of the ring drawn at the hero's state, without the ring's
