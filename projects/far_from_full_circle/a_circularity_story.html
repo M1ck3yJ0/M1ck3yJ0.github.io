@@ -38,7 +38,6 @@
   --used: #003399;        /* material used: the center, "used less" bars */
   --used-could: #7893C9;  /* material that could have been used, and the part never used */
   --back: #EBB30B;        /* what comes back: the rate arc, the recycling bars */
-  --back-could: #D2BF90;  /* waste that could come back: the 31%, the every-tonne band */
   --target: #A67F22;      /* the 24% target circle */
   --back-lap: #8F6A00;    /* the arc's second lap, past 24%: drawn over the first, translucent */
   --impact: #8A4013;      /* climate impact, beside tonnes */
@@ -170,6 +169,12 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 }
 .steps > .card:first-child { margin-top: calc(var(--chart) + 24px); }
 .steps > .card:last-child { margin-bottom: 60vh; }
+/* The break: the paragraphs between the hero and the reveal, unpinned on a white band across the
+   page, as the closer's, with no chart */
+.break { position: relative; z-index: 1; margin: 0 0 48px; padding: 20px 20px 24px; background: #fff; }
+.break-text { max-width: 720px; margin: 0 auto; font-size: 18px; }
+.break-text p { margin: 0; }
+.break-text p + p { margin-top: .8em; }
 /* The closer: paragraphs on a white band across the page, unpinned, with no chart */
 .closer { position: relative; z-index: 1; margin: 0 0 48px; padding: 20px 20px 24px; background: #fff; }
 .closer-text { max-width: 720px; margin: 0 auto; font-size: 18px; }
@@ -218,13 +223,15 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
   }
   .closer { padding: calc(40 * var(--t)) calc(40 * var(--t)) calc(48 * var(--t)); }
   .burst[data-chart="ring"] .pin { z-index: 2; }  /* panel 5's shards fly over the cards */
+  .break { padding: calc(40 * var(--t)) calc(40 * var(--t)) calc(48 * var(--t)); }
+  .break .guess { grid-template-columns: repeat(4, 1fr); }
   #ring svg { overflow: visible; }
 }
 .card, .explore-text { font-size: 18px; }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
 @media (min-width: 800px) {
-  .card, .explore-text, .closer-text { font-size: calc(20 * var(--t)); }
+  .card, .explore-text, .closer-text, .break-text { font-size: calc(20 * var(--t)); }
 }
 .card h1 {
   margin: 0 0 10px;
@@ -254,7 +261,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .ring .rope, .ring .dot.rate, .ring-key .rope, .ring-key .dot { fill: var(--back); }
 .ring .stripes.rate .tint { fill: color-mix(in srgb, var(--back) 22%, #fff); }
 .ring .stripes.rate line { stroke: var(--back); stroke-width: 2.2; }
-.ring .waste path, .ring-key .waste { fill: var(--back-could); }
 .ring-key .hatch-rate { fill: url(#ring-hatch-rate); }
 .key { fill: var(--ink-2); font-size: calc(13px * var(--cf, 1)); }
 .lab { fill: var(--ink-2); font-size: calc(13.5px * var(--cf, 1)); }
@@ -520,7 +526,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   .card { padding: calc(18 * var(--t)) calc(20 * var(--t)) calc(20 * var(--t)); }
   .card .subtitle { font-size: calc(24 * var(--t)); }
   .card .byline { font-size: calc(15 * var(--t)); }
-  .closer-text { max-width: calc(720 * var(--t)); }
+  .closer-text, .break-text { max-width: calc(720 * var(--t)); }
   .credit { font-size: calc(15 * var(--t)); }
   .notes, .floor-card, .explorer > details > summary { max-width: calc(640 * var(--t)); font-size: calc(16 * var(--t)); }
   .floor-card { max-width: calc(560 * var(--t)); }
@@ -543,26 +549,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 <div class="terrazzo" aria-hidden="true"><div class="terrazzo-tiles"></div></div>
 
 <main>
-  <section class="burst" data-chart="ring" id="sec-ring">
+  <section class="burst" data-chart="hero" id="sec-hero">
     <div class="pin">
-      <figure class="chart" id="ring">
-        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.0%, biomass 23.3%, fossil fuels 19.3% and metal ores 5.5%.">
-          <defs>
-            <clipPath id="ring-waste-clip"><rect x="-1.1" width="2.2" y="1.1" height="2.2"></rect></clipPath>
-            <clipPath id="ring-stripe-clip"><path></path></clipPath>
-            <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
-          </defs>
-          <g class="ring" transform="translate(200,176)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
-            <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
-            <path class="rope"></path>
-            <g class="disc" transform="scale(0)">
-              <g class="mats"></g>
-              <g class="waste" clip-path="url(#ring-waste-clip)"></g>
-            </g>
-          </g>
-          <g class="labels"></g>
-        </svg>
+      <figure class="chart" id="ring-hero">
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.0%, biomass 23.3%, fossil fuels 19.3% and metal ores 5.5%."></svg>
       </figure>
     </div>
     <div class="steps">
@@ -576,20 +566,45 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         <p>The newest figure for the EU, Eurostat's estimate for 2024, is 12.2%, against a target of 24% by 2030. To get there, the rate would have to climb by about 2% of all the material we use each year, more than it climbed in all fourteen years from 2010 to 2024, when it went from 10.7% to 12.2%.</p>
         <p>The European Environment Agency has warned since 2023 that recycling more won't get there on its own. I couldn't find anyone who had worked out how far each lever would have to go, so that is what I have tried to do here, before looking at what the target can't see, such as a building in Brussels that would have done more for the rate torn down than kept standing. The ring, and every figure from here on, uses 2022, the latest year for which Eurostat has reported everything the rate is made of.</p>
       </article>
-      <article class="card" data-state="back">
-        <p>Not everything we use can come back: fuel is burned and its carbon goes into the air, and food is eaten. The waste that does come back weighs as much as 31% of the material the EU consumes in a year, and most of it is soil, rubble and the rock left over from mining. Much of that is never recycled, and most of what isn't goes back into the ground, buried in landfills or used to fill land that has been dug out.</p>
-        <p>This was the second thing that shocked me about Ireland: most of its waste is soil and rock, and most of what it doesn't recycle is used as fill, which the rate doesn't count as recycling.</p>
-      </article>
-      <article class="card" data-state="back">
-        <p>Before the ring moves, try a guess: to close it by recycling alone, how much of its waste would the EU have to recycle?</p>
-        <div class="guess" role="group" aria-label="Your guess">
-          <button type="button" aria-pressed="false" data-guess="25%">25%</button>
-          <button type="button" aria-pressed="false" data-guess="50%">50%</button>
-          <button type="button" aria-pressed="false" data-guess="75%">75%</button>
-          <button type="button" aria-pressed="false" data-guess="over 90%">Over 90%</button>
-        </div>
-        <p class="guess-after" aria-live="polite"></p>
-      </article>
+    </div>
+  </section>
+
+  <section class="break" id="sec-buried">
+    <div class="break-text">
+      <p>Not everything we use can come back: fuel is burned and its carbon goes into the air, and food is eaten. The waste that does come back weighs as much as 31% of the material the EU consumes in a year, and most of it is soil, rubble and the rock left over from mining. Much of that is never recycled, and most of what isn't goes back into the ground, buried in landfills or used to fill land that has been dug out.</p>
+      <p>This was the second thing that shocked me about Ireland: most of its waste is soil and rock, and most of what it doesn't recycle is used as fill, which the rate doesn't count as recycling.</p>
+      <p>Before the ring moves, try a guess: to close it by recycling alone, how much of its waste would the EU have to recycle?</p>
+      <div class="guess" role="group" aria-label="Your guess">
+        <button type="button" aria-pressed="false" data-guess="25%">25%</button>
+        <button type="button" aria-pressed="false" data-guess="50%">50%</button>
+        <button type="button" aria-pressed="false" data-guess="75%">75%</button>
+        <button type="button" aria-pressed="false" data-guess="over 90%">Over 90%</button>
+      </div>
+      <p class="guess-after" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="burst" data-chart="ring" id="sec-ring">
+    <div class="pin">
+      <figure class="chart" id="ring">
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.0%, biomass 23.3%, fossil fuels 19.3% and metal ores 5.5%.">
+          <defs>
+            <clipPath id="ring-stripe-clip"><path></path></clipPath>
+            <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
+          </defs>
+          <g class="ring" transform="translate(200,176)">
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+            <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
+            <path class="rope"></path>
+            <g class="disc" transform="scale(0)">
+              <g class="mats"></g>
+            </g>
+          </g>
+          <g class="labels"></g>
+        </svg>
+      </figure>
+    </div>
+    <div class="steps">
       <article class="card" data-state="every">
         <p><span class="guess-said"></span>The answer is over 90%, so watch the ring as recycling climbs toward it. The thick gold arc is the share of the EU's material that comes from recycling, and the thin circle is the 24% target. The disc in the middle is all the new material the EU uses: 6.4 billion tonnes in 2022, about 14 tonnes for every person. As recycling rises, the arc grows and the disc shrinks a little, because I assume each recycled tonne replaces half a new one, a midpoint between replacing none and replacing all. The ring closes only when the EU recycles about 93% of all its waste, the soil, rubble, mine waste and ash included: 2.3 times what it recycled in 2022, and by then it uses 8.1% less new material.</p>
         <p>Recycling every last tonne would take the rate only to about 25.5%, not the 31% that comes back, because a recycled tonne only partly replaces a new one, and recycled material counts as material used too.</p>
@@ -1037,7 +1052,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const DMC = EU.consumption_kt;
   const DMC_CLOSED = U / TARGET - U;               // consumption at which the ring closes
   const LESS = 1 - DMC_CLOSED / DMC;
-  const WASTE = EU.waste_treated_per_consumption / 100;
   const RATE = U / (DMC + U);
   const X4 = EU.less_new_material_to_close / 100;  // panel 4: new material replaced by the recycling that closes the ring
   const REC4 = EU.recycled_share_to_close;         // % of treated waste recycled then
@@ -1052,9 +1066,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const TAU = 2 * Math.PI;
 
   const RING = {
-    hero:   { at: 0, dmc: DMC,        disc: true,  key: [] },
-    levers: { at: 1, dmc: DMC,        disc: true,  key: ["mats"],                  call: "tonnes" },
-    back:   { at: 2, dmc: DMC,        disc: true,  key: ["mats", "waste"],         call: "waste" },
+    hero:   { at: 2, dmc: DMC,        disc: true,  key: [],                        hint: true },
     every:  { at: 3, dmc: DMC * (1 - X4), disc: true, key: ["mats", "rate"], call: "recycle", pre: "recycling" },
     gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less", dim: true },
     less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less", pre: "gone" },
@@ -1155,8 +1167,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL;
   const FLIGHT = T_FLY / T_OUT;                    // one shard's flight, as a share of the whole
   OUT.forEach(function (s, i) { s.leaves = i * T_GAP / T_OUT; });
-  /* Panel 4's beat: the arc grows, striped, to a full ring; the gold of the waste fades as it
-     starts; the shards replaced fly off one after another from K4F of the way through, as
+  /* Panel 4's beat: the arc grows, striped, to a full ring; the shards replaced fly off one after another from K4F of the way through, as
      panel 5's; then, from K4A, the shards left close up, the ring tightening around them. */
   const T4_OUT = 1100, T4_SETTLE = 800, T4 = T4_OUT + T4_SETTLE;
   const K4A = T4_OUT / T4, K4F = 0.25;
@@ -1180,39 +1191,9 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   OUT6.forEach(function (s, i) { s.leaves6 = i * (WIN6 - T_FLY) / Math.max(1, OUT6.length - 1) / WIN6; });
   const RDUR = [0, 600, 800, T4, T_FADE + T_OUT, T_SETTLE, T6_ALL];
 
-  // Area of the shards' parts at or below a level
-  function areaBelow(level) {
-    let a = 0;
-    SHARDS.forEach(function (s) {
-      const out = [], n = s.pts.length;
-      for (let k = 0; k < n; k++) {
-        const p = s.pts[k], q = s.pts[(k + 1) % n];
-        if (p[1] >= level) out.push(p);
-        if ((p[1] >= level) !== (q[1] >= level)) {
-          const t = (level - p[1]) / (q[1] - p[1]);
-          out.push([p[0] + t * (q[0] - p[0]), level]);
-        }
-      }
-      if (out.length > 2) a += Math.abs(d3.polygonArea(out));
-    });
-    return a;
-  }
-  // The gold fill's level: the shards' parts below it hold the waste's share of their area
-  const SHARD_AREA = areaBelow(-2);
-  const WASTE_Y = (function () {
-    let lo = -1, hi = 1;
-    for (let i = 0; i < 50; i++) {
-      const y = (lo + hi) / 2;
-      if (areaBelow(y) / SHARD_AREA > WASTE) lo = y; else hi = y;
-    }
-    return (lo + hi) / 2;
-  })();
-
   const ringDisc = d3.select("#ring svg g.disc");
   const ringShards = ringDisc.select(".mats").selectAll("path").data(SHARDS).join("path")
     .attr("class", function (s) { return s.m; }).attr("d", function (s) { return s.d0; });
-  ringDisc.select(".waste").selectAll("path").data(SHARDS).join("path").attr("d", function (s) { return s.d0; });
-  d3.select("#ring-waste-clip rect").attr("y", WASTE_Y);
 
   function label(parent, x, y, lines, anchor) {
     const t = parent.append("text").attr("x", x).attr("y", y).attr("text-anchor", anchor || "start");
@@ -1295,13 +1276,9 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     });
     row.attr("transform", "translate(" + (CX - x / 2) + ",0)");
   }
-  function leader(L, a, b) {
-    L.append("line").attr("class", "leader").attr("x1", a[0]).attr("y1", a[1]).attr("x2", b[0]).attr("y2", b[1]);
-  }
 
   /* The ring, drawn from r, RING's position, which runs on between the cards' whole numbers
-     so each beat can play either way and turn mid-way. To 1, nothing moves but the labels; to
-     2, the gold of the waste that comes back rises through the disc; to 3, panel 4's beat:
+     so each beat can play either way and turn mid-way. The hero stands at 2; to 3, panel 4's beat:
      the stripes of recycling run on from the arc's end, the dot with them, until the ring
      closes, while the shards that recycling replaces fly off; then the disc closes up. Panel
      5's beats run on p, from 0 at 3 to PG at 4 and 1 at 5. From 0 to P0, the stripes fade, the
@@ -1334,8 +1311,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const size = RC0 * Math.sqrt(dmc / DMC - w4 * X4);   // the disc's radius
     const R = size + RING_GAP + 4.5;               // the ring, drawn around the disc
     const f = turns(dmc);
-    const rise = d3.easeCubicInOut(clamp01(r - 1)); // the waste's gold, risen
-    const gold = (1 - z) * (1 - clamp01(k4 / K4A / K4F));   // fading as panel 4's beat starts
     const fe = f + (1 - f) * grow;                 // where the stripes end: the rate with recycling raised
     placeTarget(g, R);
     const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
@@ -1362,8 +1337,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
     g.select(".disc").attr("transform", "scale(" + size + ")");
-    g.select(".disc .waste").attr("display", rise > 0 && gold > 0 ? null : "none").attr("opacity", gold);
-    d3.select("#ring-waste-clip rect").attr("y", 1.1 + (WASTE_Y - 1.1) * rise);
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
     const fly = wideMQ.matches ? FLY_WIDE : FLY;
@@ -1425,7 +1398,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     xrStripes(g.select(".stripes").attr("opacity", null), "#ring-stripe-clip", R, s1, t1, 4.5, true);
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(t1 * TAU)).attr("cy", -R * Math.cos(t1 * TAU)).attr("opacity", null);
     g.select(".disc").attr("transform", "scale(" + size + ")");
-    g.select(".disc .waste").attr("display", "none");
     const flyAt = function (el, d, v) {
       el.attr("d", d).attr("display", v > 0.9999 ? "none" : null)
         .attr("transform", v > 0 ? "translate(" + (fly * d3.easeQuadIn(v)).toFixed(4) + ",0)" : null)
@@ -1447,32 +1419,13 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     relabel(d3.select("#ring svg"), dur, function (L) { ringLabelsIn(L, s); });
   }
   function ringLabelsIn(L, s) {
-    const size = RC0 * Math.sqrt(s.dmc / DMC);     // the disc's radius
-    const rc = s.disc ? size : 0;
-    const R = size + RING_GAP + 4.5;
-    const fe = turns(s.dmc);
     const has = function (k) { return s.key.indexOf(k) > -1; };
-    const at = function (turn, r) { return [CX + r * Math.sin(turn * TAU), CY - r * Math.cos(turn * TAU)]; };
-    if (s.at === 0) {
+    if (s.hint) {
       label(L, CX, 352, [["Drawn as terrazzo: the floor this new material could one day become", "lab-src"]], "middle");
       label(L, CX, 22, [["The full circle is the 24% target.", "ring-hint"], ["The gold arc is how far the EU has come.", "ring-hint"]], "middle");
     }
-    const top = function (strong, rest, x, y) {   // one line above the ring, a leader down to (x, y)
-      const t = L.append("text").attr("x", CX).attr("y", 30).attr("text-anchor", "middle");
-      t.append("tspan").attr("class", "lab-strong").text(strong);
-      t.append("tspan").attr("class", "lab").text(rest);
-      leader(L, [x, 37], [x, y]);
-    };
 
     // The step's highlight, called out
-    if (s.call === "tonnes") {              // to the disc's top, left of where the arc starts
-      const x = CX - 10;
-      top(fmt1(DMC / 1e6) + " billion tonnes", " consumed in " + YR, x, CY - Math.sqrt(rc * rc - 100) + 3);
-    }
-    if (s.call === "waste") {               // to the gold shards, past the side of the ring the arc leaves bare
-      const t = label(L, 8, 280, [[Math.round(WASTE * 100) + "% comes back", "lab-strong"], ["as waste", "lab"]]);
-      leader(L, [12 + t.select("tspan").node().getComputedTextLength(), 275], [CX - 0.5 * rc, CY + 0.72 * rc]);
-    }
     if (s.call === "recycle") {             // above the ring, as panel 5's
       label(L, CX, 24, [[Math.round(REC4) + "% of waste recycled", "lab-title"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
     }
@@ -1492,7 +1445,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name];
     }));
     const extra = [];
-    if (has("waste")) extra.push([KEY.box("waste"), "Comes back as waste"]);
     if (has("rate")) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
     if (has("rate70")) extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (extra.length) rows.push(extra);
@@ -1504,7 +1456,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      longest of their times; labels cross-fade to the card's as it starts, except that "24%
      reached" waits for the ring to close. dir: 1 forward, -1 back, 0 drawn at once. */
   const STILL = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let ringName = "hero", ringR = 0, ringTimer = null;
+  let ringName = "hero", ringR = 2, ringTimer = null;
 
   function drawRing(name, dir) {
     const s = RING[name] || RING.hero, to = s.at;
@@ -3444,7 +3396,19 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   };
 
   /* ---------- Cards drive the charts ---------- */
-  const CHARTS = { ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea };
+  /* The hero's ring: a still copy of the ring drawn at the hero's state, without the ring's
+     ids. Copied at load and again once fonts are in, since the key is laid out from measured text. */
+  function heroRing() {
+    const was = ringName, svg = document.querySelector("#ring-hero svg");
+    if (ringTimer) { ringTimer.stop(); ringTimer = null; }
+    drawRing("hero", 0);
+    svg.innerHTML = document.querySelector("#ring svg").innerHTML;
+    svg.querySelectorAll("defs, [id]").forEach(function (e) { if (e.tagName === "defs") e.remove(); else e.removeAttribute("id"); });
+    svg.querySelectorAll("[clip-path]").forEach(function (e) { e.removeAttribute("clip-path"); });
+    svg.querySelectorAll(".stripes").forEach(function (e) { e.remove(); });
+    drawRing(was, 0);
+  }
+  const CHARTS = { hero: function () {}, ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea };
 
   /* Timing. Each beat's transition starts when the card before it is almost clear of the top
      edge (the bottom of the nav bar on wide screens), or, for the first card of a chart, when
@@ -3672,10 +3636,12 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 
   window.FFC = { show: show, draw: CHARTS, game: GAME };
   terrazzo();
+  heroRing();
   setupSteps();
   notes();
   if (document.fonts) document.fonts.ready.then(function () {   // the ring's key is laid out from measured text
-    if (!ringTimer) ringLabels(RING[ringName], 0);
+    heroRing();
+    if (!ringTimer) ringLabels(RING[ringName] || RING.hero, 0);
     gmLabels(gmQ);
     if (zinState) zinLabels(zinState, 0);   // "implied" sits beside the measured 561
   });

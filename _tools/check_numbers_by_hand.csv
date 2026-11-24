@@ -1,11 +1,11 @@
 section,figure,near,row,f,reason
 head,24%,,headline.target,,The EU's target
 sec-ring,24%,,headline.target,,The EU's target
-sec-ring,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
-sec-ring,25%,,,,"The guess's options, not figures"
-sec-ring,50%,,,,"The guess's options, not figures"
-sec-ring,75%,,,,"The guess's options, not figures"
-sec-ring,90%,,,,"The guess's options, not figures"
+sec-hero,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
+sec-buried,25%,,,,"The guess's options, not figures"
+sec-buried,50%,,,,"The guess's options, not figures"
+sec-buried,75%,,,,"The guess's options, not figures"
+sec-buried,90%,,,,"The guess's options, not figures"
 sec-ring,90%,answer,headline.recycled_share_to_close_k05,,"The guess's answer: over 90%, for 93.4%"
 sec-ring,8%,,headline.less_new_material_to_close_k05,,The least new material any route to 24% takes away
 sec-ring,31%,back,headline.waste_back_per_material_consumed,,The waste that comes back as a share of material consumed
@@ -90,7 +90,7 @@ notes-closer,51.9%,,ceilings.IE.share_backfilled_pct,,Backfilled share of Irelan
 sec-closer,11%,,headline.ireland_ceiling_k05,,Ireland's rate with every tonne recycled
 sec-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
 notes-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
-sec-ring,2026,Eurostat data,,,"The byline's data date, from the data file's data_as_of"
+sec-hero,2026,Eurostat data,,,"The byline's data date, from the data file's data_as_of"
 sec-waterfall,6 million,,,F107,"EU: 6.2 million fewer people in work, 2008 to 2010 (lfsa_egan2)"
 sec-waterfall,1.7 million,,,F107,"EU: 1.7 million fewer in construction, 2008 to 2010 (lfsa_egan2)"
 notes-waterfall,15,aged,,F107,The ages of the employment count (15 to 64)

@@ -83,7 +83,7 @@ COUNTRY_ROWS = ("headline.", "ceilings.", "trend", "weight_mix.", "loop.", "wast
 EXAMPLES = ("examples.",)
 SCOPES = {
     "head": (EU_ROWS + EXAMPLES, COUNTRY_ROWS),
-    "sec-ring": (EU_ROWS, COUNTRY_ROWS), "sec-waterfall": (EU_ROWS, COUNTRY_ROWS), "sec-ribbon": (EU_ROWS, COUNTRY_ROWS),
+    "sec-hero": (EU_ROWS, COUNTRY_ROWS), "sec-buried": (EU_ROWS, COUNTRY_ROWS), "sec-ring": (EU_ROWS, COUNTRY_ROWS), "sec-waterfall": (EU_ROWS, COUNTRY_ROWS), "sec-ribbon": (EU_ROWS, COUNTRY_ROWS),
     "sec-zin": (EU_ROWS + EXAMPLES, ()), "sec-ikea": (EXAMPLES, ()),
     "explore-ring": (("headline.step_", "headline.target", "headline.eea_", "headline.countries_", "headline.eu_countries",
                       "ceilings.EU.waste_treated_per_consumption"),
