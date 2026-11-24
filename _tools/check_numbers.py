@@ -608,7 +608,7 @@ def fits(v, f, loose=False, hedged=True):
 
 def classes(f):
     if f.cls == "big":
-        return ("mass", "count")
+        return ("big", "mass", "count")
     if f.cls == "count":
         return ("count", "mass", "area", "km", "times")
     if f.cls == "year":
