@@ -534,7 +534,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
             <path class="rope"></path>
-            <circle class="dot rate"></circle>
             <g class="disc" transform="scale(0)">
               <g class="mats"></g>
               <g class="waste" clip-path="url(#ring-waste-clip)"></g>
@@ -799,7 +798,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
             <path class="rope"></path>
             <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
-            <circle class="dot rate"></circle>
             <g class="disc"><g class="mats"></g></g>
           </g>
           <g class="labels"></g>
@@ -1006,7 +1004,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     levers: { at: 1, dmc: DMC,        disc: true,  key: ["mats"],                  call: "tonnes" },
     back:   { at: 2, dmc: DMC,        disc: true,  key: ["mats", "waste"],         call: "waste" },
     every:  { at: 3, dmc: DMC * (1 - X4), disc: true, key: ["mats", "rate"], call: "recycle", pre: "recycling" },
-    gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less" },
+    gone:   { at: 4, dmc: DMC,        disc: true,  key: ["mats"],                  call: "less", dim: true },
     less:   { at: 5, dmc: DMC_CLOSED, disc: true,  key: ["mats"],                  call: "less", pre: "gone" },
     both:   { at: 6, dmc: DMC * (1 - X6 - G6), disc: true, key: ["mats", "rate70"], call: "both", pre: "both_rec" }
   };
@@ -1216,6 +1214,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       g.append("line").attr("class", "target").attr("x2", 18).attr("y1", -4.5).attr("y2", -4.5);
       return 18;
     },
+    arc: function (g) {                            // the arc alone, for rings with no knob
+      g.append("rect").attr("class", "rope").attr("y", -8).attr("width", 18).attr("height", 7).attr("rx", 3.5);
+      return 18;
+    },
     rate: function (g) {
       g.append("rect").attr("class", "rope").attr("y", -8).attr("width", 13).attr("height", 7).attr("rx", 3.5);
       g.append("circle").attr("class", "dot rate").attr("cx", 13).attr("cy", -4.5).attr("r", 5.5);
@@ -1228,6 +1230,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       return function (g) { g.append("rect").attr("class", cls).attr("y", -8).attr("width", 18).attr("height", 7); return 18; };
     }
   };
+  KEY.arcDim = function (g) { const w = KEY.arc(g); g.select(".rope").attr("opacity", DIM); return w; };
   function keyRow(L, y, items) {
     const row = L.append("g").attr("class", "ring-key");
     let x = 0;
@@ -1432,7 +1435,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
 
     // The key
-    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [KEY.rate, s.dmc === DMC ? fmt1(RATE * 100) + "% circularity in " + YR : TARGET * 100 + "% circularity reached"]]];
+    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [s.dim ? KEY.arcDim : KEY.arc, s.dmc === DMC ? fmt1(RATE * 100) + "% circularity in " + YR : TARGET * 100 + "% circularity reached"]]];
     if (has("mats")) rows.push(SH.materials.map(function (m) {
       return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name];
     }));
@@ -2429,7 +2432,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
     const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
     const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
-                   [KEY.rate, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + YR]]];
+                   [KEY.arc, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + YR]]];
     rows.push(SH.materials.map(function (m) { return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name]; }));
     const extra = [];
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
