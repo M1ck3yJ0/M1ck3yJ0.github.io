@@ -104,3 +104,10 @@ sec-closer,2.1%,,ceilings.IE.rate_pct,,Ireland's rate in 2022
 sec-closer,73%,less,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
 sec-closer,73%,smaller,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
 notes-closer,73.1%,,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
+sec-ring,69%,judged,,F110,The ETC's theoretical maximum for recycling: about 69% of all waste
+sec-ring,26%,2020,,F110,The ETC's cut in material consumed below 2020 to double the rate
+notes-ring,11.6%,2020,,F110,The ETC's 2020 rate
+notes-ring,23.2%,target,,F110,The ETC's target: double 2020's 11.6%
+notes-ring,34%,fossil,,F110,The ETC's cut in fossil fuels by 2030
+notes-ring,69%,maximum,,F110,The ETC's theoretical maximum for recycling: about 69% of all waste
+notes-ring,26%,2020,,F110,The ETC's cut in material consumed below 2020 to double the rate
