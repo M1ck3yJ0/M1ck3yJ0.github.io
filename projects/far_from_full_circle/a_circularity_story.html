@@ -13,14 +13,18 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="../../assets/favicon.png">
 <link rel="preload" href="caladea-regular.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="barlow-condensed-semibold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="uncial-antiqua-regular.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="fira-sans-regular.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* Body: Cambria where installed, else Caladea 1.002, which matches Cambria's widths. Main and section titles: Barlow Condensed */
+/* Body and titles: Cambria where installed, else Caladea 1.002, which matches Cambria's widths. H1: Uncial Antiqua. Charts: Fira Sans */
 @font-face { font-family: "Caladea"; src: url("caladea-regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "Caladea"; src: url("caladea-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Caladea"; src: url("caladea-bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face { font-family: "Caladea"; src: url("caladea-bolditalic.woff2") format("woff2"); font-weight: 700; font-style: italic; font-display: swap; }
-@font-face { font-family: "Barlow Condensed"; src: url("barlow-condensed-semibold.woff2") format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Uncial Antiqua"; src: url("uncial-antiqua-regular.ttf") format("truetype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("fira-sans-regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("fira-sans-italic.woff2") format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Fira Sans"; src: url("fira-sans-bold.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
 
 :root {
   /* Page and text */
@@ -202,22 +206,17 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .card, .explore-text { font-size: 18px; }
 .card p { margin: 0; }
 .card p + p { margin-top: .6em; }
-.card .eyebrow {
-  margin: 0 0 8px;
-  font-size: 14px; line-height: 1.2;
-  font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
-  color: var(--ink-2);
-}
 @media (min-width: 800px) {
   .card, .explore-text, .closer-text { font-size: calc(20 * var(--t)); }
 }
 .card h1 {
-  margin: 0 0 12px;
-  font-size: 38px; line-height: 1;
-  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: 38px; line-height: 1.05;
+  font-weight: 400;
 }
+.card .subtitle { margin: 0 0 12px; font-size: 22px; line-height: 1.2; color: var(--ink-2); }
 .card .byline { margin: -4px 0 14px; font-size: 15px; line-height: 1.35; color: var(--ink-2); }
-.card h1, .sec-title { font-family: "Barlow Condensed", "Arial Narrow", sans-serif; }
+.card h1 { font-family: "Uncial Antiqua", Georgia, serif; }
 /* The guess: one question, four answers, before the reveal */
 .guess { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 14px 0 0; }
 .guess button {
@@ -233,7 +232,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 @media (min-width: 800px) { .guess button { font-size: calc(16 * var(--t)); } }
 
 /* Chart marks and labels */
-.chart text { font-family: inherit; }
+.chart text { font-family: "Fira Sans", Arial, sans-serif; }
 .ring .target, .ring-key .target { fill: none; stroke: var(--target); stroke-width: 1.6; }
 .ring .rope, .ring .dot.rate, .ring-key .rope, .ring-key .dot { fill: var(--back); }
 .ring .stripes.rate .tint { fill: color-mix(in srgb, var(--back) 22%, #fff); }
@@ -244,6 +243,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .lab { fill: var(--ink-2); font-size: calc(13.5px * var(--cf, 1)); }
 .lab-num { fill: var(--ink); font-size: calc(21px * var(--cf, 1)); font-weight: 700; }
 .lab-strong { fill: var(--ink); font-size: calc(15px * var(--cf, 1)); font-weight: 700; }
+.lab-title { fill: var(--ink); font-size: calc(15px * var(--cf, 1)); font-weight: 700; }
 .lab-white { fill: #fff; }
 .lab-on { fill: #fff; font-size: calc(14px * var(--cf, 1)); font-weight: 700; }
 .lab-src { fill: var(--ink-2); font-size: calc(11px * var(--cf, 1)); }
@@ -358,12 +358,12 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   transform: rotate(45deg); pointer-events: none;
 }
 /* Section titles: above the chart on a phone, at the top of the first card on wide screens */
-.sec-title { margin: 0 0 12px; font-size: 30px; line-height: 1.04; font-weight: 600; }
+.sec-title { margin: 0 0 12px; font-size: 28px; line-height: 1.12; font-weight: 700; }
 .sec-title-m { position: relative; z-index: 1; margin: 0 auto; padding: 14px 16px 6px; width: var(--chart); background: #fff; }
 .sec-title-d { display: none; }
 .explore-title { padding: 14px 16px 0; margin: 0; scroll-margin-top: 16px; }
 @media (min-width: 800px) {
-  .sec-title { font-size: calc(36 * var(--t)); }
+  .sec-title { font-size: calc(30 * var(--t)); }
   .sec-title-m { display: none; }
   .sec-title-d { display: block; }
   .explore-title { grid-column: 2; grid-row: 1; padding: 0 0 4px; }
@@ -499,7 +499,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 /* Wide screens: sizes scaled by --t, after the rules they override */
 @media (min-width: 800px) {
   .card { padding: calc(18 * var(--t)) calc(20 * var(--t)) calc(20 * var(--t)); }
-  .card .eyebrow { margin-bottom: calc(8 * var(--t)); font-size: calc(14 * var(--t)); }
+  .card .subtitle { font-size: calc(24 * var(--t)); }
   .card .byline { font-size: calc(15 * var(--t)); }
   .closer-text { max-width: calc(720 * var(--t)); }
   .credit { font-size: calc(15 * var(--t)); }
@@ -548,8 +548,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     </div>
     <div class="steps">
       <article class="card" data-state="hero">
-        <p class="eyebrow">Far from Full&nbsp;Circle</p>
-        <h1>The EU's target of doubling circularity, to 24% by 2030, is a target to use&nbsp;less</h1>
+        <h1>Far from Full&nbsp;Circle</h1>
+        <p class="subtitle">The EU's target of doubling circularity, to 24% by 2030, is a target to use&nbsp;less</p>
         <p class="byline">By Milcah M. Joseph &middot; <time class="byline-date">[launch date]</time> &middot; <span class="byline-data">Eurostat data</span></p>
         <p>I started by looking at Ireland, and the first thing that stopped me was how low its circularity rate is (the share of all the material we use that comes from recycling): one of the lowest in the EU. So I turned to the EU as a whole and the target it has set for 2030.</p>
       </article>
@@ -1434,16 +1434,16 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       leader(L, [12 + t.select("tspan").node().getComputedTextLength(), 275], [CX - 0.5 * rc, CY + 0.72 * rc]);
     }
     if (s.call === "recycle") {             // above the ring, as panel 5's
-      label(L, CX, 24, [[Math.round(REC4) + "% of waste recycled", "lab-strong"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
+      label(L, CX, 24, [[Math.round(REC4) + "% of waste recycled", "lab-title"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
     }
     if (s.call === "both") {                // above the ring, through panel 6's beat and after
       const cut = Math.round((X6 + G6) * 1000) / 10, rep = Math.round(X6 * 1000) / 10;
-      label(L, CX, 24, [[Math.round(cut) + "% less new material", "lab-strong"],
+      label(L, CX, 24, [[Math.round(cut) + "% less new material", "lab-title"],
                         [fmt1(rep) + "% replaced by recycling 70%; " + fmt1(G6 * 100) + "% gone without", "lab"],
                         ["each recycled tonne assumed to replace half a new one", "lab"]], "middle");
     }
     if (s.call === "less") {                // above the ring, for both of panel 5's beats
-      label(L, CX, 24, [[Math.round(LESS * 100) + "% less new material", "lab-strong"], ["recycling held at its " + YR + " level", "lab"]], "middle");
+      label(L, CX, 24, [[Math.round(LESS * 100) + "% less new material", "lab-title"], ["recycling held at its " + YR + " level", "lab"]], "middle");
     }
 
     // The key
@@ -1713,8 +1713,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       const ends = function (t) { wfLands.push([t, T_WLINE - T_WLAB, true]); };       // shown once the line is drawn
 
       // The title and the step years
-      if (name === "line") label(L, CX, 40, [["EU circularity rate, every second year,", "lab"], ["when countries report their waste", "lab", "1.15em"]], "middle");
-      else label(L, CX, 48, [["Change in circularity rate since " + YRS[0], "lab"]], "middle");
+      if (name === "line") label(L, CX, 40, [["EU circularity rate, every second year,", "lab-title"], ["when countries report their waste", "lab-title", "1.15em"]], "middle");
+      else label(L, CX, 48, [["Change in circularity rate since " + YRS[0], "lab-title"]], "middle");
       YRS.forEach(function (yr, i) {
         if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
       });
@@ -1876,7 +1876,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
     relabel(d3.select("#zin svg"), dur, function (L) {
       [0, 200, 400, 600].forEach(function (v) { label(L, 36, zy(v) + 4.5, [[String(v), "lab"]], "end"); });
-      label(L, CX, 40, [["Kilograms of CO2 per square meter, upfront", "lab"]], "middle");
+      label(L, CX, 40, [["Kilograms of CO2 per square meter, upfront", "lab-title"]], "middle");
 
       // The new build: its value over the roof
       const cx = ZX.could + ZTW / 2, ix = ZX.is + ZTW / 2;
@@ -2040,7 +2040,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const mid = function (b) { return (b[0] + b[1]) / 2; };
     relabel(d3.select("#ribbon svg"), dur, function (L) {
       if (s.bars) { barLabels(L); return; }
-      label(L, (RX0 + RX1) / 2, 44, [["By weight", "lab-strong"]], "middle");
+      label(L, (RX0 + RX1) / 2, 44, [["By weight", "lab-title"]], "middle");
       // Share of weight over the name, and any note in small type: blocks 33.6 or 47.4 units tall,
       // centered 1.7 or 8.6 below the share's baseline
       const hs = MAT.map(function (m) { return m.note ? 47.4 : 33.6; });
@@ -2052,7 +2052,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         label(L, RX0 - 8, ly[i] - (m.note ? 8.6 : 1.7), lines, "end");
       });
       if (s.climate) {
-        label(L, (RX2 + RX3) / 2, 44, [["By climate cost", "lab-strong"]], "middle");
+        label(L, (RX2 + RX3) / 2, 44, [["By climate cost", "lab-title"]], "middle");
         MAT.forEach(function (m, i) {
           if (shown(m)) label(L, RX3 + 8, mid(CSTK[i]) + 7, [[fmt1(m.climate) + "%", "lab-num"]]);
         });
@@ -2065,7 +2065,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 
   // The per-tonne bars' labels: names, each bar's multiple, the two examples' tags
   function barLabels(L) {
-    label(L, 200, 40, [["Climate cost of producing a tonne", "lab-strong"],
+    label(L, 200, 40, [["Climate cost of producing a tonne", "lab-title"],
                        ["against a tonne of minerals", "lab", "1.3em"]], "middle");
     BARS.forEach(function (m, i) {
       const y = BY0 + BDY * i;
@@ -2151,7 +2151,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const pans = HEAPS.heaps.map(function (heap) { const p = g.append("g"); ipan(p, heap); return p; });
     g.append("circle").attr("class", "steel-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 8);
     g.append("circle").attr("class", "steel-4").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 2.8);
-    label(L, CX, 40, [["Food waste in IKEA's kitchens", "lab"], ["Ingka's financial years, to August", "lab-src", "1.3em"]], "middle");
+    label(L, CX, 40, [["Food waste in IKEA's kitchens", "lab-title"], ["Ingka's financial years, to August", "lab-src", "1.3em"]], "middle");
     const labs = [L.append("g"), L.append("g")];   // each follows its pan
     label(labs[0], 0, ILAB, [["2017", "lab-strong"]], "middle");
     label(labs[1], 0, ILAB, [["2022", "lab-strong"]], "middle");
@@ -2436,11 +2436,11 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const sub = q.held ? "recycling held at its " + fmt1(c.share_recycled) + "% of waste"
               : q.gone > 0 ? rep + "% replaced by recycling 70%; " + fmt1(q.goneP) + "% gone without"
               : "all replaced by recycling 70%";
-    const hl = label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+    const hl = label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-title"], [sub, "lab"]], "middle");
     const part = sub.indexOf("; ");                // too wide: the split wraps after its semicolon
     if (part > 0 && hl.select("tspan.lab").node().getComputedTextLength() > XR_WRAP) {
       hl.remove();
-      label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-strong"], [sub.slice(0, part + 1), "lab"], [sub.slice(part + 2), "lab"]], "middle");
+      label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-title"], [sub.slice(0, part + 1), "lab"], [sub.slice(part + 2), "lab"]], "middle");
     }
     const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
     const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
@@ -2688,7 +2688,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       }).join(""));
 
     wticks(g, L, xy);
-    label(L, CX, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab"]], "middle");
+    label(L, CX, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab-title"]], "middle");
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
     if (est.length) label(L, CX, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]], "middle");
     label(L, CX, 394, [["Source: Eurostat. Split by lever: my calculation", "lab-src"]], "middle");
@@ -3171,7 +3171,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       const sub = q.s <= GM_S0 ? "recycling held at its " + YR + " level"
                 : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling; " + fmt1(q.C) + "% gone without"
                 : "all replaced by recycling";
-      label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-strong"], [sub, "lab"]], "middle");
+      label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-title"], [sub, "lab"]], "middle");
     }
     const now = q.weight <= 0 ? fmt1(r) + "% circularity in " + YR
               : q.closed ? (Math.abs(r - 24) < 0.05 ? "24%" : fmt1(r) + "%") + " circularity reached"
