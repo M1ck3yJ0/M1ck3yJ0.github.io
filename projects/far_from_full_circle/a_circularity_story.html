@@ -245,6 +245,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .lab-white { fill: #fff; }
 .lab-on { fill: #fff; font-size: calc(14px * var(--cf, 1)); font-weight: 700; }
 .lab-src { fill: var(--ink-2); font-size: calc(11px * var(--cf, 1)); }
+.ring-hint { fill: var(--ink-2); font-size: calc(13.5px * var(--cf, 1)); font-style: italic; }
 .leader { stroke: var(--ink-2); stroke-width: 1; }
 .wf .grid { stroke: var(--hairline); stroke-width: 1; }
 .wf .base, .wf .tick { stroke: var(--ink-2); stroke-width: 1; }
@@ -1394,7 +1395,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const fe = turns(s.dmc);
     const has = function (k) { return s.key.indexOf(k) > -1; };
     const at = function (turn, r) { return [CX + r * Math.sin(turn * TAU), CY - r * Math.cos(turn * TAU)]; };
-    if (s.at === 0) label(L, CX, 352, [["Drawn as terrazzo: a floor made from leftover stone", "lab-src"]], "middle");
+    if (s.at === 0) {
+      label(L, CX, 352, [["Drawn as terrazzo: the floor this new material could one day become", "lab-src"]], "middle");
+      label(L, CX, 22, [["The full circle is the 24% target.", "ring-hint"], ["The gold arc is how far the EU has come.", "ring-hint"]], "middle");
+    }
     const top = function (strong, rest, x, y) {   // one line above the ring, a leader down to (x, y)
       const t = L.append("text").attr("x", CX).attr("y", 30).attr("text-anchor", "middle");
       t.append("tspan").attr("class", "lab-strong").text(strong);
