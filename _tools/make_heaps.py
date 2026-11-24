@@ -1,4 +1,4 @@
-"""Build panel 18's two heaps of food as mosaic, for the balance in IKEA's kitchens.
+"""Build the two heaps of food as mosaic, for the balance in IKEA's kitchens.
 
 Usage:
     python3 -I _tools/make_heaps.py [--check] [--preview <file.svg>]

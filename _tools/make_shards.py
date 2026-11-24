@@ -5,18 +5,18 @@ Usage:
     python3 -I _tools/make_shards.py [--check]
 
 Takes the weight shares from the data file's "game" block: each material group's share of
-the EU's 2022 consumption (Eurostat env_ac_mfa, DMC), as 20a's discs do, and writes the shards
+the EU's 2022 consumption (Eurostat env_ac_mfa, DMC), as the ring explorer's discs do, and writes the shards
 into the data file under "center_shards". With --check, writes nothing and re-measures the
 shards already in the data file.
 
-It also writes panel 4's disc under "center_shards" -> "recycle": recycling raised until the
+It also writes the reveal's disc under "center_shards" -> "recycle": recycling raised until the
 ring closes, each extra recycled tonne replacing part of a new one of the same material (the
 data file's "replacement"; the share replaced is build_data.py's "less_new_material_to_close"),
 the tonnes replaced split across materials by each one's share of the waste not
 yet recycled (the data file's "not_recycled_mix"), taken out as whole shards as below, with
 a share for each material.
 
-And it writes panel 5's disc under "center_shards" -> "less": the same disc with the
+And it writes use less's disc under "center_shards" -> "less": the same disc with the
 material taken out that closes the ring at 24% with recycling held at its 2022 level, as
 the page computes it, taken out of every material alike as whole shards. For each
 material, about that share of its shards goes at every size, then swaps between shards
@@ -26,8 +26,8 @@ material keeps its exact share, and the disc is re-solved from its current layou
 the gap set so the slivers keep their share of the disc. The page draws it at the square
 root of the material left.
 
-And panel 6's two discs under "center_shards" -> "both": recycling raised to 70% of treated
-waste, the tonnes it replaces taken out as for panel 4 ("rec"); then what the EU still goes
+And both levers' two discs under "center_shards" -> "both": recycling raised to 70% of treated
+waste, the tonnes it replaces taken out as for the reveal ("rec"); then what the EU still goes
 without to close the ring, the same share of every material left, taken out of the shards
 left after recycling ("shards"), so the second disc's shards are some of the first's.
 
@@ -262,7 +262,7 @@ def make(shares, seed, n_pieces, ratio, gap, jitter, group_p, min_w=0.06):
     return [(int(mats[k]), shards[k]) for k in sorted(shards)], err, state
 
 
-# ---------- Using less: panel 5's disc ----------
+# ---------- Using less: use less's disc ----------
 
 def unevenness(shards, gone, less):
     """How unevenly the shards left cover the disc: over 17 regions (a middle, a ring of 6 and
@@ -332,10 +332,10 @@ def remove(state, gone, sizes, gap):
 
 
 def use_less(shards, state, less, seed, tries):
-    """Panel 5's disc: `less` of every material taken out as whole shards, the most even of
+    """Use less's disc: `less` of every material taken out as whole shards, the most even of
     `tries` picks; the shards left resized so every material keeps its exact share, and the gap
     set so the slivers keep their share of the disc. Returns the gap and the shards left.
-    `less` may be a list with one share per material, as for panel 4's disc."""
+    `less` may be a list with one share per material, as for the reveal's disc."""
     rng = np.random.default_rng(seed)
     gone = min((pick(rng, state["sizes"], state["mats"], less) for _ in range(tries)),
                key=lambda g: unevenness(shards, g, less))
@@ -343,7 +343,7 @@ def use_less(shards, state, less, seed, tries):
 
 
 def use_less_after(shards, state, gone1, less1, more, seed, tries):
-    """Panel 6's second disc: after the shards gone1 have gone (less1 of each material),
+    """Both levers' second disc: after the shards gone1 have gone (less1 of each material),
     `more` of every material left taken out of the shards left, the most even of `tries`
     picks, judged on the full disc against each material's share gone in all. Returns the gap,
     the shards left and the share of each material gone in all."""
@@ -421,12 +421,12 @@ def main():
         report(shards, shares, "In the data file")
         if "less" in cs:
             left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in cs["less"]["shards"]]
-            report(left, shares, f"Panel 5, {cs['less']['less_pct']}% less, in the data file")
+            report(left, shares, f"Use less, {cs['less']['less_pct']}% less, in the data file")
         if "recycle" in cs:
             rc = cs["recycle"]
             left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in rc["shards"]]
             due = [sh * (100 - rc["less_pct"][name]) / (100 - rc["replaced_pct"]) for (name, _), sh in zip(MATERIALS, shares)]
-            report(left, due, f"Panel 4, {rc['replaced_pct']}% replaced, in the data file")
+            report(left, due, f"Reveal, {rc['replaced_pct']}% replaced, in the data file")
         if "both" in cs:
             b = cs["both"]
             for key, gone, label in [("rec", b["rec_less_pct"], f"{b['replaced_pct']}% replaced"),
@@ -434,7 +434,7 @@ def main():
                 left = [(cs["shards"][s["k"]]["m"], np.array(s["p"]).reshape(-1, 2)) for s in b[key]]
                 kept = sum(sh * (100 - gone[name]) / 100 for (name, _), sh in zip(MATERIALS, shares))
                 due = [sh * (100 - gone[name]) / kept for (name, _), sh in zip(MATERIALS, shares)]
-                report(left, due, f"Panel 6, {label}, in the data file")
+                report(left, due, f"Both levers, {label}, in the data file")
         return
     shares = shares_from(data)
     shards, err, state = make(np.array(shares) / 100, **SETTINGS)
@@ -447,8 +447,8 @@ def main():
     gap, left = use_less(rounded, state, less, **LESS_SETTINGS)
     left = {k: np.round(V, 5) for k, V in sorted(left.items())}
     report([(int(state["mats"][k]), V) for k, V in left.items()], shares,
-           f"Panel 5, {100 * less:.1f}% less, rounded as stored")
-    # Panel 4's disc: recycling raised until the ring closes, each extra recycled tonne replacing
+           f"Use less, {100 * less:.1f}% less, rounded as stored")
+    # The reveal's disc: recycling raised until the ring closes, each extra recycled tonne replacing
     # part of a new one of the same material, split across materials by their waste not yet recycled
     x = eu["less_new_material_to_close"] / 100        # new material replaced, as a share of all of it (build_data.py)
     nrm = eu["not_recycled_mix"]
@@ -457,8 +457,8 @@ def main():
     rleft = {k: np.round(V, 5) for k, V in sorted(rleft.items())}
     rem = 1 - x
     report([(int(state["mats"][k]), V) for k, V in rleft.items()],
-           [s * (1 - r) / rem for s, r in zip(shares, rec)], f"Panel 4, {100 * x:.1f}% replaced, rounded as stored")
-    # Panel 6's discs: recycling raised to 70%, its replaced tonnes taken out as for panel 4; then
+           [s * (1 - r) / rem for s, r in zip(shares, rec)], f"Reveal, {100 * x:.1f}% replaced, rounded as stored")
+    # Both levers' discs: recycling raised to 70%, its replaced tonnes taken out as for the reveal; then
     # what the EU still goes without, the same share of every material left
     x6 = eu["replaced_70pct_recycled"]["eu"] / 100
     g6 = eu["gone_without_70pct_recycled"]["eu"] / 100
@@ -469,11 +469,11 @@ def main():
     bgap1, bleft1 = settle(rounded, state, gone6, rec6)
     bleft1 = {k: np.round(V, 5) for k, V in sorted(bleft1.items())}
     report([(int(state["mats"][k]), V) for k, V in bleft1.items()],
-           [s * (1 - r) / (1 - x6) for s, r in zip(shares, rec6)], f"Panel 6, {100 * x6:.1f}% replaced, rounded as stored")
+           [s * (1 - r) / (1 - x6) for s, r in zip(shares, rec6)], f"Both levers, {100 * x6:.1f}% replaced, rounded as stored")
     bgap2, bleft2, tot6 = use_less_after(rounded, state, gone6, rec6, g6 / (1 - x6), **LESS_SETTINGS)
     bleft2 = {k: np.round(V, 5) for k, V in sorted(bleft2.items())}
     report([(int(state["mats"][k]), V) for k, V in bleft2.items()],
-           [s * (1 - t) / (1 - x6 - g6) for s, t in zip(shares, tot6)], f"Panel 6, {100 * (x6 + g6):.1f}% less, rounded as stored")
+           [s * (1 - t) / (1 - x6 - g6) for s, t in zip(shares, tot6)], f"Both levers, {100 * (x6 + g6):.1f}% less, rounded as stored")
     assert set(bleft2) <= set(bleft1)
     data["center_shards"] = {
         "source": "game: Eurostat env_ac_mfa, DMC by material group, EU 2022",
@@ -497,7 +497,7 @@ def main():
     out = PREFIX + json.dumps(data, separators=(",", ":"), ensure_ascii=False) + tail
     with open(DATA, "w", encoding="utf-8") as f:
         f.write(out)
-    print(f"Wrote {len(rounded)} shards, panel 4's {len(rleft)}, panel 5's {len(left)} and panel 6's "
+    print(f"Wrote {len(rounded)} shards, the reveal's {len(rleft)}, use less's {len(left)} and both levers' "
           f"{len(bleft1)} and {len(bleft2)} to {os.path.relpath(DATA, ROOT)}")
 
 

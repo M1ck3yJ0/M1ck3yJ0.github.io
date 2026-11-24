@@ -6,7 +6,7 @@ Usage:
 Opens the page in headless Chromium, with reduced motion, and reads every figure a reader can
 see: cards, section titles, the closer, every note (the collapsed notes included), table cells
 (each cell apart), the head's descriptions, aria-labels and chart labels in every card's state,
-20a's and 20b's text and charts for every country, and the game's text, and its numbers and
+the ring and waterfall explorers' text and charts for every country, and the game's text, and its numbers and
 ending at the end of two routes, each taking the heaviest material first (recycling held at
 2022's level, and at 70%). Axis ticks (three or more evenly spaced bare numbers at one x) are
 a scale, not figures.
@@ -434,7 +434,7 @@ def load_rows():
                 sums[(r["geo"], k)] = sums.get((r["geo"], k), 0) + num(r[k])
     for (g, k), v in sums.items():
         add(f"waste_by_material.{'EU' if g == EU else g}.all_groups.{k}", v, "mass", 1e3, None if g == EU else g, "eu")
-    # 20a's arithmetic on each country's figures, as the page does it
+    # The ring explorer's arithmetic on each country's figures, as the page does it
     for r in read(f"ceilings_{YEAR}.csv"):
         g = None if r["geo"] == EU else r["geo"]
         mat = {m["geo"]: num(m["total"]) for m in read(f"materials_{YEAR}.csv")}.get(r["geo"])
