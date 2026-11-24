@@ -78,3 +78,8 @@ notes-ring,3%,concrete,,F73,"JRC survey: 0 to 3% of recycled aggregate sold for 
 notes-ring,10,Factsheet,,F75,"UBA's AutoRess Factsheet 10, a reference"
 notes-ring,206,EN,,F71,"EN 206, concrete's European standard, a reference"
 notes-waterfall,36%,footprint,,F45,"EEA: fossil fuels' footprint fell 36% from 2010 to 2024"
+notes-explore,16.6%,,ceilings.AT.rate_without_soil_rock_k05_pct,,Austria's rate with all but soil and rock recycled
+notes-explore,9.4%,,ceilings.BG.rate_without_soil_rock_k05_pct,,Bulgaria's rate with all but soil and rock recycled
+notes-explore,7.9%,,ceilings.FI.rate_without_soil_rock_k05_pct,,Finland's rate with all but soil and rock recycled
+notes-explore,14.2%,,ceilings.LU.rate_without_soil_rock_k05_pct,,Luxembourg's rate with all but soil and rock recycled
+explore-ring,9%,soil,ceilings.BG.rate_without_soil_rock_k05_pct,,Bulgaria's rate with all but soil and rock recycled
