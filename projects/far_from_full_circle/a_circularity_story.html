@@ -135,7 +135,7 @@ body {
   -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22vh, #000 calc(100% - 22vh), transparent);
           mask-image: linear-gradient(to bottom, transparent, #000 22vh, #000 calc(100% - 22vh), transparent);
 }
-.floor-card { position: relative; max-width: 640px; margin: 0 auto; padding: 20px; background: #fff; font-size: 16px; }
+.floor-card { position: relative; max-width: 560px; margin: 0 auto; padding: 20px; background: #fff; font-size: 16px; }
 .floor-card .note { padding-top: 16px; margin-top: 16px; border-top: 1px solid var(--hairline); }
 .floor-card a { color: var(--ink-2); }
 .floor-card a:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
@@ -502,6 +502,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   .closer-text { max-width: calc(720 * var(--t)); }
   .credit { font-size: calc(15 * var(--t)); }
   .notes, .floor-card, .explorer > details > summary { max-width: calc(640 * var(--t)); font-size: calc(16 * var(--t)); }
+  .floor-card { max-width: calc(560 * var(--t)); }
   .explore-teaser { font-size: calc(25 * var(--t)); }
   .notes h2 { font-size: calc(25 * var(--t)); }
   .note h3 { font-size: calc(18 * var(--t)); }
