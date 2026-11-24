@@ -1513,7 +1513,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      its yearly material accounts (env_ac_mfa): 2009, 2020 and 2023. */
   const WBANDS = [
     { from: 2008, to: 2010, name: ["Financial", "crisis"] },
-    { from: 2018, to: 2020, name: ["COVID"] },
+    { from: 2018, to: 2020, name: ["COVID", "2018 to", "2020"] },
     { from: 2022, to: 2024, name: ["Energy", "crisis"] }
   ];
   const WPTS = LEVEL.map(function (v, i) { return [WX0 + i * SW, wy(v)]; });
@@ -1695,8 +1695,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       const ends = function (t) { wfLands.push([t, T_WLINE - T_WLAB, true]); };       // shown once the line is drawn
 
       // The title and the step years
-      label(L, CX, 48, [[name === "line" ? "EU circularity rate, every second year"
-                                         : "Change in circularity rate since " + YRS[0], "lab"]], "middle");
+      if (name === "line") label(L, CX, 40, [["EU circularity rate, every second year,", "lab"], ["when countries report their waste", "lab", "1.15em"]], "middle");
+      else label(L, CX, 48, [["Change in circularity rate since " + YRS[0], "lab"]], "middle");
       YRS.forEach(function (yr, i) {
         if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
       });
