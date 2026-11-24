@@ -1,7 +1,7 @@
 """Render each scroll step of a page at phone (390 px) and desktop (1280 px) widths.
 
 Usage:
-    python3 -I _tools/check_steps.py <page.html> <outdir> [d3.min.js] [scrollama.min.js]
+    python3 -I _tools/check_steps.py <page.html> <outdir> [d3.min.js]
 
 Serves the repo on a local server, so the page's own fonts and images load.
 The browser asks for reduced motion, so each step's transition runs fast and
@@ -11,11 +11,10 @@ one, or else until its top sits at 60% of the screen, then screenshots the scree
 steps not marked active (class is-active) when shown, and any errors. Saves
 phone_steps.png and desktop_steps.png in <outdir>, one numbered tile per step.
 
-Outside requests are blocked. For a page that loads D3 or Scrollama from
-cdn.jsdelivr.net, pass local copies of the same versions, e.g.
-    npm install --prefix <dir> d3@7.9.0 scrollama@3.2.0
-then <dir>/node_modules/d3/dist/d3.min.js and
-<dir>/node_modules/scrollama/build/scrollama.min.js.
+Outside requests are blocked. For a page that loads D3 from cdn.jsdelivr.net,
+pass a local copy of the same version, e.g.
+    npm install --prefix <dir> d3@7.9.0
+then <dir>/node_modules/d3/dist/d3.min.js.
 
 Needs Python Playwright with Chromium, and Pillow.
 """
@@ -36,7 +35,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PAGE = urllib.parse.quote(os.path.relpath(os.path.abspath(sys.argv[1]), ROOT))
 OUT = sys.argv[2]
 D3 = sys.argv[3] if len(sys.argv) > 3 else None
-SCROLLAMA = sys.argv[4] if len(sys.argv) > 4 else None
 STEP = '[data-state]'
 WIDTHS = {'phone': (390, 844, 4, 300), 'desktop': (1280, 800, 3, 420)}
 
@@ -79,8 +77,6 @@ async def check(browser, base, name, width, height, cols, tile):
             await r.continue_()
         elif D3 and 'cdn.jsdelivr.net/npm/d3' in url:
             await r.fulfill(path=D3, content_type='application/javascript')
-        elif SCROLLAMA and 'cdn.jsdelivr.net/npm/scrollama' in url:
-            await r.fulfill(path=SCROLLAMA, content_type='application/javascript')
         else:
             await r.abort()
 
