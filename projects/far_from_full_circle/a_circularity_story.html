@@ -64,6 +64,7 @@
   --egg-1: #F4DFC0; --egg-2: #EBCFA8; --egg-3: #E0BD91; --egg-4: #D1A87B; --egg-5: #BD9367;
   /* Controls: the game's keys and buttons */
   --control: #EEF1F7; --control-hover: #E4E9F2; --control-press: #D9E0EE; --control-off: #F6F7FA;
+  --control-go: var(--used); --control-go-hover: #002A80; --control-go-press: #002266;   /* the game's Start */
   /* Layout */
   --chart: min(calc(100vw - 16px), 544px, 58vh);
   --u: 1px;                                        /* one px, scaled up on large screens */
@@ -442,8 +443,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 .mkey .sw { width: 12px; height: 12px; }
 .mkey .mname { font-weight: 700; white-space: nowrap; }
 .mkey .mcut { grid-column: 2; color: var(--ink-2); font-size: 15px; font-variant-numeric: tabular-nums; }
-.mkey:hover:not(:disabled), .game-reset:hover, .game-start:hover { background: var(--control-hover); }
-.mkey:active:not(:disabled), .game-reset:active, .game-start:active { background: var(--control-press); }
+.mkey:hover:not(:disabled), .game-reset:hover { background: var(--control-hover); }
+.mkey:active:not(:disabled), .game-reset:active { background: var(--control-press); }
+.game-start:hover { background: var(--control-go-hover); }
+.game-start:active { background: var(--control-go-press); }
 .mkey:focus-visible, .game-reset:focus-visible, .game-start:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 .mkey:disabled { cursor: default; color: var(--ink-2); background: var(--control-off); }
 .mkey:disabled .sw { opacity: .35; }
@@ -472,7 +475,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   font: inherit; font-size: 16px; color: var(--ink); background: var(--control); border: 0; border-radius: 0; cursor: pointer;
   touch-action: manipulation;
 }
-.game-start { display: block; margin: 14px 0 0; }
+.game-start { display: block; margin: 14px 0 0; font-weight: 700; color: #fff; background: var(--control-go); }
 @media (min-width: 800px) {
   .game-box {
     width: max-content; max-width: 100%; padding: 16px 16px 16px 0;
