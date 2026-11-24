@@ -63,6 +63,7 @@ Colors live only in the page's CSS, as variables named by role.
 - Highlights in the closer: `mark`, a band of `--highlight` (the lighter gold at 40% on white) under the lower part of the line, ink text (13.3:1). Not a series color.
 - Flat fills, no outlines or shadows, square white cards with no outline. Rounded ends only on the ring's arc, pointed ends only on the waterfall's bars; hatching only for estimates and recycling added in a scenario, and on a line, dashes only for estimates. Page text never names the hatching.
 - Labels that pair up line up, such as a name level with the midpoint of its two shares.
+- Every chart's title, with any line under it, and its source lines are centered across the chart.
 - Type: Cambria where the reader has it, else Caladea 1.002 (Google's crosextrafonts-20130214 release, Apache 2.0), which matches Cambria's character widths; never a later Caladea, whose widths differ. The eyebrow is bold capitals, spaced .12em. Everything else, chart text, explorer teasers and notes headings included, is in the body font; only the H1 and the section titles are Barlow Condensed 600. Card text (cards, the explorers' and game's text, the closer) is 18 px on a phone and 20 px on wide screens. Chart text scales with the chart, except on wide screens, where it is capped at 1.075 px per viewBox unit (`--cf`, set once at load), so labels stay smaller than the card text.
 
 ## Checking

@@ -1425,7 +1425,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     if (has("rate70")) extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
-    label(L, 6, 394, [[s.disc ? "Source: Eurostat. EU, " + YR : "Source: Eurostat, " + YR, "lab-src"]]);
+    label(L, CX, 394, [[s.disc ? "Source: Eurostat. EU, " + YR : "Source: Eurostat, " + YR, "lab-src"]], "middle");
   }
 
   /* Each card's ring plays from where the ring stands, through the beats between, in the
@@ -1681,8 +1681,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       const ends = function (t) { wfLands.push([t, T_WLINE - T_WLAB, true]); };       // shown once the line is drawn
 
       // The title and the step years
-      label(L, WX0 - 4, 48, [[name === "line" ? "EU circularity rate, every second year"
-                                               : "Change in circularity rate since " + YRS[0], "lab"]]);
+      label(L, CX, 48, [[name === "line" ? "EU circularity rate, every second year"
+                                         : "Change in circularity rate since " + YRS[0], "lab"]], "middle");
       YRS.forEach(function (yr, i) {
         if (i % 2 === 0) label(L, WX0 + i * SW, WYEAR, [[String(yr), "lab"]], "middle");
       });
@@ -1718,7 +1718,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             .attr("y1", wy(d.start) + 3).attr("y2", yl - 15);
         }
       }
-      label(L, 6, 394, [[name === "line" ? "Source: Eurostat" : "Source: Eurostat. Split by lever: my calculation", "lab-src"]]);
+      label(L, CX, 394, [[name === "line" ? "Source: Eurostat" : "Source: Eurostat. Split by lever: my calculation", "lab-src"]], "middle");
     });
     if (WFS) wfFrame(WFS);
   }
@@ -1844,7 +1844,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const could = ZIN.benchmark_upfront_per_m2, is = ZIN.upfront_per_m2;
     relabel(d3.select("#zin svg"), dur, function (L) {
       [0, 200, 400, 600].forEach(function (v) { label(L, 36, zy(v) + 4.5, [[String(v), "lab"]], "end"); });
-      label(L, 6, 40, [["Kilograms of CO2 per square meter, upfront", "lab"]]);
+      label(L, CX, 40, [["Kilograms of CO2 per square meter, upfront", "lab"]], "middle");
 
       // The new build: its value over the roof
       const cx = ZX.could + ZTW / 2, ix = ZX.is + ZTW / 2;
@@ -1852,7 +1852,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       label(L, cx + nb.node().getComputedTextLength() / 2 + 4, zy(could) - 8, [["implied", "lab"]]);
       label(L, cx, ZB + 20, [["Could have been:", "ex-row ex-state"], ["a new build", "ex-row ex-rest"]], "middle");
       label(L, ix, ZB + 20, [["Is:", "ex-row ex-state"], ["ZIN", "ex-row ex-rest"]], "middle");
-      label(L, 6, 394, [["Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025", "lab-src"]]);
+      label(L, CX, 394, [["Source: Leroy, Gomez and Nosiglia (Bureau Greisch), IABSE 2025", "lab-src"]], "middle");
       if (name === "pre") return;
 
       // ZIN: a dimension line up its right side, split at its value
@@ -2027,7 +2027,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         label(L, 200, 354, [["Climate cost of producing materials,", "lab"],
                             ["burning fuels not counted", "lab"]], "middle");
       }
-      label(L, 6, 394, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"]]);
+      label(L, CX, 394, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"]], "middle");
     });
   }
 
@@ -2043,8 +2043,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     });
     label(L, 200, 340, [["Climate cost of producing materials,", "lab"],
                         ["burning fuels not counted", "lab"]], "middle");
-    label(L, 6, 380, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"],
-                      ["Per tonne: my calculation, from its shares", "lab-src"]]);
+    label(L, CX, 380, [["Source: ETC CE Report 2025/3. EU, 2022", "lab-src"],
+                       ["Per tonne: my calculation, from its shares", "lab-src"]], "middle");
   }
 
   /* ---------- IKEA's kitchens: a balance, 2017 against 2022 ----------
@@ -2119,13 +2119,13 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const pans = HEAPS.heaps.map(function (heap) { const p = g.append("g"); ipan(p, heap); return p; });
     g.append("circle").attr("class", "steel-2").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 8);
     g.append("circle").attr("class", "steel-4").attr("cx", IPIV[0]).attr("cy", IPIV[1]).attr("r", 2.8);
-    label(L, 44, 40, [["Food waste in IKEA's kitchens", "lab"], ["Ingka's financial years, to August", "lab-src", "1.3em"]]);
+    label(L, CX, 40, [["Food waste in IKEA's kitchens", "lab"], ["Ingka's financial years, to August", "lab-src", "1.3em"]], "middle");
     const labs = [L.append("g"), L.append("g")];   // each follows its pan
     label(labs[0], 0, ILAB, [["2017", "lab-strong"]], "middle");
     label(labs[1], 0, ILAB, [["2022", "lab-strong"]], "middle");
     const less = label(labs[1], 0, ILAB + 25, [[IKEA.food_waste_cut + "% less", "lab-num"],
       ["per meal served", "lab", "1.35em"]], "middle");
-    label(L, 6, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]]);
+    label(L, CX, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]], "middle");
     IK = { pans: pans, labs: labs, beam: beam, less: less };
   }
 
@@ -2420,7 +2420,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     if (extra.length) rows.push(extra);
     const K = L.append("g").attr("transform", "translate(" + CX + ",336) scale(" + XR_KEY + ") translate(" + -CX + ",-336)");
     rows.forEach(function (items, i) { keyRow(K, 336 + 19 * i, items); });
-    label(L, 6, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: my calculation", "lab-src"]]);
+    label(L, CX, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: my calculation", "lab-src"]], "middle");
   }
 
   // The card under the chart: one template, with hand-written lines for the default and data warnings
@@ -2651,10 +2651,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       }).join(""));
 
     wticks(g, L, xy);
-    label(L, WX0 - 4, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab"]]);
+    label(L, CX, XTITLE, [["Change in circularity rate since " + XYRS[0], "lab"]], "middle");
     XYRS.forEach(function (yr, i) { label(L, WX0 + i * XSW, WYEAR, [[String(yr), "lab"]], "middle"); });
-    if (est.length) label(L, 6, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]]);
-    label(L, 6, 394, [["Source: Eurostat. Split by lever: my calculation", "lab-src"]]);
+    if (est.length) label(L, CX, 380, [[XYRS[est[0].i] + " to " + XYRS[XNS] + ": Eurostat's estimate", "lab-src"]], "middle");
+    label(L, CX, 394, [["Source: Eurostat. Split by lever: my calculation", "lab-src"]], "middle");
 
     xBars = xSteps.map(function (d) {
       const sg = g.append("g");
@@ -3145,7 +3145,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     if (q.rate > TARGET + 1e-6) extra.push([KEY.lap, "Past the target"]);
     if (extra.length) rows.push(extra);
     rows.forEach(function (items, i) { keyRow(L, 324 + 19 * i, items); });
-    label(L, 6, 394, [["Sources: Eurostat; ETC CE Report 2025/3; EEA. EU, " + YR + ". My calculation", "lab-src"]]);
+    label(L, CX, 394, [["Sources: Eurostat; ETC CE Report 2025/3; EEA. EU, " + YR + ". My calculation", "lab-src"]], "middle");
     d3.select(GM_FIG).select("svg").attr("aria-label", "The EU's circularity drawn as a ring, around a disc of the new material it uses, in shards of four blues for minerals, biomass, fossil fuels and metal ores. With " +
       Math.round(q.s) + "% of its waste recycled and " + fmt1(w) + "% less new material than in " + YR + ", its rate is " + fmt1(r) + "%, " +
       (q.closed ? (q.rate > TARGET + 1e-6 ? "past" : "at") : "short of") + " the 24% target.");
