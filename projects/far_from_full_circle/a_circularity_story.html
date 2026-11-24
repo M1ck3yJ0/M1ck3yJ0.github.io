@@ -671,7 +671,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         <div class="game-intro">
           <p>Now try it yourself. Take the EU's ring from its 11.4% circularity in 2022 to the 24% target, with either lever or both, and past it if you like.</p>
           <p><strong>Recycle more:</strong> drag the gold knob around the ring, from the 41% of its waste the EU recycled in 2022 up to 100%. As above, each extra recycled tonne replaces half a new one.</p>
-          <p><strong>Use less:</strong> tap a material under the ring. Each tap takes 5.5% of the EU's new material, about all the metal ore it uses in a year.</p>
+          <p><strong>Use less:</strong> tap a material under the ring. Each tap takes away a quarter of what the EU uses of that material in a year.</p>
           <button type="button" class="game-start">Start</button>
         </div>
         <div class="game-end" aria-live="polite" hidden></div>
@@ -890,7 +890,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     <section class="note" id="notes-game">
       <h3>Your turn: close the EU's ring</h3>
       <p class="note-src">Sources: Eurostat; climate shares and total, ETC CE Report 2025/3; recycling scenarios, EEA; burning fuels, IEA. EU, 2022. Removals: my calculation.</p>
-      <p>The game runs on the same model as the story. Waste is held at 2022's 1,971 Mt treated. The knob starts at the 41.1% of it recycled in 2022 by the rate's own count (Eurostat's waste statistics give 40.8%), and each extra recycled tonne replaces half a new one, an assumed midpoint (Method), split across materials by the waste not yet recycled, as in the ring's note. A tap takes 5.5% of 2022's new material from one material. Recycling replaces first, and taps cut only what it hasn't, so a cut gives way as recycling rises. Its endings match the story: 59.3% less new material at 2022's recycling, 31.0% at 70%, and recycling alone closing the ring between 93% and 94% of waste recycled.</p>
+      <p>The game runs on the same model as the story. Waste is held at 2022's 1,971 Mt treated. The knob starts at the 41.1% of it recycled in 2022 by the rate's own count (Eurostat's waste statistics give 40.8%), and each extra recycled tonne replaces half a new one, an assumed midpoint (Method), split across materials by the waste not yet recycled, as in the ring's note. A tap takes a quarter of one material's 2022 use, so the ring closes in 6 to 13 taps at 2022's recycling, whatever the route: fewest by cutting minerals first, the heaviest, and most by cutting the other three first. Recycling replaces first, and taps cut only what it hasn't, so a cut gives way as recycling rises. Its endings match the story: 59.3% less new material at 2022's recycling, 31.0% at 70%, and recycling alone closing the ring between 93% and 94% of waste recycled.</p>
       <p>Climate cost removed is each material's share removed of its own consumption, times its share of the climate impact of making the EU's materials (ETC CE Report 2025/3, Figure 3-4), applied to Eurostat's tonnes. As in the ring's note, the credit for recycling's replaced tonnes uses average impact per tonne, which flatters recycling. The tonnes of CO<sub>2</sub>e are that share of 2,890 Mt, the climate impact of the raw materials used in the EU in 2022 (ETC CE Report 2025/3, Table 3-1). That is a footprint of the EU's final demand, measured to the factory gate, so it can't be set beside the EU's own emissions. Burning fuels isn't counted, and for oil and gas that is most of their climate cost: worldwide, producing, moving and refining them caused just under 15% of energy-related greenhouse gas emissions, and using them another 40% (IEA, Emissions from Oil and Gas Operations in Net Zero Transitions, 2023). The report doesn't say Figure 3-4's shares come from the same calculation as the total, though both rest on the same models (FIGARO, 2024 edition, and EXIOBASE 3.8.2).</p>
       <p>Imports removed are measured against the 1,660 Mt the EU imported from outside it in 2022 (env_ac_mfa), and assume each material's imports fall in proportion to its use. A material with nothing left counts as all removed.</p>
       <p class="note-back"><a href="#sec-game">Back to the game &#8593;</a></p>
@@ -2825,8 +2825,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      The hero's ring for the EU, closed by the reader with two levers. A gold knob at the arc's tip,
      dragged around the ring, sets the share of treated waste recycled, from 2022's 41% to 100%, waste held at 2022's tonnes; each extra
      recycled tonne replaces K_REP new tonnes of the same material (an assumed midpoint), split across
-     materials by each one's waste not yet recycled. A key per material takes GM_STEP% of 2022's new
-     material away from it at each tap, until none is left; recycling replaces first, and taps cut
+     materials by each one's waste not yet recycled. A key per material takes GM_STEP% of that material's own
+     2022 use away from it at each tap, until none is left; recycling replaces first, and taps cut
      only what it hasn't replaced, so a cut gives way as recycling rises, except that a material
      tapped to nothing stays gone. The tap that would take the ring past 24% stops where it closes.
      Weight, the rate and the disc count recycling's replaced tonnes as panel 4 does, split on the
@@ -2857,7 +2857,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const GM_DG = GM_M.map(function (m) { return GM.dmc_by_group_kt[m]; });   // Eurostat's consumption, kt
   const GM_T = DATA.waste_bases.treated_kt;        // waste treated, kt, held at 2022's
   const GM_S0 = EU.share_recycled;                 // % of it recycled in 2022
-  const GM_STEP = 5.5;                             // one tap, % of 2022's new material
+  const GM_STEP = 25;                              // one tap, % of the material's own 2022 use
   const GM_LINES = [                               // what goes when a material is mostly gone, after "most of"
     "the sand, gravel and stone that become our homes, roads and bridges",
     "the crops, feed and wood we grow, our food among them",
@@ -2913,7 +2913,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   function gmTap(i) {
     const q = gmDerive(gm), room = q.avail[i] - q.gone[i];
     if (room <= 1e-9) return;
-    let amt = Math.min(GM_STEP, room);
+    let amt = Math.min(GM_STEP / 100 * GM_W[i], room);
     if (!q.closed && q.need > 1e-9 && amt >= q.need - 1e-9) amt = q.need;
     gm.g[i] = amt >= room - 1e-9 ? Infinity : q.gone[i] + amt;   // a material emptied stays gone as recycling moves
     gmSet("move");
