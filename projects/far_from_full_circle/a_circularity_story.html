@@ -1416,16 +1416,16 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       leader(L, [12 + t.select("tspan").node().getComputedTextLength(), 275], [CX - 0.5 * rc, CY + 0.72 * rc]);
     }
     if (s.call === "recycle") {             // above the ring, as panel 5's
-      label(L, CX, 24, [[fmt1(REC4) + "% of waste recycled", "lab-strong"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
+      label(L, CX, 24, [[Math.round(REC4) + "% of waste recycled", "lab-strong"], ["each recycled tonne replacing half a new one", "lab"]], "middle");
     }
     if (s.call === "both") {                // above the ring, through panel 6's beat and after
       const cut = Math.round((X6 + G6) * 1000) / 10, rep = Math.round(X6 * 1000) / 10;
-      label(L, CX, 24, [[fmt1(cut) + "% less new material", "lab-strong"],
+      label(L, CX, 24, [[Math.round(cut) + "% less new material", "lab-strong"],
                         [fmt1(rep) + "% replaced by recycling 70%; " + fmt1(G6 * 100) + "% gone without", "lab"],
                         ["each recycled tonne assumed to replace half a new one", "lab"]], "middle");
     }
     if (s.call === "less") {                // above the ring, for both of panel 5's beats
-      label(L, CX, 24, [[fmt1(LESS * 100) + "% less new material", "lab-strong"], ["recycling held at its " + YR + " level", "lab"]], "middle");
+      label(L, CX, 24, [[Math.round(LESS * 100) + "% less new material", "lab-strong"], ["recycling held at its " + YR + " level", "lab"]], "middle");
     }
 
     // The key
@@ -2137,7 +2137,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const labs = [L.append("g"), L.append("g")];   // each follows its pan
     label(labs[0], 0, ILAB, [["2017", "lab-strong"]], "middle");
     label(labs[1], 0, ILAB, [["2022", "lab-strong"]], "middle");
-    const less = label(labs[1], 0, ILAB + 25, [[IKEA.food_waste_cut + "% less", "lab-num"],
+    const less = label(labs[1], 0, ILAB + 25, [[Math.round(IKEA.food_waste_cut) + "% less", "lab-num"],
       ["per meal served", "lab", "1.35em"]], "middle");
     label(L, CX, 394, [["Source: Ingka Group, annual reports FY22 and FY24", "lab-src"]], "middle");
     IK = { pans: pans, labs: labs, beam: beam, less: less };
