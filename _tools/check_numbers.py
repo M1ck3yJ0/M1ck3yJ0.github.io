@@ -94,7 +94,7 @@ SCOPES = {
     "notes-method": (EU_ROWS, COUNTRY_ROWS), "notes-ring": (EU_ROWS, COUNTRY_ROWS),
     "notes-waterfall": (EU_ROWS, COUNTRY_ROWS), "notes-ribbon": (EU_ROWS, COUNTRY_ROWS),
     "notes-zin": (EU_ROWS + EXAMPLES, ()), "notes-ikea": (EXAMPLES, ()),
-    "notes-explore": (EU_ROWS, COUNTRY_ROWS), "notes-game": (EU_ROWS, ()),
+    "notes-explore": (EU_ROWS, COUNTRY_ROWS), "notes-explore-waterfall": (EU_ROWS, COUNTRY_ROWS), "notes-game": (EU_ROWS, ()),
     "notes-closer": (EU_ROWS + EXAMPLES, COUNTRY_ROWS), "notes-drawings": ((), ()), "notes": (EU_ROWS, COUNTRY_ROWS),
 }
 CONSTANTS = {100.0: "a whole (100%)"}
