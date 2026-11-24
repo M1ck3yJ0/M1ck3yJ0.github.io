@@ -2403,7 +2403,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
     const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
     const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
-                   [KEY.arc, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + YR]]];
+                   [KEY.arc, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + (c.data_year || YR)]]];
     rows.push(SH.materials.map(function (m) { return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name]; }));
     const extra = [];
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
@@ -2411,19 +2411,19 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     if (extra.length) rows.push(extra);
     const K = L.append("g").attr("transform", "translate(" + CX + ",336) scale(" + XR_KEY + ") translate(" + -CX + ",-336)");
     rows.forEach(function (items, i) { keyRow(K, 336 + 19 * i, items); });
-    label(L, CX, 394, [["Source: Eurostat, " + YR + "; 70% recycled, EEA scenario. Cut: my calculation", "lab-src"]], "middle");
+    label(L, CX, 394, [["Source: Eurostat, " + (c.data_year || YR) + "; 70% recycled, EEA scenario. Cut: my calculation", "lab-src"]], "middle");
   }
 
   // The card under the chart: one template, with hand-written lines for the default and data warnings
   function xrText() {
-    const q = XR, c = q.c, n = q.name;
+    const q = XR, c = q.c, n = q.name, yr = c.data_year || YR;   // a country without the data year's figures keeps its latest
     const tpp = c.materials_total * 365 / 1000, w = Math.round(c.waste_treated_per_consumption);
     const times = XR_RECYCLED / c.share_recycled;
     const cut = Math.round(q.cut * 10) / 10, rep = Math.round(q.rep * 10) / 10;
     const cmp = Math.abs(w - XR_EU_WASTE) <= 3 ? "about the same as" : w < XR_EU_WASTE ? (w < XR_EU_WASTE / 2 ? "far less than" : "less than")
               : (w > XR_EU_WASTE * 1.5 ? "far more than" : "more than");
     const past = c.rate > TARGET * 100;
-    let a = "In " + YR + ", " + fmt1(c.rate) + "% of the material " + n + " used came back into use from waste" + (past ? ", already past the target." : ".");
+    let a = "In " + yr + ", " + fmt1(c.rate) + "% of the material " + n + " used came back into use from waste" + (past ? ", already past the target." : ".");
     if (q.held) a += " It already recycles " + fmt1(c.share_recycled) + "% of its waste, more than 70%, so recycling stays where it is.";
     else a += " If it recycled 70% of its waste, up from " + fmt1(c.share_recycled) + "%" +
               (times >= 2.5 ? ", about " + Math.round(times) + " times as much," : ",") +
@@ -2453,8 +2453,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
     const box = d3.select(XR_FIG).select(".explore-text");
     box.selectAll("p").remove();
-    [a, b, XR_LINES[q.code]].forEach(function (t) { if (t) box.append("p").text(t); });
-    d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the new material it used in " + YR + ", in shards of four blues for minerals, biomass, fossil fuels and metal ores. In " + YR + ", its rate was " +
+    const late = c.data_year ? n.charAt(0).toUpperCase() + n.slice(1) + " hasn't yet reported all its figures for " + YR +
+                 ", so its ring uses " + yr + ", the latest year it has." : null;
+    [a, b, late, XR_LINES[q.code]].forEach(function (t) { if (t) box.append("p").text(t); });
+    d3.select(XR_FIG).select("svg").attr("aria-label", n.charAt(0).toUpperCase() + n.slice(1) + (/s$/.test(n) ? "'" : "'s") + " circularity drawn as a ring, around a disc of the new material it used in " + yr + ", in shards of four blues for minerals, biomass, fossil fuels and metal ores. In " + yr + ", its rate was " +
       fmt1(c.rate) + "%. With 70% of its waste recycled" + (q.held ? "" : ", up from " + fmt1(c.share_recycled) + "%, and each recycled tonne replacing half a new one") + ", it would be " + fmt1(q.r70) +
       "%" + (q.held ? "" : ", and the disc shrinks by the " + fmt1(rep) + "% of new material that recycling replaces") +
       (q.gone > 0 ? ". To close the ring at the 24% target, it would also need " + fmt1(q.goneP) + "% less new material that nothing replaces, so the disc shrinks until the ring closes." :
