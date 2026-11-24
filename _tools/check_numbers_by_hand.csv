@@ -91,3 +91,13 @@ sec-closer,11%,,headline.ireland_ceiling_k05,,Ireland's rate with every tonne re
 sec-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
 notes-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
 sec-ring,2026,Eurostat data,,,"The byline's data date, from the data file's data_as_of"
+sec-waterfall,6 million,,,F107,"EU: 6.2 million fewer people in work, 2008 to 2010 (lfsa_egan2)"
+sec-waterfall,1.7 million,,,F107,"EU: 1.7 million fewer in construction, 2008 to 2010 (lfsa_egan2)"
+notes-waterfall,15,aged,,F107,The ages of the employment count (15 to 64)
+notes-waterfall,64,aged,,F107,The ages of the employment count (15 to 64)
+notes-waterfall,189.9 million,,,F107,"EU in work, 2008 (lfsa_egan2)"
+notes-waterfall,183.7 million,,,F107,"EU in work, 2010 (lfsa_egan2)"
+notes-waterfall,15.8 million,,,F107,"EU in construction, 2008 (lfsa_egan2)"
+notes-waterfall,14.1 million,,,F107,"EU in construction, 2010 (lfsa_egan2)"
+notes-closer,"163,433",,,F109,"Ireland's vacant homes, Census 2022"
+notes-closer,8%,stock,,F109,"Ireland's census vacancy rate, 2022"
