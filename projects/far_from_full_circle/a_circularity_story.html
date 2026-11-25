@@ -857,7 +857,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             <clipPath id="xr-clip2"><path></path></clipPath>
           </defs>
           <g class="ring" transform="translate(200,188)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text><text class="lab rate-lab" text-anchor="start" opacity="0"></text>
             <g class="stripes rate" clip-path="url(#xr-clip1)"><path class="tint"></path></g>
             <path class="rope"></path>
             <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#xr-clip2)"></g></g>
@@ -1230,10 +1230,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   }
 
   // The rate the arc's dot shows, at about two o'clock, outside, across from the target's label
-  function placeRate(g, R, d) {
-    const a = 0.155 * TAU, closed = d * TARGET * 100 >= 23.95;   // reached once it would read 24.0%
+  function placeRate(g, R, d) {                    // d: the rate as a share of the target, past 1 beyond it
+    const a = 0.155 * TAU, v = fmt1(d * TARGET * 100), closed = v === fmt1(TARGET * 100);   // reached while it reads 24.0%
     g.select(".rate-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0)
-      .text(closed ? TARGET * 100 + "% reached" : fmt1(d * TARGET * 100) + "% rate");
+      .text(closed ? TARGET * 100 + "% reached" : v + "% rate");
   }
 
   /* A chart's labels for a new state, built by build(L) into a fresh group in its g.labels.
@@ -2396,6 +2396,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const s0 = solid / TARGET, s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
 
     placeTarget(g, R);
+    placeRate(g, R, total);
     g.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(g.select(".stripes.rate"), "#xr-clip1", R, Math.min(1, s1), t1, 4.5, true);
     const s2 = Math.max(0, s0 - 1), t2 = Math.max(0, total - 1);   // the second lap
@@ -2428,9 +2429,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       hl.remove();
       label(L, CX, 19, [[fmt1(cut) + "% less new material", "lab-title"], [sub.slice(0, part + 1), "lab"], [sub.slice(part + 2), "lab"]], "middle");
     }
-    const reached = q.gone > 0 ? TARGET * 100 + "%" : fmt1(q.r70) + "%";
-    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"],
-                   [KEY.arc, stage === "end" ? reached + " circularity reached" : fmt1(c.rate) + "% circularity in " + (c.data_year || YR)]]];
+    const rows = [[[KEY.target, "Target for 2030"], [KEY.arc, "Circularity rate"]]];
     rows.push(SH.materials.map(function (m) { return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name]; }));
     const extra = [];
     if (!q.held && stage !== "start") extra.push([KEY.band("hatch-rate"), "Added by recycling 70%"]);
