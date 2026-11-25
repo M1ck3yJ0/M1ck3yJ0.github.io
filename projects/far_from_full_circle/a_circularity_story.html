@@ -687,7 +687,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
               <clipPath id="gm-clip2"><path></path></clipPath>
             </defs>
             <g class="ring" transform="translate(200,176)">
-              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+              <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text><text class="lab rate-lab" text-anchor="start" opacity="0"></text>
               <g class="turn">
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
@@ -1223,16 +1223,16 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     return t;
   }
   // The target's circle at radius R, with "24% target" beside it at about ten o'clock, outside
-  function placeTarget(g, R) {
+  function placeTarget(g, R, out) {               // out: the label's distance past the ring, 13 unless given
     g.select(".target").attr("r", R);
-    const a = -0.155 * 2 * Math.PI;
-    g.select(".target-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0);
+    const a = -0.155 * 2 * Math.PI, o = R + (out || 13);
+    g.select(".target-lab").attr("x", o * Math.sin(a)).attr("y", -o * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0);
   }
 
   // The rate the arc's dot shows, at about two o'clock, outside, across from the target's label
-  function placeRate(g, R, d) {                    // d: the rate as a share of the target, past 1 beyond it
-    const a = 0.155 * TAU, v = fmt1(d * TARGET * 100), closed = v === fmt1(TARGET * 100);   // reached while it reads 24.0%
-    g.select(".rate-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0)
+  function placeRate(g, R, d, out) {               // d: the rate as a share of the target, past 1 beyond it
+    const a = 0.155 * TAU, o = R + (out || 13), v = fmt1(d * TARGET * 100), closed = v === fmt1(TARGET * 100);   // reached while it reads 24.0%
+    g.select(".rate-lab").attr("x", o * Math.sin(a)).attr("y", -o * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0)
       .text(closed ? TARGET * 100 + "% reached" : v + "% rate");
   }
 
@@ -2873,6 +2873,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   const GM_NRT = d3.sum(GM_NR);
   const GM_DG = GM_M.map(function (m) { return GM.dmc_by_group_kt[m]; });   // Eurostat's consumption, kt
   const GM_T = DATA.waste_bases.treated_kt;        // waste treated, kt, held at 2022's
+  const GM_LAB = 17;                              // the ring labels' distance past the ring
   const GM_S0 = EU.share_recycled;                 // % of it recycled in 2022
   const GM_STEP = 25;                              // one tap, % of the material's own 2022 use
   const GM_LINES = [                               // what goes when a material is mostly gone, after "most of"
@@ -3142,7 +3143,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     let total = arc[1];
     if (Math.abs(total - 1) < 1e-4) total = 1;     // closed: a full ring, with no ends
     const s1 = s0 > 0.9999 ? 1 : s0, t1 = Math.min(1, total);
-    placeTarget(GM_G, R);
+    placeTarget(GM_G, R, GM_LAB);                  // clear of the knob as it passes
+    placeRate(GM_G, R, total, GM_LAB);
     GM_G.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(GM_G.select(".stripes.rate"), "#gm-clip1", R, Math.min(1, s1), t1, 4.5, true);
     const s2 = Math.min(1, Math.max(0, s0 - 1)), t2 = Math.min(1, Math.max(0, total - 1));   // the second lap
@@ -3190,10 +3192,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
                 : "all replaced by recycling";
       label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-title"], [sub, "lab"]], "middle");
     }
-    const now = q.weight <= 0 ? fmt1(r) + "% circularity in " + YR
-              : q.closed ? (Math.abs(r - 24) < 0.05 ? "24%" : fmt1(r) + "%") + " circularity reached"
-              : fmt1(r) + "% circularity";
-    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [KEY.rate, now]]];
+    const rows = [[[KEY.target, "Target for 2030"], [KEY.rate, "Circularity rate"]]];
     const extra = [];
     if (q.s > GM_S0) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
     if (q.rate > TARGET + 1e-6) extra.push([KEY.lap, "Past the target"]);
