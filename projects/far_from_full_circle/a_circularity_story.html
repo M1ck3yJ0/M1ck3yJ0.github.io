@@ -685,6 +685,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             <defs>
               <clipPath id="gm-clip1"><path></path></clipPath>
               <clipPath id="gm-clip2"><path></path></clipPath>
+              <clipPath id="gm-clip3"><path></path></clipPath>
             </defs>
             <g class="ring" transform="translate(200,176)">
               <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text><text class="lab rate-lab" text-anchor="start" opacity="0"></text>
@@ -692,6 +693,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
                 <g class="stripes rate" clip-path="url(#gm-clip1)"><path class="tint"></path></g>
                 <path class="rope"></path>
                 <g class="lap"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip2)"></g></g>
+                <g class="lap lap3"><path class="band"></path><g class="stripes" clip-path="url(#gm-clip3)"></g></g>
                 <circle class="swell" display="none"></circle>
                 <circle class="ripple" display="none"></circle>
                 <circle class="dot rate"></circle>
@@ -3148,9 +3150,12 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     GM_G.select(".rope").attr("d", sector(R, 0, Math.min(1, s1)));
     xrStripes(GM_G.select(".stripes.rate"), "#gm-clip1", R, Math.min(1, s1), t1, 4.5, true);
     const s2 = Math.min(1, Math.max(0, s0 - 1)), t2 = Math.min(1, Math.max(0, total - 1));   // the second lap
-    GM_G.select(".lap .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
-    xrStripes(GM_G.select(".lap .stripes"), "#gm-clip2", R, s2, t2, XR_HW2, s2 > 0);
-    const lap = total > 1, tip = lap ? t2 : t1;
+    GM_G.select(".lap:not(.lap3) .band").attr("d", s2 > 0 ? band(R, 0, s2, XR_HW2) : null);
+    xrStripes(GM_G.select(".lap:not(.lap3) .stripes"), "#gm-clip2", R, s2, t2, XR_HW2, s2 > 0);
+    const s3 = Math.min(1, Math.max(0, s0 - 2)), t3 = Math.min(1, Math.max(0, total - 2));   // the third, over the second
+    GM_G.select(".lap3 .band").attr("d", s3 > 0 ? band(R, 0, s3, XR_HW2) : null);
+    xrStripes(GM_G.select(".lap3 .stripes"), "#gm-clip3", R, s3, t3, XR_HW2, s3 > 0);
+    const lap = total > 1, tip = total > 2 ? t3 : lap ? t2 : t1;
     const kx = R * Math.sin(tip * TAU), ky = -R * Math.cos(tip * TAU);
     GM_G.select(".dot").attr("class", lap ? "dot lap" : "dot rate").attr("r", lap ? RING_DOT + 1 : RING_DOT).attr("cx", kx).attr("cy", ky);
     GM_G.select(".knob-hit").attr("cx", kx).attr("cy", ky);
