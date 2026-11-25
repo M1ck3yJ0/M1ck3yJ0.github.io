@@ -604,7 +604,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
             <pattern id="ring-hatch-rate" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)"><rect width="4" height="4"></rect><line x1="2" y1="0" x2="2" y2="4"></line></pattern>
           </defs>
           <g class="ring" transform="translate(200,176)">
-            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text>
+            <circle class="target" r="0"></circle><text class="lab target-lab" text-anchor="end" opacity="0">24% target</text><text class="lab rate-lab" text-anchor="start" opacity="0"></text>
             <g class="stripes rate" clip-path="url(#ring-stripe-clip)"><path class="tint"></path></g>
             <path class="rope"></path>
             <g class="disc" transform="scale(0)">
@@ -1229,6 +1229,13 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     g.select(".target-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0);
   }
 
+  // The rate the arc's dot shows, at about two o'clock, outside, across from the target's label
+  function placeRate(g, R, d) {
+    const a = 0.155 * TAU, closed = d * TARGET * 100 >= 23.95;   // reached once it would read 24.0%
+    g.select(".rate-lab").attr("x", (R + 13) * Math.sin(a)).attr("y", -(R + 13) * Math.cos(a) + 4).attr("opacity", R > 0 ? null : 0)
+      .text(closed ? TARGET * 100 + "% reached" : fmt1(d * TARGET * 100) + "% rate");
+  }
+
   /* A chart's labels for a new state, built by build(L) into a fresh group in its g.labels.
      Over dur ms, labels the old state had too stay put, the old state's others fade out, and
      the new state's others fade in; at 0, the new labels just replace the old. */
@@ -1351,6 +1358,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
+    placeRate(g, R, d);
     g.select(".disc").attr("transform", "scale(" + size + ")");
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
@@ -1412,6 +1420,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     stripesAt = "";                                                              // ringFrame redraws its own stripes
     xrStripes(g.select(".stripes").attr("opacity", null), "#ring-stripe-clip", R, s1, t1, 4.5, true);
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(t1 * TAU)).attr("cy", -R * Math.cos(t1 * TAU)).attr("opacity", null);
+    placeRate(g, R, t1);
     g.select(".disc").attr("transform", "scale(" + size + ")");
     const flyAt = function (el, d, v) {
       el.attr("d", d).attr("display", v > 0.9999 ? "none" : null)
@@ -1437,7 +1446,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const has = function (k) { return s.key.indexOf(k) > -1; };
     if (s.hint) {
       label(L, CX, 352, [["The disc is the " + fmt1(DMC / 1e6) + " billion tonnes the EU consumed in " + YR + ",", "lab-src"], ["drawn as terrazzo: the floor it could one day become", "lab-src"]], "middle");
-      label(L, CX, 22, [["The full circle is the 24% target for 2030.", "ring-hint"], ["The gold arc is the EU's " + fmt1(RATE * 100) + "% in " + YR + ", not yet halfway.", "ring-hint"]], "middle");
+      label(L, CX, 22, [["The full circle is the 24% target.", "ring-hint"], ["The gold arc is how far the EU has come.", "ring-hint"]], "middle");
     }
 
     // The step's highlight, called out
@@ -1455,7 +1464,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }
 
     // The key
-    const rows = [[[KEY.target, TARGET * 100 + "% target for 2030"], [s.dim ? KEY.arcDim : KEY.arc, s.dmc === DMC ? fmt1(RATE * 100) + "% circularity in " + YR : TARGET * 100 + "% circularity reached"]]];
+    const rows = [[[KEY.target, "Target for 2030"], [s.dim ? KEY.arcDim : KEY.arc, "Circularity rate"]]];
     if (has("mats")) rows.push(SH.materials.map(function (m) {
       return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name];
     }));
