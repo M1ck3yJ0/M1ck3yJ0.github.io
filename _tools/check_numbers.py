@@ -6,7 +6,8 @@ Usage:
 Opens the page in headless Chromium, with reduced motion, and reads every figure a reader can
 see: cards, section titles, the closer, every note (the collapsed notes included), table cells
 (each cell apart), the head's descriptions, aria-labels and chart labels in every card's state,
-the ring and waterfall explorers' text and charts for every country, and the game's text, and its numbers and
+the ring and waterfall explorers' text and charts for every country, peeks (read with their paragraph),
+and the game's text, and its numbers and
 ending at the end of two routes, each taking the heaviest material first (recycling held at
 2022's level, and at 70%). Axis ticks (three or more evenly spaced bare numbers at one x) are
 a scale, not figures.
@@ -124,7 +125,8 @@ STATIC_JS = r"""() => {
   };
   document.querySelectorAll(BLOCK).forEach(el => {
     if (el.closest('svg, script, style, select, template, .game-end, .explore-text')) return;
-    if (el.querySelector(BLOCK)) return;
+    if (el.matches('button.peek')) return;                                  // a peek is read with its paragraph
+    if ([...el.querySelectorAll(BLOCK)].some(c => !c.matches('button.peek'))) return;
     let ctx = '';
     if (el.tagName === 'TR') {
       const t = el.closest('table');
