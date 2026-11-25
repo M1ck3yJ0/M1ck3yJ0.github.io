@@ -1,7 +1,7 @@
 section,figure,near,row,f,reason
 head,24%,,headline.target,,The EU's target
 sec-ring,24%,,headline.target,,The EU's target
-sec-hero,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
+sec-hero,2%,climb,headline.pace_needed_per_year_from_2024,,The pace needed each year to reach 24% by 2030 from 2024's rate
 sec-buried,25%,,,,"The guess's options, not figures"
 sec-buried,50%,,,,"The guess's options, not figures"
 sec-buried,75%,,,,"The guess's options, not figures"
@@ -154,3 +154,4 @@ notes-closer,35 Mt,,,F120,Premature disposal's waste a year (SWD(2023) 59)
 notes-closer,"48,000",,,F122,"Ireland's homes vacant in both 2016 and 2022 (Census 2022, final)"
 notes-closer,"23,072",,,F122,"Ireland's homes vacant in 2011, 2016 and 2022"
 notes-closer,530,,,F121,"Grand Parc, Bordeaux: homes transformed"
+sec-hero,2%,Ireland,,F99,"Ireland's rate, 2022 (2.1%, ceilings_2022.csv rate_pct)"
