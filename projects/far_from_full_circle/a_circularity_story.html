@@ -589,7 +589,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         <button type="button" aria-pressed="false" data-guess="25%">25%</button>
         <button type="button" aria-pressed="false" data-guess="50%">50%</button>
         <button type="button" aria-pressed="false" data-guess="75%">75%</button>
-        <button type="button" aria-pressed="false" data-guess="over 90%">Over 90%</button>
+        <button type="button" aria-pressed="false" data-guess="almost all of it">Almost all of it</button>
       </div>
       <p class="guess-after" aria-live="polite"></p>
     </div>
@@ -617,11 +617,11 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     </div>
     <div class="steps">
       <article class="card" data-state="every">
-        <p><span class="guess-said"></span>The answer is over 90%, so watch the ring as recycling climbs toward it. The thick gold arc is the share of the EU's material that comes from recycling, and the thin circle is the 24% target. The disc in the middle is all the new material the EU uses: 6.4 billion tonnes in 2022, about 14 tonnes for every person. As recycling rises, the arc grows and the disc shrinks a little, because I assume each recycled tonne replaces half a new one, a midpoint between replacing none and replacing all. The ring closes only when the EU recycles about 93% of all its waste, the soil, rubble, mine waste and ash included: 2.3 times what it recycled in 2022, and by then it uses 8.1% less new material.</p>
+        <p><span class="guess-said"></span>The answer is almost all of it, so watch the ring as recycling climbs. The thick gold arc is the share of the EU's material that comes from recycling, and the thin circle is the 24% target. The disc in the middle is all the new material the EU uses: 6.4 billion tonnes in 2022, about 14 tonnes for every person. As recycling rises, the arc grows and the disc shrinks a little, because I assume each recycled tonne replaces half a new one, a midpoint between replacing none and replacing all. On that assumption the ring closes only when the EU recycles about 93% of all its waste, the soil, rubble, mine waste and ash included: 2.3 times what it recycled in 2022, and by then it uses 8.1% less new material. If each recycled tonne replaced a whole new one, it would take about 87%. If each replaced none, recycling every tonne would stop at 23.7%, and the ring would never close this way.</p>
         <p>Recycling every last tonne would take the rate only to about 25.5%, not the 31% that comes back, because a recycled tonne only partly replaces a new one, and recycled material counts as material used too.</p>
       </article>
       <article class="card" data-state="every">
-        <p>Closing it this way rests on two hopes. One is that recycling reaches nearly all of the EU's waste, the soil, rubble, mine waste and ash included, when even the European Environment Agency pictures recycling 90% only by 2050. The other is that each recycled tonne really does take the place of half a new one, which happens only as far as markets let it. If recycled tonnes replaced none at all, recycling every tonne would stop at 23.7%, and the ring would never close this way.</p>
+        <p>Closing it this way rests on two hopes. One is that recycling reaches nearly all of the EU's waste, the soil, rubble, mine waste and ash included, when even the European Environment Agency pictures recycling 90% only by 2050. The other is that each recycled tonne really does take the place of half a new one, which happens only as far as markets let it.</p>
       </article>
       <article class="card" data-state="every">
         <p>In practice, recycled material doesn't fully replace new material either. Sorting and reprocessing lose part of what is collected, and paper needs fresh fiber to keep going round. Steel scrap carries copper that can't be refined out, so the sheet for car bodies still comes almost entirely from new steel. Concrete may take only part of its stone from rubble, and in practice takes almost none: rubble goes instead under roads and into fill. What recycling would replace is also mostly sand, gravel and stone, since that is most of the waste not yet recycled, so closing the ring this way removes 8.1% of the EU's new material by weight but only about 3.6% of the climate cost of producing it, burning fuels not counted: a rough estimate, and a generous one to recycling.</p>
@@ -3481,7 +3481,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     btns.forEach(function (b) {
       b.addEventListener("click", function () {
         btns.forEach(function (o) { o.setAttribute("aria-pressed", o === b ? "true" : "false"); });
-        const g = b.dataset.guess, right = g === "over 90%";
+        const g = b.dataset.guess, right = g === "almost all of it";
         after.textContent = "Scroll on for the answer.";
         said.textContent = right ? "You guessed right. " : "You guessed " + g + ". ";
       });
