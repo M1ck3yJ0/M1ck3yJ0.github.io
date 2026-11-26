@@ -1221,15 +1221,15 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
      the full disc's stripes and gold fade; the shards taken out fly off one after another, in
      a scattered order, each leaving T_GAP after the one before and taking T_FLY to go; its
      second, the shards left close up. p runs from 0 to 1 over the two, in step with time, so
-     P0 and PG mark the end of the fade and of the first beat. */
-  const T_FADE = 180, T_FLY = 260, T_SETTLE = 900;
+     P0 and PG mark the end of the fade and of the first beat. The arc dims over T_DIM, into the flight. */
+  const T_FADE = 400, T_DIM = 600, T_FLY = 260, T_SETTLE = 900;
   const OUT = SHARDS.filter(function (s) { return !s.morph; }).sort(function (a, b) {
     return (a.k * 0.6180339887) % 1 - (b.k * 0.6180339887) % 1;
   });
-  const T_OUT = 900 - T_FADE;                      // the flight
+  const T_OUT = 720;                               // the flight
   const T_GAP = (T_OUT - T_FLY) / Math.max(1, OUT.length - 1);
   const T_ALL = T_FADE + T_OUT + T_SETTLE;
-  const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL;
+  const P0 = T_FADE / T_ALL, PG = (T_FADE + T_OUT) / T_ALL, PD = T_DIM / T_ALL;
   const FLIGHT = T_FLY / T_OUT;                    // one shard's flight, as a share of the whole
   OUT.forEach(function (s, i) { s.leaves = i * T_GAP / T_OUT; });
   /* Panel 4's beat: the arc grows, striped, to a full ring; the shards replaced fly off one after another from K4F of the way through, as
@@ -1385,7 +1385,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const f = turns(dmc);
     const fe = f + (1 - f) * grow;                 // where the stripes end: the rate with recycling raised
     placeTarget(g, R);
-    const q = p > PG ? 1 - w : z;                  // how dim the arc is: dimming as o's extras go, brightening as the ring closes
+    const q = p > PG ? 1 - w : d3.easeCubicInOut(clamp01(p / PD));   // how dim the arc is: dimming into the flight, brightening as the ring closes
     const lit = q > 0 ? 1 - (1 - DIM) * q : null;
     g.select(".rope").attr("d", sector(R, 0, f)).attr("opacity", lit);
     const striped = fe > f && z < 1;
@@ -1409,6 +1409,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const d = fe + (f - fe) * z;                   // the dot, back from o's stripes to the rate
     g.select(".dot").attr("r", RING_DOT).attr("cx", R * Math.sin(d * TAU)).attr("cy", -R * Math.cos(d * TAU)).attr("opacity", lit);
     placeRate(g, R, d);
+    if (q > 0) g.select(".rate-lab").attr("opacity", 1 - q);   // the rate's label fades out with the arc, back as the ring closes
     g.select(".disc").attr("transform", "scale(" + size + ")");
 
     const u = p > P0 ? Math.min(1, (p - P0) / (PG - P0)) : 0;      // the first beat's flight
