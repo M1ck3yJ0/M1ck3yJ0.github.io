@@ -5,18 +5,16 @@ sec-hero,2%,climb,headline.pace_needed_per_year_from_2024,,The pace needed each 
 sec-buried,25%,,,,"The guess's options, not figures"
 sec-buried,50%,,,,"The guess's options, not figures"
 sec-buried,75%,,,,"The guess's options, not figures"
-sec-buried,90%,,,,"The guess's options, not figures"
-sec-ring,90%,answer,headline.recycled_share_to_close_k05,,"The guess's answer: over 90%, for 93.4%"
 sec-ring,31%,back,headline.waste_back_per_material_consumed,,The waste that comes back as a share of material consumed
 sec-ring,90%,2050,,F46,The EEA's 90% recycled by 2050
 sec-ring,15%,modeled,,F11,The EEA's scenario: 15% less material
 sec-ring,22%,reached,,F11,The EEA's scenario reaches about 22% by 2030
 sec-zin,600 kilograms,,,,"The chart's axis, from 0 to 600, not a figure"
 sec-closer,70%,G7,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
-sec-closer,14%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
-sec-closer,18%,G7,,F28,"IRP: 14 to 18% from better recycling of construction materials"
-sec-closer,8%,G7,,F28,"IRP: 8 to 10% from designs that use less material"
-sec-closer,10%,G7,,F28,"IRP: 8 to 10% from designs that use less material"
+sec-closer,14%,G7,,F28,IRP: 14 to 18% from better recycling of construction materials
+sec-closer,18%,G7,,F28,IRP: 14 to 18% from better recycling of construction materials
+sec-closer,8%,G7,,F28,IRP: 8 to 10% from designs that use less material
+sec-closer,10%,G7,,F28,IRP: 8 to 10% from designs that use less material
 game,90%,,,F46,The EEA's 90% recycled by 2050
 explore-ring,14%,biggest,headline.step_2008_2010_use_change,,"The EU's biggest two-year fall, 2008 to 2010, in every country's card"
 explore-ring,31%,EU's,ceilings.EU.waste_treated_per_consumption_pct,,"The EU's waste treated per tonne consumed, in every country's card"
@@ -49,11 +47,11 @@ notes-closer,2028,,,F26,Whole-life carbon disclosure from January 1
 notes-closer,1000 square meters,,,F26,New buildings over 1000 m2 first
 notes-closer,70%,construction,,F84,The Waste Framework Directive's 70% by weight for construction and demolition waste
 notes-closer,70%,homes,,F28,"IRP: up to 70% less for homes used more intensively, G7, 2050"
-notes-closer,14%,homes,,F28,"IRP: 14 to 18% from better recycling of construction materials"
-notes-closer,18%,homes,,F28,"IRP: 14 to 18% from better recycling of construction materials"
-notes-closer,8%,homes,,F28,"IRP: 8 to 10% from designs that use less material"
-notes-closer,10%,homes,,F28,"IRP: 8 to 10% from designs that use less material"
-notes-drawings,1870s,,,F94,"Italian mosaic workers in the US from around 1875"
+notes-closer,14%,homes,,F28,IRP: 14 to 18% from better recycling of construction materials
+notes-closer,18%,homes,,F28,IRP: 14 to 18% from better recycling of construction materials
+notes-closer,8%,homes,,F28,IRP: 8 to 10% from designs that use less material
+notes-closer,10%,homes,,F28,IRP: 8 to 10% from designs that use less material
+notes-drawings,1870s,,,F94,Italian mosaic workers in the US from around 1875
 notes-drawings,1920s,,,F95,Divider strips and grinders made terrazzo common by the early 1920s
 sec-closer,24%,,headline.target,,The EU's target
 notes-method,24%,,headline.target,,The EU's target
@@ -63,18 +61,18 @@ notes-ring,2%,,headline.pace_needed_per_year_from_2024,,The pace needed each yea
 notes-ring,24%,,headline.target,,The EU's target
 notes-ring,2026,,,F98,"env_wastrt's 2024 release, October 2026"
 notes-waterfall,2026,June,,F104,"Eurostat's Physical imports and exports, data from June 2026"
-notes-ring,15%,,,F11,"EEA 2023's combined scenario: 15% less material than in 2020"
-notes-ring,22%,,,F11,"EEA 2023's combined scenario lifts the rate to about 22% by 2030"
+notes-ring,15%,,,F11,EEA 2023's combined scenario: 15% less material than in 2020
+notes-ring,22%,,,F11,EEA 2023's combined scenario lifts the rate to about 22% by 2030
 notes-ring,23.4%,,,F11,"The EEA's doubling of 2020's rate, the scenario's aim"
-notes-ring,90%,,,F11,"EEA 2023: recycling 90% of all waste nearly meets the target by 2050"
+notes-ring,90%,,,F11,EEA 2023: recycling 90% of all waste nearly meets the target by 2050
 notes-ring,37%,plastic,,F62,"JRC: median sorting yields at EU plants, 37% (PS) to 85% (PET, HDPE)"
 notes-ring,85%,plastic,,F62,"JRC: median sorting yields at EU plants, 37% (PS) to 85% (PET, HDPE)"
 notes-ring,66%,reprocessing,,F62,"JRC: median recycling-plant yields, 66% (PP, PS) to 88% (HDPE)"
 notes-ring,88%,reprocessing,,F62,"JRC: median recycling-plant yields, 66% (PP, PS) to 88% (HDPE)"
-notes-ring,3%,concrete,,F73,"JRC survey: 0 to 3% of recycled aggregate sold for concrete"
+notes-ring,3%,concrete,,F73,JRC survey: 0 to 3% of recycled aggregate sold for concrete
 notes-ring,10,Factsheet,,F75,"UBA's AutoRess Factsheet 10, a reference"
 notes-ring,206,EN,,F71,"EN 206, concrete's European standard, a reference"
-notes-waterfall,36%,footprint,,F45,"EEA: fossil fuels' footprint fell 36% from 2010 to 2024"
+notes-waterfall,36%,footprint,,F45,EEA: fossil fuels' footprint fell 36% from 2010 to 2024
 notes-explore,16.6%,,ceilings.AT.rate_without_soil_rock_k05_pct,,Austria's rate with all but soil and rock recycled
 notes-explore,9.4%,,ceilings.BG.rate_without_soil_rock_k05_pct,,Bulgaria's rate with all but soil and rock recycled
 notes-explore,7.9%,,ceilings.FI.rate_without_soil_rock_k05_pct,,Finland's rate with all but soil and rock recycled
@@ -84,8 +82,6 @@ sec-closer,2026,February,,F106,Ireland's strategy published February 2026
 notes-closer,2026,Strategy,,F106,"The strategy's title years, 2026 to 2028"
 notes-closer,2026,February,,F106,Ireland's strategy published February 2026
 notes-closer,37.7%,,headline.ireland_less_for_own_target_70pct_recycled,,Ireland's cut to reach 12% at 70% recycled
-notes-closer,69.9%,,ceilings.IE.share_soil_rock_pct,,Soil and rock's share of Ireland's treated waste
-notes-closer,51.9%,,ceilings.IE.share_backfilled_pct,,Backfilled share of Ireland's treated waste
 sec-closer,11%,,headline.ireland_ceiling_k05,,Ireland's rate with every tonne recycled
 sec-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
 notes-closer,12%,,headline.ireland_own_target_2030,,Ireland's own goal for 2030
@@ -104,45 +100,27 @@ sec-closer,2.1%,,ceilings.IE.rate_pct,,Ireland's rate in 2022
 sec-closer,73%,less,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
 sec-closer,73%,smaller,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
 notes-closer,73.1%,,ceilings.IE.less_consumption_for_eu_target_70pct_recycled_pct,,Ireland's cut for 24% with 70% recycled
-sec-ring,69%,judged,,F110,The ETC's theoretical maximum for recycling: about 69% of all waste
-sec-ring,26%,2020,,F110,The ETC's cut in material consumed below 2020 to double the rate
 notes-ring,11.6%,2020,,F110,The ETC's 2020 rate
 notes-ring,23.2%,target,,F110,The ETC's target: double 2020's 11.6%
 notes-ring,34%,fossil,,F110,The ETC's cut in fossil fuels by 2030
 notes-ring,69%,maximum,,F110,The ETC's theoretical maximum for recycling: about 69% of all waste
 notes-ring,26%,2020,,F110,The ETC's cut in material consumed below 2020 to double the rate
-sec-zin,2026,,,F112,"The summer of the heat deaths, 2026"
-sec-zin,"32,000",,,F112,"Heat deaths in 854 European cities attributable to climate change, summer 2026 (32,619)"
 sec-ikea,129 kg,,,F113,"EU food waste per person, 2024 (env_wasfw)"
 sec-closer,530,,,F121,"Grand Parc, Bordeaux: homes transformed"
-notes-waterfall,350,,,F118,Bord na Móna harvesting staff moved into rehabilitation
-notes-waterfall,"3,600 tonnes",,,F118,"Horticultural peat from Latvia, September 2021"
-notes-waterfall,12 times,,,F118,"Ireland's peat exports over imports, 2021 (env_ac_mfa, MF414: 589.2 kt against 47.9 kt)"
-notes-waterfall,30,hectares,,F118,The High Court's 30-hectare threshold
-notes-waterfall,"33,000",,,F118,Peatlands Climate Action Scheme area
-notes-waterfall,108 million,,,F118,The scheme's EU recovery funding
-notes-waterfall,4.5 Mt,,,F118,"Ireland's peat extraction, 2018 (CSO MFA 2024; env_ac_mfa MF414 4,517 kt)"
-notes-waterfall,0.4 Mt,,,F118,"Ireland's peat extraction a year, 2021 to 2024 (CSO MFA 2024; env_ac_mfa MF414 374 to 434 kt)"
-notes-zin,2026,,,F112,"Barnes and others, Nature Health 2026, on summer 2026"
-notes-zin,854,,,F112,The study's cities
-notes-zin,"50,391",,,F112,"Heat-related deaths, 854 cities, June to August 2026"
-notes-zin,"32,619",,,F112,Of which attributable to human-caused warming
-notes-zin,65%,,,F112,Attributable share
-notes-zin,40%,people,,F112,The cities' share of the 30 countries' population
 notes-ikea,129 kg,,,F113,"EU food waste per person, 2024 (env_wasfw)"
 notes-ikea,53%,,,F113,"Households' share of EU food waste, 2024"
 notes-ikea,69 kg,,,F113,"Household food waste per person, 2024"
-notes-ribbon,50 Mt,,,F114,"Sand extracted from the lower Mekong a year (Hackney and others 2020)"
-notes-ribbon,6 Mt,,,F114,"Sand flux into the Mekong delta a year (Hackney and others 2020)"
-notes-ribbon,50 billion tonnes,,,F114,"Sand and gravel used worldwide a year (UNEP 2026)"
+notes-ribbon,50 Mt,,,F114,Sand extracted from the lower Mekong a year (Hackney and others 2020)
+notes-ribbon,6 Mt,,,F114,Sand flux into the Mekong delta a year (Hackney and others 2020)
+notes-ribbon,50 billion tonnes,,,F114,Sand and gravel used worldwide a year (UNEP 2026)
 notes-ribbon,2026,,,F114,"UNEP's Sand and Sustainability 2026; WRI, October 2026 (F115)"
 notes-ribbon,12,years,,F114,Years after extraction that the Dutch pits' seabed life still differed
 notes-ribbon,90%,,,F111,"IRP GRO 2024: biomass, land-use-related biodiversity loss and water stress"
 notes-ribbon,55%,,,F111,"IRP GRO 2024: extraction and processing of materials, share of world emissions"
 notes-ribbon,16%,,,F115,"EU imports' share of trade-linked tropical deforestation, 2017 (WWF 2021)"
-notes-ribbon,85%,,,F115,"Six commodities' share of forest loss linked to EU imports (WRI 2026)"
+notes-ribbon,85%,,,F115,Six commodities' share of forest loss linked to EU imports (WRI 2026)
 notes-ribbon,1960,,,F116,Great Yellow Bumblebee found across Ireland before 1960
-notes-ribbon,"7,721",,,F117,"Villages in Lo and others 2024"
+notes-ribbon,"7,721",,,F117,Villages in Lo and others 2024
 notes-ribbon,4.4%,,,F117,"Forest cover lost, nickel-mining villages, as a share of village land"
 notes-ribbon,2.4%,,,F117,"Forest cover lost, matched villages without mining"
 notes-closer,19 kg,,,F119,"EU textiles consumed per person, 2022 (EEA)"
@@ -155,3 +133,44 @@ notes-closer,"48,000",,,F122,"Ireland's homes vacant in both 2016 and 2022 (Cens
 notes-closer,"23,072",,,F122,"Ireland's homes vacant in 2011, 2016 and 2022"
 notes-closer,530,,,F121,"Grand Parc, Bordeaux: homes transformed"
 sec-hero,2%,Ireland,,F99,"Ireland's rate, 2022 (2.1%, ceilings_2022.csv rate_pct)"
+sec-less,1999,,,F123,The summer Pontevedra's new council pedestrianized its historic center
+sec-less,2026,,,F112,"The summer of the heat deaths, 2026"
+sec-less,"32,000",,,F112,"Heat deaths in 854 European cities attributable to climate change, summer 2026 (32,619)"
+notes-less,459,,,F125,"Issue number of La Santé en action, a reference"
+notes-less,2026,,,F112,"Barnes and others, Nature Health 2026, on summer 2026"
+notes-less,854,,,F112,The study's cities
+notes-less,"50,391",,,F112,"Heat-related deaths, 854 cities, June to August 2026"
+notes-less,"32,619",,,F112,Of which attributable to human-caused warming
+notes-less,65%,about,,F112,Attributable share of the heat deaths
+notes-less,40%,people,,F112,The cities' share of the 30 countries' population
+notes-less,70%,,,F124,"Low end of the council's traffic falls in the historic center (council site, 1996 to 2014)"
+notes-less,97%,,,F124,"High end of the council's traffic falls in the historic center (Citiscope, Yahoo News)"
+notes-less,80%,children,,F128,Council: children aged 7 to 12 walking to school (81% on its site; 80% to El Salto)
+notes-less,7,,,F128,"Children aged 7 to 12, the council's age range"
+notes-less,12,,,F128,"Children aged 7 to 12, the council's age range"
+notes-less,10 km,,,F129,The 10 km/h limit inside the center (Euronews)
+notes-less,1999,,,F123,"The council took office July 3, 1999; seriously injured in 1999"
+notes-less,"300,000 m²",,,F123,"The historic center's area (council councillor, La Nación 2023)"
+notes-less,80%,space,,F123,Council: share of public space once given to motor vehicles recovered for pedestrians
+notes-less,77%,,,F124,Council: traffic fall in the areas around the historic center
+notes-less,53%,,,F124,Council: traffic fall across the city
+notes-less,92%,,,F124,Council's DGT case study: traffic fall in the historic center
+notes-less,30.1%,,,F124,"Council site: traffic fall across the city, 1996 to 2014"
+notes-less,1996,,,F124,Council site's base year for traffic
+notes-less,"80,000",,,F124,"Vehicles entering the center each day in 1999, low end (Yahoo News)"
+notes-less,"150,000",,,F124,"Vehicles entering the center each day in 1999, high end (Yahoo News)"
+notes-less,129,,,F126,Seriously injured in 1999 (council DGT case study)
+notes-less,4,,,F126,Seriously injured in 2020 (council DGT case study)
+notes-less,67%,,,F125,Mayor: less fuel (La Santé en action 2022)
+notes-less,65%,CO,,F125,Mayor: less CO2 (La Santé en action 2022)
+notes-less,66%,,,F125,Council site: less fuel across the city
+notes-less,88%,,,F125,Council site: less fuel in the center
+notes-less,"74,942",,,F127,"INE, 2001 census"
+notes-less,2001,,,F127,INE census year
+notes-less,"82,346",,,F127,"INE, 2011 census"
+notes-less,"83,000",,,F127,"INE, held at about 83,000"
+notes-less,"83,339",,,F127,"INE, 2025 register"
+notes-zin,0.129 times,,,F67,"My calculation: 11.4/88.6, the bar for extra recycled rubble against extra new material"
+notes-zin,"22,000 tonnes",,,F67,"My calculation: 0.129 times 171,000 tonnes (examples.zin.structure_kept)"
+sec-closer,"20,000",homes,,F122,"Census: 23,072 homes vacant in all three censuses, 2011, 2016 and 2022"
+notes-closer,92%,biomass,,F132,"Share of biomass the costliest-per-tonne route takes at 70% recycled, half-tonne replacement (two_levers logic)"
