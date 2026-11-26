@@ -426,6 +426,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   .sec-title-m { display: none; }
   .sec-title-d { display: block; }
   .explore-title { grid-column: 2; grid-row: 1; padding: 0 0 4px; }
+  .game .explore-title { padding-top: max(0px, calc(var(--chart) * 24 / 400 - 22 * var(--t))); }   /* level with the chart's title */
   .explore { grid-template-rows: auto auto auto 1fr; }
   .explore .chart { grid-row: 1 / span 4; }
   .explore-text { grid-row: 2; }
