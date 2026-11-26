@@ -3277,36 +3277,30 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     });
   }
   function gmEnding(q) {
-    const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10, c = Math.round(q.climate * 10) / 10;
-    let t = "The ring is closed. You took " + fmt1(w) + "% of the EU's new material away by weight, " + fmt1(q.weight / 100 * DMC / 1e6) +
-            " billion tonnes, " + (c < w ? "but only " + fmt1(c) + "% of the climate cost of producing materials (burning fuels not counted)."
-            : "and " + fmt1(c) + "% of the climate cost of producing materials (burning fuels not counted), " + (c > w ? "a larger share than the weight." : "the same share as the weight."));
-    const best = ", mostly sand, gravel and stone, but only if the EU recycles " + gmMult(q.mult) +
-                 " times as much as it did in " + YR + " and each recycled tonne replaces half a new one.";
-    if (q.s > GM_S0 && q.C > 1e-9) t += " Recycling stood in for " + fmt1(rep) + "% of it" + best + " Nothing stood in for the other " + fmt1(q.C) + "%.";
-    else if (q.s > GM_S0) t += " Recycling stood in for all of it" + best;
-    else t += " Nothing stood in for any of it.";
-    const lines = [];
-    q.cut.forEach(function (x, i) { if (x >= 0.75) lines.push((x >= 0.995 ? "all of " : "most of ") + GM_LINES[i]); });
-    if (lines.length) t += " That means cutting " + (lines.length === 1 ? lines[0] : lines.length === 2 ? lines[0] + ", and " + lines[1]
-                         : lines.slice(0, -1).join("; ") + "; and " + lines[lines.length - 1]) + ".";
+    const w = Math.round(q.weight * 10) / 10, c = Math.round(q.climate * 10) / 10;
+    let t = "The ring is closed. You took " + fmt1(w) + "% of the EU's new material away by weight, " +
+            (c < w ? "but only " : "and ") + fmt1(c) + "% of the climate cost of producing materials (burning fuels is not counted).";
+    if (q.s > GM_S0) t += " Recycling was raised to " + Math.round(q.s) + "%, which means the EU would have to recycle " + gmMult(q.mult) +
+                          " times as much as it did in " + YR + ", with each recycled tonne replacing half a new one.";
+    let u = "";
     if (q.C > 1e-9) {
       const h = gmHeaviest(q), d = Math.round(q.climate * 10) - Math.round(h * 10);
-      if (d) t += " Cutting the same weight heaviest first, at the same recycling, would have removed " + fmt1(h) +
-                  "% of the climate cost; your route removed " + (d > 0 ? "more" : "less") + ".";
+      if (d) u = "Cutting the same weight heaviest first, at the same recycling, would have removed " + fmt1(h) +
+                 "% of the climate cost; your route removed " + (d > 0 ? "more" : "less") + ". ";
     }
-    return t;
+    return [t, u + GM_HANDOFF];
   }
-  // The ending's second paragraph, the same for every route
-  const GM_HANDOFF = "The rate counts only weight, so a tonne of gravel counts for as much as a tonne of metal or of food, " +
-                     "though producing each costs the climate very different amounts.";
+  // The end of the ending's second paragraph, the same for every route
+  const GM_HANDOFF = "The rate counts only weight, so a tonne of gravel counts as much as a tonne of metal or of food, " +
+                     "though producing each has very different climate costs.";
   function gmText(q) {
     const end = GM_FIG.querySelector(".game-end");
     GM_FIG.classList.toggle("is-closed", q.closed);
     end.hidden = !q.closed;
     if (!q.closed) { end.textContent = ""; return; }
-    if (!end.querySelector("p")) { end.appendChild(document.createElement("p")); end.appendChild(document.createElement("p")).textContent = GM_HANDOFF; }
-    end.querySelector("p").textContent = gmEnding(q);
+    if (!end.querySelector("p")) { end.appendChild(document.createElement("p")); end.appendChild(document.createElement("p")); }
+    const ps = end.querySelectorAll("p"), t = gmEnding(q);
+    ps[0].textContent = t[0]; ps[1].textContent = t[1];
   }
 
   /* The first beat: curly arrows on the chart to the knob and the keys, beside the intro. The first
@@ -3436,7 +3430,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     }, { rootMargin: "200% 0px" }).observe(GM_FIG);
   } else gmEnsure();
   const GAME = {                                   // for checking: play by script, read the state
-    tap: gmTap, state: function () { return gmQ; }, ending: function () { return gmQ.closed ? gmEnding(gmQ) : null; },
+    tap: gmTap, state: function () { return gmQ; }, ending: function () { return gmQ.closed ? gmEnding(gmQ).join("\n\n") : null; },
     recycle: function (v) { gm.s = gmToPct(v); gmSet("move"); },
     reset: function () { GM_FIG.querySelector(".game-reset").click(); }, heaviest: function () { return gmHeaviest(gmQ); }
   };
