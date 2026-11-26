@@ -3817,9 +3817,12 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   /* Popups: each button.pop names its note (data-note, ids separated by spaces; table rows are
      gathered into one table under their thead) and, for an image peek, a template (data-img). At load
      each gets a native popover holding a copy of its note, so the note stays the one home of the fact.
-     Light dismiss and Escape come with the popover; focus moves into it and returns to the phrase. */
+     Light dismiss and Escape come with the popover; focus moves into it and returns to the phrase.
+     On wide screens with a mouse, hovering the phrase also opens it, without moving focus, and it
+     closes once the pointer leaves both; a click, or a click inside it, keeps it open. */
   function popups() {
     const wide = window.matchMedia("(min-width: 800px)");
+    const hoverable = window.matchMedia("(min-width: 800px) and (hover: hover) and (pointer: fine)");
     const strip = function (n) {
       if (n.removeAttribute) n.removeAttribute("id");
       if (n.querySelectorAll) n.querySelectorAll("[id]").forEach(function (x) { x.removeAttribute("id"); });
@@ -3867,6 +3870,28 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       b.setAttribute("popovertarget", pop.id);
       b.setAttribute("aria-haspopup", "dialog");
       b.setAttribute("aria-expanded", "false");
+      let viaHover = false, pinned = false, tOpen = 0, tClose = 0;
+      const isOpen = function () { return pop.matches(":popover-open"); };
+      const later = function () { clearTimeout(tOpen); clearTimeout(tClose);
+        tClose = setTimeout(function () { if (viaHover && !pinned && isOpen()) pop.hidePopover(); }, 250); };
+      b.addEventListener("mouseenter", function () {
+        if (!hoverable.matches) return;
+        clearTimeout(tClose);
+        if (isOpen()) return;
+        tOpen = setTimeout(function () { if (!isOpen()) { viaHover = true; pinned = false; pop.showPopover(); } }, 120);
+      });
+      b.addEventListener("mouseleave", later);
+      pop.addEventListener("mouseenter", function () { clearTimeout(tClose); });
+      pop.addEventListener("mouseleave", later);
+      pop.addEventListener("pointerdown", function () { pinned = true; });
+      b.addEventListener("click", function (e) {
+        clearTimeout(tOpen);
+        if (viaHover && !pinned && isOpen()) {
+          e.preventDefault();
+          pinned = true;
+          foot.querySelector(".pop-close").focus({ preventScroll: true });
+        } else viaHover = false;
+      });
       foot.querySelector(".pop-close").addEventListener("click", function () { pop.hidePopover(); });
       pop.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", function () { pop.hidePopover(); }); });
       pop.addEventListener("toggle", function (e) {
@@ -3874,8 +3899,12 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         b.setAttribute("aria-expanded", open ? "true" : "false");
         if (open) {
           place(b, pop);
-          foot.querySelector(".pop-close").focus({ preventScroll: true });
+          if (!viaHover) foot.querySelector(".pop-close").focus({ preventScroll: true });
         } else {
+          const hovered = viaHover && !pinned;
+          viaHover = pinned = false;
+          clearTimeout(tClose);
+          if (hovered && !pop.contains(document.activeElement)) return;
           const f = document.activeElement;
           if (!f || f === document.body || pop.contains(f)) b.focus({ preventScroll: true });
         }
