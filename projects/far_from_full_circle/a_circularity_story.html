@@ -746,7 +746,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         <div class="game-end" aria-live="polite" hidden></div>
         <a class="skip" href="#sec-zin">Skip ahead &#8595;</a>
         <dl class="game-nums">
-          <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd></div>
+          <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd><dd class="t" data-n="weight-split">Recycling held at its 2022 level</dd></div>
           <div><dt>Climate cost removed, roughly</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t">At each material's average per tonne, for producing materials only, not burning fuels</dd></div>
           <div><dt>Imports removed</dt><dd class="v" data-n="imports">0.0%</dd><dd class="t" data-n="imports-t">0 million tonnes</dd></div>
           <div><dt>Waste recycled</dt><dd class="v" data-n="share">41%</dd><dd class="t" data-n="mult">1.0× 2022's recycling</dd><dd class="t">The EEA's scenarios: 70% by 2030, 90% by 2050</dd></div>
@@ -3238,13 +3238,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   function gmLabels(q) {
     const L = d3.select(GM_FIG).select("svg g.labels");
     L.selectAll("*").remove();
-    const w = Math.round(q.weight * 10) / 10, rep = Math.round(q.rep * 10) / 10, r = 100 * q.rate;
-    if (w > 0) {
-      const sub = q.s <= GM_S0 ? "recycling held at its " + YR + " level"
-                : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling; " + fmt1(q.C) + "% not replaced"
-                : "all replaced by recycling";
-      label(L, CX, 24, [[fmt1(w) + "% less new material", "lab-title"], [sub, "lab"]], "middle");
-    }
+    const w = Math.round(q.weight * 10) / 10, r = 100 * q.rate;
+    label(L, CX, 24, [[w > 0 ? fmt1(w) + "% less new material" : "How much less new material?", "lab-title"]], "middle");
     const rows = [[[KEY.target, "Target for 2030"], [KEY.rate, "Circularity rate"]]];
     const extra = [];
     if (q.s > GM_S0) extra.push([KEY.band("hatch-rate"), "Added by recycling more"]);
@@ -3261,6 +3256,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     set("weight", fmt1(q.weight) + "%");
     set("weight-t", fmt1(q.weight / 100 * DMC / 1e6) + " billion tonnes");
     set("climate", fmt1(q.climate) + "%");
+    const rep = Math.round(q.rep * 10) / 10;
+    set("weight-split", q.s <= GM_S0 ? "Recycling held at its " + YR + " level"
+                      : q.C > 1e-9 ? fmt1(rep) + "% replaced by recycling, " + fmt1(q.C) + "% not replaced"
+                      : "All replaced by recycling");
     set("imports", fmt1(100 * q.imports / DATA.imports.imports_kt) + "%");
     set("imports-t", gmFmtC(q.imports / 1000) + " million tonnes");
     set("share", Math.round(q.s) + "%");
