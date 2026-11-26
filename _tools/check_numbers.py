@@ -6,7 +6,8 @@ Usage:
 Opens the page in headless Chromium, with reduced motion, and reads every figure a reader can
 see: cards, section titles, the closer, every note (the collapsed notes included), table cells
 (each cell apart), the head's descriptions, aria-labels and chart labels in every card's state,
-the ring and waterfall explorers' text and charts for every country, peeks (read with their paragraph),
+the ring and waterfall explorers' text and charts for every country, popup phrases (read with their
+paragraph; a popup's text is its note's, read in the notes),
 and the game's text, and its numbers and
 ending at the end of two routes, each taking the heaviest material first (recycling held at
 2022's level, and at 70%). Axis ticks (three or more evenly spaced bare numbers at one x) are
@@ -84,7 +85,7 @@ COUNTRY_ROWS = ("headline.", "ceilings.", "trend", "weight_mix.", "loop.", "wast
 EXAMPLES = ("examples.",)
 SCOPES = {
     "head": (EU_ROWS + EXAMPLES, COUNTRY_ROWS),
-    "sec-hero": (EU_ROWS, COUNTRY_ROWS), "sec-buried": (EU_ROWS, COUNTRY_ROWS), "sec-ring": (EU_ROWS, COUNTRY_ROWS), "sec-waterfall": (EU_ROWS, COUNTRY_ROWS), "sec-ribbon": (EU_ROWS, COUNTRY_ROWS),
+    "sec-hero": (EU_ROWS, COUNTRY_ROWS), "sec-buried": (EU_ROWS, COUNTRY_ROWS), "sec-less": ((), ()), "sec-ring": (EU_ROWS, COUNTRY_ROWS), "sec-waterfall": (EU_ROWS, COUNTRY_ROWS), "sec-ribbon": (EU_ROWS, COUNTRY_ROWS),
     "sec-zin": (EU_ROWS + EXAMPLES, ()), "sec-ikea": (EXAMPLES, ()),
     "explore-ring": (("headline.step_", "headline.target", "headline.eea_", "headline.countries_", "headline.eu_countries",
                       "ceilings.EU.waste_treated_per_consumption"),
@@ -94,7 +95,7 @@ SCOPES = {
     "game": (EU_ROWS, ()), "sec-closer": (EU_ROWS + EXAMPLES, COUNTRY_ROWS),
     "notes-method": (EU_ROWS, COUNTRY_ROWS), "notes-ring": (EU_ROWS, COUNTRY_ROWS),
     "notes-waterfall": (EU_ROWS, COUNTRY_ROWS), "notes-ribbon": (EU_ROWS, COUNTRY_ROWS),
-    "notes-zin": (EU_ROWS + EXAMPLES, ()), "notes-ikea": (EXAMPLES, ()),
+    "notes-zin": (EU_ROWS + EXAMPLES, ()), "notes-ikea": (EXAMPLES, ()), "notes-less": ((), ()),
     "notes-explore": (EU_ROWS, COUNTRY_ROWS), "notes-explore-waterfall": (EU_ROWS, COUNTRY_ROWS), "notes-game": (EU_ROWS, ()),
     "notes-closer": (EU_ROWS + EXAMPLES, COUNTRY_ROWS), "notes-drawings": ((), ()), "notes": (EU_ROWS, COUNTRY_ROWS), "method": (EU_ROWS, COUNTRY_ROWS),
 }
@@ -124,9 +125,9 @@ STATIC_JS = r"""() => {
     out.push({ section: secOf(el), where: k + counts[k], text: text, ctx: (ctx || '').replace(/\s+/g, ' ').trim() });
   };
   document.querySelectorAll(BLOCK).forEach(el => {
-    if (el.closest('svg, script, style, select, template, .game-end, .explore-text')) return;
-    if (el.matches('button.peek')) return;                                  // a peek is read with its paragraph
-    if ([...el.querySelectorAll(BLOCK)].some(c => !c.matches('button.peek'))) return;
+    if (el.closest('svg, script, style, select, template, .game-end, .explore-text, .popup')) return;
+    if (el.matches('button.pop')) return;                                   // a popup's phrase is read with its paragraph
+    if ([...el.querySelectorAll(BLOCK)].some(c => !c.matches('button.pop'))) return;
     let ctx = '';
     if (el.tagName === 'TR') {
       const t = el.closest('table');
@@ -139,6 +140,7 @@ STATIC_JS = r"""() => {
     .forEach(m => out.push({ section: 'head', where: 'head ' + (m.getAttribute('name') || m.getAttribute('property')), text: m.content, ctx: '' }));
   document.querySelectorAll('[aria-label]').forEach(el => {
     if (el.closest('svg') && el.tagName !== 'svg') return;
+    if (el.closest('.popup, template') || el.matches('button.pop')) return;   // read with its note or paragraph
     if (el.closest('#explore-ring, #explore-waterfall, .burst')) return;   // read with their charts
     push(el, el.getAttribute('aria-label'), 'aria-label (' + (el.id || el.className.baseVal || el.className || el.tagName) + ')');
   });
