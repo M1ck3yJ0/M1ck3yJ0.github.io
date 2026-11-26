@@ -387,8 +387,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   min-height: 44px; padding: 8px 40px 8px 12px; cursor: pointer;
 }
 .pick select:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
-.skip { margin: 12px 12px 0 0; font-size: 15px; color: var(--ink-2); }
-.skip:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
 .explore-text .show-xr { font-size: 15px; }
 .show-xr button { font: inherit; color: var(--ink-2); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .show-xr button:focus-visible { outline: 2px solid var(--used); outline-offset: 2px; }
@@ -490,7 +488,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 .game-l, .game-r { display: contents; }
 .game-box .sec-title { order: 1; }
 .game-intro { order: 2; }
-.game .skip { order: 3; align-self: flex-end; margin: 10px 16px 0 0; }
 #game-chart { order: 4; width: auto; height: auto; }
 #game-chart svg { height: auto; pointer-events: none; }
 .game-keys, .game-tapnote { order: 6; }
@@ -562,7 +559,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   #game-chart svg { overflow: visible; }            /* its shards fly over the text */
   .game-intro { padding: 12px 0 0; font-size: calc(20 * var(--t)); }
   .game-end { grid-column: 1 / -1; padding: calc(20 * var(--t)) 0 0 16px; font-size: calc(17 * var(--t)); }
-  .game .skip { margin: 10px 0 0; }
   .game-nums, .game-caveats { margin-left: 0; margin-right: 0; }
   .game-reset { margin-left: 0; }
   .game-box .note-link { margin: 12px 0 0; }
@@ -583,7 +579,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   .notes h2 { font-size: calc(25 * var(--t)); }
   .note h3 { font-size: calc(18 * var(--t)); }
   .note table { font-size: calc(14 * var(--t)); }
-  .note-link, .note-back, .notes-toggle, .explore-toggle, .skip, .explore-text .show-xr { font-size: calc(15 * var(--t)); }
+  .note-link, .note-back, .notes-toggle, .explore-toggle, .explore-text .show-xr { font-size: calc(15 * var(--t)); }
   .pick select { font-size: calc(17 * var(--t)); min-height: calc(44 * var(--t)); }
   .mkey { min-height: calc(52 * var(--t)); font-size: calc(16 * var(--t)); }
   .mkey .mcut { font-size: calc(15 * var(--t)); }
@@ -772,7 +768,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
           <p><strong>Use less:</strong> tap a material under the ring. Each tap takes away a quarter of what the EU uses of that material in a year.</p>
           <button type="button" class="game-start">Start</button>
         </div>
-        <a class="skip" href="#sec-zin">Skip ahead &#8595;</a>
         <dl class="game-nums">
           <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd><dd class="t" data-n="weight-split">Recycling held at its 2022 level</dd></div>
           <div><dt>Climate cost removed, roughly</dt><dd class="v" data-n="climate">0.0%</dd><dd class="t">At each material's average per tonne, for producing materials only, not burning fuels</dd></div>
