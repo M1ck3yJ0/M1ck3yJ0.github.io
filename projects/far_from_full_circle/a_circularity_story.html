@@ -480,7 +480,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 .game-reset { order: 10; }
 .game-box .note-link { order: 11; margin: 12px 16px 0; }
 .game-intro, .game-end { margin: 0; padding: 8px 16px 0; font-size: 18px; }
-.game-end { padding-top: 16px; }
+.game-end { padding-top: 16px; font-size: 16px; line-height: 1.45; }
+.game-end p { margin: 0 0 8px; }
 .game-intro p { margin: 0 0 10px; }
 .game-intro p:last-of-type { margin-bottom: 0; }
 .game.is-fresh .game-nums, .game.is-fresh .game-caveats, .game.is-fresh .game-reset { display: none; }
@@ -539,8 +540,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   .game-l { position: relative; z-index: 1; container: game-l / inline-size; }
   #game-chart { width: var(--chart); }
   #game-chart svg { overflow: visible; }            /* its shards fly over the text */
-  .game-end { order: 2; }
-  .game-intro, .game-end { padding: 12px 0 0; font-size: calc(20 * var(--t)); }
+  .game-intro { padding: 12px 0 0; font-size: calc(20 * var(--t)); }
+  .game-end { grid-column: 1 / -1; max-width: calc(720 * var(--t)); padding: calc(20 * var(--t)) 0 0 16px; font-size: calc(17 * var(--t)); }
   .game .skip { margin: 10px 0 0; }
   .game-nums, .game-caveats { margin-left: 0; margin-right: 0; }
   .game-reset { margin-left: 0; }
@@ -743,7 +744,6 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
           <p><strong>Use less:</strong> tap a material under the ring. Each tap takes away a quarter of what the EU uses of that material in a year.</p>
           <button type="button" class="game-start">Start</button>
         </div>
-        <div class="game-end" aria-live="polite" hidden></div>
         <a class="skip" href="#sec-zin">Skip ahead &#8595;</a>
         <dl class="game-nums">
           <div><dt>Weight removed</dt><dd class="v" data-n="weight">0.0%</dd><dd class="t" data-n="weight-t">0.0 billion tonnes</dd><dd class="t" data-n="weight-split">Recycling held at its 2022 level</dd></div>
@@ -755,6 +755,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
         <button type="button" class="game-reset">Start again</button>
         <p class="note-link"><a href="#notes-game">Notes &#8595;</a></p>
       </div>
+      <div class="game-end" aria-live="polite" hidden></div>
     </div>
   </section>
 
