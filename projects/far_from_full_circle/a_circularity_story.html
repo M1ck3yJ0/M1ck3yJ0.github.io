@@ -35,7 +35,8 @@
   --crisis: #EBEFF5;      /* the history's crisis bands: furniture, not a series */
   --highlight: #F7E19D;   /* the closer's highlighted phrases: the lighter gold at 40% on white */
   /* Series */
-  --used: #003399;        /* material used: the center, "used less" bars */
+  --used: #003399;        /* material used: the center */
+  --wf-used: #1B4F8A;     /* the waterfall's "used less" bars */
   --used-could: #7893C9;  /* material that could have been used, and the part never used */
   --back: #EBB30B;        /* what comes back: the rate arc, the recycling bars */
   --target: #A67F22;      /* the 24% target circle */
@@ -312,7 +313,7 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .leader { stroke: var(--ink-2); stroke-width: 1; }
 .wf .grid { stroke: var(--hairline); stroke-width: 1; }
 .wf .base, .wf .tick { stroke: var(--ink-2); stroke-width: 1; }
-.wf .used { fill: var(--used); }
+.wf .used { fill: var(--wf-used); }
 .wf .back { fill: var(--back); }
 .wf .used.est { fill: url(#wf-hatch-used); }
 .wf .back.est { fill: url(#wf-hatch-back); }
@@ -325,8 +326,8 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .wf .rate-line.est { stroke-dasharray: 2.5 3.5; }
 .wf .rate-pt { fill: var(--ink); }
 .wf .rate-pt.est { fill: #fff; stroke: var(--ink); stroke-width: 1.5; }
-#wf-hatch-used rect, #xwf-hatch-used rect { fill: color-mix(in srgb, var(--used) 22%, #fff); }
-#wf-hatch-used line, #xwf-hatch-used line { stroke: var(--used); stroke-width: 2.2; }
+#wf-hatch-used rect, #xwf-hatch-used rect { fill: color-mix(in srgb, var(--wf-used) 22%, #fff); }
+#wf-hatch-used line, #xwf-hatch-used line { stroke: var(--wf-used); stroke-width: 2.2; }
 .explore .wf .used.est { fill: url(#xwf-hatch-used); }
 .explore .wf .back.est { fill: url(#xwf-hatch-back); }
 #wf-hatch-back rect, #xwf-hatch-back rect { fill: color-mix(in srgb, var(--back) 22%, #fff); }
