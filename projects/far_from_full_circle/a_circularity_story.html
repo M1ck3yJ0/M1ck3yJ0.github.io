@@ -636,14 +636,28 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   <section class="break" id="sec-open">
     <div class="break-text">
       <p>This is a journey that began with my work on sustainability data in Ireland. With a 2% circularity rate, Ireland is one of the least circular countries in the European Union. I followed a very long rabbit hole trying to understand it, and the longer I spent with the numbers, the more I found myself wondering what they were actually telling us. If the point of becoming more circular is to form a world where life thrives, how well are we measuring that? So I turned to the EU as a whole and the target it's set for 2030, on a journey through the circularity measure and what it could become.</p>
-      <p>The newest figure for the EU's circularity rate (the share of all the material we use that comes from recycling) is <button type="button" class="pop" data-note="notes-ring-imputed" aria-label="Eurostat's estimate for 2024: more detail">Eurostat's estimate</button> for 2024: 12.2%, against a target of 24% by 2030. To get there, the rate would have to climb by about 2% of all the material we use each year, more than it climbed in all fourteen years from 2010 to 2024, when it went from 10.7% to 12.2%.</p>
-      <p>The European Environment Agency has warned since 2023 that recycling more won't get there on its own, and in 2025 its European Topic Centre worked out how much less material the EU would have to use even with recycling pushed close to its limit. What I wanted to see was how far each lever would have to go on its own, how much that depends on what a recycled tonne really replaces, and what it would mean for each EU country, before looking at what the target can't see, such as a building in Brussels that could have done more for the rate torn down than kept standing. The model behind the ring and all its calculations use 2022, the latest year for which Eurostat has reported everything the rate is made of.</p>
+    </div>
+  </section>
+
+  <section class="burst" data-chart="hero" id="sec-intro">
+    <div class="pin">
+      <figure class="chart" id="ring-intro">
+        <svg viewBox="0 0 400 400" role="img" aria-label="The EU's circularity target drawn as a ring: a thin dark gold circle for the 24% target, and a thick gold arc ending in a dot for the rate, 11.4% in 2022, less than halfway round. In the middle, a disc for the material the EU consumes, made of shards in four blues, one for each kind of material, covering its share by weight: minerals 52.0%, biomass 23.3%, fossil fuels 19.3% and metal ores 5.5%."></svg>
+      </figure>
+    </div>
+    <div class="steps">
+      <article class="card" data-state="hero">
+        <p>The circularity rate is in essence a recycling rate. It's a measure of how much of the total material consumption comes from recycled materials. The latest figure for the EU's circularity rate is <button type="button" class="pop" data-note="notes-ring-imputed" aria-label="an estimate for 2024: more detail">an estimate for 2024</button>, so we'll be using the latest year for which Eurostat has reported everything the rate comprises (numbers from the year 2022).</p>
+        <p>However, the 2030 target came with the ambition of doubling the 2024 estimate of 12.2% circularity. In the fourteen years from 2010 to 2024, the rate only climbed 1.5% (10.7% to 12.2%). The target aims to double that rate in just six years.</p>
+      </article>
+      <article class="card" data-state="hero">
+        <p>The European Environment Agency <button type="button" class="pop" data-note="notes-ring-eea notes-ring-2" aria-label="has warned since 2023: what it said">has warned since 2023</button> that recycling more won't get there on its own. For one, not everything we use can come back. Fuel is burned (and its carbon goes into the air), food is eaten, and all material is lost in fragments to wear and tear. Yearly, the EU only treats waste weighing as much as <button type="button" class="pop" data-note="notes-ring-4" aria-label="31%: what that waste is">31%</button> of the material it consumes (and it isn't that year's material coming back). And most of it is soil, rubble and the rock left over from mining: waste that is hardly ever recycled, and mostly goes back into the ground, buried in landfills or used to fill land that has been dug out.</p>
+      </article>
     </div>
   </section>
 
   <section class="break" id="sec-buried">
     <div class="break-text">
-      <p>Not everything we use can come back: fuel is burned and its carbon goes into the air, and food is eaten. Each year the EU treats waste weighing as much as 31% of the material it consumes, but it isn't that year's material coming back. Most of it is soil, rubble and the rock left over from mining: the rubble comes from buildings put up decades ago, and much of the soil and rock never counted as material used at all. Much of this waste is never recycled, and most of what isn't goes back into the ground, buried in landfills or used to fill land that has been dug out.</p>
       <p>This was the second thing that shocked me about Ireland: most of its waste is soil and rock, and most of what it doesn't recycle is <button type="button" class="pop" data-note="notes-ring-fill" aria-label="used as fill: Ireland's figures">used as fill</button>, which the rate doesn't count as recycling.</p>
       <p>Before the ring moves, try a guess: to close it by recycling alone, how much of its waste would the EU have to recycle?</p>
       <div class="guess" role="group" aria-label="Your guess">
@@ -1020,7 +1034,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       <h3>The EU's target of doubling circularity, to 24% by 2030, is a target to use less</h3>
       <p class="note-src">Sources: Eurostat; EEA 2023; ETC CE Report 2023/6; the 26% cut and climate shares, ETC CE Report 2025/3; recycled aggregate and concrete, JRC 2023; recycling's practical limits, Antonopoulos, Faraca and Tonini 2021, Cepi, Daehn, Cabrera Serrenho and Allwood 2017, and UBA 2025. EU, 2022, unless a year is named.</p>
       <p id="notes-ring-imputed">The newest rate, 12.2% for 2024, is Eurostat's estimate: it marks the 2024 rate as imputed for the EU and for every country but Luxembourg, and 2024's waste figures were first published in October 2026, after it (env_ac_cur, env_wastrt). So the ring and the figures after the opening use 2022, the latest year with every input reported.</p>
-      <p id="notes-ring-1">From 2024's rate, 24% by 2030 takes a rise of about 2% of material used a year, against a rise from 10.7% in 2010 to 12.2% in 2024 (my calculation from Eurostat). The European Environment Agency's warning is in its 2023 briefing: "Enhanced waste recycling alone will not be sufficient for the EU to achieve the target" (EEA 2023).</p>
+      <p id="notes-ring-1">From 2024's rate, 24% by 2030 takes a rise of about 2% of material used a year, against a rise from 10.7% in 2010 to 12.2% in 2024 (my calculation from Eurostat).</p>
+      <p id="notes-ring-eea">The European Environment Agency's warning is in its 2023 briefing: "Enhanced waste recycling alone will not be sufficient for the EU to achieve the target" (EEA 2023).</p>
       <p id="notes-ring-2">Neither that briefing nor the report behind it works out how far either lever alone would have to go: both test set levels of each lever and combine them (EEA 2023; ETC CE Report 2023/6, sections 4.3.1 and 4.4). In the briefing's combined scenario, recycling 70% of treated waste, using 15% less material than in 2020 and a third less fossil fuel lift the rate to about 22% by 2030, short of the 23.4% it aims for. Recycling 90% of all waste would bring the EU close to the target only by 2050 (EEA 2023).</p>
       <p id="notes-ring-etc">In 2025 the agency's European Topic Centre worked out what doubling would take, from 2020's 11.6% to the 23.2% it takes as the target. Even with fossil fuels cut by 34%, recycling at what it calls a theoretical maximum of about 69% of all waste, and each recycled tonne replacing a whole new one, which it calls likely an overestimation, the EU would have to consume 26% less material than in 2020 (ETC CE Report 2025/3, key messages and sections 3.1 and 4.1 to 4.4).</p>
       <p id="notes-ring-3">That is one route, from another base year and for another target, and it sits close to the 31.0% less here with 70% of waste recycled. It doesn't work out how far either lever alone would have to go, or what any country would need.</p>
@@ -3569,14 +3584,16 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   /* The hero's ring: a still copy of the ring drawn at the hero's state, without the ring's
      ids or any label, key or source. Copied at load and again once fonts are in, since the key is laid out from measured text. */
   function heroRing() {
-    const was = ringName, svg = document.querySelector("#ring-hero svg");
+    const was = ringName, svg = document.querySelector("#ring-hero svg"), intro = document.querySelector("#ring-intro svg");
     if (ringTimer) { ringTimer.stop(); ringTimer = null; }
     drawRing("hero", 0);
-    svg.innerHTML = document.querySelector("#ring svg").innerHTML;
-    svg.querySelectorAll("defs, [id]").forEach(function (e) { if (e.tagName === "defs") e.remove(); else e.removeAttribute("id"); });
-    svg.querySelectorAll("[clip-path]").forEach(function (e) { e.removeAttribute("clip-path"); });
-    svg.querySelectorAll(".stripes").forEach(function (e) { e.remove(); });
-    svg.querySelectorAll(".labels, .lab").forEach(function (e) { e.remove(); });   // the opening shows the ring alone
+    [svg, intro].forEach(function (el) {
+      el.innerHTML = document.querySelector("#ring svg").innerHTML;
+      el.querySelectorAll("defs, [id]").forEach(function (e) { if (e.tagName === "defs") e.remove(); else e.removeAttribute("id"); });
+      el.querySelectorAll("[clip-path]").forEach(function (e) { e.removeAttribute("clip-path"); });
+      el.querySelectorAll(".stripes").forEach(function (e) { e.remove(); });
+    });
+    svg.querySelectorAll(".labels, .lab").forEach(function (e) { e.remove(); });   // the cover shows the ring alone
     const bb = svg.querySelector(".ring").getBBox(), pad = 6;                         // cropped to the ring, centered at 200,176
     const half = Math.max(bb.width, bb.height) / 2 + pad;
     svg.setAttribute("viewBox", [200 - half, 176 - half, 2 * half, 2 * half].map(function (v) { return v.toFixed(1); }).join(" "));
