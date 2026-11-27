@@ -309,7 +309,6 @@ main { position: relative; z-index: 1; max-width: 560px; margin: 0 auto; }
 .lab-white { fill: #fff; }
 .lab-on { fill: #fff; font-size: calc(14px * var(--cf, 1)); font-weight: 700; }
 .lab-src { fill: var(--ink-2); font-size: calc(11px * var(--cf, 1)); }
-.ring-hint { fill: var(--ink-2); font-size: calc(13.5px * var(--cf, 1)); font-style: italic; }
 .leader { stroke: var(--ink-2); stroke-width: 1; }
 .wf .grid { stroke: var(--hairline); stroke-width: 1; }
 .wf .base, .wf .tick { stroke: var(--ink-2); stroke-width: 1; }
@@ -616,14 +615,17 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     <div class="steps">
       <article class="card" data-state="hero">
         <h1>Far from Full&nbsp;<span class="ring-c">C</span>ircle</h1>
-        <p class="subtitle">To double its circularity by 2030, the EU needs about a third less new material, even recycling far&nbsp;more</p>
+        <p class="subtitle">Is the EU using the right measure for its circularity&nbsp;target?</p>
         <p class="byline">By Milcah M. Joseph &middot; <time class="byline-date">[launch date]</time> &middot; <span class="byline-data">Eurostat data</span></p>
-        <p>This is a journey that began with my work on sustainability data in Ireland. I didn't always live here, so the waste management efforts in Europe have always been impressive to me. So the 2% circularity rate for Ireland, one of the lowest in the EU, came out of left field, and I followed a very long rabbit hole trying to understand it. But the longer I spent with the numbers, the more I found myself wondering what they were actually telling us. If the point of becoming more circular is to take less from the earth, to do less harm to the life it sustains and to leave behind a world worth living in, how well are we measuring that? So I turned to the EU as a whole and the target it has set for 2030.</p>
       </article>
-      <article class="card" data-state="hero">
-        <p>The newest figure for the EU's circularity rate (the share of all the material we use that comes from recycling) is <button type="button" class="pop" data-note="notes-ring-imputed" aria-label="Eurostat's estimate for 2024: more detail">Eurostat's estimate</button> for 2024: 12.2%, against a target of 24% by 2030. To get there, the rate would have to climb by about 2% of all the material we use each year, more than it climbed in all fourteen years from 2010 to 2024, when it went from 10.7% to 12.2%.</p>
-        <p>The European Environment Agency has warned since 2023 that recycling more won't get there on its own, and in 2025 its European Topic Centre worked out how much less material the EU would have to use even with recycling pushed close to its limit. What I wanted to see was how far each lever would have to go on its own, how much that depends on what a recycled tonne really replaces, and what it would mean for each EU country, before looking at what the target can't see, such as a building in Brussels that could have done more for the rate torn down than kept standing. The model behind the ring and all its calculations use 2022, the latest year for which Eurostat has reported everything the rate is made of.</p>
-      </article>
+    </div>
+  </section>
+
+  <section class="break" id="sec-open">
+    <div class="break-text">
+      <p>This is a journey that began with my work on sustainability data in Ireland. With a 2% circularity rate, Ireland is one of the least circular countries in the European Union. I followed a very long rabbit hole trying to understand it, and the longer I spent with the numbers, the more I found myself wondering what they were actually telling us. If the point of becoming more circular is to form a world where life thrives, how well are we measuring that? So I turned to the EU as a whole and the target it's set for 2030, on a journey through the circularity measure and what it could become.</p>
+      <p>The newest figure for the EU's circularity rate (the share of all the material we use that comes from recycling) is <button type="button" class="pop" data-note="notes-ring-imputed" aria-label="Eurostat's estimate for 2024: more detail">Eurostat's estimate</button> for 2024: 12.2%, against a target of 24% by 2030. To get there, the rate would have to climb by about 2% of all the material we use each year, more than it climbed in all fourteen years from 2010 to 2024, when it went from 10.7% to 12.2%.</p>
+      <p>The European Environment Agency has warned since 2023 that recycling more won't get there on its own, and in 2025 its European Topic Centre worked out how much less material the EU would have to use even with recycling pushed close to its limit. What I wanted to see was how far each lever would have to go on its own, how much that depends on what a recycled tonne really replaces, and what it would mean for each EU country, before looking at what the target can't see, such as a building in Brussels that could have done more for the rate torn down than kept standing. The model behind the ring and all its calculations use 2022, the latest year for which Eurostat has reported everything the rate is made of.</p>
     </div>
   </section>
 
@@ -1330,6 +1332,10 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     const t = parent.append("text").attr("x", x).attr("y", y).attr("text-anchor", anchor || "start");
     lines.forEach(function (l, i) {
       const ts = t.append("tspan").attr("x", x).attr("dy", i ? (l[2] || "1.2em") : 0).attr("class", l[1]);
+      if (/\*/.test(l[0])) {                                   // *word* set in italics
+        String(l[0]).split("*").forEach(function (bit, j) { if (bit) ts.append("tspan").attr("font-style", j % 2 ? "italic" : null).text(bit); });
+        return;
+      }
       if (!/CO2/.test(l[0])) { ts.text(l[0]); return; }
       String(l[0]).split("CO2").forEach(function (bit, j) {   // CO2's 2 set as a subscript
         if (j) { ts.append("tspan").text("CO"); ts.append("tspan").attr("class", "sub").attr("baseline-shift", "sub").text("2"); }
@@ -1562,8 +1568,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   function ringLabelsIn(L, s) {
     const has = function (k) { return s.key.indexOf(k) > -1; };
     if (s.hint) {
-      label(L, CX, 352, [["The disc is the " + fmt1(DMC / 1e6) + " billion tonnes the EU consumed in " + YR + ",", "lab-src"], ["drawn as terrazzo: the floor it could one day become", "lab-src"]], "middle");
-      label(L, CX, 22, [["The full circle is the 24% target.", "ring-hint"], ["The gold arc is how far the EU has come.", "ring-hint"]], "middle");
+      label(L, CX, 352, [["The disc is the " + fmt1(DMC / 1e6) + " billion tonnes the EU consumed in " + YR + ".", "lab-src"], ["Drawn as *terrazzo*.", "lab-src"]], "middle");
     }
 
     // The step's highlight, called out
@@ -3556,7 +3561,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 
   /* ---------- Cards drive the charts ---------- */
   /* The hero's ring: a still copy of the ring drawn at the hero's state, without the ring's
-     ids. Copied at load and again once fonts are in, since the key is laid out from measured text. */
+     ids or any label, key or source. Copied at load and again once fonts are in, since the key is laid out from measured text. */
   function heroRing() {
     const was = ringName, svg = document.querySelector("#ring-hero svg");
     if (ringTimer) { ringTimer.stop(); ringTimer = null; }
@@ -3565,6 +3570,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
     svg.querySelectorAll("defs, [id]").forEach(function (e) { if (e.tagName === "defs") e.remove(); else e.removeAttribute("id"); });
     svg.querySelectorAll("[clip-path]").forEach(function (e) { e.removeAttribute("clip-path"); });
     svg.querySelectorAll(".stripes").forEach(function (e) { e.remove(); });
+    svg.querySelectorAll(".labels, .lab").forEach(function (e) { e.remove(); });   // the opening shows the ring alone
     drawRing(was, 0);
   }
   const CHARTS = { hero: function () {}, ring: drawRing, waterfall: drawWaterfall, zin: drawZin, ribbon: drawRibbon, ikea: drawIkea };
