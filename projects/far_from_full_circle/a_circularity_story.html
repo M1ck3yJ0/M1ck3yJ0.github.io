@@ -1228,6 +1228,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   };
   RING.both_rec = Object.assign({}, RING.both, { dmc: DMC, pre: null });   // panel 6's labels while its ring closes
   RING.recycling = Object.assign({}, RING.every, { dmc: DMC, pre: null });   // panel 4's labels while its ring closes
+  RING.intro = Object.assign({}, RING.hero, { key: ["disc"], hint: false });  // the intro's still copy: the disc in the key, no caption
 
   /* The disc as terrazzo: shards in one blue per kind of material, each material's shards
      covering exactly its share of material use by weight (_tools/make_shards.py). They sit
@@ -1428,6 +1429,18 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
       return function (g) { g.append("rect").attr("class", cls).attr("y", -8).attr("width", 18).attr("height", 7); return 18; };
     }
   };
+  KEY.disc = function (g) {                        // a small terrazzo disc: four shards, one blue per material
+    const r = 6, cx = r, cy = -4.5, px = cx + 1.2, py = cy - 0.8;
+    const cuts = [0.15, 1.75, 3.1, 4.6];             // clockwise from the top: upper right, lower right, lower left, upper left
+    const cls = ["fossil", "metals", "biomass", "minerals"];
+    const pt = function (a) { return [cx + r * Math.sin(a), cy - r * Math.cos(a)]; };
+    cuts.forEach(function (a, i) {
+      const b = i < 3 ? cuts[i + 1] : cuts[0] + TAU, p0 = pt(a), p1 = pt(b);
+      g.append("path").attr("class", cls[i]).attr("stroke", "#fff").attr("stroke-width", 0.8).attr("stroke-linejoin", "round")
+        .attr("d", "M" + px + "," + py + "L" + p0[0].toFixed(2) + "," + p0[1].toFixed(2) + "A" + r + "," + r + " 0 " + (b - a > Math.PI ? 1 : 0) + " 1 " + p1[0].toFixed(2) + "," + p1[1].toFixed(2) + "Z");
+    });
+    return 2 * r;
+  };
   KEY.arcDim = function (g) { const w = KEY.arc(g); g.select(".rope").attr("opacity", DIM); return w; };
   function keyRow(L, y, items) {
     const row = L.append("g").attr("class", "ring-key");
@@ -1608,6 +1621,7 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
 
     // The key
     const rows = [[[KEY.target, "Target for 2030"], [s.dim ? KEY.arcDim : KEY.arc, "Circularity rate"]]];
+    if (has("disc")) rows.push([[KEY.disc, "Material the EU consumes"]]);
     if (has("mats")) rows.push(SH.materials.map(function (m) {
       return [KEY.box(m), MAT.find(function (d) { return d.key === m; }).name];
     }));
@@ -3586,8 +3600,8 @@ details[open] > summary .explore-toggle::after { content: "Close it \2191"; }
   function heroRing() {
     const was = ringName, svg = document.querySelector("#ring-hero svg"), intro = document.querySelector("#ring-intro svg");
     if (ringTimer) { ringTimer.stop(); ringTimer = null; }
-    drawRing("hero", 0);
     [svg, intro].forEach(function (el) {
+      drawRing(el === intro ? "intro" : "hero", 0);
       el.innerHTML = document.querySelector("#ring svg").innerHTML;
       el.querySelectorAll("defs, [id]").forEach(function (e) { if (e.tagName === "defs") e.remove(); else e.removeAttribute("id"); });
       el.querySelectorAll("[clip-path]").forEach(function (e) { e.removeAttribute("clip-path"); });
