@@ -40,7 +40,7 @@ notes-game,40%,using,,F96,"IEA 2023: using oil and gas, another 40% of emissions
 notes-closer,2026,Circular Economy Act,,F33,The Act planned for the fourth quarter of 2026
 notes-closer,16,,,F79,The consumption footprint's 16 impact categories
 notes-closer,18%,Austria,,F29,Austria's 18% rate target for 2030
-notes-closer,14 tonnes,Austria,,F29,Austria's 14 tonnes per person by 2030
+notes-closer,14 tons,Austria,,F29,Austria's 14 tonnes per person by 2030
 notes-closer,2026,January,,F85,CBAM from January 1 and construction products from January 8
 notes-closer,2040,,,F86,The old construction standards may stay in use until 2040
 notes-closer,2028,,,F26,Whole-life carbon disclosure from January 1
@@ -112,7 +112,7 @@ notes-ikea,53%,,,F113,"Households' share of EU food waste, 2024"
 notes-ikea,69 kg,,,F113,"Household food waste per person, 2024"
 notes-ribbon,50 Mt,,,F114,Sand extracted from the lower Mekong a year (Hackney and others 2020)
 notes-ribbon,6 Mt,,,F114,Sand flux into the Mekong delta a year (Hackney and others 2020)
-notes-ribbon,50 billion tonnes,,,F114,Sand and gravel used worldwide a year (UNEP 2026)
+notes-ribbon,50 billion tons,,,F114,Sand and gravel used worldwide a year (UNEP 2026)
 notes-ribbon,2026,,,F114,"UNEP's Sand and Sustainability 2026; WRI, October 2026 (F115)"
 notes-ribbon,12,years,,F114,Years after extraction that the Dutch pits' seabed life still differed
 notes-ribbon,90%,,,F111,"IRP GRO 2024: biomass, land-use-related biodiversity loss and water stress"
@@ -171,6 +171,6 @@ notes-less,"82,346",,,F127,"INE, 2011 census"
 notes-less,"83,000",,,F127,"INE, held at about 83,000"
 notes-less,"83,339",,,F127,"INE, 2025 register"
 notes-zin,0.129 times,,,F67,"My calculation: 11.4/88.6, the bar for extra recycled rubble against extra new material"
-notes-zin,"22,000 tonnes",,,F67,"My calculation: 0.129 times 171,000 tonnes (examples.zin.structure_kept)"
+notes-zin,"22,000 tons",,,F67,"My calculation: 0.129 times 171,000 tonnes (examples.zin.structure_kept)"
 sec-closer,"20,000",homes,,F122,"Census: 23,072 homes vacant in all three censuses, 2011, 2016 and 2022"
 notes-closer,92%,biomass,,F132,"Share of biomass the costliest-per-tonne route takes at 70% recycled, half-tonne replacement (two_levers logic)"

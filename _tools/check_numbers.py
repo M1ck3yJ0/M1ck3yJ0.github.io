@@ -472,10 +472,10 @@ def load_rows():
 
 FIG = re.compile(r"(?<![\w.\-/])(?<!\w\()(?<!\d,)(\d{1,3}(?:,\d{3})+|\d+)(\.\d+)?(s?)(?![\w/]|\(\d|-\d|\.\d)")
 UNIT = re.compile(
-    r"\s?(?P<u>%|percent\b|×|x\b|\s?times\b|(?:\s?(?P<mul>thousand|million|billion))?\s?(?P<w>tonnes?|t\b|Mt\b|Gt\b|kt\b|"
+    r"\s?(?P<u>%|percent\b|×|x\b|\s?times\b|(?:\s?(?P<mul>thousand|million|billion))?\s?(?P<w>tonnes?|tons?\b|t\b|Mt\b|Gt\b|kt\b|"
     r"kilograms?|kilometers?|kilos?|kg\b|square meters|m²|m2\b|km\b)|\s?(?P<mul2>million|billion)\b)")
 MULT = {"thousand": 1e3, "million": 1e6, "billion": 1e9}
-WEIGHT = {"tonne": 1, "tonnes": 1, "t": 1, "mt": 1e6, "gt": 1e9, "kt": 1e3, "kilogram": 1e-3, "kilograms": 1e-3,
+WEIGHT = {"tonne": 1, "tonnes": 1, "ton": 1, "tons": 1, "t": 1, "mt": 1e6, "gt": 1e9, "kt": 1e3, "kilogram": 1e-3, "kilograms": 1e-3,
           "kilo": 1e-3, "kilos": 1e-3, "kg": 1e-3}
 REF = re.compile(r"\b(?:sections?|figures?|fig\.|tables?|pages?|pp?\.|articles?|annex(?:es)?|paragraphs?|books?|"
                  r"chapters?|panels?|cards?|modules?|points?|steps?|regulation|directive|decision|document|report|"
